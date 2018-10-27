@@ -18,7 +18,6 @@ categories: jekyll update
 ![](https://bozenne.github.io/img/causalGraph.png)
 <br>
 
-<!-- ![](img/photoId.jpeg){:height="36px" width="36px"} -->
 
 5. What are the consequence of the design on the causal graph: <br>
   e.g. randomisation of the treatment allocation would remove the link

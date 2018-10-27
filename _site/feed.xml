@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-10-28T00:38:51+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Biostat at kunru</title><subtitle>Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.</subtitle><author><name>Brice Ozenne</name></author><entry><title type="html">An ideal statistical analysis (3 steps)</title><link href="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html" rel="alternate" type="text/html" title="An ideal statistical analysis (3 steps)" /><published>2018-10-26T00:00:00+02:00</published><updated>2018-10-26T00:00:00+02:00</updated><id>http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html">&lt;h2 id=&quot;phase-1-ideal-world-blinded-to-the-data&quot;&gt;Phase 1: ideal world (blinded to the data)&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-10-28T00:53:20+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Biostat at kunru</title><subtitle>Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.</subtitle><author><name>Brice Ozenne</name></author><entry><title type="html">An ideal statistical analysis (3 steps)</title><link href="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html" rel="alternate" type="text/html" title="An ideal statistical analysis (3 steps)" /><published>2018-10-26T00:00:00+02:00</published><updated>2018-10-26T00:00:00+02:00</updated><id>http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html">&lt;h2 id=&quot;phase-1-ideal-world-blinded-to-the-data&quot;&gt;Phase 1: ideal world (blinded to the data)&lt;/h2&gt;
 &lt;ol&gt;
   &lt;li&gt;Formulate the hypothesis/hypotheses to be tested.&lt;/li&gt;
   &lt;li&gt;Define the population of interest for each hypothesis.&lt;/li&gt;
@@ -11,15 +11,12 @@
       &lt;li&gt;mediators(s): sodium intake, therapy impacts both hypertension and sodium intake (sodium intake impacts hypertension).&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;Draw the causal graph
+  &lt;li&gt;
+    &lt;p&gt;Draw the causal graph
 &lt;br /&gt;
 &lt;img src=&quot;https://bozenne.github.io/img/causalGraph.png&quot; alt=&quot;&quot; /&gt;
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;!-- ![](img/photoId.jpeg){:height=&quot;36px&quot; width=&quot;36px&quot;} --&gt;
-
-&lt;ol&gt;
+&lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
   &lt;li&gt;What are the consequence of the design on the causal graph: &lt;br /&gt;
   e.g. randomisation of the treatment allocation would remove the link
   between Therapy and history of hypertension. &lt;br /&gt;
