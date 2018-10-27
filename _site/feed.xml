@@ -1,13 +1,114 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-10-27T23:04:08+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Broz-statistics</title><subtitle>Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2018/10/25/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2018-10-25T22:42:46+02:00</published><updated>2018-10-25T22:42:46+02:00</updated><id>http://localhost:4000/jekyll/update/2018/10/25/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/10/25/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-10-27T23:28:50+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Broz-statistics</title><subtitle>Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.</subtitle><entry><title type="html">Checking list</title><link href="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html" rel="alternate" type="text/html" title="Checking list" /><published>2018-10-26T00:00:00+02:00</published><updated>2018-10-26T00:00:00+02:00</updated><id>http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/10/26/statisticalFramework.html">&lt;h2 id=&quot;phase-1-ideal-world-blinded-to-the-data&quot;&gt;Phase 1: ideal world (blinded to the data)&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Formulate the hypothesis/hypotheses to be tested. Count them and
+decide if you should adjust for multiple comparisons.&lt;/li&gt;
+  &lt;li&gt;Define the population of interest for each hypothesis.&lt;/li&gt;
+  &lt;li&gt;Identify the variables/mecanisms that are related to each hypothesis:
+    &lt;ul&gt;
+      &lt;li&gt;outcome(s), e.g. blood pressure after 1 week.&lt;/li&gt;
+      &lt;li&gt;exposure(s): e.g. therapy A vs B.&lt;/li&gt;
+      &lt;li&gt;confounder(s), e.g. history of hypertension, those patients are more likely to get therapy A.&lt;/li&gt;
+      &lt;li&gt;risk factor(s), e.g. BMI, therapy allocation is independent of BMI.&lt;/li&gt;
+      &lt;li&gt;mediators(s): sodium intake, therapy impacts both hypertension and sodium intake (sodium intake impacts hypertension).&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Draw the causal graph
+&lt;br /&gt;
+&lt;img src=&quot;https://bozenne.github.io/img/causalGraph.png&quot; alt=&quot;&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;What are the consequence of the design on the causal graph: &lt;br /&gt;
+  e.g. randomisation of the treatment allocation would remove the link
+  between Therapy and history of hypertension. &lt;br /&gt;
+  e.g. a observational study could lead to have more confounders (doctor preferences could be related to Therapy and BMI). &lt;br /&gt;
+  e.g. a longitudinal study would induce a correlation between the mesurements of a blood pressure for a given individual.&lt;/li&gt;
+  &lt;li&gt;The statistical model (or test) you will choose should reflect:
+    &lt;ul&gt;
+      &lt;li&gt;the type of the outcome, e.g. binary -&amp;gt; logistic regression&lt;/li&gt;
+      &lt;li&gt;the design of your data, e.g. repetead measurements -&amp;gt; mixed model&lt;/li&gt;
+      &lt;li&gt;the causal graph: e.g. adjust for the possible confounders.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;h2 id=&quot;phase-2-data-management&quot;&gt;Phase 2: data management&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Work on the subset of data that is relevant for your analysis. &lt;br /&gt;
+e.g. in some studies, people have collected more than 200 variables but in
+your study only 10 of them are relevant. Working on a smaller
+dataset ease the data checking.&lt;/li&gt;
+  &lt;li&gt;Identify the individuals that will be kept for the study and create
+one dataset that will be used during the analysis. Drawing an
+inclusion and exlcusion is usually very usefull to understand and
+communicate how the individuals where selected.&lt;/li&gt;
+  &lt;li&gt;Check the data that have been collected, column by column. &lt;br /&gt;
+Is there extreme/abnormal values? e.g. negative times, three levels for gender: “Male”, “male”, “Female”. &lt;br /&gt;
+Does the univariate distributions match what you have expected? e.g. all patients have a blood pressure &amp;gt;130 mmHg&lt;/li&gt;
+  &lt;li&gt;Name your variable in english. Never use special characters.&lt;/li&gt;
+  &lt;li&gt;Use explicit values and names for your variables. &lt;br /&gt; 
+e.g. gender = 0,1 is not good. It should be either Male = TRUE, FALSE or Gender
+= “Male”, “Female”.&lt;/li&gt;
+  &lt;li&gt;Check that your data has been anonymized. You should however always keep
+an identification variable (e.g. Id = “Patient_1” to Id = “Patient_52”)&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;h2 id=&quot;phase-3-back-to-reality&quot;&gt;Phase 3: back to reality&lt;/h2&gt;
+&lt;p&gt;Considering the data that you have collected:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Does your dataset still corresponds to the population of interest?&lt;/li&gt;
+  &lt;li&gt;Do you have missing values ? Is the missingness random ? Due to an
+observed variable (e.g. the most diseased patients left the study) ?
+Due to an unobserved variable ?&lt;/li&gt;
+  &lt;li&gt;Is the number of hypotheses you want to test resonnable regarding
+your sample size ?&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;modeling&quot;&gt;Modeling:&lt;/h2&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry></feed>
+&lt;ol&gt;
+  &lt;li&gt;Is the model define during phase 1 is still relevant?&lt;/li&gt;
+  &lt;li&gt;Check model assumptions, especially linearity and
+homoschedasticity. &lt;a href=&quot;jekyll/update/2017/06/23/RsoftwareRessources.html&quot;&gt;This page&lt;/a&gt; contain
+some of the diagnostic functions in R.&lt;/li&gt;
+  &lt;li&gt;If you had observations with extreme values, check how they impact the parameter(s) of interest.&lt;/li&gt;
+  &lt;li&gt;Check the overall fit of your model. If the fit is poor then maybe
+you have missed an important variable (which could be a confounder
+!), or the model you used is not appropriate. This is problematic
+because you are testing your hypothesis under the assumption that
+the model gives an unbiased estimate of your parameter of interest.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In case of small sample sizes (n&amp;lt;50), confidence intervals based on
+a gaussian approximation of the test statistic should not be
+used. Confidence intervals based on a student’s t-distribution, boostrap, or
+jacknife should provide a more accurate coverage.&lt;/p&gt;
+
+    &lt;p&gt;Reporting:&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Remember to report both the effect size and the p.value. A
+difference in blood pressure of 0.1mmHg may be significant (p&amp;lt;0.05)
+but not clinically relevant. No need to go further. On the other
+hand you could end up with a clinically relevant difference in
+blood pressure (e.g. 20 mmHg) that is not clinically significant
+(p&amp;gt;0.05). Maybe a larger study is necessary.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;about-variable-selection&quot;&gt;About variable selection&lt;/h2&gt;
+
+&lt;p&gt;Most statistical software include methods to perform variable
+selection. But it is often unclear whether you have a better answer to
+your question after having done variable selection.&lt;/p&gt;
+
+&lt;p&gt;“The decision on how many and which covariates to include in a model
+is not at all an easy one. It is important to stress that the
+interpretation of the effect of one covariate may depend strongly on
+which other covariates are included in the model.” &lt;em&gt;Regression with
+Linear Predictors&lt;/em&gt; (chapter 6). Per Kragh Andersen, Lene Theil
+Skovgaard, 2010.&lt;/p&gt;
+
+&lt;p&gt;Often your study is designed to test your hypothesis not to identify
+possible confounders. Then you cannot expect to do a good job in
+identifying the confounders using your data. Even worse, in some case
+you may introduce a bias due to the selection procedure you used. This
+is why, ideally, the choice of the covariates to include in the model
+should be based on prior knowledge.&lt;/p&gt;</content><author><name></name></author><summary type="html">Phase 1: ideal world (blinded to the data) Formulate the hypothesis/hypotheses to be tested. Count them and decide if you should adjust for multiple comparisons. Define the population of interest for each hypothesis. Identify the variables/mecanisms that are related to each hypothesis: outcome(s), e.g. blood pressure after 1 week. exposure(s): e.g. therapy A vs B. confounder(s), e.g. history of hypertension, those patients are more likely to get therapy A. risk factor(s), e.g. BMI, therapy allocation is independent of BMI. mediators(s): sodium intake, therapy impacts both hypertension and sodium intake (sodium intake impacts hypertension). Draw the causal graph</summary></entry></feed>

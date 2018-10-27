@@ -20,6 +20,8 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://bozenne.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  bozenne
 
+title-img: "img/photoId.jpeg"
+
 
 # Build settings
 markdown: kramdown
