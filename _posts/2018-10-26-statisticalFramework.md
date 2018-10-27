@@ -1,12 +1,11 @@
 ---
 layout: post
-title:  "Checking list"
+title:  "An ideal statistical analysis (3 steps)"
 categories: jekyll update
 ---
 
 ## Phase 1: ideal world (blinded to the data)
-1. Formulate the hypothesis/hypotheses to be tested. Count them and
-   decide if you should adjust for multiple comparisons.
+1. Formulate the hypothesis/hypotheses to be tested. 
 2. Define the population of interest for each hypothesis.
 3. Identify the variables/mecanisms that are related to each hypothesis:
    + outcome(s), e.g. blood pressure after 1 week.
@@ -16,10 +15,10 @@ categories: jekyll update
    + mediators(s): sodium intake, therapy impacts both hypertension and sodium intake (sodium intake impacts hypertension).
 4. Draw the causal graph
 <br>
-![](https://bozenne.github.io/img/causalGraph.png)
+![](https://github.com/bozenne/bozenne.github.io/blob/master/img/causalGraph.png)
 <br>
 
-
+<!-- ![](img/photoId.jpeg){:height="36px" width="36px"} -->
 
 5. What are the consequence of the design on the causal graph: <br>
   e.g. randomisation of the treatment allocation would remove the link

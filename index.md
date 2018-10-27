@@ -6,6 +6,5 @@ layout: home
 ---
 
 
-![](img/photoId.jpeg)
 
 
