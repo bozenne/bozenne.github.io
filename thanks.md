@@ -1,8 +1,15 @@
 ---
 layout: page
-title: Thanks
-permalink: /thanks/
+title: About
+permalink: /About/
 ---
+
+## How to generate the website (locally)
+
+- *template*: `jekyll new blog`
+- *compile site*: `jekyll serve` (need to be in the directory of the website, e.g. using `cd blog`)
+
+## Thanks
 
 To [github](https://github.com/about)
 and [jekyll](http://jekyllrb.com/) to enable me to create a website
