@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "Consultations at NRU"
-date:   2017-06-23 19:54:25 +0200
 categories: jekyll update
 ---
 
@@ -94,16 +93,15 @@ study that you would like to replicate_.
   I can help you with:
   + performing statistical analysis that are suited to your research
     question and that output interpretable quantities.
-  + generate nice figures (if you use the R software).
-  + write the "statistical analysis" paragraph from the method section
-    and help you to present the results in your manuscript.
-  + make sure that your analysis is reproducible, i.e. when you get
+  + generating nice figures (if you use the R software).
+  + writing the "statistical analysis" paragraph from the method
+    section and presenting the results in your manuscript.
+  + making sure that your analysis is reproducible, i.e. when you get
     the review 3 months after you are able to reproduce the results
     you got when you wrote the article (you need to ask specifically
     for this).
-  + help you to answer the comments of the reviewers that are related
-    to the statistical analysis.
-<br> <br>
+  + answering the comments of the reviewers that are related to the
+    statistical analysis.  <br> <br>
 
   What I will expect from you:
   + to present me the person(s) involved in the project. By default I
@@ -141,27 +139,27 @@ study that you would like to replicate_.
   welcome to disagree with my comments, then we should just meet to
   discuss them. <br> <br>
 
-  You should not expect me:
-  + to be a policeman: you should not try things and then come to me
-  asking whether it correct or not.
-  + to be a magician: you should not expect statistics to create data
-  or more information than you have. If you only have data on 20
-  subjects don't aim at testing 100 null hypotheses. Also be
-  realistic: doing statistics is not easy especially when it is not
-  your field of expertise. If you come with a complicated design,
-  missing values, and outcomes with non standard distributions, it
-  becomes less likely that (i) I can propose a statistical method
-  suited to your needs, (ii) this method is easy to apply, (iii) this
-  method is easy to interpret, (iv) it is the classical method used in
-  your field.
-  + to be a software tester: if you try to do the same analysis in
-  several software, you may end-up with different results. This is
-  annoying but you should not expect me to be able to say which
-  software is the best. I am personally working with the R software,
-  but I trust the classical software, e.g. SAS, SPSS, matlab ....
-  + to know all the statistical methods: sadly I have a limited
-  knowledge. So if you need to use a method with which I am not
-  familiar may need additional time to be able to help you.
+[//]: #  You should not expect me:
+[//]: #  + to be a policeman: you should not try things and then come to me
+[//]: #  asking whether it correct or not.
+[//]: #  + to be a magician: you should not expect statistics to create data
+[//]: #  or more information than you have. If you only have data on 20
+[//]: #  subjects don't aim at testing 100 null hypotheses. Also be
+[//]: #  realistic: doing statistics is not easy especially when it is not
+[//]: #  your field of expertise. If you come with a complicated design,
+[//]: #  missing values, and outcomes with non standard distributions, it
+[//]: #  becomes less likely that (i) I can propose a statistical method
+[//]: #  suited to your needs, (ii) this method is easy to apply, (iii) this
+[//]: #  method is easy to interpret, (iv) it is the classical method used in
+[//]: #  your field.
+[//]: #  + to be a software tester: if you try to do the same analysis in
+[//]: #  several software, you may end-up with different results. This is
+[//]: #  annoying but you should not expect me to be able to say which
+[//]: #  software is the best. I am personally working with the R software,
+[//]: #  but I trust the classical software, e.g. SAS, SPSS, matlab ....
+[//]: #  + to know all the statistical methods: sadly I have a limited
+[//]: #  knowledge. So if you need to use a method with which I am not
+[//]: #  familiar may need additional time to be able to help you.
 
 
 
