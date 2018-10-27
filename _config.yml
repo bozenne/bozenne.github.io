@@ -9,14 +9,14 @@
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
 
 ## Site settings
-title: Broz-statistics 
-baseurl: "/" # the subpath of your site, e.g. /blog
-url: "https://bozenne.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+title: "Biostat at kunru"
+baseurl: ""
+url: "https://bozenne.github.io"
 description: Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.
-
 
 ## Personal details
 email: brice.ozenne@nru.dk
+author: Brice Ozenne
 github_username:  bozenne
 orcid: 0000-0001-9694-2956
 avatar: img/photoId.jpeg

@@ -15,7 +15,7 @@ categories: jekyll update
    + mediators(s): sodium intake, therapy impacts both hypertension and sodium intake (sodium intake impacts hypertension).
 4. Draw the causal graph
 <br>
-![](https://github.com/bozenne/bozenne.github.io/blob/master/img/causalGraph.png)
+![](https://bozenne.github.io/img/causalGraph.png)
 <br>
 
 <!-- ![](img/photoId.jpeg){:height="36px" width="36px"} -->
