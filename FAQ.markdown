@@ -15,6 +15,12 @@ expected. See also the Vancouver
 Protocol
 [page 4](http://www.research.mq.edu.au/documents/policies/Vancouver.pdf).
 
+My affiliations are:
+1. Neurobiology Research Unit and Center for Integrated Molecular Brain Imaging, The Neuroscience Centre, Rigshospitalet, Copenhagen, Denmark
+
+2. Section of Biostatistics, , University of Copenhagen, Copenhagen, Denmark
+
+
 # Response time 
 
 I usually answer to questions that I could not solve during the

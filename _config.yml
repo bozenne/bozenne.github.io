@@ -13,9 +13,9 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Brice Ozenne
+title: Broz-statistics 
 email: brice.ozenne@nru.dk
-description: Postdoc in Biostatistics
+description: Welcome to my professional website. You will find a brief description of my research, teaching material, and information about my consulting activity at NRU.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://bozenne.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  bozenne
