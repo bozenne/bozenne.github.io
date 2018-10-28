@@ -1,0 +1,279 @@
+#+TITLE:
+#+Author: Brice Ozenne
+
+# header
+#+BEGIN_EXPORT latex
+\begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+	\textbf{\Large Brice Ozenne} & \textbf{\today} \\
+\end{tabular*}
+
+\bigskip
+
+\begin{minipage}{0.2\linewidth}
+\includegraphics[width=\linewidth]{photoId.png}
+\end{minipage}
+\begin{minipage}{0.75\linewidth}
+\begin{tabular*}{7in}{ll@{ }l}
+	Nationality&:& french  \\
+	Date of birth&:& February 8, 1990  \\
+	Personal email&:& \url{brice.ozenne@orange.fr} \\ 
+	Personal phone number&:& (+45) 52 328 128 \\ 
+        Personal adress&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Denmark \\
+\end{tabular*}
+\end{minipage}
+#+END_EXPORT
+
+\bigskip
+
+* CURRENT POSITION                                                   :ignore:
+#+LaTeX: \resheading{CURRENT POSITION}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+	November 2015- Now:& \textbf{Postdoctoral researcher} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{page personnelle})\\
+	& Section of Biostatistics, University of Copenhagen \\
+	& Øster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
+	& Neurobiology Research Unit \\
+	& Copenhagen University Hospital, Rigshospitalet \\
+	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+Mon research work is organized around three topics:
+- the development of *latent variable models* for the analysis of
+  complex data (software =lavaSearch2=). I apply these developments on
+  neuroimaging data and data from psychological tests to investigate
+  the relationship between the brain response and depression.
+
+\smallskip
+
+- the analysis of registry data with *time to events outcomes* and
+  *competing risks* (logiciel =riskRegression=). My developments have,
+  for instance, been applied to compare preventive stroke treatments
+  using the danish registry data.
+
+\smallskip
+
+- the development of *generalized pairwise comparisons* to handle
+  multiple and heterogenous outcomes (logiciel =BuyseTest=). A typical
+  application is the assessment of new chemotherapy where being able
+  to balance the benefit (longer in survival time) and the risk
+  (treatment side effects) in an interpretable way is important.
+
+* EDUCATION :ignore:
+#+LaTeX: \resheading{EDUCATION}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
+              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ [3mm]
+2011 - 2012 : & Master’s degree in biostatistics (m2 b3s), university lyon, Lyon, France. \\ 
+              & Carried out in double degree with the École Centrale de Lyon. \\ [3mm]
+2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
+              & Erasmus at Politecnico di Milano (2nd semester 2011). \\
+\end{tabular}
+#+END_EXPORT
+
+\clearpage
+
+* SKILLS                                                             :ignore:
+#+LaTeX: \resheading{SKILLS}
+** /Language/
+French (native language), english (fluent), basics in italian and danish.
+
+** /Software/
+Good knowledge of \Rlogo{}, \LaTeX{} and [[https://orgmode.org/][orgmode]]. @@latex:\\@@ 
+Basic knowledge but common use of \Cpp{}, lisp (for [[https://www.gnu.org/software/emacs/][GNU Emacs]]) and
+git/github (via [[https://magit.vc/][magit]]).
+
+* GRANTS                                                             :ignore:
+#+LaTeX: \resheading{GRANTS}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2017-2019: MARIE CURIE Individual Fellowships (200 000\euro) \\
+2017-2020: Lundbeck Fellowships (140 000\euro) \\
+
+\end{tabular}
+#+END_EXPORT
+
+
+* SCIENTIFIC OUTPUT                                                  :ignore:
+#+LaTeX: \resheading{SCIENTIFIC OUTPUT}
+** /Publications (methodological)/
+
+Published:
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{ozenne2017riskregression}
+    \item \bibentry{peron2016extension}
+    \item \bibentry{ozenne2015precision}
+    \item \bibentry{ozenne2015spatially}
+  \end{enumerate}
+#+END_EXPORT
+
+\clearpage
+
+Submitted:
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{ozenne20XXestimation}
+    \item \bibentry{ozenne20XXsmall}
+  \end{enumerate}
+#+END_EXPORT
+In progress:
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{ozenne20XXcontroling}
+    \item \bibentry{peron20XXunbiased}
+  \end{enumerate}
+#+END_EXPORT
+
+
+** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
+#+LaTeX: \begin{minipage}{0.01\textwidth}
+#+LaTeX: \hspace{\fill}
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.92\textwidth}
+- *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
+  généralisées. Implémentation de la méthode décrite dans
+  citep:peron2016extension. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] et sur [[https://github.com/bozenne/BuyseTest][Github]].
+
+- *lavaSearch2* (Créateur et mainteneur): Inférence et outils
+  diagnostiques dans les modèles à variables latentes. Papier
+  décrivant la méthode soumis. Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+
+- *riskRegression* (Contributeur) : Calculateur du risque
+  d'évènenement en présence de risques compétitifs. Implémentation de
+  la méthode décrite dans citep:ozenne2017riskregression. Disponible
+  sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+#+LaTeX: \end{minipage}
+
+\bigskip
+
+** /Publications (applications cliniques)/
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{borgsted2018amygdala}
+    \item \bibentry{hjordt2018self}
+    \item \bibentry{foged2018verbal}
+    \item \bibentry{staerk2018standard}
+    \item \bibentry{hjordt2017season}
+    \item \bibentry{beliveau2017high}
+    \item \bibentry{stenbaek2017brain}
+    \item \bibentry{staerk2017resumption}
+    \item \bibentry{fisher2017bdnf}
+    \item \bibentry{foged2017safety}
+    \item \bibentry{peron2016net}
+    \item \bibentry{staerk2016ischaemic}
+    \item \bibentry{peron2016assessment}
+    \item \bibentry{ozenne2015evaluation}
+    \item \bibentry{hermitte2013very}
+  \end{enumerate}
+#+END_EXPORT
+
+
+* Enseignement                                         :ignore:
+#+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
+              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h) \\
+2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
+              & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
+2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
+\end{tabular}
+#+END_EXPORT
+
+* Encadrement :ignore:
+#+LaTeX: \resheading{Encadrement}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2015 - Actuellement &:& \textbf{consultant} en statistiques pour NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
+\multicolumn{3}{l}{ Conseille les chercheurs en neuroscience dans l'analyse de leurs données et la rédaction d'articles.} \\ [3mm]
+                        2014 &:& encadrement d'une étudiante de master 2 dans son stage de fin d'étude. \\
+\end{tabular}
+#+END_EXPORT
+
+
+* Reference :ignore:
+
+# bibliographystyle:apalike
+ bibliographystyle:plainnat
+
+ # [[bibliography:publicationBO.bib]]
+[[nobibliography:publicationBO.bib]]
+
+* CONFIG :noexport:
+#+LANGUAGE: en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:nil author:nil toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+options: num:nil
+
+#+LaTeX_HEADER: \pagestyle{empty} % no page numbering
+#+LATEX_HEADER: \usepackage[french]{babel}
+
+** Notations
+#+LaTeX_HEADER: \newcommand{\Rlogo}{\textbf{\textsf{R}}}
+#+LaTeX_HEADER: \newcommand{\Cpp}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
+#+LaTeX_HEADER: \usepackage{eurosym} % euro symbol
+
+** Sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+#+LaTeX_HEADER: \titleformat{\section}{\large}{\thesection}{1em}{}
+
+#+LaTeX_HEADER: \titlespacing*{\section}{0pt}{0.25\baselineskip}{0.25\baselineskip}
+** Margin
+#+LaTeX_HEADER: \geometry{
+#+LaTeX_HEADER: left=20mm,
+#+LaTeX_HEADER: right=20mm,
+#+LaTeX_HEADER: top=20mm,
+#+LaTeX_HEADER: bottom=20mm
+#+LaTeX_HEADER: }
+
+** Line spacing
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER: \renewcommand{\baselinestretch}{1.1}
+
+** CV
+# from https://www.sharelatex.com/templates/cv-or-resume/sc_cv
+#+LaTeX_HEADER: \usepackage{framed}
+#+LaTeX_HEADER: \usepackage{tocloft}
+
+#+LaTeX_HEADER: \newlength{\outerbordwidth}
+#+LaTeX_HEADER: \raggedbottom
+#+LaTeX_HEADER: \raggedright
+
+#+LaTeX_HEADER: \setlength{\outerbordwidth}{3pt}  % Width of border outside of title bars
+#+LaTeX_HEADER: \definecolor{shadecolor}{gray}{0.75}  % Outer background color of title bars (0 = black, 1 = white)
+#+LaTeX_HEADER: \definecolor{shadecolorB}{gray}{0.93}  % Inner background color of title bars
+
+#+LaTeX_HEADER: \usepackage{mdframed}
+#+LaTeX_HEADER: \newcommand{\resitem}[1]{\item #1 \vspace{-2pt}}
+
+#+LaTeX_HEADER: \newcommand{\resheading}[1]{
+#+LaTeX_HEADER: \vspace{8pt}
+#+LaTeX_HEADER:  \parbox{\textwidth}{\setlength{\FrameSep}{\outerbordwidth}
+#+LaTeX_HEADER:     \begin{shaded}
+#+LaTeX_HEADER: \setlength{\fboxsep}{0pt}\framebox[\textwidth][l]{\setlength{\fboxsep}{4pt}\fcolorbox{shadecolorB}{shadecolorB}{\textbf{\sffamily{\mbox{~}\makebox[6.762in][l]{\large #1} \vphantom{p\^{E}}}}}}
+#+LaTeX_HEADER:     \end{shaded}
+#+LaTeX_HEADER:   }\vspace{-5pt}
+#+LaTeX_HEADER: }
+#+LaTeX_HEADER: \newcommand{\ressubheading}[4]{
+#+LaTeX_HEADER: \begin{tabular*}{6.5in}{l@{\cftdotfill{\cftsecdotsep}\extracolsep{\fill}}r}
+#+LaTeX_HEADER: 		\textbf{#1} & #2 \\
+#+LaTeX_HEADER: 		\textit{#3} & \textit{#4} \\
+#+LaTeX_HEADER: \end{tabular*}\vspace{-6pt}}
+
+** List of publications
+# ### list publications
+#+LaTeX_HEADER: \usepackage{bibentry}
+#+LaTeX_HEADER: \nobibliography*
+
+# ### display of my name
+#+LaTeX_HEADER: \newcommand{\myname}[1]{\textbf{#1}}
+
+#+LaTeX_HEADER:  \usepackage{url}

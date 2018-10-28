@@ -1,0 +1,290 @@
+%MMMMMMMMMM STATS %%%%%%%%%%%%%%%%
+
+@article{ozenne2017riskregression,
+  title={riskRegression: Predicting the risk of an event using cox regression models},
+  author={{\myname{Ozenne, Brice}} and S{\o}rensen, Anne Lyngholm and Scheike, Thomas and Torp-Pedersen, Christian and Gerds, Thomas Alexander},
+  journal={R Journal},
+  volume={9},
+  number={2},
+  pages={440--460},
+  url = {https://journal.r-project.org/archive/2017/RJ-2017-062/index.html},
+   year={2017}
+}
+
+@article{peron2016extension,
+  title={An extension of generalized pairwise comparisons for prioritized outcomes in the presence of censoring},
+  author={P{\'e}ron, Julien and Buyse, Marc and {\myname{Ozenne, Brice}} and Roche, Laurent and Roy, Pascal},
+  journal={Statistical methods in medical research},
+  doi = {10.1177/0962280216658320},
+	url = {https://doi.org/10.1177\%2F0962280216658320},
+	year = 2016,
+	month = {aug},
+	publisher = {{SAGE} Publications},
+	volume = {27},
+	number = {4},
+	pages = {1230--1239}
+}
+
+@article{ozenne2015precision,
+  title={The precision--recall curve overcame the optimism of the receiver operating characteristic curve in rare diseases},
+  author={{\myname{Ozenne, Brice}} and Subtil, Fabien and Maucort-Boulch, Delphine},
+  journal={Journal of clinical epidemiology},
+  doi = {10.1016/j.jclinepi.2015.02.010},
+	url = {https://doi.org/10.1016\%2Fj.jclinepi.2015.02.010},
+	year = 2015,
+	month = {aug},
+	publisher = {Elsevier {BV}},
+	volume = {68},
+	number = {8},
+	pages = {855--859}
+}
+
+@article{ozenne2015spatially,
+  title={Spatially regularized mixture model for lesion segmentation with application to stroke patients},
+  author={{\myname{Ozenne, Brice}} and Subtil, Fabien and {\O}stergaard, Leif and Maucort-Boulch, Delphine},
+  journal={Biostatistics},
+  doi = {10.1093/biostatistics/kxv004},
+	url = {https://doi.org/10.1093\%2Fbiostatistics\%2Fkxv004},
+	year = 2015,
+	month = {mar},
+	publisher = {Oxford University Press ({OUP})},
+	volume = {16},
+	number = {3},
+	pages = {580--595}
+}
+
+%%%%%%%%%%% THESE %%%%%%%%%%%%%%%%
+
+@phdthesis{ozenne2015modelisation,
+  title={Mod{\'e}lisation statistique pour la pr{\'e}diction du pronostic de patients atteints d’un Accident Vasculaire C{\'e}r{\'e}bral},
+  author={{\myname{Ozenne, Brice}}},
+  year={2015},
+  url = {https://tel.archives-ouvertes.fr/tel-01233049},
+  school={Universit{\'e} Claude Bernard-Lyon I}
+}
+
+
+%%%%%%%%%%% CLINIC %%%%%%%%%%%%%%%%
+
+@article{borgsted2018amygdala,
+  title={Amygdala response to emotional faces in seasonal affective disorder},
+  author={Borgsted, Camilla and {\myname{Ozenne, Brice}} and Mc Mahon, Brenda and Madsen, Martin K and Hjordt, Liv V and Hageman, Ida and Baar{\'e}, William FC and Knudsen, Gitte M and Fisher, Patrick M},
+  journal={Journal of affective disorders},
+  doi = {10.1016/j.jad.2017.12.097},
+	url = {https://doi.org/10.1016\%2Fj.jad.2017.12.097},
+	year = 2018,
+	month = {mar},
+	publisher = {Elsevier {BV}},
+	volume = {229},
+	pages = {288--295}
+}
+
+@article{hjordt2018self,
+  title={Self-perceived personality characteristics in seasonal affective disorder and their implications for severity of depression},
+  author={Hjordt, Liv Vadskj{\ae}r and Dam, Vibeke H and {\myname{Ozenne, Brice}} and Hageman, Ida and Mc Mahon, Brenda and Mortensen, Erik Lykke and Knudsen, Gitte M and Stenb{\ae}k, Dea Siggaard},
+  journal={Psychiatry research},
+  doi = {10.1016/j.psychres.2018.02.015},
+	url = {https://doi.org/10.1016\%2Fj.psychres.2018.02.015},
+	year = 2018,
+	month = {apr},
+	publisher = {Elsevier {BV}},
+	volume = {262},
+	pages = {108--114}
+}
+
+@article{foged2018verbal,
+  title={Verbal learning and memory outcome in selective amygdalohippocampectomy versus temporal lobe resection in patients with hippocampal sclerosis},
+  author={Foged, Mette Thrane and Vinter, Kirsten and Stauning, Louise and Kj{\ae}r, Troels W and {\myname{Ozenne, Brice}} and Beniczky, S{\'a}ndor and Paulson, Olaf B and Pinborg, Lars H and others},
+  journal={Epilepsy \& Behavior},
+ doi = {10.1016/j.yebeh.2017.12.007},
+	url = {https://doi.org/10.1016\%2Fj.yebeh.2017.12.007},
+	year = 2018,
+	month = {feb},
+	publisher = {Elsevier {BV}},
+	volume = {79},
+	pages = {180--187}
+}
+
+@article{staerk2018standard,
+	doi = {10.1111/joim.12683},
+	url = {https://doi.org/10.1111\%2Fjoim.12683},
+	year = 2017,
+	month = {sep},
+	publisher = {Wiley},
+	volume = {283},
+	number = {1},
+	pages = {45--55},
+	author = {L. Staerk and T. A. Gerds and G. Y. H. Lip and {\myname{B. Ozenne}} and A. N. Bonde and M. Lamberts and E. L. Fosb{\o}l and C. Torp-Pedersen and G. H. Gislason and J. B. Olesen},
+	title = {Standard and reduced doses of dabigatran, rivaroxaban and apixaban for stroke prevention in atrial fibrillation: a nationwide cohort study},
+	journal = {Journal of Internal Medicine}
+}
+
+@article{hjordt2017season,
+  title={Season-independent cognitive deficits in seasonal affective disorder and their relation to depressive symptoms},
+  author={Hjordt, Liv Vadskj{\ae}r and Stenb{\ae}k, Dea Siggaard and {\myname{Ozenne, Brice}} and Mc Mahon, Brenda and Hageman, Ida and Hasselbalch, Steen Gregers and Knudsen, Gitte Moos},
+  journal={Psychiatry research},
+  doi = {10.1016/j.psychres.2017.07.056},
+	url = {https://doi.org/10.1016\%2Fj.psychres.2017.07.056},
+	year = 2017,
+	month = {nov},
+	publisher = {Elsevier {BV}},
+	volume = {257},
+	pages = {219--226}
+}
+
+@article{beliveau2017high,
+  title={A high-resolution in vivo atlas of the human brain's serotonin system},
+  author={Beliveau, Vincent and Ganz, Melanie and Feng, Ling and {\myname{Ozenne, Brice}} and H{\o}jgaard, Liselotte and Fisher, Patrick M and Svarer, Claus and Greve, Douglas N and Knudsen, Gitte M},
+  journal={Journal of Neuroscience},
+  volume = {37},
+	number = {1},
+	pages = {120--128},
+	year = {2017},
+	doi = {10.1523/JNEUROSCI.2830-16.2016},
+	publisher = {Society for Neuroscience},
+	issn = {0270-6474},
+	URL = {http://www.jneurosci.org/content/37/1/120}
+}
+
+@article{stenbaek2017brain,
+  title={Brain serotonin 4 receptor binding is inversely associated with verbal memory recall},
+  author={Stenb{\ae}k, Dea S and Fisher, Patrick M and {\myname{Ozenne, Brice}} and Andersen, Emil and Hjordt, Liv V and McMahon, Brenda and Hasselbalch, Steen G and Frokjaer, Vibe G and Knudsen, Gitte M},
+  journal={Brain and behavior},
+  doi = {10.1002/brb3.674},
+	url = {https://doi.org/10.1002\%2Fbrb3.674},
+	year = 2017,
+	month = {mar},
+	publisher = {Wiley},
+	volume = {7},
+	number = {4},
+	pages = {e00674}
+}
+
+@article{staerk2017resumption,
+  title={Resumption of oral anticoagulation following traumatic injury and risk of stroke and bleeding in patients with atrial fibrillation: a nationwide cohort study},
+  author={Staerk, Laila and Fosb{\o}l, Emil Loldrup and Lamberts, Morten and Bonde, Anders Nissen and Gadsb{\o}ll, Kasper and Sindet-Pedersen, Caroline and Holm, Ellen A and Gerds, Thomas Alexander and {\myname{Ozenne, Brice}} and Lip, Gregory YH and others},
+  journal={European heart journal},
+  doi = {10.1093/eurheartj/ehx598},
+	url = {https://doi.org/10.1093\%2Feurheartj\%2Fehx598},
+	year = 2017,
+	month = {nov},
+	publisher = {Oxford University Press ({OUP})},
+	volume = {39},
+	number = {19},
+	pages = {1698--1705a}
+}
+
+@article{fisher2017bdnf,
+  title={BDNF val66met association with serotonin transporter binding in healthy humans},
+  author={Fisher, PM and {\myname{Ozenne, B}} and Svarer, C and Adamsen, D and Lehel, S and Baar{\'e}, WFC and Jensen, PS and Knudsen, GM},
+  journal={Translational psychiatry},
+  doi = {10.1038/tp.2016.295},
+	url = {https://doi.org/10.1038\%2Ftp.2016.295},
+	year = 2017,
+	month = {feb},
+	publisher = {Springer Nature},
+	volume = {7},
+	number = {2},
+	pages = {e1029--e1029}
+}
+
+
+@article{foged2017safety,
+  title={Safety and EEG data quality of concurrent high-density EEG and high-speed fMRI at 3 Tesla},
+  author={Foged, Mette Thrane and Lindberg, Ulrich and Vakamudi, Kishore and Larsson, Henrik BW and Pinborg, Lars H and Kj{\ae}r, Troels W and Fabricius, Martin and Svarer, Claus and {\myname{Ozenne, Brice}} and Thomsen, Carsten and others},
+  journal={PloS one},
+  doi = {10.1371/journal.pone.0178409},
+	url = {https://doi.org/10.1371\%2Fjournal.pone.0178409},
+	year = 2017,
+	month = {may},
+	publisher = {Public Library of Science ({PLoS})},
+	volume = {12},
+	number = {5},
+	pages = {e0178409}
+}
+
+@article{peron2016net,
+  title={The net chance of a longer survival as a patient-oriented measure of treatment benefit in randomized clinical trials},
+  author={P{\'e}ron, Julien and Roy, Pascal and {\myname{Ozenne, Brice}} and Roche, Laurent and Buyse, Marc},
+  journal={JAMA oncology},
+  doi = {10.1001/jamaoncol.2015.6359},
+	url = {https://doi.org/10.1001\%2Fjamaoncol.2015.6359},
+	year = 2016,
+	month = {jul},
+	publisher = {American Medical Association ({AMA})},
+	volume = {2},
+	number = {7},
+	pages = {901}
+}
+
+@article{staerk2016ischaemic,
+  title={Ischaemic and haemorrhagic stroke associated with non-vitamin K antagonist oral anticoagulants and warfarin use in patients with atrial fibrillation: a nationwide cohort study},
+  author={Staerk, Laila and Fosb{\o}l, Emil Loldrup and Lip, Gregory YH and Lamberts, Morten and Bonde, Anders Nissen and Torp-Pedersen, Christian and {\myname{Ozenne, Brice}} and Gerds, Thomas Alexander and Gislason, Gunnar Hilmar and Olesen, Jonas Bjerring},
+  journal={European heart journal},
+  doi = {10.1093/eurheartj/ehw496},
+	url = {https://doi.org/10.1093\%2Feurheartj\%2Fehw496},
+	year = 2016,
+	month = {oct},
+	publisher = {Oxford University Press ({OUP})},
+	pages = {ehw496}
+}
+
+@article{peron2016assessment,
+  title={An assessment of the benefit-risk balance of FOLFIRINOX in metastatic pancreatic adenocarcinoma},
+  author={P{\'e}ron, Julien and Roy, Pascal and Conroy, Thierry and Desseigne, Fran{\c{c}}oise and Ychou, Marc and Gourgou-Bourgade, Sophie and Stanbury, Trevor and Roche, Laurent and {\myname{Ozenne, Brice}} and Buyse, Marc},
+  journal={Oncotarget},
+  doi = {10.18632/oncotarget.12761},
+	url = {https://doi.org/10.18632\%2Foncotarget.12761},
+	year = 2016,
+	month = {oct},
+	publisher = {Impact Journals, {LLC}},
+	volume = {7},
+	number = {50}
+}
+
+@article{ozenne2015evaluation,
+  title={Evaluation of Early Reperfusion Criteria in Acute Ischemic Stroke},
+  author={{\myname{Ozenne, Brice}} and Cho, Tae-Hee and Mikkelsen, Irene Kl{\ae}rke and Hermier, Marc and Ribe, Lars and Thomalla, G{\"o}tz and Pedraza, Salvador and Baron, Jean-Claude and Roy, Pascal and Berthez{\`e}ne, Yves and others},
+  journal={Journal of Neuroimaging},
+  doi = {10.1111/jon.12255},
+	url = {https://doi.org/10.1111\%2Fjon.12255},
+	year = 2015,
+	month = {may},
+	publisher = {Wiley},
+	volume = {25},
+	number = {6},
+	pages = {952--958}
+}
+
+@article{hermitte2013very,
+  title={Very low cerebral blood volume predicts parenchymal hematoma in acute ischemic stroke},
+  author={Hermitte, Laure and Cho, Tae-Hee and {\myname{Ozenne, Brice}} and Nighoghossian, Norbert and Mikkelsen, Irene Kl{\ae}rke and Ribe, Lars and Baron, Jean-Claude and {\O}stergaard, Leif and Derex, Laurent and Hjort, Niels and others},
+  journal={Stroke},
+  doi = {10.1161/strokeaha.113.001751},
+  url = {https://doi.org/10.1161\%2Fstrokeaha.113.001751},
+  year = 2013,
+  month = {may},
+  publisher = {Ovid Technologies (Wolters Kluwer Health)},
+  volume = {44},
+  number = {8},
+  pages = {2318--2320}
+}
+
+
+
+
+
+
+
+
+
+
+                  
+
+
+
+
+
+
+
+
