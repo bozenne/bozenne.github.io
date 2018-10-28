@@ -49,14 +49,14 @@ Mon research work is organized around three topics:
 \smallskip
 
 - the analysis of registry data with *time to events outcomes* and
-  *competing risks* (logiciel =riskRegression=). My developments have,
+  *competing risks* (software =riskRegression=). My developments have,
   for instance, been applied to compare preventive stroke treatments
   using the danish registry data.
 
 \smallskip
 
 - the development of *generalized pairwise comparisons* to handle
-  multiple and heterogenous outcomes (logiciel =BuyseTest=). A typical
+  multiple and heterogenous outcomes (software =BuyseTest=). A typical
   application is the assessment of new chemotherapy where being able
   to balance the benefit (longer in survival time) and the risk
   (treatment side effects) in an interpretable way is important.
@@ -110,8 +110,6 @@ Published:
     \item \bibentry{ozenne2015spatially}
   \end{enumerate}
 #+END_EXPORT
-
-\clearpage
 
 Submitted:
 #+BEGIN_EXPORT latex
