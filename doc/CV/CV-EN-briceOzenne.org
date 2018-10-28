@@ -18,7 +18,7 @@
 	Date of birth&:& February 8, 1990  \\
 	Personal email&:& \url{brice.ozenne@orange.fr} \\ 
 	Personal phone number&:& (+45) 52 328 128 \\ 
-        Personal adress&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Denmark \\
+        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Denmark \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
@@ -74,7 +74,7 @@ Mon research work is organized around three topics:
 \end{tabular}
 #+END_EXPORT
 
-\clearpage
+\pagebreak[3]
 
 * SKILLS                                                             :ignore:
 #+LaTeX: \resheading{SKILLS}
@@ -111,6 +111,8 @@ Published:
   \end{enumerate}
 #+END_EXPORT
 
+\pagebreak[3]
+
 Submitted:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
@@ -127,28 +129,29 @@ In progress:
 #+END_EXPORT
 
 
-** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
+** /Software development (package for the [[https://www.r-project.org/][R]] software)/
 #+LaTeX: \begin{minipage}{0.01\textwidth}
 #+LaTeX: \hspace{\fill}
 #+LaTeX: \end{minipage}
 #+LaTeX: \begin{minipage}{0.92\textwidth}
-- *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
-  généralisées. Implémentation de la méthode décrite dans
-  citep:peron2016extension. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] et sur [[https://github.com/bozenne/BuyseTest][Github]].
+- *BuyseTest* (author and maintainer): generalized pairwise
+  comparisons. Implementation of the extension described in
+  citep:peron2016extension. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on [[https://github.com/bozenne/BuyseTest][Github]].
 
-- *lavaSearch2* (Créateur et mainteneur): Inférence et outils
-  diagnostiques dans les modèles à variables latentes. Papier
-  décrivant la méthode soumis. Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+- *lavaSearch2* (author and maintainer): Inference and diagnostic
+  tools for latent variable models.  Methodology described in
+  citep:ozenne20XXsmall and citep:ozenne20XXcontroling. Available on
+  [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] and on [[https://github.com/bozenne/lavaSearch2][Github]]. .
 
-- *riskRegression* (Contributeur) : Calculateur du risque
-  d'évènenement en présence de risques compétitifs. Implémentation de
-  la méthode décrite dans citep:ozenne2017riskregression. Disponible
-  sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+- *riskRegression* (contributor): computation of absolute risks and
+  average treatment effects. Methodology described in
+  citep:ozenne2017riskregression and
+  citep:ozenne20XXestimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
-\bigskip
+\pagebreak[3]
 
-** /Publications (applications cliniques)/
+** /Publications (clinical applications)/
 #+BEGIN_EXPORT latex
  \begin{enumerate}
     \item \bibentry{borgsted2018amygdala}
@@ -170,26 +173,25 @@ In progress:
 #+END_EXPORT
 
 
-* Enseignement                                         :ignore:
-#+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
+* TEACHING                                                           :ignore:
+#+LaTeX: \resheading{TEACHING \hfill L : lecture, PC : practical classes}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h) \\
-2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
-              & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
-2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
+2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
+              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Structural Equation Models} for Master students in statistics (2h, L). \\
+2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
+              & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
+2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).
 \end{tabular}
 #+END_EXPORT
 
-* Encadrement :ignore:
-#+LaTeX: \resheading{Encadrement}
+* SUPERVISION                                                        :ignore:
+#+LaTeX: \resheading{SUPERVISION}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
-2015 - Actuellement &:& \textbf{consultant} en statistiques pour NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
-\multicolumn{3}{l}{ Conseille les chercheurs en neuroscience dans l'analyse de leurs données et la rédaction d'articles.} \\ [3mm]
-                        2014 &:& encadrement d'une étudiante de master 2 dans son stage de fin d'étude. \\
+2015 - Now &:& \textbf{statistical consultant} at NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
+\multicolumn{3}{l}{Advise neuroscientists and psychologists.} \\ [3mm]
 \end{tabular}
 #+END_EXPORT
 

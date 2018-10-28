@@ -138,7 +138,7 @@ En cours de rédaction:
   généralisées. Implémentation de la méthode décrite dans
   citep:peron2016extension. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] et sur [[https://github.com/bozenne/BuyseTest][Github]].
 
-- *lavaSearch2* (Créateur et mainteneur): Inférence et outils
+- *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
   diagnostiques dans les modèles à variables latentes. Papier
   décrivant la méthode soumis. Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
 

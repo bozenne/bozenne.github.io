@@ -27,7 +27,7 @@ Mon research work is organized around three topics:
   to balance the benefit (longer in survival time) and the risk
   (treatment side effects) in an interpretable way is important.
 
-For 
+Software....
 
 
 I have some knowledge and interest in:
@@ -45,9 +45,9 @@ I have some knowledge and interest in:
   in machine learning, I have tested some of these methods (random
   forest, support vector machines, neural network) during my phd.
 
-- **causal inference**
+- **causal inference** ... peal
 
-- **semi parametric theory** and **likelihood theory**
+- **semi parametric theory** and **likelihood theory** books...
 
 
 To download my CV:
