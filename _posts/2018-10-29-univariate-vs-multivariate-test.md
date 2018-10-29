@@ -13,5 +13,5 @@ test to compare the other levels of the variable to the reference
 level. However the F-test and the Wald tests may give contradictory
 results. This
 [document](https://bozenne.github.io/doc/Univariate-vs-Multivariate-test/uniVSmult.pdf)
-present a geometrical illustration of when the F-test and Wald test
+presents a geometrical illustration of when the F-test and Wald test
 may disagree.

@@ -1,0 +1,2209 @@
+#+TITLE: "How to" in \Rlogo
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+options(width = 100)
+path <- "c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/howTo/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+This document present ways to perform basic operations in \Rlogo:
+- importing data
+- data management
+- graphical displaying
+- modeling
+- loops and parallel computing
+- generating data through simulation
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+* Packages
+The following packages are necessary to run the code suggested in the document:
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
+## importing data and data management
+library(data.table)
+
+## graphical display
+library(ggplot2)
+
+## modeling
+library(car)
+
+library(prodlim) # survival analysis
+library(survival) # survival analysis
+
+## statistical inference
+library(multcomp) # adjust for multiple comparisons
+
+## loops and parallel computing
+library(pbapply)
+library(doSNOW)
+library(parallel)
+
+## simulation
+library(lava)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+Attaching package: 'car'
+
+The following object is masked from 'package:rms':
+
+    vif
+
+The following object is masked from 'package:lava':
+
+    logit
+Loading required package: mvtnorm
+Loading required package: TH.data
+Loading required package: MASS
+
+Attaching package: 'TH.data'
+
+The following object is masked from 'package:MASS':
+
+    geyser
+
+Warning messages:
+1: package 'multcomp' was built under R version 3.4.4 
+2: package 'mvtnorm' was built under R version 3.4.3
+Warning message:
+package 'pbapply' was built under R version 3.4.1
+Loading required package: snow
+
+Attaching package: 'snow'
+
+The following objects are masked from 'package:parallel':
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ, clusterExport, clusterMap,
+    clusterSplit, makeCluster, parApply, parCapply, parLapply, parRapply, parSapply,
+    splitIndices, stopCluster
+#+end_example
+
+\clearpage
+
+* Import/export data
+
+** Set the working directory
+
+The working directory is where \Rlogo \(\;\) will, by default, look for files
+to import and export data or pictures. The current working directory
+can be accessed using:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+getwd()
+#+END_SRC
+
+#+RESULTS:
+: [1] "c:/Users/hpl802/AppData/Roaming/R"
+
+It can be changed using the function =setwd()=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+path <- "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+We can check that the working directory has indeed changed calling
+again =getwd()=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+getwd()
+#+END_SRC
+
+#+RESULTS:
+: [1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo"
+
+** See which files are present in the current directory
+
+List all files in the current directory:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+list.files() 
+#+END_SRC
+
+#+RESULTS:
+:  [1] "#howTo.org#"       "figures"           "howTo.org"         "howTo.org.~1~"    
+:  [5] "howTo.org.~2~"     "howTo.org.~3~"     "howTo.org.~4~"     "howTo.org.~5~"    
+:  [9] "howTo.org.~6~"     "howTo.org.~7~"     "howTo.org_archive" "howTo.pdf"        
+: [13] "howTo.soc"         "howTo.tex"         "howTo.tex.~1~"     "howTo.tex.~100~"  
+: [17] "howTo.tex.~101~"   "howTo.tex.~102~"   "howTo.tex.~103~"   "howTo.tex.~104~"  
+: [21] "howTo.tex.~105~"   "howTo.tex.~106~"   "howTo.tex.~2~"     "howTo.tex.~3~"    
+: [25] "howTo.tex.~4~"     "howTo.tex.~5~"     "howTo.tex.~6~"     "howTo.tex.~98~"   
+: [29] "howTo.tex.~99~"    "mydata.csv"        "mydata.txt"        "myplot.png"
+
+There are many files. To list files in the current directory with a
+given extension, e.g. =.txt= use:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+list.files(pattern = ".txt") 
+#+END_SRC
+
+#+RESULTS:
+: [1] "mydata.txt"
+
+There is only one file with a =.txt= extension, it is called
+=mydata.txt=.
+
+** Check that the file we want to import exists:
+
+Test whether the file exists:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+file.exists("./mydata.txt")
+#+END_SRC
+
+#+RESULTS:
+: [1] TRUE
+
+** Display a file before importing it
+
+
+Display the first three lines of the file we want to import
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+readLines("./mydata.txt")[1:3]
+#+END_SRC
+
+#+RESULTS:
+: [1] "Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3"
+: [2] "1 40 Male Yes 50 57 56 50.67 55.88 61.69"                                     
+: [3] "2 38 Female No 52 57 63 50.26 55.73 60.37"
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+readLines("./mydata.csv")[1:3]
+#+END_SRC
+
+#+RESULTS:
+: [1] "Id;Age;Gender;Treatment;weight_t1;weight_t2;weight_t3;size_t1;size_t2;size_t3"
+: [2] "1;40;Male;Yes;50;57;56;50,67;55,88;61,69"                                     
+: [3] "2;38;Female;No;52;57;63;50,26;55,73;60,37"
+
+** Import a data from a file (.txt, .csv)
+
+Import a file and store the dataset into a =data.frame= object:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dfW.data <- read.table("./mydata.txt", header = TRUE, na.strings = ".")
+#+END_SRC
+
+#+RESULTS:
+
+Import a file and store the dataset into a =data.table= object:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data <- fread("./mydata.txt", header = TRUE, na.strings = ".")
+#+END_SRC
+
+#+RESULTS:
+
+In both cases, the argument =na.strings= specifies which character(s)
+in the dataset stands for missing values. The argument =header=TRUE=
+indicates that the first line of the dataset contains the name of the
+columns of the dataset (and not the data of an observation). See
+=?read.table= or =?fread= for further explanations about the arguments
+of these functions.
+
+\bigskip
+
+| _Note:_ | ="./"=  | stands for current directory, e.g. ="./mydata.txt"= abreviated in ="mydata.txt"= |
+|         | ="../"= | stands for parent directory, e.g. ="../mydata.txt"=                              |
+|         | ="/"=   | stands for root directory, e.g. ="/mydata.txt"=                                  |
+
+** Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)
+
+There are many packages that can be used to read excel files, e.g.:
+- *xlsx* package: function =read.xlsx=.
+- *gdata* package: function =read.xls=.
+
+\bigskip
+
+The *foreign* package enable to read a variety for files, e.g.:
+- =read.spss=: read an spss data file.
+- =read.ssd=: obtain a data frame from a sas permanent dataset, via read.xport.
+
+\bigskip
+ 
+To load .rds files use =readRDS= and to load .rdata files use =load=.
+
+** Export data
+
+To export a data.frame to a file one can use:
+- =write.csv= to export a .csv file
+- =write.table= to export a .txt file
+- =xlsx::write.xlsx= to export a .xlsx file
+- =data.table::fwrite=
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+fwrite(dtW.data, file = "./mydata.csv", sep = ";", dec = ",")
+fwrite(dtW.data, file = "./mydata.txt", sep = " ", dec = ".")
+#+END_SRC
+
+#+RESULTS:
+
+To export a single R object (can be anything) use =saveRDS=.
+To export several R object use =save=.
+To export the current workspace use =save.image=.
+
+** Export table
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(Publish)
+myTable1 <- univariateTable(Treatment ~ Age + Gender + weight_t1, data = dtW.data)
+#+END_SRC
+
+#+RESULTS:
+
+Export to word:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(officer)
+myTable1.doc <- body_add_table(x = read_docx(), 
+                               value =  summary(myTable1)) 
+print(myTable1.doc, target = "./Table1.docx")
+#+END_SRC
+
+#+RESULTS:
+: [1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/Table1.docx"
+
+** Export graphs
+
+The functions =pdf=, =png=, =postscript=, =svg=, =tiff= enables a graph to
+export to .pdf, .png, .eps, .svg, or .tiff file:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+png("myplot.png")
+plot(1:10)
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+: null device 
+:           1
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+file.exists("myplot.png")
+#+END_SRC
+
+#+RESULTS:
+: [1] TRUE
+
+For exporting graph generated by *ggplot2*, use =ggsave=.
+
+* Data management 
+** Categorize age into groups
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+vec <- dfW.data$weight_t3
+vec
+#+END_SRC
+
+#+RESULTS:
+:   [1] 56 63 62 60 64 65 66 63 59 64 59 58 63 64 61 64 67 54 57 65 63 60 60 57 66 65 60 53 57 58 58
+:  [32] 58 59 63 64 58 64 58 59 59 60 59 57 62 61 63 63 63 65 55 59 65 71 64 62 62 64 58 61 61 65 64
+:  [63] 66 60 58 60 63 57 58 68 59 60 54 61 60 63 61 60 62 61 59 59 65 62 66 58 64 66 62 65 59 63 57
+:  [94] 62 64 59 63 57 62 59 55 68
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cut(vec, breaks = seq(0,100,5))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+  [1] (55,60] (60,65] (60,65] (55,60] (60,65] (60,65] (65,70] (60,65] (55,60] (60,65] (55,60]
+ [12] (55,60] (60,65] (60,65] (60,65] (60,65] (65,70] (50,55] (55,60] (60,65] (60,65] (55,60]
+ [23] (55,60] (55,60] (65,70] (60,65] (55,60] (50,55] (55,60] (55,60] (55,60] (55,60] (55,60]
+ [34] (60,65] (60,65] (55,60] (60,65] (55,60] (55,60] (55,60] (55,60] (55,60] (55,60] (60,65]
+ [45] (60,65] (60,65] (60,65] (60,65] (60,65] (50,55] (55,60] (60,65] (70,75] (60,65] (60,65]
+ [56] (60,65] (60,65] (55,60] (60,65] (60,65] (60,65] (60,65] (65,70] (55,60] (55,60] (55,60]
+ [67] (60,65] (55,60] (55,60] (65,70] (55,60] (55,60] (50,55] (60,65] (55,60] (60,65] (60,65]
+ [78] (55,60] (60,65] (60,65] (55,60] (55,60] (60,65] (60,65] (65,70] (55,60] (60,65] (65,70]
+ [89] (60,65] (60,65] (55,60] (60,65] (55,60] (60,65] (60,65] (55,60] (60,65] (55,60] (60,65]
+[100] (55,60] (50,55] (65,70]
+20 Levels: (0,5] (5,10] (10,15] (15,20] (20,25] (25,30] (30,35] (35,40] (40,45] (45,50] ... (95,100]
+#+end_example
+
+* Data management using the /data.table/ package
+** Introduction
+In \Rlogo, data are usually stored in =data.frame= object since compared
+to matrices, it enables to store in a same object different types of
+variables (e.g. numeric, categorical, ...). Data management can be
+performed using the core R function, e.g. using =for= loops or
+the =apply=, =tapply=, =lapply= functions.  However this approach will
+most often requires many lines of code to get the expected
+transformation.  A faster and safer approach is to functions/packages
+suited to the structure of longitudinal data.
+
+\bigskip
+
+We present here how to use the /data.table/ package to perform the
+most common operations in data management. The main benefit of using
+this package are:
+ - a concise and consistant syntax for performing the most common
+   operations in data management.
+ - fast and memory efficient implementation (i.e. able to deal with
+   dataset with millions of lines).
+ - share common features with the SQL terminology.
+A concise summary of the features can be found at:
+https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf
+
+\bigskip
+
+Additional documentation can be found:
+- in the documentation of the function =data.table=: type =?data.table= in \Rlogo.
+- on the webpage of the package: https://github.com/Rdatatable/data.table/wiki.
+- in the vignettes of the package: https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html.
+
+\bigskip
+
+_Note_: the *wide format* denote a format where each line corresponds
+to a different individuals. Repeated measurements of the same quantity
+(e.g. weight) for a given individual are stored in different columns
+(e.g. =weight_t1=, =weight_t2=).
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+: 2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+: 3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+: 4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+: 5:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+: 6:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+
+ The *long* format denote a format where the same individual may
+appear on different lines but a given quantity is only stored in one
+column. In case of repeated measurement, an additional column encodes
+at which repetition the measurement was obtained (e.g. =time=):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtL.data)
+#+END_SRC
+
+#+RESULTS:
+:    Id Gender Treatment Age time weight  size
+: 1:  1   Male       Yes  40    1     50 50.67
+: 2:  2 Female        No  38    1     52 50.26
+: 3:  3   Male        No  41    1     47 46.61
+: 4:  4 Female       Yes  41    1     48 45.95
+: 5:  5 Female       Yes  42    1     52 52.86
+: 6:  6   Male       Yes  38    1     52 49.37
+
+** Display a dataset
+
+Using the =print= method:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+print(dtW.data) # equivalent to just dtW.data
+#+END_SRC
+#+RESULTS:
+#+begin_example
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+  1:   1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+  2:   2  38 Female        No        52        57        63   50.26   55.73   60.37
+  3:   3  41   Male        No        47        54        62   46.61   50.89   56.52
+  4:   4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+  5:   5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+ ---                                                                               
+ 98:  98  39   Male        No        53        59        57   49.51   53.80   61.13
+ 99:  99  42 Female       Yes        51        57        62   47.60   56.55   59.47
+100: 100  40 Female        No        53        55        59   50.06   54.90   61.89
+101: 101  38 Female        No        48        58        55   49.51   54.01   62.32
+102: 102  39 Female        No        52        58        68   47.35   56.08   59.49
+#+end_example
+
+To print more lines use the argument =topn=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+print(dtW.data, topn = 6)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+  1:   1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+  2:   2  38 Female        No        52        57        63   50.26   55.73   60.37
+  3:   3  41   Male        No        47        54        62   46.61   50.89   56.52
+  4:   4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+  5:   5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+  6:   6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+ ---                                                                               
+ 97:  97  39   Male        No        50        60        63   51.72   57.86   61.06
+ 98:  98  39   Male        No        53        59        57   49.51   53.80   61.13
+ 99:  99  42 Female       Yes        51        57        62   47.60   56.55   59.47
+100: 100  40 Female        No        53        55        59   50.06   54.90   61.89
+101: 101  38 Female        No        48        58        55   49.51   54.01   62.32
+102: 102  39 Female        No        52        58        68   47.35   56.08   59.49
+#+end_example
+
+** Extract row(s), i.e. all the variables relative to one or several observations
+
+*** Extract row(s) using row numbers
+Extract the third line:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[3]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+
+Extract line one to four:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[1:4]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+: 2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+: 3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+: 4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+
+Extract line one, three, and five:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[c(1,3,5)]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+: 2:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+: 3:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+
+*** Extract row(s) according to conditions 
+
+Extract lines corresponding to the observations with =Id= equals to =1=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[Id == 1]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+
+Extract lines corresponding to the males:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+newdata <- dtW.data[Gender == "Male"]
+head(newdata)
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+: 2:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+: 3:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+: 4:  9  42   Male       Yes        46        52        59   49.53   52.84   60.54
+: 5: 11  42   Male        No        55        58        59   50.03   55.09   60.94
+: 6: 12  41   Male       Yes        50        52        58   48.66   52.73   55.86
+
+Extract lines corresponding to the males whose age is inferior or
+equal to 38:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[Gender == "Male" & Age <= 38]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+: 2: 41  37   Male        No        53        55        60   47.59   53.75   57.00
+: 3: 76  38   Male        No        53        57        63   48.10   54.82   55.29
+: 4: 91  38   Male        No        51        55        59   52.05   57.01   59.53
+
+Extract lines corresponding to observations where =Age= is inferior or
+equal to 37, or greater or equal to 43 :
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[Age <= 37 | Age >= 43]
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1: 10  43 Female       Yes        52        57        64   53.22   57.25   62.94
+: 2: 41  37   Male        No        53        55        60   47.59   53.75   57.00
+: 3: 45  43 Female       Yes        48        51        61   49.88   54.41   56.18
+: 4: 73  43   Male       Yes        46        53        54   48.44   52.74   60.93
+
+** Extract column(s), i.e. all the observations relative to one or several variables
+
+*** Extract column(s) using column numbers
+
+Extract the third column:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, 3, with = FALSE]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     Gender
+  1:   Male
+  2: Female
+  3:   Male
+  4: Female
+  5: Female
+ ---       
+ 98:   Male
+ 99: Female
+100: Female
+101: Female
+102: Female
+#+end_example
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[[3]]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+  [1] "Male"   "Female" "Male"   "Female" "Female" "Male"   "Female" "Female" "Male"   "Female"
+ [11] "Male"   "Male"   "Female" "Female" "Female" "Female" "Female" "Female" "Male"   "Female"
+ [21] "Male"   "Male"   "Female" "Male"   "Female" "Male"   "Male"   "Male"   "Female" "Female"
+ [31] "Male"   "Male"   "Male"   "Male"   "Female" "Female" "Female" "Female" "Male"   "Male"  
+ [41] "Male"   "Female" "Female" "Female" "Female" "Female" "Female" "Female" "Male"   "Male"  
+ [51] "Female" "Male"   "Male"   "Male"   "Female" "Female" "Male"   "Male"   "Female" "Male"  
+ [61] "Female" "Male"   "Male"   "Male"   "Female" "Male"   "Female" "Male"   "Male"   "Male"  
+ [71] "Female" "Female" "Male"   "Female" "Female" "Male"   "Female" "Female" "Female" "Female"
+ [81] "Male"   "Male"   "Female" "Female" "Male"   "Female" "Female" "Female" "Female" "Female"
+ [91] "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Female" "Female"
+[101] "Female" "Female"
+#+end_example
+
+Extract column one, three, and five:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, c(1,3,5), with = FALSE]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Gender weight_t1
+  1:   1   Male        50
+  2:   2 Female        52
+  3:   3   Male        47
+  4:   4 Female        48
+  5:   5 Female        52
+ ---                     
+ 98:  98   Male        53
+ 99:  99 Female        51
+100: 100 Female        53
+101: 101 Female        48
+102: 102 Female        52
+#+end_example
+
+*** Extract column(s) using column names 
+
+Extract one column, e.g. =Id=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, Id] # similar to dtW.data[,"Id",with=FALSE] 
+#+END_SRC
+
+#+RESULTS:
+:   [1]   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23
+:  [24]  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44  45  46
+:  [47]  47  48  49  50  51  52  53  54  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69
+:  [70]  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87  88  89  90  91  92
+:  [93]  93  94  95  96  97  98  99 100 101 102
+
+Extract several columns, e.g. =Id= and =Age=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, .(Id,Age)] 
+# similar to dtW.data[, c("Id","Age"), with = FALSE]
+# similar to dtW.data[, .SD, .SDcols = c("Id","Age")]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Age
+  1:   1  40
+  2:   2  38
+  3:   3  41
+  4:   4  41
+  5:   5  42
+ ---        
+ 98:  98  39
+ 99:  99  42
+100: 100  40
+101: 101  38
+102: 102  39
+#+end_example
+** Work with categorical variables
+*** Convert a numeric/character into a factor
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+class(dtW.data[,Gender])
+#+END_SRC
+
+#+RESULTS:
+: [1] "character"
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, Gender := as.factor(Gender)]
+class(dtW.data[,Gender])
+#+END_SRC
+
+#+RESULTS:
+: [1] "factor"
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+class(dtW.data[,Id])
+#+END_SRC
+
+#+RESULTS:
+: [1] "integer"
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, Id := as.factor(Id)]
+class(dtW.data[,Id])
+#+END_SRC
+
+#+RESULTS:
+: [1] "factor"
+
+*** Divide a continuous variable into categories
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, AgeCategory := cut(Age, breaks = c(0,38,40,42,100))]
+dtW.data[,.(Age,AgeCategory)]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     Age AgeCategory
+  1:  40     (38,40]
+  2:  38      (0,38]
+  3:  41     (40,42]
+  4:  41     (40,42]
+  5:  42     (40,42]
+ ---                
+ 98:  39     (38,40]
+ 99:  42     (40,42]
+100:  40     (38,40]
+101:  38      (0,38]
+102:  39     (38,40]
+#+end_example
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, AgeCategory0 := findInterval(Age, vec = c(0,38,40,42,100))]
+dtW.data[,.(Age,AgeCategory0)]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     Age AgeCategory0
+  1:  40            3
+  2:  38            2
+  3:  41            3
+  4:  41            3
+  5:  42            4
+ ---                 
+ 98:  39            2
+ 99:  42            4
+100:  40            3
+101:  38            2
+102:  39            2
+#+end_example
+
+The arguments =rightmost= and =left.open= can be used to decide what
+to do with the values equaling the breaks (i.e. one of the value of
+the argument =vec=). But it is often easier to modify =vec= such that no value
+equals the breaks, e.g. using =c(0,38,40,42,100)-1e12=.
+
+*** Redefine the levels of a factor variable
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[,AgeCategory0 := factor(AgeCategory0, 
+                                levels = 1:4, 
+                                labels = c("[0-37)","[38-39)","[40-41)","[42-100)"))]
+dtW.data[,.(Age,AgeCategory0,AgeCategory)]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     Age AgeCategory0 AgeCategory
+  1:  40      [40-41)     (38,40]
+  2:  38      [38-39)      (0,38]
+  3:  41      [40-41)     (40,42]
+  4:  41      [40-41)     (40,42]
+  5:  42     [42-100)     (40,42]
+ ---                             
+ 98:  39      [38-39)     (38,40]
+ 99:  42     [42-100)     (40,42]
+100:  40      [40-41)     (38,40]
+101:  38      [38-39)      (0,38]
+102:  39      [38-39)     (38,40]
+#+end_example
+
+** Extract simple features of a dataset
+*** Number of rows and columns
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dim(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+: [1] 102  12
+
+The dataset has 102 rows and 7 columns.
+
+*** Name of the columns
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+names(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+:  [1] "Id"           "Age"          "Gender"       "Treatment"    "weight_t1"    "weight_t2"   
+:  [7] "weight_t3"    "size_t1"      "size_t2"      "size_t3"      "AgeCategory"  "AgeCategory0"
+
+*** Type of the columns
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+str(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Classes 'data.table' and 'data.frame':	102 obs. of  12 variables:
+ $ Id          : Factor w/ 102 levels "1","2","3","4",..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ Age         : int  40 38 41 41 42 38 42 40 42 43 ...
+ $ Gender      : Factor w/ 2 levels "Female","Male": 2 1 2 1 1 2 1 1 2 1 ...
+ $ Treatment   : chr  "Yes" "No" "No" "Yes" ...
+ $ weight_t1   : int  50 52 47 48 52 52 52 51 46 52 ...
+ $ weight_t2   : int  57 57 54 55 56 59 63 52 52 57 ...
+ $ weight_t3   : int  56 63 62 60 64 65 66 63 59 64 ...
+ $ size_t1     : num  50.7 50.3 46.6 46 52.9 ...
+ $ size_t2     : num  55.9 55.7 50.9 53.1 58.4 ...
+ $ size_t3     : num  61.7 60.4 56.5 59.8 63.8 ...
+ $ AgeCategory : Factor w/ 4 levels "(0,38]","(38,40]",..: 2 1 3 3 3 1 3 2 3 4 ...
+ $ AgeCategory0: Factor w/ 4 levels "[0-37)","[38-39)",..: 3 2 3 3 4 2 4 3 4 4 ...
+ - attr(*, ".internal.selfref")=<externalptr> 
+ - attr(*, "index")= int
+#+end_example
+
+The column =Gender= contains a factor variable with two levels ="Yes"=
+and ="No"=. 
+
+The column =Id= contains integers while the columns =weight_t3=
+contains numeric numbers.
+
+*** Summary statistics by column
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+       Id          Age           Gender    Treatment           weight_t1       weight_t2    
+ 1      : 1   Min.   :37.00   Female:54   Length:102         Min.   :46.00   Min.   :51.00  
+ 2      : 1   1st Qu.:39.00   Male  :48   Class :character   1st Qu.:49.25   1st Qu.:55.00  
+ 3      : 1   Median :40.00               Mode  :character   Median :51.00   Median :57.00  
+ 4      : 1   Mean   :40.26                                  Mean   :50.87   Mean   :56.29  
+ 5      : 1   3rd Qu.:41.00                                  3rd Qu.:52.00   3rd Qu.:58.00  
+ 6      : 1   Max.   :43.00                                  Max.   :57.00   Max.   :63.00  
+ (Other):96                                                                                 
+   weight_t3       size_t1         size_t2         size_t3        AgeCategory   AgeCategory0
+ Min.   :53.0   Min.   :45.67   Min.   :50.89   Min.   :55.02   (0,38]  : 9   [0-37)  : 1   
+ 1st Qu.:59.0   1st Qu.:48.45   1st Qu.:54.17   1st Qu.:59.35   (38,40] :48   [38-39) :29   
+ Median :61.0   Median :50.44   Median :55.59   Median :61.00   (40,42] :42   [40-41) :53   
+ Mean   :61.2   Mean   :50.55   Mean   :55.54   Mean   :60.98   (42,100]: 3   [42-100):19   
+ 3rd Qu.:64.0   3rd Qu.:52.01   3rd Qu.:57.03   3rd Qu.:62.66                               
+ Max.   :71.0   Max.   :59.15   Max.   :61.45   Max.   :67.06
+#+end_example
+
+The column =Gender= contains 48 =Male= and 54 =Female=. The median
+value of =Age= is 40.
+
+*** Number of missing values
+
+Total number
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sum(is.na(dtW.data))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0
+
+Number of missing values by variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+colSums(is.na(dtW.data))
+#+END_SRC
+
+#+RESULTS:
+:           Id          Age       Gender    Treatment    weight_t1    weight_t2    weight_t3 
+:            0            0            0            0            0            0            0 
+:      size_t1      size_t2      size_t3  AgeCategory AgeCategory0 
+:            0            0            0            0            0
+
+Number of missing values by observation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rowSums(is.na(dtW.data))
+#+END_SRC
+
+#+RESULTS:
+:   [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+:  [48] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+:  [95] 0 0 0 0 0 0 0 0
+
+*** Mean value of a column
+
+First extract the values from a column:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+vec.tempo <- dtW.data[,Age]
+#+END_SRC
+
+#+RESULTS:
+
+Then compute the mean:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mean(vec.tempo)
+#+END_SRC
+#+RESULTS:
+: [1] 40.26471
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[,mean(Age)]
+#+END_SRC
+
+#+RESULTS:
+: [1] 40.26471
+
+*** Correlation between values of several columns
+
+First extract the columns:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.tempo <- dtW.data[,.(weight_t1,weight_t2,weight_t3)]
+#+END_SRC
+
+#+RESULTS:
+
+Then compute the correlation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cor(dt.tempo)
+#+END_SRC
+#+RESULTS:
+:           weight_t1 weight_t2 weight_t3
+: weight_t1 1.0000000 0.1882809 0.3179175
+: weight_t2 0.1882809 1.0000000 0.2374259
+: weight_t3 0.3179175 0.2374259 1.0000000
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[,cor(cbind(weight_t1,weight_t2,weight_t3))]
+#+END_SRC
+
+#+RESULTS:
+:           weight_t1 weight_t2 weight_t3
+: weight_t1 1.0000000 0.1882809 0.3179175
+: weight_t2 0.1882809 1.0000000 0.2374259
+: weight_t3 0.3179175 0.2374259 1.0000000
+
+** Performing operations on a group of rows
+*** Computing the number of observations per subgroup
+Compute the number of observation per gender:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, .N, by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:    Gender  N
+: 1:   Male 48
+: 2: Female 54
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, NROW(.SD), by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:    Gender V1
+: 1:   Male 48
+: 2: Female 54
+
+*** Computing the mean by subgroup
+
+Compute the mean weight at time 1 by gender:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, mean(weight_t1), by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:    Gender       V1
+: 1:   Male 50.45833
+: 2: Female 51.24074
+
+Alternative display:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, .(mean = mean(weight_t1)), by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:    Gender     mean
+: 1:   Male 50.45833
+: 2: Female 51.24074
+
+Compute the mean weight at time 1 to 3 by gender:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, .(mean_t1 = mean(weight_t1),
+             mean_t2 = mean(weight_t2),
+             mean_t3 = mean(weight_t3)), 
+         by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:    Gender  mean_t1  mean_t2  mean_t3
+: 1:   Male 50.45833 55.81250 60.64583
+: 2: Female 51.24074 56.72222 61.68519
+
+Compute the mean weight at time 1 to 3 by gender and treatment group:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data[, .(mean_t1 = mean(weight_t1),
+             mean_t2 = mean(weight_t2),
+             mean_t3 = mean(weight_t3)), 
+         by = c("Gender","Treatment")]
+#+END_SRC
+
+#+RESULTS:
+:    Gender Treatment  mean_t1  mean_t2  mean_t3
+: 1:   Male       Yes 50.42857 55.09524 60.23810
+: 2: Female        No 51.65517 56.93103 61.75862
+: 3:   Male        No 50.48148 56.37037 60.96296
+: 4: Female       Yes 50.76000 56.48000 61.60000
+
+*** Computing the correlation matrix by subgroup
+
+We create a matrix containing the variables of interest, compute the
+correlation matrix and print it.
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+null.result <- dtW.data[, print(cor(cbind(weight_t1,weight_t2,weight_t3))), 
+                        by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:           weight_t1 weight_t2 weight_t3
+: weight_t1 1.0000000 0.2867753 0.2886667
+: weight_t2 0.2867753 1.0000000 0.2740567
+: weight_t3 0.2886667 0.2740567 1.0000000
+:            weight_t1  weight_t2 weight_t3
+: weight_t1 1.00000000 0.03214955 0.3148578
+: weight_t2 0.03214955 1.00000000 0.1551156
+: weight_t3 0.31485784 0.15511561 1.0000000
+
+If we want to store the correlation matrix we need to wrap it into
+=.()= to keep the matrix format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+result <- dtW.data[, .(cor = .(cor(cbind(weight_t1,weight_t2,weight_t3)))), 
+                   by = "Gender"]
+result[,cor]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[[1]]
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+
+[[2]]
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+#+end_example
+
+Alternatively:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+null.result <- dtW.data[, print(cor(.SD)), 
+                        .SDcols = c("weight_t1","weight_t2","weight_t3"), 
+                        by = "Gender"]
+#+END_SRC
+
+#+RESULTS:
+:           weight_t1 weight_t2 weight_t3
+: weight_t1 1.0000000 0.2867753 0.2886667
+: weight_t2 0.2867753 1.0000000 0.2740567
+: weight_t3 0.2886667 0.2740567 1.0000000
+:            weight_t1  weight_t2 weight_t3
+: weight_t1 1.00000000 0.03214955 0.3148578
+: weight_t2 0.03214955 1.00000000 0.1551156
+: weight_t3 0.31485784 0.15511561 1.0000000
+
+#+RESULTS:
+#+begin_example
+[[1]]
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+
+[[2]]
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+#+end_example
+
+** Sort a dataset according to one or several variables
+
+Sort the dataset according to =Age=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setkeyv(dtW.data, c("Age"))
+dtW.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+  1: 41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+  2:  2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+  3:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45      (0,38]
+  4: 46  38 Female        No        53        57        63   49.27   61.45   66.59      (0,38]
+  5: 48  38 Female        No        52        57        63   54.27   57.71   65.63      (0,38]
+ ---                                                                                          
+ 98: 95  42   Male       Yes        51        55        64   51.05   56.48   60.30     (40,42]
+ 99: 99  42 Female       Yes        51        57        62   47.60   56.55   59.47     (40,42]
+100: 10  43 Female       Yes        52        57        64   53.22   57.25   62.94    (42,100]
+101: 45  43 Female       Yes        48        51        61   49.88   54.41   56.18    (42,100]
+102: 73  43   Male       Yes        46        53        54   48.44   52.74   60.93    (42,100]
+     AgeCategory0
+  1:       [0-37)
+  2:      [38-39)
+  3:      [38-39)
+  4:      [38-39)
+  5:      [38-39)
+ ---             
+ 98:     [42-100)
+ 99:     [42-100)
+100:     [42-100)
+101:     [42-100)
+102:     [42-100)
+#+end_example
+
+Sort the dataset according to =Age= and then =weight_t1=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setkeyv(dtW.data, cols = c("Age","weight_t1"))
+dtW.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+  1:  41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+  2: 101  38 Female        No        48        58        55   49.51   54.01   62.32      (0,38]
+  3:  59  38 Female       Yes        49        60        61   51.08   53.77   60.75      (0,38]
+  4:  91  38   Male        No        51        55        59   52.05   57.01   59.53      (0,38]
+  5:   2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+ ---                                                                                           
+ 98:  11  42   Male        No        55        58        59   50.03   55.09   60.94     (40,42]
+ 99:  54  42   Male       Yes        57        60        64   58.75   57.57   63.98     (40,42]
+100:  73  43   Male       Yes        46        53        54   48.44   52.74   60.93    (42,100]
+101:  45  43 Female       Yes        48        51        61   49.88   54.41   56.18    (42,100]
+102:  10  43 Female       Yes        52        57        64   53.22   57.25   62.94    (42,100]
+     AgeCategory0
+  1:       [0-37)
+  2:      [38-39)
+  3:      [38-39)
+  4:      [38-39)
+  5:      [38-39)
+ ---             
+ 98:     [42-100)
+ 99:     [42-100)
+100:     [42-100)
+101:     [42-100)
+102:     [42-100)
+#+end_example
+
+** Change the names of the column in a dataset
+
+Use a small dataset
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.simple <- dtW.data[,.(Age,Gender,Id,Treatment)]
+head(dt.simple)
+#+END_SRC
+
+#+RESULTS:
+:    Age Gender  Id Treatment
+: 1:  37   Male  41        No
+: 2:  38 Female 101        No
+: 3:  38 Female  59       Yes
+: 4:  38   Male  91        No
+: 5:  38 Female   2        No
+: 6:  38   Male   6       Yes
+
+Change all names:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setnames(dt.simple, c("AgeXX","GenderYY","IdZZ","Treat"))
+head(dt.simple)
+#+END_SRC
+
+#+RESULTS:
+:    AgeXX GenderYY IdZZ Treat
+: 1:    37     Male   41    No
+: 2:    38   Female  101    No
+: 3:    38   Female   59   Yes
+: 4:    38     Male   91    No
+: 5:    38   Female    2    No
+: 6:    38     Male    6   Yes
+
+Change one or several names (less memory efficient):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+names(dt.simple)[1:2] <- c("Age","Gender")
+head(dt.simple)
+#+END_SRC
+
+#+RESULTS:
+:    Age Gender IdZZ Treat
+: 1:  37   Male   41    No
+: 2:  38 Female  101    No
+: 3:  38 Female   59   Yes
+: 4:  38   Male   91    No
+: 5:  38 Female    2    No
+: 6:  38   Male    6   Yes
+
+** Converting a dataset from the wide format to the long format
+*** Univariate melt
+Data in the wide format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+1:  41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+2: 101  38 Female        No        48        58        55   49.51   54.01   62.32      (0,38]
+3:  59  38 Female       Yes        49        60        61   51.08   53.77   60.75      (0,38]
+4:  91  38   Male        No        51        55        59   52.05   57.01   59.53      (0,38]
+5:   2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+6:   6  38   Male       Yes        52        59        65   49.37   57.91   64.45      (0,38]
+   AgeCategory0
+1:       [0-37)
+2:      [38-39)
+3:      [38-39)
+4:      [38-39)
+5:      [38-39)
+6:      [38-39)
+#+end_example
+
+The convertion can be done naming explicitely the columns or using =patterns=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL.data <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+                 measure=c("weight_t1","weight_t2","weight_t3"), 
+                 variable.name = "time", value.name = "weight")
+
+dtL.data.bis <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+                     measure=patterns("weight_t"), 
+                     variable.name = "time", value.name = "weight")
+
+identical(dtL.data, dtL.data.bis)
+#+END_SRC
+
+
+#+RESULTS:
+: [1] TRUE
+
+Arguments (see =?melt.data.table= for more details):
+- =id.vars=: name of the column(s) that are kept constant over the repetitions
+- =measure.vars=: name of the columns to be melted in a single one
+  (i.e. repeated measurements).
+
+\bigskip
+
+Data in the long format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtL.data)
+#+END_SRC
+
+#+RESULTS:
+:     Id Gender Treatment Age      time weight
+: 1:  41   Male        No  37 weight_t1     53
+: 2: 101 Female        No  38 weight_t1     48
+: 3:  59 Female       Yes  38 weight_t1     49
+: 4:  91   Male        No  38 weight_t1     51
+: 5:   2 Female        No  38 weight_t1     52
+: 6:   6   Male       Yes  38 weight_t1     52
+
+Reorder the data by Id and time:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setkeyv(dtL.data, c("Id","time"))
+head(dtL.data)
+#+END_SRC
+
+#+RESULTS:
+:    Id Gender Treatment Age      time weight
+: 1:  1   Male       Yes  40 weight_t1     50
+: 2:  1   Male       Yes  40 weight_t2     57
+: 3:  1   Male       Yes  40 weight_t3     56
+: 4:  2 Female        No  38 weight_t1     52
+: 5:  2 Female        No  38 weight_t2     57
+: 6:  2 Female        No  38 weight_t3     63
+
+\clearpage
+
+*** Multivariate melt
+
+Use a list of vectors each containing a vector with the columns to be
+melted:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL.data <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+                 measure=list(c("weight_t1","weight_t2","weight_t3"), 
+                              c("size_t1","size_t2","size_t3")),
+                 variable.name = "time", value.name = c("weight","size"))
+
+dtL.data.bis <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+                     measure=patterns("weight_t","size_t"),
+                     variable.name = "time", value.name = c("weight","size"))
+
+identical(dtL.data,dtL.data.bis)
+#+END_SRC
+
+#+RESULTS:
+: [1] TRUE
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Gender Treatment Age time weight  size
+  1:  41   Male        No  37    1     53 47.59
+  2: 101 Female        No  38    1     48 49.51
+  3:  59 Female       Yes  38    1     49 51.08
+  4:  91   Male        No  38    1     51 52.05
+  5:   2 Female        No  38    1     52 50.26
+ ---                                           
+302:  11   Male        No  42    3     59 60.94
+303:  54   Male       Yes  42    3     64 63.98
+304:  73   Male       Yes  43    3     54 60.93
+305:  45 Female       Yes  43    3     61 56.18
+306:  10 Female       Yes  43    3     64 62.94
+#+end_example
+
+** Converting a dataset from the long format to the wide format
+
+*** Univariate
+Data in the long format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtL.data)
+#+END_SRC
+
+#+RESULTS:
+:     Id Gender Treatment Age time weight  size
+: 1:  41   Male        No  37    1     53 47.59
+: 2: 101 Female        No  38    1     48 49.51
+: 3:  59 Female       Yes  38    1     49 51.08
+: 4:  91   Male        No  38    1     51 52.05
+: 5:   2 Female        No  38    1     52 50.26
+: 6:   6   Male       Yes  38    1     52 49.37
+
+The convertion can be done using a formula:
+- left side: variables that do not vary 
+- right side: variable indexing the repetition whose values will be
+  used to name the new columns.
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data <- dcast(dtL.data, value.var = c("weight"),
+                  formula = Id + Gender + Treatment + Age ~ time)
+#+END_SRC
+
+#+RESULTS:
+
+Data in the wide format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setnames(dtW.data, old = c("1","2","3"), new = paste0("weight_t",1:3))
+dtW.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Gender Treatment Age weight_t1 weight_t2 weight_t3
+  1:   1   Male       Yes  40        50        57        56
+  2:   2 Female        No  38        52        57        63
+  3:   3   Male        No  41        47        54        62
+  4:   4 Female       Yes  41        48        55        60
+  5:   5 Female       Yes  42        52        56        64
+ ---                                                       
+ 98:  98   Male        No  39        53        59        57
+ 99:  99 Female       Yes  42        51        57        62
+100: 100 Female        No  40        53        55        59
+101: 101 Female        No  38        48        58        55
+102: 102 Female        No  39        52        58        68
+#+end_example
+
+\clearpage
+
+*** Multivariate
+
+
+Same as before but with several elements in the argument
+=value.var=. Note that the repetition index (here =time=) must be the
+same for both variables:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data <- dcast(dtL.data, value.var = c("weight","size"),
+                  formula = Id + Gender + Treatment + Age ~ time)
+#+END_SRC
+
+#+RESULTS:
+
+Data in the wide format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      Id Gender Treatment Age weight_1 weight_2 weight_3 size_1 size_2 size_3
+  1:   1   Male       Yes  40       50       57       56  50.67  55.88  61.69
+  2:   2 Female        No  38       52       57       63  50.26  55.73  60.37
+  3:   3   Male        No  41       47       54       62  46.61  50.89  56.52
+  4:   4 Female       Yes  41       48       55       60  45.95  53.10  59.82
+  5:   5 Female       Yes  42       52       56       64  52.86  58.41  63.79
+ ---                                                                         
+ 98:  98   Male        No  39       53       59       57  49.51  53.80  61.13
+ 99:  99 Female       Yes  42       51       57       62  47.60  56.55  59.47
+100: 100 Female        No  40       53       55       59  50.06  54.90  61.89
+101: 101 Female        No  38       48       58       55  49.51  54.01  62.32
+102: 102 Female        No  39       52       58       68  47.35  56.08  59.49
+#+end_example
+
+* Graphical display
+
+** Descriptive plots
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dtL.data)
+#+END_SRC
+
+#+RESULTS:
+:     Id Gender Treatment Age time weight  size
+: 1:  41   Male        No  37    1     53 47.59
+: 2: 101 Female        No  38    1     48 49.51
+: 3:  59 Female       Yes  38    1     49 51.08
+: 4:  91   Male        No  38    1     51 52.05
+: 5:   2 Female        No  38    1     52 50.26
+: 6:   6   Male       Yes  38    1     52 49.37
+
+*** Spaguetti plot 
+
+**** color by individual (first ten individuals)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.spaguetti1 <- ggplot(dtL.data[Id %in% 1:10], 
+                        aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti1 <- gg.spaguetti1 + geom_line() + geom_point()
+gg.spaguetti1
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-spaguetti1.pdf" :exports results :session *R* :cache yes
+print(gg.spaguetti1)
+#+END_SRC
+
+#+ATTR_LATEX: :width 0.65\textwidth
+#+RESULTS[<2017-11-26 16:08:21> a2fecd752692f0c82e42087253559aef64a607a8]:
+[[file:./figures/fig-spaguetti1.pdf]]
+
+\clearpage
+
+**** color by treatment group (first ten individuals)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.spaguetti2 <- ggplot(dtL.data[Id %in% 1:10],
+                        aes(x = time, y = weight, color = Treatment, group = Id))
+gg.spaguetti2 <- gg.spaguetti2 + geom_line() + geom_point()
+gg.spaguetti2
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-spaguetti2.pdf" :exports results :session *R* :cache yes
+print(gg.spaguetti2)
+#+END_SRC
+
+#+ATTR_LATEX: :width 0.8\textwidth
+#+RESULTS[<2018-06-15 12:47:20> 6226ecf9e163073d2ab30f05b87ebe83edb1c357]:
+[[file:./figures/fig-spaguetti2.pdf]]
+
+\clearpage 
+
+**** pannel for each treatment group (first ten individuals)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.spaguetti3 <- ggplot(dtL.data[Id %in% 1:10], 
+                        aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti3 <- gg.spaguetti3 + geom_line() + geom_point()
+gg.spaguetti3 <- gg.spaguetti3 + facet_wrap(~ Treatment, labeller = label_both) 
+gg.spaguetti3
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-spaguetti3.pdf" :exports results :session *R* :cache yes
+print(gg.spaguetti3)
+#+END_SRC
+
+#+ATTR_LATEX: :width 0.8\textwidth
+#+RESULTS[<2018-06-15 12:47:35> fb40f90e19b4d9a316ab886744bb3e61ad48bda0]:
+[[file:./figures/fig-spaguetti3.pdf]]
+
+\clearpage
+
+**** individual spaguetti plot (first ten individuals)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.spaguetti4 <- ggplot(dtL.data[Id %in% 1:10], 
+                        aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti4 <- gg.spaguetti4 + geom_line() + geom_point()
+gg.spaguetti4 <- gg.spaguetti4 + facet_wrap(~ Id, labeller = label_both) 
+gg.spaguetti4
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-spaguetti4.pdf" :exports results :session *R* :cache yes
+print(gg.spaguetti4)
+#+END_SRC
+
+#+ATTR_LATEX: :width 0.8\textwidth
+#+RESULTS[<2018-06-15 12:47:57> 63c4a7db5b33b4f583d589551b99fda7a3b7b2ae]:
+[[file:./figures/fig-spaguetti4.pdf]]
+
+\clearpage
+
+*** Display the mean over time
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean <- ggplot(dtL.data[Id %in% 1:10], aes(x = time, y = weight))
+gg.mean <- gg.mean + stat_summary(aes(group = Treatment, color = Treatment), 
+                                  geom = "line", fun.y = mean, size = 2)
+gg.mean <- gg.mean + stat_summary(aes(group = Treatment, color = Treatment), 
+                                  geom = "point", fun.y = mean, size = 3)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-meanTime.pdf" :exports results :session *R* :cache yes
+print(gg.mean)
+#+END_SRC
+
+#+RESULTS[<2017-11-26 15:50:29> a5a271bce412d9ea8cf1e90d89ecd6ebc1a124a9]:
+[[file:./figures/fig-meanTime.pdf]]
+
+** Diagnostic plots
+
+Consider the linear model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm <- lm(weight ~ Age + Treatment + size,
+            data = dtL.data)
+#+END_SRC
+
+#+RESULTS:
+
+*** Histogram of the residuals
+
+Extract the residuals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+epsilon <- residuals(e.lm, type = "response")
+#+END_SRC
+
+#+RESULTS:
+
+Display the histogram
+#+BEGIN_SRC R :results graphics :file "./figures/fig-hist-residuals.pdf" :exports results :session *R* :cache yes
+hist(epsilon, main = "histogram of the residuals")
+#+END_SRC
+
+#+RESULTS[<2017-11-26 16:24:46> 49d45d6c113078b94fe54df81527692db7cefb04]:
+[[file:./figures/fig-hist-residuals.pdf]]
+
+#+name: fig:1
+#+ATTR_LATEX: :width 0.7\textwidth
+#+CAPTION:
+
+** Customize graphic 
+
+*** Modify the legend of a discrete scale
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean2 <- gg.mean + scale_colour_manual(name = "Group",
+                                          labels = c("X","Y"),
+                                          values = c("No" = "purple", 
+                                                     "Yes" = "black"))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-meanTime2.pdf" :exports results :session *R* :cache yes
+print(gg.mean2)
+#+END_SRC
+
+#+RESULTS[<2017-11-26 15:50:17> 1109fa04c32d0a2d006129d4bc47fbcdf686f723]:
+[[file:./figures/fig-meanTime2.pdf]]
+
+*** Increase the font size
+
+All text:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(text = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-meanTime3.pdf" :exports results :session *R* :cache no
+print(gg.mean3)
+#+END_SRC
+
+#+RESULTS[<2018-06-15 12:49:19> cae321186bbdf81944d04d6a8396e9b74f8c84df]:
+[[file:./figures/fig-meanTime3.pdf]]
+
+Only x axis labels:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(axis.text = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+Only axis title:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+*** Put the legend at the bottom
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean4 <- gg.mean + theme(legend.position="bottom")
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-meanTime4.pdf" :exports results :session *R* :cache no
+print(gg.mean4)
+#+END_SRC
+
+*** Default ggplot color palette
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+#+END_SRC
+
+#+RESULTS:
+*** Color blind palette
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ggthemes::colorblind_pal()(10)
+#+END_SRC
+*** Rotate x-axis labels 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#+END_SRC
+*** Change tick mark labels
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean5 <- gg.mean + scale_x_discrete(breaks=c("1","2","3"),
+                                       labels=c("Dose 1", "Dose 2", "Dose 3"))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-meanTime5.pdf" :exports results :session *R* :cacheno
+print(gg.mean5)
+#+END_SRC
+
+#+RESULTS:
+[[file:./figures/fig-meanTime5.pdf]]
+
+
+\clearpage
+
+** Path diagram
+Using lava:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m <- lvm(Y~E+X1+X2+M,M~E,E~X2)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+plot(m, plot.engine="rgraphviz") 
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-pathDiagram1.pdf" :exports results :session *R* :cache yes
+plot(m, plot.engine="rgraphviz") 
+#+END_SRC
+
+#+RESULTS[<2018-06-15 12:55:44> f22e8dcd954ab667b22fa90f8c894b2e20034b43]:
+[[file:./figures/fig-pathDiagram1.pdf]]
+
+Dynamic graph:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+plot(m, plot.engine="visnetwork")
+#+END_SRC
+
+#+RESULTS:
+
+* Modeling 
+** Testing linear hypotheses
+
+Consider the linear model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm <- lm(weight ~ Age + Treatment + size,
+            data = dtL.data)
+summary(e.lm)$coef
+#+END_SRC
+
+#+RESULTS:
+:                 Estimate Std. Error    t value     Pr(>|t|)
+: (Intercept)  13.11292977 5.84498969  2.2434479 2.559263e-02
+: Age          -0.05479836 0.13849481 -0.3956709 6.926272e-01
+: TreatmentYes -0.65247721 0.36126020 -1.8061143 7.189597e-02
+: size          0.81718969 0.03513376 23.2593869 2.743182e-69
+
+To test linear hypotheses we first need to define them using a contrast matrix:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+name.coef <- names(coef(e.lm))
+n.coef <- length(name.coef)
+
+C <- matrix(0,nrow = 3, ncol = n.coef, 
+            dimnames = list (c("Age","2 Treatment","All"), name.coef))
+C["Age","Age"] <- 1
+C["2 Treatment","TreatmentYes"] <- 2
+C["All",-1] <- 1
+C
+#+END_SRC
+
+#+RESULTS:
+:             (Intercept) Age TreatmentYes size
+: Age                   0   1            0    0
+: 2 Treatment           0   0            2    0
+: All                   0   1            1    1
+
+*** Separate Wald tests of linear hypotheses
+
+No adjustment for multiple comparison:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(glht(e.lm, linfct = C), test = univariate())
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)  
+Age == 0          -0.0548     0.1385  -0.396   0.6926  
+2 Treatment == 0  -1.3050     0.7225  -1.806   0.0719 .
+All == 0           0.1099     0.3513   0.313   0.7546  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Univariate p values reported)
+#+end_example
+
+Adjustment using bonferroni:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(glht(e.lm, linfct = C), test = adjusted("bonferroni"))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)
+Age == 0          -0.0548     0.1385  -0.396    1.000
+2 Treatment == 0  -1.3050     0.7225  -1.806    0.216
+All == 0           0.1099     0.3513   0.313    1.000
+(Adjusted p values reported -- bonferroni method)
+#+end_example
+
+Adjustment using the max statistic:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(glht(e.lm, linfct = C), test = adjusted("single-step"))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)
+Age == 0          -0.0548     0.1385  -0.396    0.916
+2 Treatment == 0  -1.3050     0.7225  -1.806    0.156
+All == 0           0.1099     0.3513   0.313    0.948
+(Adjusted p values reported -- single-step method)
+#+end_example
+
+Alternative syntax (without contrast matrix):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(glht(e.lm, 
+             linfct = c("Age = 0",
+                        "2*TreatmentYes = 0",
+                        "Age + TreatmentYes + size = 0")), 
+        test = adjusted("single-step"))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                               Estimate Std. Error t value Pr(>|t|)
+Age == 0                        -0.0548     0.1385  -0.396    0.916
+2 * TreatmentYes == 0           -1.3050     0.7225  -1.806    0.157
+Age + TreatmentYes + size == 0   0.1099     0.3513   0.313    0.948
+(Adjusted p values reported -- single-step method)
+#+end_example
+
+*** Confidence intervals associated with linear hypotheses
+
+With no adjustment for multiplicity:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+confint(glht(e.lm, linfct = C), calpha = univariate_calpha())
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Confidence Intervals
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Quantile = 1.9679
+95% confidence level
+ 
+
+Linear Hypotheses:
+                 Estimate lwr     upr    
+Age == 0         -0.0548  -0.3273  0.2177
+2 Treatment == 0 -1.3050  -2.7268  0.1169
+All == 0          0.1099  -0.5815  0.8013
+#+end_example
+
+With adjustment for multiplicity:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+confint(glht(e.lm, linfct = C), calpha = adjusted_calpha())
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 Simultaneous Confidence Intervals
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Quantile = 2.3128
+95% family-wise confidence level
+ 
+
+Linear Hypotheses:
+                 Estimate lwr     upr    
+Age == 0         -0.0548  -0.3751  0.2655
+2 Treatment == 0 -1.3050  -2.9760  0.3661
+All == 0          0.1099  -0.7027  0.9225
+#+end_example
+
+*** Joint test of linear hypotheses
+
+One can use the =Ftest()= or =Chisqtest()= to obtain a joint test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(glht(e.lm, 
+             linfct = c("Age = 0",
+                        "2*TreatmentYes = 0",
+                        "Age + TreatmentYes + size = 0")), 
+        test = Ftest())
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	 General Linear Hypotheses
+
+Linear Hypotheses:
+                               Estimate
+Age == 0                        -0.0548
+2 * TreatmentYes == 0           -1.3050
+Age + TreatmentYes + size == 0   0.1099
+
+Global Test:
+      F DF1 DF2    Pr(>F)
+1 181.2   3 302 3.349e-67
+#+end_example
+
+The same can be obtained using the =linearHypothesis= method from the =car= package:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+linearHypothesis(e.lm, hypothesis.matrix = C, rhs = c(0,0,0))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Linear hypothesis test
+
+Hypothesis:
+Age = 0
+2 TreatmentYes = 0
+Age  + TreatmentYes  + size = 0
+
+Model 1: restricted model
+Model 2: weight ~ Age + Treatment + size
+
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1    305 7748.5                                  
+2    302 2767.2  3    4981.3 181.21 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#+end_example
+
+* Loops and parallel computations
+** Apply with progress bar
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ls.res <- pbapply::pblapply(1:5, FUN = rnorm)
+#+END_SRC
+
+#+RESULTS:
+:    |                                                  | 0 % ~calculating     |++++++++++                                        | 20% ~00s             |++++++++++++++++++++                              | 40% ~00s             |++++++++++++++++++++++++++++++                    | 60% ~00s             |++++++++++++++++++++++++++++++++++++++++         | 80% ~00s             |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed = 00s
+
+** Parallel computation
+*** Detect the number of cores
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cores <- parallel::detectCores()
+cores
+#+END_SRC
+
+#+RESULTS:
+: [1] 4
+
+*** Start a cluster
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cpus <- 2
+
+cl <- snow::makeSOCKcluster(cpus)
+doSNOW::registerDoSNOW(cl)
+#+END_SRC
+
+#+RESULTS:
+
+*** Get the name of each core
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cpus.name <- unlist(parallel::clusterCall(cl = cl, function(x){
+    myName <- paste(Sys.info()[['nodename']], Sys.getpid(), sep='-')
+    return(myName)
+}))
+cpus.name
+#+END_SRC
+
+#+RESULTS:
+: [1] "SUND31034-8096" "SUND31034-1476"
+
+*** Export element to cluster
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+parallel::clusterExport(cl, varlist = "cpus.name")
+
+parallel::clusterCall(cl = cl, function(x){
+    indexCPU <- which(cpus.name == paste(Sys.info()[['nodename']], Sys.getpid(), sep='-'))
+    indexCPU
+})
+#+END_SRC
+
+#+RESULTS:
+: [[1]]
+: [1] 1
+: 
+: [[2]]
+: [1] 2
+
+*** Show progress bar (in console)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.sim <- 20
+
+pb <- txtProgressBar(max = n.sim, style=3)
+opts <- list(progress = function(n) setTxtProgressBar(pb, n))
+
+ls.res <- foreach::`%dopar%`(
+                       foreach::foreach(i=1:n.sim, .options.snow=opts), {
+                           Sys.sleep(0.1)
+                       })
+#+END_SRC
+
+#+RESULTS:
+
+*** Show progress bar (external)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.sim <- 20
+parallel::clusterExport(cl, varlist = "n.sim")
+
+ls.res <- foreach::`%dopar%`(
+                       foreach::foreach(iCpus=1:cpus), {
+                           pb <- tcltk::tkProgressBar(paste0("CPU ",iCpus), min = 0, max = n.sim, initial = 0)
+
+                           for(iSim in 1:n.sim){
+                               Sys.sleep(0.1)
+                               tcltk::setTkProgressBar(pb = pb, value = iSim,
+                                                       label = paste(iSim," over ",n.sim," iterations done") )
+                           }
+
+                           close(pb)
+                       })
+#+END_SRC
+
+#+RESULTS:
+
+*** Stop a cluster
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+parallel::stopCluster(cl)
+#+END_SRC
+
+* Generate data using the /lava/ package
+
+** Generate repeated measurements
+Model:
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m <- lvm(weight_t1[50:5] ~ Gender+Treatment+tau, 
+         weight_t2[55:3] ~ Gender+Treatment+tau, 
+         weight_t3[60:8] ~ Gender+Treatment+tau, 
+         size_t1[50:5] ~ Gender+tau, 
+         size_t2[55:3] ~ Gender+tau, 
+         size_t3[60:8] ~ Gender+tau, 
+         Age[40:2]~1)
+latent(m) <- ~tau
+transform(m, Id~Age) <- function(x){as.character(1:NROW(x))}
+categorical(m, labels = c("Male","Female")) <- ~Gender
+categorical(m, labels = c("Yes","No")) <- ~Treatment
+#+END_SRC
+
+#+RESULTS:
+
+Simulation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+dfW.data <- sim(m, n = 102, latent = FALSE)
+#+END_SRC
+#+RESULTS:
+
+Display simulated data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+head(dfW.data)
+#+END_SRC
+
+#+RESULTS:
+:   weight_t1 Gender Treatment weight_t2 weight_t3  size_t1  size_t2  size_t3      Age Id
+: 1  49.59633   Male       Yes  56.62904  55.58780 50.66805 55.88362 61.69410 39.54546  1
+: 2  52.35484 Female        No  56.68563  63.21026 50.26003 55.72930 60.36953 37.70748  2
+: 3  46.53011   Male        No  54.36636  62.05018 46.61315 50.89281 56.52237 40.80342  3
+: 4  48.48417 Female       Yes  54.79413  59.72995 45.95248 53.09941 59.82107 40.94933  4
+: 5  52.17022 Female       Yes  55.71550  64.21010 52.86341 58.40516 63.79082 42.06512  5
+: 6  52.18837   Male       Yes  58.86797  64.51316 49.36853 57.90530 64.45437 37.68392  6
+
+Modify simulated data 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+  dtW.data <- as.data.table(dfW.data)
+  dtW.data[,paste0("weight_t",1:3) := lapply(.SD,round),
+           .SDcols = paste0("weight_t",1:3)]
+  dtW.data[,paste0("size_t",1:3) := lapply(.SD,round, digit = 2),
+           .SDcols = paste0("size_t",1:3)]
+  dtW.data[,Age := round(Age)]
+
+  setcolorder(dtW.data, c("Id","Age","Gender","Treatment",
+                          paste0("weight_t",1:3),paste0("size_t",1:3)))
+  head(dtW.data)
+#+END_SRC
+
+#+RESULTS:
+:    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+: 1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+: 2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+: 3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+: 4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+: 5:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+: 6:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+
+Export data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+fwrite(dtW.data, file = "./mydata.csv", sep = ";", dec = ",")
+fwrite(dtW.data, file = "./mydata.txt", sep = " ", dec = ".")
+#+END_SRC
+
+#+RESULTS:
+
+** Generate data with heteroschadasticity
+
+Model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm(y[m:v]~x)
+constrain(mSim, v ~ x + a + b) <- function(x){ x[,2] + x[,3] * exp(x[,1]) }
+parameter(mSim, start = c(0,1)) <- ~ a + b
+#+END_SRC
+
+#+RESULTS:
+
+Simulation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+n <- 1e3
+df.tempo <- sim(mSim, n = n)
+#+END_SRC
+
+#+RESULTS:
+
+Display:
+#+BEGIN_SRC R :results graphics :file "./figures/fig-hetero.pdf" :exports results :session *R* :cache no
+plot(y ~ x, data = df.tempo)
+#+END_SRC
+
+#+RESULTS[<2017-11-26 14:59:32> 968ee2e3370919a6d9a4d5fbfd993df81e26d5d7]:
+[[file:./figures/fig-hetero.pdf]]
+
+#+name: fig:1
+#+ATTR_LATEX: :width 0.7\textwidth
+#+CAPTION:
+
+** Generate survival time under non proportional hazard (non-PH)
+
+Model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm()
+regression(mSim) <- eventtime ~ Gender + Age
+regression(mSim) <- s ~ exp(0.6 * Treatment - 0.5 * Gender)
+distribution(mSim,~ Treatment + Gender) <- binomial.lvm()
+distribution(mSim,~cens) <- coxWeibull.lvm(scale = 1)
+distribution(mSim,~eventtime) <- coxWeibull.lvm(scale = 0.3,shape =~ s)
+eventTime(mSim) <- time ~ min(eventtime = 1, cens = 0)
+#+END_SRC
+
+#+RESULTS:
+
+Simulation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+n <- 1e3
+df.tempo <- sim(mSim, n = n)
+#+END_SRC
+
+#+RESULTS:
+
+Display:
+#+BEGIN_SRC R :results graphics :file "./figures/fig-nonPH.pdf" :exports results :session *R* :cache no
+cc <- prodlim(Surv(time,status)~ Gender + Treatment,
+              data = df.tempo)
+plot(cc,col=1:4,mark.time=FALSE)
+#+END_SRC
+
+#+RESULTS[<2017-11-26 15:14:37> 5d18a7a2e6d084fc41370dfbb0e55993349262a9]:
+[[file:./figures/fig-nonPH.pdf]]
+
+#+name: fig:1
+#+ATTR_LATEX: :width 0.7\textwidth
+#+CAPTION:
+
+** Generate survival time with delayed treatment effect
+
+Generative model with non-PH group effect but no Age effect:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rates1 <- c(0.25,0.5,0.1); cuts <- c(0,3,5)
+rates2 <- c(0.25,0.1,0.1); cuts <- c(0,3,5)
+lasttime <- 20
+
+m1 <- lvm(Age[50:5]~1)
+m2 <- lvm(Age[50:5]~1)
+distribution(m1,~eventtime) <- coxExponential.lvm(rate=rates1,timecut=cuts)
+distribution(m2,~eventtime) <- coxExponential.lvm(rate=rates2,timecut=cuts)
+transform(m1,status~eventtime) <- function(x){as.numeric(x[,1]<= lasttime)}
+transform(m2,status~eventtime) <- function(x){as.numeric(x[,1]<= lasttime)}
+transform(m1,time~eventtime) <- function(x){pmin(lasttime,x[,1])}
+transform(m2,time~eventtime) <- function(x){pmin(lasttime,x[,1])}
+latent(m1) <- ~eventtime
+latent(m2) <- ~eventtime
+#+END_SRC
+
+#+RESULTS:
+
+Simulate data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(12)
+n <- 500
+d1 <- as.data.table(sim(m1,n,latent=FALSE))
+d2 <- as.data.table(sim(m2,n,latent=FALSE))
+dt.data <- rbind(cbind(d1,group="treatment"),cbind(d2,group="placebo"))
+dt.data
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+           Age status       time     group
+   1: 46.68935      1  3.8755119 treatment
+   2: 53.52666      1  3.2816799 treatment
+   3: 47.86065      1  0.8515517 treatment
+   4: 47.94281      1 10.1313180 treatment
+   5: 45.53314      1  2.6198951 treatment
+  ---                                     
+ 996: 46.47948      1  2.1560011   placebo
+ 997: 52.78256      1  6.6831242   placebo
+ 998: 45.10627      1  6.0589065   placebo
+ 999: 49.24545      1 12.5248064   placebo
+1000: 49.08839      1  1.9096902   placebo
+#+end_example
+
+Display survival curves by group:
+#+BEGIN_SRC R :results graphics :file "./figures/fig-delayedTreatmentEffect.pdf" :exports results :session *R* :cache no
+e.KM <- prodlim(Hist(time,status)~group,data=dt.data)
+par(mfrow = c(1,1))
+plot(e.KM)  
+#+END_SRC
+
+#+RESULTS[<2017-11-26 15:09:37> d7e02f7a48598dc65a6a1d444ab6a2276c5006ee]:
+[[file:./figures/fig-delayedTreatmentEffect.pdf]]
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+OPTIONS:   title:t author:t date:t toc:nil todo:t 
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Latex packages
+#+LaTeX_HEADER: \RequirePackage{xargs} % newcommandx
+#+LaTeX_HEADER:\usepackage{authblk}
+
+** Additional commands
+#+LaTeX_HEADER: \newcommandx\Rlogo[1][1=0.02]{\includegraphics[scale=#1]{figures/Rlogo.eps}}
+
+** Display
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## solve bug in titlesec (remove section numerotation)
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+# ## add page break after section/subsection
+#+LaTeX_HEADER: \newcommand{\sectionbreak}{\clearpage}
+#+LaTeX_HEADER: \newcommand{\subsectionbreak}{\clearpage}
+
+** Code
+#+PROPERTY: header-args :session *R*
+#+PROPERTY: header-args :tange yes % extract source code: http://orgmode.org/manual/Extracting-source-code.html
+#+PROPERTY: header-args :cache no
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+

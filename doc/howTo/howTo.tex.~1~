@@ -1,0 +1,2296 @@
+% Created 2018-06-15 fr 12:56
+% Intended LaTeX compiler: pdflatex
+\documentclass{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstset{
+backgroundcolor=\color{white},
+basewidth={0.5em,0.4em},
+basicstyle=\ttfamily\small,
+breakatwhitespace=false,
+breaklines=true,
+columns=fullflexible,
+commentstyle=\color[rgb]{0.5,0,0.5},
+frame=single,
+keepspaces=true,
+keywordstyle=\color{black},
+literate={~}{$\sim$}{1},
+numbers=left,
+numbersep=10pt,
+numberstyle=\ttfamily\tiny\color{gray},
+showspaces=false,
+showstringspaces=false,
+stepnumber=1,
+stringstyle=\color[rgb]{0,.5,0},
+tabsize=4,
+xleftmargin=.23in,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+emphstyle=\color{blue}
+}
+
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{capt-of}
+\usepackage{caption}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{textcomp}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+\RequirePackage{xargs} % newcommandx
+\usepackage{authblk}
+\newcommandx\Rlogo[1][1=0.02]{\includegraphics[scale=#1]{figures/Rlogo.eps}}
+\usepackage[hyperref,x11names]{xcolor}
+\hypersetup{colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+\newcommand{\sectionbreak}{\clearpage}
+\newcommand{\subsectionbreak}{\clearpage}
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\author{Brice Ozenne}
+\date{\today}
+\title{"How to" in \Rlogo}
+\hypersetup{
+ colorlinks=true,
+ citecolor=[rgb]{0,0.5,0},
+ urlcolor=[rgb]{0,0,0.5},
+ linkcolor=[rgb]{0,0,0.5},
+ pdfauthor={Brice Ozenne},
+ pdftitle={"How to" in \Rlogo},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.0.4)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+This document present ways to perform basic operations in \Rlogo:
+\begin{itemize}
+\item importing data
+\item data management
+\item graphical displaying
+\item modeling
+\item loops and parallel computing
+\item generating data through simulation
+\end{itemize}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Packages}
+\label{sec:orgc1f0210}
+The following packages are necessary to run the code suggested in the document:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+## importing data and data management
+library(data.table)
+
+## graphical display
+library(ggplot2)
+
+## modeling
+library(car)
+
+library(prodlim) # survival analysis
+library(survival) # survival analysis
+
+## statistical inference
+library(multcomp) # adjust for multiple comparisons
+
+## loops and parallel computing
+library(pbapply)
+library(doSNOW)
+library(parallel)
+
+## simulation
+library(lava)
+\end{lstlisting}
+
+\clearpage
+
+\section{Import/export data}
+\label{sec:org8e6e22d}
+
+\subsection{Set the working directory}
+\label{sec:orga9c13a4}
+
+The working directory is where \Rlogo \(\;\) will, by default, look for files
+to import and export data or pictures. The current working directory
+can be accessed using:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+getwd()
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo"
+\end{verbatim}
+
+It can be changed using the function \texttt{setwd()}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+path <- "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/"
+setwd(path)
+\end{lstlisting}
+
+We can check that the working directory has indeed changed calling
+again \texttt{getwd()}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+getwd()
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo"
+\end{verbatim}
+
+\subsection{See which files are present in the current directory}
+\label{sec:org36c23cc}
+
+List all files in the current directory:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+list.files()
+\end{lstlisting}
+
+\begin{verbatim}
+ [1] "#howTo.org#"       "figures"           "howTo.org"         "howTo.org.~1~"    
+ [5] "howTo.org.~2~"     "howTo.org.~3~"     "howTo.org.~4~"     "howTo.org.~5~"    
+ [9] "howTo.org.~6~"     "howTo.org.~7~"     "howTo.org_archive" "howTo.pdf"        
+[13] "howTo.soc"         "howTo.tex"         "howTo.tex.~1~"     "howTo.tex.~100~"  
+[17] "howTo.tex.~101~"   "howTo.tex.~102~"   "howTo.tex.~103~"   "howTo.tex.~104~"  
+[21] "howTo.tex.~105~"   "howTo.tex.~106~"   "howTo.tex.~2~"     "howTo.tex.~3~"    
+[25] "howTo.tex.~4~"     "howTo.tex.~5~"     "howTo.tex.~6~"     "howTo.tex.~98~"   
+[29] "howTo.tex.~99~"    "mydata.csv"        "mydata.txt"        "myplot.png"
+\end{verbatim}
+
+There are many files. To list files in the current directory with a
+given extension, e.g. \texttt{.txt} use:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+list.files(pattern = ".txt")
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "mydata.txt"
+\end{verbatim}
+
+There is only one file with a \texttt{.txt} extension, it is called
+\texttt{mydata.txt}.
+
+\subsection{Check that the file we want to import exists:}
+\label{sec:orgb255793}
+
+Test whether the file exists:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+file.exists("./mydata.txt")
+\end{lstlisting}
+
+\begin{verbatim}
+[1] TRUE
+\end{verbatim}
+
+\subsection{Display a file before importing it}
+\label{sec:orgf66f67b}
+
+
+Display the first three lines of the file we want to import
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+readLines("./mydata.txt")[1:3]
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3"
+[2] "1 40 Male Yes 50 57 56 50.67 55.88 61.69"                                     
+[3] "2 38 Female No 52 57 63 50.26 55.73 60.37"
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+readLines("./mydata.csv")[1:3]
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "Id;Age;Gender;Treatment;weight_t1;weight_t2;weight_t3;size_t1;size_t2;size_t3"
+[2] "1;40;Male;Yes;50;57;56;50,67;55,88;61,69"                                     
+[3] "2;38;Female;No;52;57;63;50,26;55,73;60,37"
+\end{verbatim}
+
+\subsection{Import a data from a file (.txt, .csv)}
+\label{sec:org60f3f50}
+
+Import a file and store the dataset into a \texttt{data.frame} object:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfW.data <- read.table("./mydata.txt", header = TRUE, na.strings = ".")
+\end{lstlisting}
+
+Import a file and store the dataset into a \texttt{data.table} object:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data <- fread("./mydata.txt", header = TRUE, na.strings = ".")
+\end{lstlisting}
+
+In both cases, the argument \texttt{na.strings} specifies which character(s)
+in the dataset stands for missing values. The argument \texttt{header=TRUE}
+indicates that the first line of the dataset contains the name of the
+columns of the dataset (and not the data of an observation). See
+\texttt{?read.table} or \texttt{?fread} for further explanations about the arguments
+of these functions.
+
+\bigskip
+
+\begin{center}
+\begin{tabular}{lll}
+\uline{Note:} & \texttt{"./"} & stands for current directory, e.g. \texttt{"./mydata.txt"} abreviated in \texttt{"mydata.txt"}\\
+ & \texttt{"../"} & stands for parent directory, e.g. \texttt{"../mydata.txt"}\\
+ & \texttt{"/"} & stands for root directory, e.g. \texttt{"/mydata.txt"}\\
+\end{tabular}
+\end{center}
+
+\subsection{Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)}
+\label{sec:orgc80bd40}
+
+There are many packages that can be used to read excel files, e.g.:
+\begin{itemize}
+\item \textbf{xlsx} package: function \texttt{read.xlsx}.
+\item \textbf{gdata} package: function \texttt{read.xls}.
+\end{itemize}
+
+\bigskip
+
+The \textbf{foreign} package enable to read a variety for files, e.g.:
+\begin{itemize}
+\item \texttt{read.spss}: read an spss data file.
+\item \texttt{read.ssd}: obtain a data frame from a sas permanent dataset, via read.xport.
+\end{itemize}
+
+\bigskip
+
+To load .rds files use \texttt{readRDS} and to load .rdata files use \texttt{load}.
+
+\subsection{Export data}
+\label{sec:org8c84bd3}
+
+To export a data.frame to a file one can use:
+\begin{itemize}
+\item \texttt{write.csv} to export a .csv file
+\item \texttt{write.table} to export a .txt file
+\item \texttt{xlsx::write.xlsx} to export a .xlsx file
+\item \texttt{data.table::fwrite}
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+fwrite(dtW.data, file = "./mydata.csv", sep = ";", dec = ",")
+fwrite(dtW.data, file = "./mydata.txt", sep = " ", dec = ".")
+\end{lstlisting}
+
+To export a single R object (can be anything) use \texttt{saveRDS}.
+To export several R object use \texttt{save}.
+To export the current workspace use \texttt{save.image}.
+
+\subsection{Export graphs}
+\label{sec:org25cb635}
+
+The functions \texttt{pdf}, \texttt{png}, \texttt{postscript}, \texttt{svg}, \texttt{tiff} enables a graph to
+export to .pdf, .png, .eps, .svg, or .tiff file:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+png("myplot.png")
+plot(1:10)
+dev.off()
+\end{lstlisting}
+
+\begin{verbatim}
+null device 
+          1
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+file.exists("myplot.png")
+\end{lstlisting}
+
+\begin{verbatim}
+[1] TRUE
+\end{verbatim}
+
+For exporting graph generated by \textbf{ggplot2}, use \texttt{ggsave}.
+
+\section{Data management}
+\label{sec:org095aca0}
+\subsection{Categorize age into groups}
+\label{sec:orga2273e2}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+vec <- dfW.data$weight_t3
+vec
+\end{lstlisting}
+
+\begin{verbatim}
+ [1] 56 63 62 60 64 65 66 63 59 64 59 58 63 64 61 64 67 54 57 65 63 60 60 57 66 65 60 53 57 58 58
+[32] 58 59 63 64 58 64 58 59 59 60 59 57 62 61 63 63 63 65 55 59 65 71 64 62 62 64 58 61 61 65 64
+[63] 66 60 58 60 63 57 58 68 59 60 54 61 60 63 61 60 62 61 59 59 65 62 66 58 64 66 62 65 59 63 57
+[94] 62 64 59 63 57 62 59 55 68
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cut(vec, breaks = seq(0,100,5))
+\end{lstlisting}
+
+\begin{verbatim}
+  [1] (55,60] (60,65] (60,65] (55,60] (60,65] (60,65] (65,70] (60,65] (55,60] (60,65] (55,60]
+ [12] (55,60] (60,65] (60,65] (60,65] (60,65] (65,70] (50,55] (55,60] (60,65] (60,65] (55,60]
+ [23] (55,60] (55,60] (65,70] (60,65] (55,60] (50,55] (55,60] (55,60] (55,60] (55,60] (55,60]
+ [34] (60,65] (60,65] (55,60] (60,65] (55,60] (55,60] (55,60] (55,60] (55,60] (55,60] (60,65]
+ [45] (60,65] (60,65] (60,65] (60,65] (60,65] (50,55] (55,60] (60,65] (70,75] (60,65] (60,65]
+ [56] (60,65] (60,65] (55,60] (60,65] (60,65] (60,65] (60,65] (65,70] (55,60] (55,60] (55,60]
+ [67] (60,65] (55,60] (55,60] (65,70] (55,60] (55,60] (50,55] (60,65] (55,60] (60,65] (60,65]
+ [78] (55,60] (60,65] (60,65] (55,60] (55,60] (60,65] (60,65] (65,70] (55,60] (60,65] (65,70]
+ [89] (60,65] (60,65] (55,60] (60,65] (55,60] (60,65] (60,65] (55,60] (60,65] (55,60] (60,65]
+[100] (55,60] (50,55] (65,70]
+20 Levels: (0,5] (5,10] (10,15] (15,20] (20,25] (25,30] (30,35] (35,40] (40,45] (45,50] ... (95,100]
+\end{verbatim}
+
+\section{Data management using the \emph{data.table} package}
+\label{sec:orgf7f3870}
+\subsection{Introduction}
+\label{sec:orgc68b86a}
+In \Rlogo, data are usually stored in \texttt{data.frame} object since compared
+to matrices, it enables to store in a same object different types of
+variables (e.g. numeric, categorical, \ldots{}). Data management can be
+performed using the core R function, e.g. using \texttt{for} loops or
+the \texttt{apply}, \texttt{tapply}, \texttt{lapply} functions.  However this approach will
+most often requires many lines of code to get the expected
+transformation.  A faster and safer approach is to functions/packages
+suited to the structure of longitudinal data.
+
+\bigskip
+
+We present here how to use the \emph{data.table} package to perform the
+most common operations in data management. The main benefit of using
+this package are:
+\begin{itemize}
+\item a concise and consistant syntax for performing the most common
+operations in data management.
+\item fast and memory efficient implementation (i.e. able to deal with
+dataset with millions of lines).
+\item share common features with the SQL terminology.
+\end{itemize}
+A concise summary of the features can be found at:
+\url{https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf}
+
+\bigskip
+
+Additional documentation can be found:
+\begin{itemize}
+\item in the documentation of the function \texttt{data.table}: type \texttt{?data.table} in \Rlogo.
+\item on the webpage of the package: \url{https://github.com/Rdatatable/data.table/wiki}.
+\item in the vignettes of the package: \url{https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html}.
+\end{itemize}
+
+\bigskip
+
+\uline{Note}: the \textbf{wide format} denote a format where each line corresponds
+to a different individuals. Repeated measurements of the same quantity
+(e.g. weight) for a given individual are stored in different columns
+(e.g. \texttt{weight\_t1}, \texttt{weight\_t2}).
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+5:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+6:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+\end{verbatim}
+
+ The \textbf{long} format denote a format where the same individual may
+appear on different lines but a given quantity is only stored in one
+column. In case of repeated measurement, an additional column encodes
+at which repetition the measurement was obtained (e.g. \texttt{time}):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtL.data)
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Gender Treatment Age time weight  size
+1:  1   Male       Yes  40    1     50 50.67
+2:  2 Female        No  38    1     52 50.26
+3:  3   Male        No  41    1     47 46.61
+4:  4 Female       Yes  41    1     48 45.95
+5:  5 Female       Yes  42    1     52 52.86
+6:  6   Male       Yes  38    1     52 49.37
+\end{verbatim}
+
+\subsection{Display a dataset}
+\label{sec:org57abf47}
+
+Using the \texttt{print} method:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+print(dtW.data) # equivalent to just dtW.data
+\end{lstlisting}
+\begin{verbatim}
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+  1:   1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+  2:   2  38 Female        No        52        57        63   50.26   55.73   60.37
+  3:   3  41   Male        No        47        54        62   46.61   50.89   56.52
+  4:   4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+  5:   5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+ ---                                                                               
+ 98:  98  39   Male        No        53        59        57   49.51   53.80   61.13
+ 99:  99  42 Female       Yes        51        57        62   47.60   56.55   59.47
+100: 100  40 Female        No        53        55        59   50.06   54.90   61.89
+101: 101  38 Female        No        48        58        55   49.51   54.01   62.32
+102: 102  39 Female        No        52        58        68   47.35   56.08   59.49
+\end{verbatim}
+
+To print more lines use the argument \texttt{topn}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+print(dtW.data, topn = 6)
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+  1:   1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+  2:   2  38 Female        No        52        57        63   50.26   55.73   60.37
+  3:   3  41   Male        No        47        54        62   46.61   50.89   56.52
+  4:   4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+  5:   5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+  6:   6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+ ---                                                                               
+ 97:  97  39   Male        No        50        60        63   51.72   57.86   61.06
+ 98:  98  39   Male        No        53        59        57   49.51   53.80   61.13
+ 99:  99  42 Female       Yes        51        57        62   47.60   56.55   59.47
+100: 100  40 Female        No        53        55        59   50.06   54.90   61.89
+101: 101  38 Female        No        48        58        55   49.51   54.01   62.32
+102: 102  39 Female        No        52        58        68   47.35   56.08   59.49
+\end{verbatim}
+
+\subsection{Extract row(s), i.e. all the variables relative to one or several observations}
+\label{sec:orgdd4e910}
+
+\subsubsection{Extract row(s) using row numbers}
+\label{sec:org4cbb7b2}
+Extract the third line:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[3]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+\end{verbatim}
+
+Extract line one to four:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[1:4]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+\end{verbatim}
+
+Extract line one, three, and five:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[c(1,3,5)]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+2:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+3:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+\end{verbatim}
+
+\subsubsection{Extract row(s) according to conditions}
+\label{sec:org11da746}
+
+Extract lines corresponding to the observations with \texttt{Id} equals to \texttt{1}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[Id == 1]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+\end{verbatim}
+
+Extract lines corresponding to the males:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+newdata <- dtW.data[Gender == "Male"]
+head(newdata)
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+2:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+3:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+4:  9  42   Male       Yes        46        52        59   49.53   52.84   60.54
+5: 11  42   Male        No        55        58        59   50.03   55.09   60.94
+6: 12  41   Male       Yes        50        52        58   48.66   52.73   55.86
+\end{verbatim}
+
+Extract lines corresponding to the males whose age is inferior or
+equal to 38:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[Gender == "Male" & Age <= 38]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+2: 41  37   Male        No        53        55        60   47.59   53.75   57.00
+3: 76  38   Male        No        53        57        63   48.10   54.82   55.29
+4: 91  38   Male        No        51        55        59   52.05   57.01   59.53
+\end{verbatim}
+
+Extract lines corresponding to observations where \texttt{Age} is inferior or
+equal to 37, or greater or equal to 43 :
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[Age <= 37 | Age >= 43]
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1: 10  43 Female       Yes        52        57        64   53.22   57.25   62.94
+2: 41  37   Male        No        53        55        60   47.59   53.75   57.00
+3: 45  43 Female       Yes        48        51        61   49.88   54.41   56.18
+4: 73  43   Male       Yes        46        53        54   48.44   52.74   60.93
+\end{verbatim}
+
+\subsection{Extract column(s), i.e. all the observations relative to one or several variables}
+\label{sec:org588b457}
+
+\subsubsection{Extract column(s) using column numbers}
+\label{sec:org473f145}
+
+Extract the third column:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, 3, with = FALSE]
+\end{lstlisting}
+
+\begin{verbatim}
+     Gender
+  1:   Male
+  2: Female
+  3:   Male
+  4: Female
+  5: Female
+ ---       
+ 98:   Male
+ 99: Female
+100: Female
+101: Female
+102: Female
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[[3]]
+\end{lstlisting}
+
+\begin{verbatim}
+  [1] "Male"   "Female" "Male"   "Female" "Female" "Male"   "Female" "Female" "Male"   "Female"
+ [11] "Male"   "Male"   "Female" "Female" "Female" "Female" "Female" "Female" "Male"   "Female"
+ [21] "Male"   "Male"   "Female" "Male"   "Female" "Male"   "Male"   "Male"   "Female" "Female"
+ [31] "Male"   "Male"   "Male"   "Male"   "Female" "Female" "Female" "Female" "Male"   "Male"  
+ [41] "Male"   "Female" "Female" "Female" "Female" "Female" "Female" "Female" "Male"   "Male"  
+ [51] "Female" "Male"   "Male"   "Male"   "Female" "Female" "Male"   "Male"   "Female" "Male"  
+ [61] "Female" "Male"   "Male"   "Male"   "Female" "Male"   "Female" "Male"   "Male"   "Male"  
+ [71] "Female" "Female" "Male"   "Female" "Female" "Male"   "Female" "Female" "Female" "Female"
+ [81] "Male"   "Male"   "Female" "Female" "Male"   "Female" "Female" "Female" "Female" "Female"
+ [91] "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Male"   "Female" "Female"
+[101] "Female" "Female"
+\end{verbatim}
+
+Extract column one, three, and five:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, c(1,3,5), with = FALSE]
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Gender weight_t1
+  1:   1   Male        50
+  2:   2 Female        52
+  3:   3   Male        47
+  4:   4 Female        48
+  5:   5 Female        52
+ ---                     
+ 98:  98   Male        53
+ 99:  99 Female        51
+100: 100 Female        53
+101: 101 Female        48
+102: 102 Female        52
+\end{verbatim}
+
+\subsubsection{Extract column(s) using column names}
+\label{sec:org830bc7e}
+
+Extract one column, e.g. \texttt{Id}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, Id] # similar to dtW.data[,"Id",with=FALSE]
+\end{lstlisting}
+
+\begin{verbatim}
+ [1]   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23
+[24]  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44  45  46
+[47]  47  48  49  50  51  52  53  54  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69
+[70]  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87  88  89  90  91  92
+[93]  93  94  95  96  97  98  99 100 101 102
+\end{verbatim}
+
+Extract several columns, e.g. \texttt{Id} and \texttt{Age}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, .(Id,Age)] 
+# similar to dtW.data[, c("Id","Age"), with = FALSE]
+# similar to dtW.data[, .SD, .SDcols = c("Id","Age")]
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Age
+  1:   1  40
+  2:   2  38
+  3:   3  41
+  4:   4  41
+  5:   5  42
+ ---        
+ 98:  98  39
+ 99:  99  42
+100: 100  40
+101: 101  38
+102: 102  39
+\end{verbatim}
+\subsection{Work with categorical variables}
+\label{sec:org623c0a7}
+\subsubsection{Convert a numeric/character into a factor}
+\label{sec:org7e8e81b}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+class(dtW.data[,Gender])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "character"
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, Gender := as.factor(Gender)]
+class(dtW.data[,Gender])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "factor"
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+class(dtW.data[,Id])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "integer"
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, Id := as.factor(Id)]
+class(dtW.data[,Id])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "factor"
+\end{verbatim}
+
+\subsubsection{Divide a continuous variable into categories}
+\label{sec:org2d5a5ac}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, AgeCategory := cut(Age, breaks = c(0,38,40,42,100))]
+dtW.data[,.(Age,AgeCategory)]
+\end{lstlisting}
+
+\begin{verbatim}
+     Age AgeCategory
+  1:  40     (38,40]
+  2:  38      (0,38]
+  3:  41     (40,42]
+  4:  41     (40,42]
+  5:  42     (40,42]
+ ---                
+ 98:  39     (38,40]
+ 99:  42     (40,42]
+100:  40     (38,40]
+101:  38      (0,38]
+102:  39     (38,40]
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, AgeCategory0 := findInterval(Age, vec = c(0,38,40,42,100))]
+dtW.data[,.(Age,AgeCategory0)]
+\end{lstlisting}
+
+\begin{verbatim}
+     Age AgeCategory0
+  1:  40            3
+  2:  38            2
+  3:  41            3
+  4:  41            3
+  5:  42            4
+ ---                 
+ 98:  39            2
+ 99:  42            4
+100:  40            3
+101:  38            2
+102:  39            2
+\end{verbatim}
+
+The arguments \texttt{rightmost} and \texttt{left.open} can be used to decide what
+to do with the values equaling the breaks (i.e. one of the value of
+the argument \texttt{vec}). But it is often easier to modify \texttt{vec} such that no value
+equals the breaks, e.g. using \texttt{c(0,38,40,42,100)-1e12}.
+
+\subsubsection{Redefine the levels of a factor variable}
+\label{sec:orge7c9e14}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[,AgeCategory0 := factor(AgeCategory0, 
+				levels = 1:4, 
+				labels = c("[0-37)","[38-39)","[40-41)","[42-100)"))]
+dtW.data[,.(Age,AgeCategory0,AgeCategory)]
+\end{lstlisting}
+
+\begin{verbatim}
+     Age AgeCategory0 AgeCategory
+  1:  40      [40-41)     (38,40]
+  2:  38      [38-39)      (0,38]
+  3:  41      [40-41)     (40,42]
+  4:  41      [40-41)     (40,42]
+  5:  42     [42-100)     (40,42]
+ ---                             
+ 98:  39      [38-39)     (38,40]
+ 99:  42     [42-100)     (40,42]
+100:  40      [40-41)     (38,40]
+101:  38      [38-39)      (0,38]
+102:  39      [38-39)     (38,40]
+\end{verbatim}
+
+\subsection{Extract simple features of a dataset}
+\label{sec:orgff6c88c}
+\subsubsection{Number of rows and columns}
+\label{sec:orgcc45277}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dim(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 102  12
+\end{verbatim}
+
+The dataset has 102 rows and 7 columns.
+
+\subsubsection{Name of the columns}
+\label{sec:org2d45058}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+names(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "Id"           "Age"          "Gender"       "Treatment"    "weight_t1"    "weight_t2"   
+[7] "weight_t3"    "size_t1"      "size_t2"      "size_t3"      "AgeCategory"  "AgeCategory0"
+\end{verbatim}
+
+\subsubsection{Type of the columns}
+\label{sec:org7ec83e9}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+str(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+Classes 'data.table' and 'data.frame':	102 obs. of  12 variables:
+ $ Id          : Factor w/ 102 levels "1","2","3","4",..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ Age         : int  40 38 41 41 42 38 42 40 42 43 ...
+ $ Gender      : Factor w/ 2 levels "Female","Male": 2 1 2 1 1 2 1 1 2 1 ...
+ $ Treatment   : chr  "Yes" "No" "No" "Yes" ...
+ $ weight_t1   : int  50 52 47 48 52 52 52 51 46 52 ...
+ $ weight_t2   : int  57 57 54 55 56 59 63 52 52 57 ...
+ $ weight_t3   : int  56 63 62 60 64 65 66 63 59 64 ...
+ $ size_t1     : num  50.7 50.3 46.6 46 52.9 ...
+ $ size_t2     : num  55.9 55.7 50.9 53.1 58.4 ...
+ $ size_t3     : num  61.7 60.4 56.5 59.8 63.8 ...
+ $ AgeCategory : Factor w/ 4 levels "(0,38]","(38,40]",..: 2 1 3 3 3 1 3 2 3 4 ...
+ $ AgeCategory0: Factor w/ 4 levels "[0-37)","[38-39)",..: 3 2 3 3 4 2 4 3 4 4 ...
+ - attr(*, ".internal.selfref")=<externalptr> 
+ - attr(*, "index")= int
+\end{verbatim}
+
+The column \texttt{Gender} contains a factor variable with two levels \texttt{"Yes"}
+and \texttt{"No"}. 
+
+The column \texttt{Id} contains integers while the columns \texttt{weight\_t3}
+contains numeric numbers.
+
+\subsubsection{Summary statistics by column}
+\label{sec:org0a27d10}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+      Id          Age           Gender    Treatment           weight_t1       weight_t2    
+1      : 1   Min.   :37.00   Female:54   Length:102         Min.   :46.00   Min.   :51.00  
+2      : 1   1st Qu.:39.00   Male  :48   Class :character   1st Qu.:49.25   1st Qu.:55.00  
+3      : 1   Median :40.00               Mode  :character   Median :51.00   Median :57.00  
+4      : 1   Mean   :40.26                                  Mean   :50.87   Mean   :56.29  
+5      : 1   3rd Qu.:41.00                                  3rd Qu.:52.00   3rd Qu.:58.00  
+6      : 1   Max.   :43.00                                  Max.   :57.00   Max.   :63.00  
+(Other):96                                                                                 
+  weight_t3       size_t1         size_t2         size_t3        AgeCategory   AgeCategory0
+Min.   :53.0   Min.   :45.67   Min.   :50.89   Min.   :55.02   (0,38]  : 9   [0-37)  : 1   
+1st Qu.:59.0   1st Qu.:48.45   1st Qu.:54.17   1st Qu.:59.35   (38,40] :48   [38-39) :29   
+Median :61.0   Median :50.44   Median :55.59   Median :61.00   (40,42] :42   [40-41) :53   
+Mean   :61.2   Mean   :50.55   Mean   :55.54   Mean   :60.98   (42,100]: 3   [42-100):19   
+3rd Qu.:64.0   3rd Qu.:52.01   3rd Qu.:57.03   3rd Qu.:62.66                               
+Max.   :71.0   Max.   :59.15   Max.   :61.45   Max.   :67.06
+\end{verbatim}
+
+The column \texttt{Gender} contains 48 \texttt{Male} and 54 \texttt{Female}. The median
+value of \texttt{Age} is 40.
+
+\subsubsection{Number of missing values}
+\label{sec:orge534b53}
+
+Total number
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sum(is.na(dtW.data))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0
+\end{verbatim}
+
+Number of missing values by variable:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+colSums(is.na(dtW.data))
+\end{lstlisting}
+
+\begin{verbatim}
+     Id          Age       Gender    Treatment    weight_t1    weight_t2    weight_t3 
+      0            0            0            0            0            0            0 
+size_t1      size_t2      size_t3  AgeCategory AgeCategory0 
+      0            0            0            0            0
+\end{verbatim}
+
+Number of missing values by observation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rowSums(is.na(dtW.data))
+\end{lstlisting}
+
+\begin{verbatim}
+ [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[48] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[95] 0 0 0 0 0 0 0 0
+\end{verbatim}
+
+\subsubsection{Mean value of a column}
+\label{sec:org26f38de}
+
+First extract the values from a column:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+vec.tempo <- dtW.data[,Age]
+\end{lstlisting}
+
+Then compute the mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mean(vec.tempo)
+\end{lstlisting}
+\begin{verbatim}
+[1] 40.26471
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[,mean(Age)]
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 40.26471
+\end{verbatim}
+
+\subsubsection{Correlation between values of several columns}
+\label{sec:orga479a9c}
+
+First extract the columns:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.tempo <- dtW.data[,.(weight_t1,weight_t2,weight_t3)]
+\end{lstlisting}
+
+Then compute the correlation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cor(dt.tempo)
+\end{lstlisting}
+\begin{verbatim}
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.1882809 0.3179175
+weight_t2 0.1882809 1.0000000 0.2374259
+weight_t3 0.3179175 0.2374259 1.0000000
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[,cor(cbind(weight_t1,weight_t2,weight_t3))]
+\end{lstlisting}
+
+\begin{verbatim}
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.1882809 0.3179175
+weight_t2 0.1882809 1.0000000 0.2374259
+weight_t3 0.3179175 0.2374259 1.0000000
+\end{verbatim}
+
+\subsection{Performing operations on a group of rows}
+\label{sec:orgd96c1bc}
+\subsubsection{Computing the number of observations per subgroup}
+\label{sec:orgc146b86}
+Compute the number of observation per gender:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, .N, by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender  N
+1:   Male 48
+2: Female 54
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, NROW(.SD), by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender V1
+1:   Male 48
+2: Female 54
+\end{verbatim}
+
+\subsubsection{Computing the mean by subgroup}
+\label{sec:orgacaf363}
+
+Compute the mean weight at time 1 by gender:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, mean(weight_t1), by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender       V1
+1:   Male 50.45833
+2: Female 51.24074
+\end{verbatim}
+
+Alternative display:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, .(mean = mean(weight_t1)), by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender     mean
+1:   Male 50.45833
+2: Female 51.24074
+\end{verbatim}
+
+Compute the mean weight at time 1 to 3 by gender:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, .(mean_t1 = mean(weight_t1),
+	     mean_t2 = mean(weight_t2),
+	     mean_t3 = mean(weight_t3)), 
+	 by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender  mean_t1  mean_t2  mean_t3
+1:   Male 50.45833 55.81250 60.64583
+2: Female 51.24074 56.72222 61.68519
+\end{verbatim}
+
+Compute the mean weight at time 1 to 3 by gender and treatment group:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data[, .(mean_t1 = mean(weight_t1),
+	     mean_t2 = mean(weight_t2),
+	     mean_t3 = mean(weight_t3)), 
+	 by = c("Gender","Treatment")]
+\end{lstlisting}
+
+\begin{verbatim}
+   Gender Treatment  mean_t1  mean_t2  mean_t3
+1:   Male       Yes 50.42857 55.09524 60.23810
+2: Female        No 51.65517 56.93103 61.75862
+3:   Male        No 50.48148 56.37037 60.96296
+4: Female       Yes 50.76000 56.48000 61.60000
+\end{verbatim}
+
+\subsubsection{Computing the correlation matrix by subgroup}
+\label{sec:org68c5dde}
+
+We create a matrix containing the variables of interest, compute the
+correlation matrix and print it.
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+null.result <- dtW.data[, print(cor(cbind(weight_t1,weight_t2,weight_t3))), 
+			by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+\end{verbatim}
+
+If we want to store the correlation matrix we need to wrap it into
+\texttt{.()} to keep the matrix format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+result <- dtW.data[, .(cor = .(cor(cbind(weight_t1,weight_t2,weight_t3)))), 
+		   by = "Gender"]
+result[,cor]
+\end{lstlisting}
+
+\begin{verbatim}
+[[1]]
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+
+[[2]]
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+\end{verbatim}
+
+Alternatively:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+null.result <- dtW.data[, print(cor(.SD)), 
+			.SDcols = c("weight_t1","weight_t2","weight_t3"), 
+			by = "Gender"]
+\end{lstlisting}
+
+\begin{verbatim}
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+\end{verbatim}
+
+\begin{verbatim}
+[[1]]
+          weight_t1 weight_t2 weight_t3
+weight_t1 1.0000000 0.2867753 0.2886667
+weight_t2 0.2867753 1.0000000 0.2740567
+weight_t3 0.2886667 0.2740567 1.0000000
+
+[[2]]
+           weight_t1  weight_t2 weight_t3
+weight_t1 1.00000000 0.03214955 0.3148578
+weight_t2 0.03214955 1.00000000 0.1551156
+weight_t3 0.31485784 0.15511561 1.0000000
+\end{verbatim}
+
+\subsection{Sort a dataset according to one or several variables}
+\label{sec:org8e358a7}
+
+Sort the dataset according to \texttt{Age}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+setkeyv(dtW.data, c("Age"))
+dtW.data
+\end{lstlisting}
+
+\begin{verbatim}
+     Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+  1: 41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+  2:  2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+  3:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45      (0,38]
+  4: 46  38 Female        No        53        57        63   49.27   61.45   66.59      (0,38]
+  5: 48  38 Female        No        52        57        63   54.27   57.71   65.63      (0,38]
+ ---                                                                                          
+ 98: 95  42   Male       Yes        51        55        64   51.05   56.48   60.30     (40,42]
+ 99: 99  42 Female       Yes        51        57        62   47.60   56.55   59.47     (40,42]
+100: 10  43 Female       Yes        52        57        64   53.22   57.25   62.94    (42,100]
+101: 45  43 Female       Yes        48        51        61   49.88   54.41   56.18    (42,100]
+102: 73  43   Male       Yes        46        53        54   48.44   52.74   60.93    (42,100]
+     AgeCategory0
+  1:       [0-37)
+  2:      [38-39)
+  3:      [38-39)
+  4:      [38-39)
+  5:      [38-39)
+ ---             
+ 98:     [42-100)
+ 99:     [42-100)
+100:     [42-100)
+101:     [42-100)
+102:     [42-100)
+\end{verbatim}
+
+Sort the dataset according to \texttt{Age} and then \texttt{weight\_t1}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+setkeyv(dtW.data, cols = c("Age","weight_t1"))
+dtW.data
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+  1:  41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+  2: 101  38 Female        No        48        58        55   49.51   54.01   62.32      (0,38]
+  3:  59  38 Female       Yes        49        60        61   51.08   53.77   60.75      (0,38]
+  4:  91  38   Male        No        51        55        59   52.05   57.01   59.53      (0,38]
+  5:   2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+ ---                                                                                           
+ 98:  11  42   Male        No        55        58        59   50.03   55.09   60.94     (40,42]
+ 99:  54  42   Male       Yes        57        60        64   58.75   57.57   63.98     (40,42]
+100:  73  43   Male       Yes        46        53        54   48.44   52.74   60.93    (42,100]
+101:  45  43 Female       Yes        48        51        61   49.88   54.41   56.18    (42,100]
+102:  10  43 Female       Yes        52        57        64   53.22   57.25   62.94    (42,100]
+     AgeCategory0
+  1:       [0-37)
+  2:      [38-39)
+  3:      [38-39)
+  4:      [38-39)
+  5:      [38-39)
+ ---             
+ 98:     [42-100)
+ 99:     [42-100)
+100:     [42-100)
+101:     [42-100)
+102:     [42-100)
+\end{verbatim}
+
+\subsection{Change the names of the column in a dataset}
+\label{sec:orgc425c36}
+
+Use a small dataset
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.simple <- dtW.data[,.(Age,Gender,Id,Treatment)]
+head(dt.simple)
+\end{lstlisting}
+
+\begin{verbatim}
+   Age Gender  Id Treatment
+1:  37   Male  41        No
+2:  38 Female 101        No
+3:  38 Female  59       Yes
+4:  38   Male  91        No
+5:  38 Female   2        No
+6:  38   Male   6       Yes
+\end{verbatim}
+
+Change all names:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+setnames(dt.simple, c("AgeXX","GenderYY","IdZZ","Treat"))
+head(dt.simple)
+\end{lstlisting}
+
+\begin{verbatim}
+   AgeXX GenderYY IdZZ Treat
+1:    37     Male   41    No
+2:    38   Female  101    No
+3:    38   Female   59   Yes
+4:    38     Male   91    No
+5:    38   Female    2    No
+6:    38     Male    6   Yes
+\end{verbatim}
+
+Change one or several names (less memory efficient):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+names(dt.simple)[1:2] <- c("Age","Gender")
+head(dt.simple)
+\end{lstlisting}
+
+\begin{verbatim}
+   Age Gender IdZZ Treat
+1:  37   Male   41    No
+2:  38 Female  101    No
+3:  38 Female   59   Yes
+4:  38   Male   91    No
+5:  38 Female    2    No
+6:  38   Male    6   Yes
+\end{verbatim}
+
+\subsection{Converting a dataset from the wide format to the long format}
+\label{sec:org3a6a5dc}
+\subsubsection{Univariate melt}
+\label{sec:org520aa43}
+Data in the wide format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+    Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3 AgeCategory
+1:  41  37   Male        No        53        55        60   47.59   53.75   57.00      (0,38]
+2: 101  38 Female        No        48        58        55   49.51   54.01   62.32      (0,38]
+3:  59  38 Female       Yes        49        60        61   51.08   53.77   60.75      (0,38]
+4:  91  38   Male        No        51        55        59   52.05   57.01   59.53      (0,38]
+5:   2  38 Female        No        52        57        63   50.26   55.73   60.37      (0,38]
+6:   6  38   Male       Yes        52        59        65   49.37   57.91   64.45      (0,38]
+   AgeCategory0
+1:       [0-37)
+2:      [38-39)
+3:      [38-39)
+4:      [38-39)
+5:      [38-39)
+6:      [38-39)
+\end{verbatim}
+
+The convertion can be done naming explicitely the columns or using \texttt{patterns}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtL.data <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+		 measure=c("weight_t1","weight_t2","weight_t3"), 
+		 variable.name = "time", value.name = "weight")
+
+dtL.data.bis <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+		     measure=patterns("weight_t"), 
+		     variable.name = "time", value.name = "weight")
+
+identical(dtL.data, dtL.data.bis)
+\end{lstlisting}
+
+
+\begin{verbatim}
+[1] TRUE
+\end{verbatim}
+
+Arguments (see \texttt{?melt.data.table} for more details):
+\begin{itemize}
+\item \texttt{id.vars}: name of the column(s) that are kept constant over the repetitions
+\item \texttt{measure.vars}: name of the columns to be melted in a single one
+(i.e. repeated measurements).
+\end{itemize}
+
+\bigskip
+
+Data in the long format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtL.data)
+\end{lstlisting}
+
+\begin{verbatim}
+    Id Gender Treatment Age      time weight
+1:  41   Male        No  37 weight_t1     53
+2: 101 Female        No  38 weight_t1     48
+3:  59 Female       Yes  38 weight_t1     49
+4:  91   Male        No  38 weight_t1     51
+5:   2 Female        No  38 weight_t1     52
+6:   6   Male       Yes  38 weight_t1     52
+\end{verbatim}
+
+Reorder the data by Id and time:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+setkeyv(dtL.data, c("Id","time"))
+head(dtL.data)
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Gender Treatment Age      time weight
+1:  1   Male       Yes  40 weight_t1     50
+2:  1   Male       Yes  40 weight_t2     57
+3:  1   Male       Yes  40 weight_t3     56
+4:  2 Female        No  38 weight_t1     52
+5:  2 Female        No  38 weight_t2     57
+6:  2 Female        No  38 weight_t3     63
+\end{verbatim}
+
+\clearpage
+
+\subsubsection{Multivariate melt}
+\label{sec:org59abc40}
+
+Use a list of vectors each containing a vector with the columns to be
+melted:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtL.data <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+		 measure=list(c("weight_t1","weight_t2","weight_t3"), 
+			      c("size_t1","size_t2","size_t3")),
+		 variable.name = "time", value.name = c("weight","size"))
+
+dtL.data.bis <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+		     measure=patterns("weight_t","size_t"),
+		     variable.name = "time", value.name = c("weight","size"))
+
+identical(dtL.data,dtL.data.bis)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] TRUE
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtL.data
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Gender Treatment Age time weight  size
+  1:  41   Male        No  37    1     53 47.59
+  2: 101 Female        No  38    1     48 49.51
+  3:  59 Female       Yes  38    1     49 51.08
+  4:  91   Male        No  38    1     51 52.05
+  5:   2 Female        No  38    1     52 50.26
+ ---                                           
+302:  11   Male        No  42    3     59 60.94
+303:  54   Male       Yes  42    3     64 63.98
+304:  73   Male       Yes  43    3     54 60.93
+305:  45 Female       Yes  43    3     61 56.18
+306:  10 Female       Yes  43    3     64 62.94
+\end{verbatim}
+
+\subsection{Converting a dataset from the long format to the wide format}
+\label{sec:orgb149f2b}
+
+\subsubsection{Univariate}
+\label{sec:org10180c9}
+Data in the long format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtL.data)
+\end{lstlisting}
+
+\begin{verbatim}
+    Id Gender Treatment Age time weight  size
+1:  41   Male        No  37    1     53 47.59
+2: 101 Female        No  38    1     48 49.51
+3:  59 Female       Yes  38    1     49 51.08
+4:  91   Male        No  38    1     51 52.05
+5:   2 Female        No  38    1     52 50.26
+6:   6   Male       Yes  38    1     52 49.37
+\end{verbatim}
+
+The convertion can be done using a formula:
+\begin{itemize}
+\item left side: variables that do not vary
+\item right side: variable indexing the repetition whose values will be
+used to name the new columns.
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data <- dcast(dtL.data, value.var = c("weight"),
+		  formula = Id + Gender + Treatment + Age ~ time)
+\end{lstlisting}
+
+Data in the wide format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+setnames(dtW.data, old = c("1","2","3"), new = paste0("weight_t",1:3))
+dtW.data
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Gender Treatment Age weight_t1 weight_t2 weight_t3
+  1:   1   Male       Yes  40        50        57        56
+  2:   2 Female        No  38        52        57        63
+  3:   3   Male        No  41        47        54        62
+  4:   4 Female       Yes  41        48        55        60
+  5:   5 Female       Yes  42        52        56        64
+ ---                                                       
+ 98:  98   Male        No  39        53        59        57
+ 99:  99 Female       Yes  42        51        57        62
+100: 100 Female        No  40        53        55        59
+101: 101 Female        No  38        48        58        55
+102: 102 Female        No  39        52        58        68
+\end{verbatim}
+
+\clearpage
+
+\subsubsection{Multivariate}
+\label{sec:org5f9761d}
+
+
+Same as before but with several elements in the argument
+\texttt{value.var}. Note that the repetition index (here \texttt{time}) must be the
+same for both variables:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data <- dcast(dtL.data, value.var = c("weight","size"),
+		  formula = Id + Gender + Treatment + Age ~ time)
+\end{lstlisting}
+
+Data in the wide format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data
+\end{lstlisting}
+
+\begin{verbatim}
+      Id Gender Treatment Age weight_1 weight_2 weight_3 size_1 size_2 size_3
+  1:   1   Male       Yes  40       50       57       56  50.67  55.88  61.69
+  2:   2 Female        No  38       52       57       63  50.26  55.73  60.37
+  3:   3   Male        No  41       47       54       62  46.61  50.89  56.52
+  4:   4 Female       Yes  41       48       55       60  45.95  53.10  59.82
+  5:   5 Female       Yes  42       52       56       64  52.86  58.41  63.79
+ ---                                                                         
+ 98:  98   Male        No  39       53       59       57  49.51  53.80  61.13
+ 99:  99 Female       Yes  42       51       57       62  47.60  56.55  59.47
+100: 100 Female        No  40       53       55       59  50.06  54.90  61.89
+101: 101 Female        No  38       48       58       55  49.51  54.01  62.32
+102: 102 Female        No  39       52       58       68  47.35  56.08  59.49
+\end{verbatim}
+
+\section{Graphical display}
+\label{sec:org29717a8}
+
+\subsection{Descriptive plots}
+\label{sec:org09ed529}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dtL.data)
+\end{lstlisting}
+
+\begin{verbatim}
+    Id Gender Treatment Age time weight  size
+1:  41   Male        No  37    1     53 47.59
+2: 101 Female        No  38    1     48 49.51
+3:  59 Female       Yes  38    1     49 51.08
+4:  91   Male        No  38    1     51 52.05
+5:   2 Female        No  38    1     52 50.26
+6:   6   Male       Yes  38    1     52 49.37
+\end{verbatim}
+
+\subsubsection{Spaguetti plot}
+\label{sec:org116556c}
+
+\begin{enumerate}
+\item color by individual (first ten individuals)
+\label{sec:org9bdce74}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.spaguetti1 <- ggplot(dtL.data[Id %in% 1:10], 
+			aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti1 <- gg.spaguetti1 + geom_line() + geom_point()
+gg.spaguetti1
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=0.65\textwidth]{./figures/fig-spaguetti1.pdf}
+\end{center}
+
+\clearpage
+
+\item color by treatment group (first ten individuals)
+\label{sec:org435bff7}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.spaguetti2 <- ggplot(dtL.data[Id %in% 1:10],
+			aes(x = time, y = weight, color = Treatment, group = Id))
+gg.spaguetti2 <- gg.spaguetti2 + geom_line() + geom_point()
+gg.spaguetti2
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{./figures/fig-spaguetti2.pdf}
+\end{center}
+
+\clearpage 
+
+\item pannel for each treatment group (first ten individuals)
+\label{sec:orgad19a31}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.spaguetti3 <- ggplot(dtL.data[Id %in% 1:10], 
+			aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti3 <- gg.spaguetti3 + geom_line() + geom_point()
+gg.spaguetti3 <- gg.spaguetti3 + facet_wrap(~ Treatment, labeller = label_both) 
+gg.spaguetti3
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{./figures/fig-spaguetti3.pdf}
+\end{center}
+
+\clearpage
+
+\item individual spaguetti plot (first ten individuals)
+\label{sec:org3a66526}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.spaguetti4 <- ggplot(dtL.data[Id %in% 1:10], 
+			aes(x = time, y = weight, color = Id, group = Id))
+gg.spaguetti4 <- gg.spaguetti4 + geom_line() + geom_point()
+gg.spaguetti4 <- gg.spaguetti4 + facet_wrap(~ Id, labeller = label_both) 
+gg.spaguetti4
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{./figures/fig-spaguetti4.pdf}
+\end{center}
+
+\clearpage
+\end{enumerate}
+
+\subsubsection{Display the mean over time}
+\label{sec:orga6b1594}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean <- ggplot(dtL.data[Id %in% 1:10], aes(x = time, y = weight))
+gg.mean <- gg.mean + stat_summary(aes(group = Treatment, color = Treatment), 
+				  geom = "line", fun.y = mean, size = 2)
+gg.mean <- gg.mean + stat_summary(aes(group = Treatment, color = Treatment), 
+				  geom = "point", fun.y = mean, size = 3)
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-meanTime.pdf}
+\end{center}
+
+\subsection{Diagnostic plots}
+\label{sec:orgfd04137}
+
+Consider the linear model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.lm <- lm(weight ~ Age + Treatment + size,
+	    data = dtL.data)
+\end{lstlisting}
+
+\subsubsection{Histogram of the residuals}
+\label{sec:org342219e}
+
+Extract the residuals:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+epsilon <- residuals(e.lm, type = "response")
+\end{lstlisting}
+
+Display the histogram
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-hist-residuals.pdf}
+\end{center}
+
+\subsection{Customize graphic}
+\label{sec:org4df689b}
+
+\subsubsection{Modify the legend of a discrete scale}
+\label{sec:org7f2e5f4}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean2 <- gg.mean + scale_colour_manual(name = "Group",
+					  labels = c("X","Y"),
+					  values = c("No" = "purple", 
+						     "Yes" = "black"))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-meanTime2.pdf}
+\end{center}
+
+\subsubsection{Increase the font size}
+\label{sec:org54f9350}
+
+All text:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean3 <- gg.mean + theme(text = element_text(size=10))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-meanTime3.pdf}
+\end{center}
+
+Only x axis labels:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean3 <- gg.mean + theme(axis.text = element_text(size=10))
+\end{lstlisting}
+
+Only axis title:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
+\end{lstlisting}
+
+
+\subsubsection{Put the legend at the bottom}
+\label{sec:org5c650d6}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean4 <- gg.mean + theme(legend.position="bottom")
+\end{lstlisting}
+
+\subsubsection{Default ggplot color palette}
+\label{sec:org2c0a6c9}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+\end{lstlisting}
+
+\subsubsection{Change tick mark labels}
+\label{sec:orgf3fe7ca}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.mean5 <- gg.mean + scale_x_discrete(breaks=c("1","2","3"),
+				       labels=c("Dose 1", "Dose 2", "Dose 3"))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-meanTime5.pdf}
+\end{center}
+
+
+\clearpage
+
+\subsection{Path diagram}
+\label{sec:orgcc5d4cf}
+Using lava:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+m <- lvm(Y~E+X1+X2+M,M~E,E~X2)
+\end{lstlisting}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+plot(m, plot.engine="rgraphviz")
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-pathDiagram1.pdf}
+\end{center}
+
+Dynamic graph:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+plot(m, plot.engine="visnetwork")
+\end{lstlisting}
+
+
+
+\section{Modeling}
+\label{sec:orgce1dce6}
+\subsection{Testing linear hypotheses}
+\label{sec:org98e6996}
+
+Consider the linear model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.lm <- lm(weight ~ Age + Treatment + size,
+	    data = dtL.data)
+summary(e.lm)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+                Estimate Std. Error    t value     Pr(>|t|)
+(Intercept)  13.11292977 5.84498969  2.2434479 2.559263e-02
+Age          -0.05479836 0.13849481 -0.3956709 6.926272e-01
+TreatmentYes -0.65247721 0.36126020 -1.8061143 7.189597e-02
+size          0.81718969 0.03513376 23.2593869 2.743182e-69
+\end{verbatim}
+
+To test linear hypotheses we first need to define them using a contrast matrix:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+name.coef <- names(coef(e.lm))
+n.coef <- length(name.coef)
+
+C <- matrix(0,nrow = 3, ncol = n.coef, 
+	    dimnames = list (c("Age","2 Treatment","All"), name.coef))
+C["Age","Age"] <- 1
+C["2 Treatment","TreatmentYes"] <- 2
+C["All",-1] <- 1
+C
+\end{lstlisting}
+
+\begin{verbatim}
+            (Intercept) Age TreatmentYes size
+Age                   0   1            0    0
+2 Treatment           0   0            2    0
+All                   0   1            1    1
+\end{verbatim}
+
+\subsubsection{Separate Wald tests of linear hypotheses}
+\label{sec:org695d270}
+
+No adjustment for multiple comparison:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(glht(e.lm, linfct = C), test = univariate())
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)  
+Age == 0          -0.0548     0.1385  -0.396   0.6926  
+2 Treatment == 0  -1.3050     0.7225  -1.806   0.0719 .
+All == 0           0.1099     0.3513   0.313   0.7546  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Univariate p values reported)
+\end{verbatim}
+
+Adjustment using bonferroni:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(glht(e.lm, linfct = C), test = adjusted("bonferroni"))
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)
+Age == 0          -0.0548     0.1385  -0.396    1.000
+2 Treatment == 0  -1.3050     0.7225  -1.806    0.216
+All == 0           0.1099     0.3513   0.313    1.000
+(Adjusted p values reported -- bonferroni method)
+\end{verbatim}
+
+Adjustment using the max statistic:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(glht(e.lm, linfct = C), test = adjusted("single-step"))
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                 Estimate Std. Error t value Pr(>|t|)
+Age == 0          -0.0548     0.1385  -0.396    0.916
+2 Treatment == 0  -1.3050     0.7225  -1.806    0.156
+All == 0           0.1099     0.3513   0.313    0.948
+(Adjusted p values reported -- single-step method)
+\end{verbatim}
+
+Alternative syntax (without contrast matrix):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(glht(e.lm, 
+	     linfct = c("Age = 0",
+			"2*TreatmentYes = 0",
+			"Age + TreatmentYes + size = 0")), 
+	test = adjusted("single-step"))
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Linear Hypotheses:
+                               Estimate Std. Error t value Pr(>|t|)
+Age == 0                        -0.0548     0.1385  -0.396    0.916
+2 * TreatmentYes == 0           -1.3050     0.7225  -1.806    0.157
+Age + TreatmentYes + size == 0   0.1099     0.3513   0.313    0.948
+(Adjusted p values reported -- single-step method)
+\end{verbatim}
+
+\subsubsection{Confidence intervals associated with linear hypotheses}
+\label{sec:orgd096e7b}
+
+With no adjustment for multiplicity:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+confint(glht(e.lm, linfct = C), calpha = univariate_calpha())
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Confidence Intervals
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Quantile = 1.9679
+95% confidence level
+ 
+
+Linear Hypotheses:
+                 Estimate lwr     upr    
+Age == 0         -0.0548  -0.3273  0.2177
+2 Treatment == 0 -1.3050  -2.7268  0.1169
+All == 0          0.1099  -0.5815  0.8013
+\end{verbatim}
+
+With adjustment for multiplicity:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+confint(glht(e.lm, linfct = C), calpha = adjusted_calpha())
+\end{lstlisting}
+
+\begin{verbatim}
+	 Simultaneous Confidence Intervals
+
+Fit: lm(formula = weight ~ Age + Treatment + size, data = dtL.data)
+
+Quantile = 2.3128
+95% family-wise confidence level
+ 
+
+Linear Hypotheses:
+                 Estimate lwr     upr    
+Age == 0         -0.0548  -0.3751  0.2655
+2 Treatment == 0 -1.3050  -2.9760  0.3661
+All == 0          0.1099  -0.7027  0.9225
+\end{verbatim}
+
+\subsubsection{Joint test of linear hypotheses}
+\label{sec:org2f1d9f7}
+
+One can use the \texttt{Ftest()} or \texttt{Chisqtest()} to obtain a joint test:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+summary(glht(e.lm, 
+	     linfct = c("Age = 0",
+			"2*TreatmentYes = 0",
+			"Age + TreatmentYes + size = 0")), 
+	test = Ftest())
+\end{lstlisting}
+
+\begin{verbatim}
+	 General Linear Hypotheses
+
+Linear Hypotheses:
+                               Estimate
+Age == 0                        -0.0548
+2 * TreatmentYes == 0           -1.3050
+Age + TreatmentYes + size == 0   0.1099
+
+Global Test:
+      F DF1 DF2    Pr(>F)
+1 181.2   3 302 3.349e-67
+\end{verbatim}
+
+The same can be obtained using the \texttt{linearHypothesis} method from the \texttt{car} package:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+linearHypothesis(e.lm, hypothesis.matrix = C, rhs = c(0,0,0))
+\end{lstlisting}
+
+\begin{verbatim}
+Linear hypothesis test
+
+Hypothesis:
+Age = 0
+2 TreatmentYes = 0
+Age  + TreatmentYes  + size = 0
+
+Model 1: restricted model
+Model 2: weight ~ Age + Treatment + size
+
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1    305 7748.5                                  
+2    302 2767.2  3    4981.3 181.21 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{verbatim}
+
+
+\section{Loops and parallel computations}
+\label{sec:org1298de4}
+\subsection{Apply with progress bar}
+\label{sec:orgb88b2e4}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+ls.res <- pbapply::pblapply(1:5, FUN = rnorm)
+\end{lstlisting}
+
+\begin{verbatim}
+   |                                                  | 0 % ~calculating     |++++++++++                                        | 20% ~00s             |++++++++++++++++++++                              | 40% ~00s             |++++++++++++++++++++++++++++++                    | 60% ~00s             |++++++++++++++++++++++++++++++++++++++++         | 80% ~00s             |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed = 00s
+\end{verbatim}
+
+\subsection{Parallel computation}
+\label{sec:orged5694c}
+\subsubsection{Detect the number of cores}
+\label{sec:orgf431a5a}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cores <- parallel::detectCores()
+cores
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 4
+\end{verbatim}
+
+\subsubsection{Start a cluster}
+\label{sec:org0e31301}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cpus <- 2
+
+cl <- snow::makeSOCKcluster(cpus)
+doSNOW::registerDoSNOW(cl)
+\end{lstlisting}
+
+\subsubsection{Get the name of each core}
+\label{sec:orgdde5ce0}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cpus.name <- unlist(parallel::clusterApply(cl = cl, 1:cpus, function(x){
+    myName <- paste(Sys.info()[['nodename']], Sys.getpid(), sep='-')
+    return(myName)
+}))
+cpus.name
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "SUND31034-4740" "SUND31034-9156"
+\end{verbatim}
+
+\subsubsection{Export element to cluster}
+\label{sec:org705ae84}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+parallel::clusterExport(cl, varlist = "cpus.name")
+
+parallel::clusterApply(cl = cl, 1:cpus, function(x){
+    indexCPU <- which(cpus.name == paste(Sys.info()[['nodename']], Sys.getpid(), sep='-'))
+    indexCPU
+})
+\end{lstlisting}
+
+\begin{verbatim}
+[[1]]
+[1] 1
+
+[[2]]
+[1] 2
+\end{verbatim}
+
+\subsubsection{Show progress bar (in console)}
+\label{sec:orgdcb926e}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.sim <- 20
+
+pb <- txtProgressBar(max = n.sim, style=3)
+opts <- list(progress = function(n) setTxtProgressBar(pb, n))
+
+ls.res <- foreach::`%dopar%`(
+		       foreach::foreach(i=1:n.sim, .options.snow=opts), {
+			   Sys.sleep(0.1)
+		       })
+\end{lstlisting}
+
+\subsubsection{Show progress bar (external)}
+\label{sec:orgc765988}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.sim <- 20
+parallel::clusterExport(cl, varlist = "n.sim")
+
+ls.res <- foreach::`%dopar%`(
+		       foreach::foreach(iCpus=1:cpus), {
+			   pb <- tcltk::tkProgressBar(paste0("CPU ",iCpus), min = 0, max = n.sim, initial = 0)
+
+			   for(iSim in 1:n.sim){
+			       Sys.sleep(0.1)
+			       tcltk::setTkProgressBar(pb = pb, value = iSim,
+						       label = paste(iSim," over ",n.sim," iterations done") )
+			   }
+
+			   close(pb)
+		       })
+\end{lstlisting}
+
+\subsubsection{Stop a cluster}
+\label{sec:orge2e18a5}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+parallel::stopCluster(cl)
+\end{lstlisting}
+
+\section{Generate data using the \emph{lava} package}
+\label{sec:orgf83881e}
+
+\subsection{Generate repeated measurements}
+\label{sec:orgd5b00ab}
+Model:
+Simulation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10)
+dfW.data <- sim(m, n = 102, latent = FALSE)
+\end{lstlisting}
+Display simulated data:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(dfW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+  weight_t1 Gender Treatment weight_t2 weight_t3  size_t1  size_t2  size_t3      Age Id
+1  49.59633   Male       Yes  56.62904  55.58780 50.66805 55.88362 61.69410 39.54546  1
+2  52.35484 Female        No  56.68563  63.21026 50.26003 55.72930 60.36953 37.70748  2
+3  46.53011   Male        No  54.36636  62.05018 46.61315 50.89281 56.52237 40.80342  3
+4  48.48417 Female       Yes  54.79413  59.72995 45.95248 53.09941 59.82107 40.94933  4
+5  52.17022 Female       Yes  55.71550  64.21010 52.86341 58.40516 63.79082 42.06512  5
+6  52.18837   Male       Yes  58.86797  64.51316 49.36853 57.90530 64.45437 37.68392  6
+\end{verbatim}
+
+Modify simulated data 
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.data <- as.data.table(dfW.data)
+dtW.data[,paste0("weight_t",1:3) := lapply(.SD,round),
+	 .SDcols = paste0("weight_t",1:3)]
+dtW.data[,paste0("size_t",1:3) := lapply(.SD,round, digit = 2),
+	 .SDcols = paste0("size_t",1:3)]
+dtW.data[,Age := round(Age)]
+
+setcolorder(dtW.data, c("Id","Age","Gender","Treatment",
+			paste0("weight_t",1:3),paste0("size_t",1:3)))
+head(dtW.data)
+\end{lstlisting}
+
+\begin{verbatim}
+   Id Age Gender Treatment weight_t1 weight_t2 weight_t3 size_t1 size_t2 size_t3
+1:  1  40   Male       Yes        50        57        56   50.67   55.88   61.69
+2:  2  38 Female        No        52        57        63   50.26   55.73   60.37
+3:  3  41   Male        No        47        54        62   46.61   50.89   56.52
+4:  4  41 Female       Yes        48        55        60   45.95   53.10   59.82
+5:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
+6:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
+\end{verbatim}
+
+Export data:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+fwrite(dtW.data, file = "./mydata.csv", sep = ";", dec = ",")
+fwrite(dtW.data, file = "./mydata.txt", sep = " ", dec = ".")
+\end{lstlisting}
+
+\subsection{Generate data with heteroschadasticity}
+\label{sec:org1bcd666}
+
+Model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mSim <- lvm(y[m:v]~x)
+constrain(mSim, v ~ x + a + b) <- function(x){ x[,2] + x[,3] * exp(x[,1]) }
+parameter(mSim, start = c(0,1)) <- ~ a + b
+\end{lstlisting}
+
+Simulation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10)
+n <- 1e3
+df.tempo <- sim(mSim, n = n)
+\end{lstlisting}
+
+Display:
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-hetero.pdf}
+\end{center}
+
+\subsection{Generate survival time under non proportional hazard (non-PH)}
+\label{sec:orgb208bd5}
+
+Model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mSim <- lvm()
+regression(mSim) <- eventtime ~ Gender + Age
+regression(mSim) <- s ~ exp(0.6 * Treatment - 0.5 * Gender)
+distribution(mSim,~ Treatment + Gender) <- binomial.lvm()
+distribution(mSim,~cens) <- coxWeibull.lvm(scale = 1)
+distribution(mSim,~eventtime) <- coxWeibull.lvm(scale = 0.3,shape =~ s)
+eventTime(mSim) <- time ~ min(eventtime = 1, cens = 0)
+\end{lstlisting}
+
+Simulation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10)
+n <- 1e3
+df.tempo <- sim(mSim, n = n)
+\end{lstlisting}
+
+Display:
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-nonPH.pdf}
+\end{center}
+
+\subsection{Generate survival time with delayed treatment effect}
+\label{sec:orgfc9c997}
+
+Generative model with non-PH group effect but no Age effect:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rates1 <- c(0.25,0.5,0.1); cuts <- c(0,3,5)
+rates2 <- c(0.25,0.1,0.1); cuts <- c(0,3,5)
+lasttime <- 20
+
+m1 <- lvm(Age[50:5]~1)
+m2 <- lvm(Age[50:5]~1)
+distribution(m1,~eventtime) <- coxExponential.lvm(rate=rates1,timecut=cuts)
+distribution(m2,~eventtime) <- coxExponential.lvm(rate=rates2,timecut=cuts)
+transform(m1,status~eventtime) <- function(x){as.numeric(x[,1]<= lasttime)}
+transform(m2,status~eventtime) <- function(x){as.numeric(x[,1]<= lasttime)}
+transform(m1,time~eventtime) <- function(x){pmin(lasttime,x[,1])}
+transform(m2,time~eventtime) <- function(x){pmin(lasttime,x[,1])}
+latent(m1) <- ~eventtime
+latent(m2) <- ~eventtime
+\end{lstlisting}
+
+Simulate data:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(12)
+n <- 500
+d1 <- as.data.table(sim(m1,n,latent=FALSE))
+d2 <- as.data.table(sim(m2,n,latent=FALSE))
+dt.data <- rbind(cbind(d1,group="treatment"),cbind(d2,group="placebo"))
+dt.data
+\end{lstlisting}
+
+\begin{verbatim}
+           Age status       time     group
+   1: 46.68935      1  3.8755119 treatment
+   2: 53.52666      1  3.2816799 treatment
+   3: 47.86065      1  0.8515517 treatment
+   4: 47.94281      1 10.1313180 treatment
+   5: 45.53314      1  2.6198951 treatment
+  ---                                     
+ 996: 46.47948      1  2.1560011   placebo
+ 997: 52.78256      1  6.6831242   placebo
+ 998: 45.10627      1  6.0589065   placebo
+ 999: 49.24545      1 12.5248064   placebo
+1000: 49.08839      1  1.9096902   placebo
+\end{verbatim}
+
+Display survival curves by group:
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/fig-delayedTreatmentEffect.pdf}
+\end{center}
+\end{document}

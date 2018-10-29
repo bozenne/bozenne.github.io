@@ -80,7 +80,7 @@ study that you would like to replicate_.
 
 ## When can you get help ? Consultation hours
 I take consultations Monday afternoon (13h30-17h30) and Tuesday
-afternoon (13h30-17h30). <br> <br>
+afternoon (13h30-17h30). <br>
 
 If this is completely incompatible with your schedule, for instance
 because you're running every week experiments those days, just ask me

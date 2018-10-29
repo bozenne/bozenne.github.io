@@ -10,5 +10,5 @@ it is therefore estimation is just not possible (in a unique way). In
 such a case the practionner should modify his/her model to make it
 identifiable or collect additional data. This
 [document](https://bozenne.github.io/doc/Identifiability-LVM/LVMindentifiability.pdf)
-describe a simple procedure to derive necessary identifiability
+describes a simple procedure to derive necessary identifiability
 conditions for a latent variable model.

@@ -5,6 +5,9 @@
 layout: home
 ---
 
+My recipe book in R can be downloaded
+[here](https://bozenne.github.io/doc/howTo/howTo.pdf).
+
 
 
 
