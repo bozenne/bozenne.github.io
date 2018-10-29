@@ -47,8 +47,8 @@ related to my research interests, nothing else.
 ## How to get help?
 
 - **Technical questions**: <br> You don’t need to book a meeting, you
-  can just show at my office Monday afternoon (14h-17h) or Tuesday
-  afternoon (14h-17h) when I am available (check my calendar in
+  can just show at my office Monday afternoon (13h30-17h30) or Tuesday
+  afternoon (13h30-17h30) when I am available (check my calendar in
   [cal](https://cal.nru.dk/)). This type of consultation is typically
   short, i.e. less than 15 minutes. If I am busy, you can also send me
   an email (<brice.ozenne@nru.dk>, please put **Consultation** in the
