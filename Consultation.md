@@ -4,8 +4,9 @@ title:  "Consultations at NRU"
 categories: jekyll update
 ---
 
-This page is meant for the people from NRU ([https://nru.dk/](http://example.com/)) needing
-some assistance with data analysis. I do NOT help people outside NRU.
+This page is meant for NRU staff
+ ([https://nru.dk/](http://example.com/)) needing assistance with data
+ analysis. I do NOT help people outside NRU.
 
 
 ## What can I help you with?
