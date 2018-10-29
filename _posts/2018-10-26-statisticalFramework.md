@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "An ideal statistical analysis (3 steps)"
+title:  "The 4 steps of a statistical analysis"
 categories: jekyll update
 ---
 
@@ -58,26 +58,26 @@ Due to an unobserved variable ?
 3. Is the number of hypotheses you want to test resonnable regarding
    your sample size ?
    
-##  Modeling:
+## Phase 4: modeling and inference
 		
-4. Is the model define during phase 1 is still relevant?
-5. Check model assumptions, especially linearity and
+1. Is the model define during phase 1 is still relevant?
+2. Check model assumptions, especially linearity and
    homoschedasticity. [This page](jekyll/update/2017/06/23/RsoftwareRessources.html) contain
    some of the diagnostic functions in R.
-6. If you had observations with extreme values, check how they impact the parameter(s) of interest.
-7. Check the overall fit of your model. If the fit is poor then maybe
+3. If you had observations with extreme values, check how they impact the parameter(s) of interest.
+4. Check the overall fit of your model. If the fit is poor then maybe
    you have missed an important variable (which could be a confounder
    !), or the model you used is not appropriate. This is problematic
    because you are testing your hypothesis under the assumption that
    the model gives an unbiased estimate of your parameter of interest.
-8. In case of small sample sizes (n<50), confidence intervals based on
+5. In case of small sample sizes (n<50), confidence intervals based on
    a gaussian approximation of the test statistic should not be
    used. Confidence intervals based on a student's t-distribution, boostrap, or
    jacknife should provide a more accurate coverage.
    
    Reporting:
 	
-9. Remember to report both the effect size and the p.value. A
+6. Remember to report both the effect size and the p.value. A
    difference in blood pressure of 0.1mmHg may be significant (p<0.05)
    but not clinically relevant. No need to go further. On the other
    hand you could end up with a clinically relevant difference in

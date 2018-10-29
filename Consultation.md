@@ -4,7 +4,7 @@ title:  "Consultations at NRU"
 categories: jekyll update
 ---
 
-This page is meant for NRU staff
+This page is meant for the NRU staff
  ([https://nru.dk/](http://example.com/)) needing assistance with data
  analysis. I do NOT help people outside NRU.
 
@@ -56,7 +56,7 @@ related to my research interests, nothing else.
   within a week.
 
 - **Assistance for performing a statistical analysis/Planning a
-study**: <br> You should send me an email (brice.ozenne@nru.dk, please
+study**: <br> You should send me an email (<brice.ozenne@nru.dk>, please
 put **Consultation** in the subject line). The email should include:
   + a name for your project
   + a short description of your study and your questions. By short I
@@ -67,7 +67,7 @@ e.g. _a display of the design of the study_ <br> or _the article of a
 study that you would like to replicate_.
   <br> <br>
 
-  Then you can book an appointment (/2 hour to 1 hour) in my calendar
+  Then you can book an appointment (1/2 hour to 1 hour) in my calendar
   during my consultation hours. I only take one or two consultations
   like that a week so I may ask you to postpone the meeting if I am
   too busy.
@@ -80,9 +80,7 @@ study that you would like to replicate_.
 
 ## When can you get help ? Consultation hours
 I take consultations Monday afternoon (13h30-17h30) and Tuesday
-afternoon (13h30-17h30). 
-
-<br> <br>
+afternoon (13h30-17h30). <br> <br>
 
 If this is completely incompatible with your schedule, for instance
 because you're running every week experiments those days, just ask me
