@@ -1,0 +1,20 @@
+\BOOKMARK [1][-]{section.1}{Preparation}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Load R packages}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Data generation}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{ICC1: fixed number of sessions \(e.g. test, re-test\) assuming no session effect}{}% 4
+\BOOKMARK [2][-]{subsection.2.1}{using mixed models}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.2}{using generalized least squares}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.3}{using anova}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.4}{using existing packages}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{ICC3: fixed number of sessions \(e.g. test, re-test\) accounting for a session effect}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{using mixed models}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.2}{using generalized least squares}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.3}{using anova}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.4}{using existing packages}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{Heterogenous variance between sessions}{}% 14
+\BOOKMARK [1][-]{section.5}{ICC2: random number of sessions}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{using mixed models}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{using generalized least squares}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.3}{using anova}{section.5}% 18
+\BOOKMARK [2][-]{subsection.5.4}{using existing packages}{section.5}% 19
+\BOOKMARK [1][-]{section.6}{Different correlation between sessions}{}% 20

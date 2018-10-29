@@ -1,0 +1,5 @@
+\contentsline {section}{\numberline {1}Simulate data}{2}{section.1}
+\contentsline {section}{\numberline {2}Prepare data with non linear transformations of X}{2}{section.2}
+\contentsline {section}{\numberline {3}Fit models}{3}{section.3}
+\contentsline {section}{\numberline {4}Extract the fitted values}{3}{section.4}
+\contentsline {section}{\numberline {5}Display fit}{3}{section.5}
