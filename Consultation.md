@@ -47,11 +47,11 @@ related to my research interests, nothing else.
 ## How to get help?
 
 - **Technical questions**: <br> You don’t need to book a meeting, you
-  can just show at my office Monday afternoon (13h30-17h30) or Tuesday
-  afternoon (13h30-17h30) when I am available (check my calendar in
-  [cal](https://cal.nru.dk/)). This type of consultation is typically
-  short, i.e. less than 15 minutes. If I am busy, you can also send me
-  an email (<brice.ozenne@nru.dk>, please put **Consultation** in the
+  can just show at my office during my consultation hours. Just check
+  in my calendar (in [cal](https://cal.nru.dk/)) that I don't already
+  have a meeting. This type of consultation is typically short,
+  i.e. less than 15 minutes. If I am busy, you can also send me an
+  email (<brice.ozenne@nru.dk>, please put **Consultation** in the
   subject line) explaining your problem and I will try to answer
   within a week.
 
@@ -67,16 +67,26 @@ e.g. _a display of the design of the study_ <br> or _the article of a
 study that you would like to replicate_.
   <br> <br>
 
-  Then you can book an appointment (1/2 hour to 1 hour) in my calendar
-  Monday afternoon (13h30-17h00) or Tuesday afternoon (13h30-17h00). I
-  only take one or two consultations like that a week so I may ask you
-  to postpone the meeting if I am too busy. 
+  Then you can book an appointment (/2 hour to 1 hour) in my calendar
+  during my consultation hours. I only take one or two consultations
+  like that a week so I may ask you to postpone the meeting if I am
+  too busy.
   
   Note: sending me information by email may seem a loss of time, but
   it will help me prepare the consultation and so we will be more
   efficient when we will meet. In some cases it also forces you to
   write down clearly what you are actually doing / wanting to do and
   you may find by yourself the answers to your questions!
+
+## When can you get help ? Consultation hours
+I take consultations Monday afternoon (13h30-17h30) and Tuesday
+afternoon (13h30-17h30). 
+
+<br> <br>
+
+If this is completely incompatible with your schedule, for instance
+because you're running every week experiments those days, just ask me
+we will figure out a solution.
 
 ## What to expect?
 
