@@ -6,9 +6,9 @@ permalink: /Research/
 
 As an applied statistician, my work mixes methodological development,
 software development, and data analysis. By methodological development
-I mean try to re-use or combine existing existing statistical results
-to solve a statistical issue. So far, I have organized my research
-around three topics:
+I mean adapt or combine existing existing statistical results to solve
+a statistical issue. So far, I have organized my research around three
+topics:
 - the development of **latent variable models** for the analysis of
   complex systems. I apply these developments on neuroimaging data and
   data from psychological tests to investigate the relationship
