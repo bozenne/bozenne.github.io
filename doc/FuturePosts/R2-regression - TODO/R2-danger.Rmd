@@ -1,0 +1,82 @@
+---
+title: "Mixed effect model with interactions"
+output: 
+  pdf_document:
+  fig_caption: yes
+keep_tex: yes
+number_sections: yes
+toc: no
+fontsize: 12pt
+---
+  
+Set seed
+```{r, message=FALSE}
+set.seed(10)
+library(ggplot2)
+library(data.table)
+```
+
+# Two independent random variables:
+```{r, message=FALSE}
+n <- 2e1
+X <- rnorm(n)
+Y <- rnorm(n)
+
+df.data <- data.frame(X = X, Y = Y, type = "base")
+ggLM <- ggplot(df.data, aes(X,Y)) + geom_point(aes(color = type)) + geom_smooth(method = "lm", color = "red")
+ggLM
+cor.test(df.data$X,df.data$Y)
+```
+
+# Add 2 "normal" points where X and Y are correlated
+```{r, message=FALSE}
+Xplus <- rnorm(2)
+Yplus <- rnorm(2, mean = Xplus[1:2])
+df.data  <- rbind(df.data,
+                  data.frame(X = Xplus, Y = Yplus, type = "extraNormal")
+)
+ggLM %+% df.data
+cor.test(df.data$X,df.data$Y)
+```
+
+# Add 2 extreme points where X and Y are correlated
+```{r, message=FALSE}
+Xext <- c(-5, 5)
+Yext <- rnorm(2, mean = range(Xext))
+df.data  <- rbind(df.data,
+                  data.frame(X = Xext, Y = Yext, type = "extraExtreme")
+)
+
+ggLM %+% df.data[df.data$type != "extraNormal",]
+cor.test(df.data$X,df.data$Y)
+```
+
+The correlation coefficient is completely driven by the correlation of 2 the extreme points.
+
+# Correlation coefficient dependent of the interval
+```{r, message=FALSE}
+n <- 2e1
+X <- rnorm(n = n, mean = 0, sd = 3)
+Y <- 3 + 2*X + rnorm(n = n, mean = 0, sd = 4)
+df.data2 <- data.frame(Y = Y, X = X)
+
+# cut at the median point
+index.I1 <- which(df.data2$X<=median(df.data2$X))
+index.I2 <- which(df.data2$X>median(df.data2$X))
+
+cor.test(Y, X)
+cor.test(Y[index.I1], X[index.I1])
+cor.test(Y[index.I2], X[index.I2])
+
+df.res <- data.table(rbind(data.frame("Y" = df.data2$Y, "X" = df.data2$X, "fitted" = lm(Y~X,data = df.data2)$fitted.values, method = "lm0.I"),
+                           data.frame("Y" = df.data2$Y[index.I1], "X" = df.data2$X[index.I1], "fitted" = lm(Y~X,data = df.data2, subset = index.I1)$fitted.values, method = "lm1.I"),
+                           data.frame("Y" = df.data2$Y[index.I2], "X" = df.data2$X[index.I2], "fitted" = lm(Y~X,data = df.data2, subset = index.I2)$fitted.values, method = "lm2.I")
+))
+setkey(df.res, method, Y)
+df.res[,residuals := fitted - Y]
+ggbase <- ggplot(df.res, aes(x = X)) 
+ggbase + geom_point(aes(y = Y), alpha = 1) + geom_line(aes(col = method, group = method, y = fitted))
+
+print(df.res[, .(varY = var(Y), varResidual = var(residuals), R2 = 1 - var(residuals)/var(Y)), by = method]
+)
+```
