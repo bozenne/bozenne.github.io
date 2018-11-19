@@ -6,4 +6,4 @@ categories: jekyll update
 
 This
 [document](https://bozenne.github.io/doc/multipleTesting/lavaSearch2-WP1.pdf)
-present a simple but non-efficient strategy to analyse the effect of one exposure on multiple outcomes.
+present a simple but non-efficient strategy to analyse the effect of one exposure on multiple outcomes. 

@@ -86,6 +86,63 @@ If this is completely incompatible with your schedule, for instance
 because you're running every week experiments those days, just ask me
 we will figure out a solution.
 
+<br>
+<br>
+
+NOTE: the 20/11, 27/11, 04/11, I won't take consultations (I'm teaching at KU)
+
+## Authorship
+
+- **Technical questions**: This help does not qualify me for co-authorship. 
+
+- **Assistance for performing a statistical analysis**: This help
+  qualifies me for co-authorship. I expect it to be automatic. If
+  you/your superviser disagree we should discuss it at the first
+  meeting. My affiliations are:
+  + Neurobiology Research Unit, Rigshospitalet and University of
+    Copenhagen, Copenhagen, Denmark
+  + Section of Biostatistics, University of Copenhagen, Copenhagen,
+  Denmark  <br> <br>
+  
+- **Planning a study**: This help does not qualify me for co-authorship. 
+
+## Response time 
+
+I usually answer to questions that I could not solve during the
+consultation within a week. I you havn't heared from after a week,
+please send me a reminder, I have probably forgotten (sorry!).
+
+If you ask me to review your article you should give me a delay of
+two weeks.
+
+What I cannot do is to help you to finish your analysis for
+tomorrow. Please anticipate a resonable time for the statistical
+analysis, especially if you have a complicated design or many
+hypotheses to test.
+
+## Software
+
+I can provide you support in [R](https://www.r-project.org/) to find
+the appropriate function(s) to perform your analysis, display the
+results, and understand the outputs of the software.
+
+For other softwares (e.g. SAS, Stata, SPSS, GraphPad Prism, MATLAB,
+Python, ...), I can try to help you to understand the outputs of
+software. Note that they are very skilled people in SAS at the section
+of biostatistics so you should consider using Statistical advisory
+service at Rigshospitalet (below) if you want to use SAS but you
+anticipate you will need help to use it. People from the data analysis
+group at NRU tend to use MATLAB and many psychologists at NRU use SPSS
+so they can probably help you with these software.
+
+## Confidentiality
+
+Please tell me if there is any confidentiality clause relative to your
+results or your data. By default, I will not share your data with
+anybody without asking you. However I may discuss the analysis with
+people at the section of biostatistics (not the results just the
+method).
+
 ## What to expect?
 
 - **Technical questions**: <br> I will try my best to indicate the
@@ -169,60 +226,6 @@ we will figure out a solution.
  <!-- + to know all the statistical methods: sadly I have a limited -->
  <!-- knowledge. So if you need to use a method with which I am not -->
  <!-- familiar may need additional time to be able to help you. -->
-
-
-
-## Authorship
-
-- **Technical questions**: This help does not qualify me for co-authorship. 
-
-- **Assistance for performing a statistical analysis**: This help
-  qualifies me for co-authorship. I expect it to be automatic. If
-  you/your superviser disagree we should discuss it at the first
-  meeting. My affiliations are:
-  + Neurobiology Research Unit, Rigshospitalet and University of
-    Copenhagen, Copenhagen, Denmark
-  + Department of Biostatistics, University of Copenhagen, Copenhagen,
-  Denmark  <br> <br>
-  
-- **Planning a study**: This help does not qualify me for co-authorship. 
-
-## Response time 
-
-I usually answer to questions that I could not solve during the
-consultation within a week. I you havn't heared from after a week,
-please send me a reminder, I have probably forgotten (sorry!).
-
-If you ask me to review your article you should give me a delay of
-two weeks.
-
-What I cannot do is to help you to finish your analysis for
-tomorrow. Please anticipate a resonable time for the statistical
-analysis, especially if you have a complicated design or many
-hypotheses to test.
-
-## Software
-
-I can provide you support in [R](https://www.r-project.org/) to find
-the appropriate function(s) to perform your analysis, display the
-results, and understand the outputs of the software.
-
-For other softwares (e.g. SAS, Stata, SPSS, GraphPad Prism, MATLAB,
-Python, ...), I can try to help you to understand the outputs of
-software. Note that they are very skilled people in SAS at the section
-of biostatistics so you should consider using Statistical advisory
-service at Rigshospitalet (below) if you want to use SAS but you
-anticipate you will need help to use it. People from the data analysis
-group at NRU tend to use MATLAB and many psychologists at NRU use SPSS
-so they can probably help you with these software.
-
-## Confidentiality
-
-Please tell me if there is any confidentiality clause relative to your
-results or your data. By default, I will not share your data with
-anybody without asking you. However I may discuss the analysis with
-people at the section of biostatistics (not the results just the
-method).
 
 ## Other places where you can find help for data analysis
 
