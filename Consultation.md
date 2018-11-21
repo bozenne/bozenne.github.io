@@ -100,9 +100,10 @@ NOTE: the 20/11, 27/11, 04/11, I won't take consultations (I'm teaching at KU)
   you/your superviser disagree we should discuss it at the first
   meeting. My affiliations are:
   + Neurobiology Research Unit, Rigshospitalet and University of
-    Copenhagen, Copenhagen, Denmark
-  + Section of Biostatistics, University of Copenhagen, Copenhagen,
-  Denmark  <br> <br>
+    Copenhagen, 9 Blegdamsvej, 2100 Copenhagen, Denmark
+  + Department of Public Health, Section of Biostatistics, University
+  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen K, Denmark,
+  Denmark <br> <br>
   
 - **Planning a study**: This help does not qualify me for co-authorship. 
 
