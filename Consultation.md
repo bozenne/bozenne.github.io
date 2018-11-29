@@ -42,7 +42,7 @@ statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
 statistical analysis myself (this is at my discretion). If I accept
 this would be because the statistical issues met in your study are
-related to my research interests, nothing else. 
+related to my research interests. 
 
 ## How to get help?
 
@@ -201,7 +201,7 @@ method).
   classical in your fields. But at the end either we find an agreement
   or I may withdraw from the project. If it was the case, it only
   means that I don't feel comfortable taking the responsibility for a
-  statistical analysis I disapprove, nothing more.
+  statistical analysis.
   + before submitting an article with my name on it, you need to have
   had my approval. Send me your article and I will give you some
   comments. If I mention "major" or "major concerns" or something
