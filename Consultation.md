@@ -199,9 +199,7 @@ method).
   + to follow my recommendations: you are also welcome to disagree and
   to propose alternative approach, for instance because they are more
   classical in your fields. But at the end either we find an agreement
-  or I may withdraw from the project. If it was the case, it only
-  means that I don't feel comfortable taking the responsibility for a
-  statistical analysis.
+  or I may withdraw from the project.
   + before submitting an article with my name on it, you need to have
   had my approval. Send me your article and I will give you some
   comments. If I mention "major" or "major concerns" or something
