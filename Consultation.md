@@ -107,6 +107,10 @@ NOTE: the 20/11, 27/11, 04/11, I won't take consultations (I'm teaching at KU)
   
 - **Planning a study**: This help does not qualify me for co-authorship. 
 
+- **Externalizing the statistical analysis**: This help qualifies me
+  for co-authorship. I expect it to be automatic and I will also
+  expect to have a good place (first, second, last).
+
 ## Response time 
 
 I usually answer to questions that I could not solve during the
