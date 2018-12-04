@@ -1,4 +1,4 @@
-% Created 2018-08-13 ma 18:20
+% Created 2018-12-04 ti 10:42
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
 
@@ -174,59 +174,57 @@ emphstyle=\color{blue}
 \maketitle
 
 \section*{Summary}
-\label{sec:org719aa51}
-We propose two strategies to assess the effect of an exposure (e.g. a
+\label{sec:org8f71312}
+We propose a strategy to assess the effect of an exposure (e.g. a
 disease, a genetic factor) on several outcomes (e.g. psychological
 outcomes, the binding potential measured in several brain regions)
-while accounting for possible risk factors and confounders:
-\begin{itemize}
-\item \emph{Multiple univariate regressions}: we use a separate model to model
-the relationship between an outcome and the exposure.
-\item \emph{Joint model}: we model the relationship between the outcomes and
-the exposure in a single latent variable model
-\citep{holst2013linear}.
-\end{itemize}
-Once the model(s) has(have) been correctly fitted, a global test can
-  be used to test whether there is any effect of the exposure one the
-  outcomes. After that, multiple tests are performed to test
-  outcome-specific effects of the exposure where the Dunnett
-  adjustment is used to control the type 1 error
-  \citep{pipper2012versatile}. An adjustment is used to improved the
-  control of the type 1 error in small sample sizes (e.g. n<100). This
-  adjustment has been shown to beneficial in several settings (using
-  simulation studies) but does not always perfectly control the type 1
-  error rate. It is advised to check that validity of the adjustment
-  when using very small samples or models with many parameters.
+while accounting for possible risk factors and confounders. This
+strategy, called \emph{multiple univariage regressions} strategy, models
+the relationship between each outcome and the exposure using a
+separate model. Once the models have been correctly fitted, a global
+test can be used to test whether there is any effect of the exposure
+on the outcomes. After that, multiple tests are performed to test
+outcome-specific effects of the exposure where the Dunnett adjustment
+is used to control the type 1 error \citep{pipper2012versatile}. An
+adjustment is used to improved the control of the type 1 error in
+small sample sizes (e.g. n<100). This adjustment has been shown to
+beneficial in several settings (using simulation studies) but does not
+always perfectly control the type 1 error rate. It is advised to check
+that validity of the adjustment when using very small samples or
+models with many parameters.
 
 \bigskip
 
-The proposed strategies can be used with continuous outcomes,
-  categorical outcomes, or a mixture of the two. The number of
-  outcomes should be smaller than the number of observations
-  (low-dimensional setting). By explicitly modeling the correlation
-  between the outcomes, the \emph{joint model} strategy, when valid, will
-  provide more powerful tests compared to the \emph{multiple univariate
-  regressions} strategy. Another benefit of the \emph{joint model} strategy
-  is the use of latent variables that may reflect unmeasured
-  biological mechanisms and therefore help the interpretation of the
-  results. The drawbacks with this approach is that it relies on more
-  assumptions and a more complex statistical modeling.
+The proposed strategy can be used with any type of outcomes for which
+  a can fit a model with asymptotically linear estimators
+  (\cite{tsiatis2007semiparametric}, section 3). This includes
+  generalized linear model or Cox models. It makes it very flexible
+  and the strategy makes only few assumptions on the joint
+  distribution. The drawback is that it is not the most efficient
+  approach. For instance modelling the joint distribution of the
+  outcomes, e.g. using a latent variable model / mixed model in the
+  case of normally distributed outcomes, will be a more efficient
+  strategy. Another limitation is that with the proposed approach a
+  treatment effect specific to each outcome will be estimated, while
+  in some context the investigator may want to constrain the treatment
+  effect to be the same for some outcomes. Finally, to be feasible the
+  strategy requires the number of outcomes to be not too large (<100)
+  and smaller than the number of observations (low-dimensional
+  setting).
 
 \bigskip
 
-This document we aim at giving a basic understanding of the two
-  strategies\footnote{For now, only the "multiple univariate regressions" is
-presented in this document.}, how to implement them, and their limitations. In
-  particular, we don't claim that the proposed strategies give valid
-  or optimal results in every application (they probably do not) and
-  many other approaches exists (e.g. MANOVA) but won't be discussed
-  here. The document is organized as follow: first section
-  \ref{sec:Rsoftware} present how to install and set up the \Rlogo{}
-  software. Then basic functions to import and process the data are
-  presented in section \ref{sec:dataManagement}. The goals, a minima, of
-  the descriptive analysis are presented in section \ref{sec:descriptive},
-  as well as code to export figures and tables to Word
-  documents. Section \ref{sec:LM} recalls how to perform a univariate
+This document we aim at giving a basic understanding of the strategy
+  and how to implement it. In particular, we don't claim that the
+  proposed strategy is valid or optimal results in every application
+  (it is probably not the case) and many other approaches exists but
+  won't be discussed here. The document is organized as follow: first
+  section \ref{sec:Rsoftware} present how to install and set up the
+  \Rlogo{} software. Then basic functions to import and process the
+  data are presented in section \ref{sec:dataManagement}. The goals, a
+  minima, of the descriptive analysis are presented in section
+  \ref{sec:descriptive}, as well as code to export figures and tables to
+  Word documents. Section \ref{sec:LM} recalls how to perform a univariate
   linear regression in \Rlogo{} and present tools to assess the
   parametric assumptions and section \ref{sec:multipleLM} presents the
   \emph{multiple univariate regressions} strategy. Finally appendix
@@ -296,7 +294,7 @@ synthetic description of the functionalities can be found at
 \section{Data management}
 \label{sec:dataManagement}
 \subsection{Working directory}
-\label{sec:org2b0a31e}
+\label{sec:orgdc24857}
 
 The working directory is where R, by default, look for files
 to import and export data or figures. The current working directory
@@ -329,7 +327,7 @@ getwd()
 \end{verbatim}
 
 \subsection{Importing the data}
-\label{sec:org7b39419}
+\label{sec:org4e202cc}
 
 It is a good idea to start by checking that the working directory
 contains the data we want to import. For instance the file \texttt{data.csv}
@@ -369,10 +367,13 @@ We can see that the columns are separated with \texttt{,} and that the \texttt{.
 indicates the decimal values. Moreover the words such as the columns
 names or the subject identities are surrounded by \texttt{\textbackslash{}"} (e.g. \texttt{\textbackslash{}"Id\textbackslash{}"}
 stand for Id). Finally in this example there is no missing values but
-if there was it is important to know how they are encoded. The command
-to import the data depends on the type of file. Here for a \texttt{.csv} file
-we use \texttt{read.csv}. Luckily the default arguments \texttt{sep}, \texttt{dec}, \texttt{quote}
-are correctly specified:
+if there was it is important to know how they are encoded.
+
+\clearpage
+
+ The command to import the data depends on the type of file. Here for
+a \texttt{.csv} file we use \texttt{read.csv}. Luckily the default arguments \texttt{sep},
+\texttt{dec}, \texttt{quote} are correctly specified:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 args(read.csv)
@@ -424,7 +425,7 @@ is a type of character strings in R) and the rest contains numerical
 values.
 
 \subsection{Data processing}
-\label{sec:org397e56f}
+\label{sec:org826f765}
 
 Often the raw data needs to be transformed before being analyzed:
 \begin{itemize}
@@ -440,6 +441,9 @@ This is already better:
 \begin{lstlisting}
 female <- c(1,0,1,0,1) ## we can guess that 1: female and 0: male
 \end{lstlisting}
+
+\clearpage 
+
 but it is a good practice in such situation to rename the actual
 values into something understandable:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -461,9 +465,9 @@ using the \texttt{melt} method:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 dfL <- melt(dfW, 
-	    id.vars = c("Id","Gender","age","BMI","MDI"),
-	    value.name = "score",
-	    variable.name = "outcome")
+			id.vars = c("Id","Gender","age","BMI","MDI"),
+			value.name = "score",
+			variable.name = "outcome")
 head(dfL)
 \end{lstlisting}
 
@@ -543,7 +547,7 @@ the function \texttt{univariateTable} from the Publish package:
 \begin{lstlisting}
 library(Publish)
 myTable1 <- univariateTable(Gender ~ age + BMI + MDI + Y1 + Y2 + Y3 + Y4 + Y5, 
-			    data = dfW)
+							data = dfW)
 myTable1
 \end{lstlisting}
 
@@ -565,13 +569,15 @@ officer:
 \begin{lstlisting}
 library(officer)
 myTable1.doc <- body_add_table(x = read_docx(), 
-			       value =  summary(myTable1)) 
+							   value =  summary(myTable1)) 
 print(myTable1.doc, target = "./Table1.docx")
 \end{lstlisting}
 
 To keep the code simple, we only present here a very basic application
 of these tools. More complex tables with a nicer display in word can
 be obtain with a bit of coding.
+
+\clearpage
 
 \begin{itemize}
 \item \textbf{make synthetic representations of your data} using graphs or
@@ -626,7 +632,7 @@ practice. Univariate linear regression are also not recommended in
 presence of extreme values (A3) or very correlated covariates (A4).
 
 \subsection{Fitting a univariate linear regression in \Rlogo{}}
-\label{sec:orga91d9f1}
+\label{sec:org569a9bc}
 
 We can use:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -657,6 +663,8 @@ then we can interpret \(\beta_{MDI}\) as the effect of MDI on the
 outcome. This means that if we could change the MDI of an individual
 by one unit then its variation in outcome should be \(\beta_{MDI}\).
 
+\clearpage
+
 \subsection{Diagnostics tools for univariate linear regression in \Rlogo{}}
 \label{sec:diagLM}
 \Rlogo{} provides a graphical display that giving an overview of the
@@ -680,7 +688,7 @@ shape) and the bottom right plot can be used to identify observation
 that have a huge influence on the fitted values.
 
 \subsubsection{Testing (A1)}
-\label{sec:org0e47a56}
+\label{sec:orgcec1e51}
 
 The qqtest package provides a more readable qqplot. To use it, we
 first need to extract the residuals. This can be achieved using the
@@ -742,8 +750,10 @@ W = 0.98104, p-value = 0.5967
 Here the null hypothesis is that the residuals follow a normal
 distribution.
 
+\clearpage
+
 \subsubsection{Testing (A2)}
-\label{sec:org762bdaf}
+\label{sec:orgfccfbdf}
 
 A statistical test can also be used to assess whether there is
 evidence for a more complex functional form for the linear predictor:
@@ -772,7 +782,7 @@ Based on 1000 realizations. Cumulated residuals ordered by MDI-variable.
 \end{verbatim}
 
 \subsubsection{Testing (A3)}
-\label{sec:org74b22b4}
+\label{sec:orgb15ca4f}
 
 The \texttt{influence} method can be used to output what is the impact of
 each observation on each estimated parameter:
@@ -794,7 +804,7 @@ head(influence(e.lm)$coefficient)
 Large values (positive or negative) indicate influential observations.
 
 \subsubsection{Testing (A4)}
-\label{sec:org3ee7071}
+\label{sec:org9124794}
 
 The correlation among the explanatory variables can be assessed using
 the VIF (variance inflation factor):
@@ -812,7 +822,7 @@ arbitrary).
 
 
 \subsection{Hypothesis testing}
-\label{sec:org35a0fe8}
+\label{sec:org33074eb}
 
 We want to formally test whether there is an effect of MDI on the
 outcome. This is equivalent to test the null hypothesis:
@@ -889,39 +899,39 @@ Y_5  &= \alpha_{Y_{5}} + \beta_{Y_5,age} age + \beta_{Y_5,BMI} BMI + \beta_{Y_5,
 \end{align*}
 where
 \(\varepsilon_{1},\varepsilon_{2},\varepsilon_{3},\varepsilon_{4},\varepsilon_{5}\)
-are the residual errors. The outcomes are assumed to have zero mean
+are the residual errors. The residuals are assumed to have zero mean
 and finite variance, respectively,
 \(\sigma^2_{1},\sigma^2_{2},\sigma^2_{3},\sigma^2_{4},\sigma^2_{5}\). Here
 we make no assumption on the correlation structure between the
 residuals.
 
 \subsection{Fitting multiple linear regression in \Rlogo{}}
-\label{sec:org6170c81}
+\label{sec:org579dfe3}
 
 We can estimate all the 5 models and store them into a list:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 ls.lm <- list(Y1 = lm(Y1 ~ age + BMI + MDI, data = dfW),
-	      Y2 = lm(Y2 ~ age + BMI + MDI, data = dfW),
-	      Y3 = lm(Y3 ~ age + BMI + MDI, data = dfW),
-	      Y4 = lm(Y4 ~ age + BMI + MDI, data = dfW),
-	      Y5 = lm(Y5 ~ age + BMI + MDI, data = dfW)
-	      )
+			  Y2 = lm(Y2 ~ age + BMI + MDI, data = dfW),
+			  Y3 = lm(Y3 ~ age + BMI + MDI, data = dfW),
+			  Y4 = lm(Y4 ~ age + BMI + MDI, data = dfW),
+			  Y5 = lm(Y5 ~ age + BMI + MDI, data = dfW)
+			  )
 \end{lstlisting}
 
 \subsection{Interpretation of the regression coefficients}
-\label{sec:orgd45fd6e}
+\label{sec:org744f64f}
 
 Same as in the univariate case (see section \ref{sec:interpretationLM}).
 
 \subsection{Diagnostics tools for univariate linear regression in \Rlogo{}}
-\label{sec:org4725676}
+\label{sec:orga17204e}
 
 Same as in the univariate case (see section \ref{sec:diagLM}). This model
 checking needs to be done for each outcome.
 
 \subsection{Hypothesis testing}
-\label{sec:org091446a}
+\label{sec:orga039532}
 
 We now want to test:
 \begin{align*}
@@ -938,9 +948,11 @@ collect the p-values:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 vec.p.value <- unlist(lapply(ls.lm, function(x){
-    summary(x)$coef["MDI","Pr(>|t|)"]
+	summary(x)$coef["MDI","Pr(>|t|)"]
 }))
 \end{lstlisting}
+
+\clearpage
 
 and adjust them for multiple comparisons using Bonferroni:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1006,6 +1018,8 @@ resC$null
 Y1: MDI Y2: MDI Y3: MDI Y4: MDI Y5: MDI 
       0       0       0       0       0
 \end{verbatim}
+
+\clearpage
 
 We will now call \texttt{glht2} to perform the adjustment for multiple
 comparisons but first we need to convert the list into a \texttt{mmm} object:
@@ -1109,7 +1123,7 @@ intervals using the (single-step) Dunnett approach.
 \clearpage
 
 \section{References}
-\label{sec:org5442bea}
+\label{sec:org16e0531}
 
 \begingroup
 \renewcommand{\section}[2]{}
@@ -1124,7 +1138,7 @@ intervals using the (single-step) Dunnett approach.
 \section{Statistics: definitions and notations}
 \label{SM:statistics}
 \subsection{Variables}
-\label{sec:orge471522}
+\label{sec:orgc681c6b}
 
 We can differentiate several types of random variables: outcomes,
 exposure, risk factors, confounders, and mediators. To explicit the
@@ -1181,7 +1195,7 @@ Path diagram relating the variables Y, E, M, \(X_1\) and \(X_2\)}
 \clearpage 
 
 \subsection{Assumptions}
-\label{sec:orgf0341bd}
+\label{sec:org581343e}
 
 We can distinguish two types of assumptions:
 \begin{itemize}
@@ -1204,7 +1218,7 @@ complex.
 \end{itemize}
 
 \subsection{Statistical model}
-\label{sec:org9aa53d3}
+\label{sec:orgecdc20a}
 A statistical model \(\model\) is set of possible probability
 distributions. For instance when we fit a Gaussian linear model for
 \(Y_1\) with just an intercept \(\model=\left\{\Gaus[\mu,\sigma^2];\mu
@@ -1212,7 +1226,7 @@ distributions. For instance when we fit a Gaussian linear model for
 containing all possible univariate normal distributions.
 
 \subsection{Model parameters}
-\label{sec:org4ad5f01}
+\label{sec:orgc1d03c1}
 
 The model parameters are the (non random) variables that enable the
 statistical model to "adapt" to different settings. They will be
@@ -1281,7 +1295,7 @@ empirical variance:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 Theta_hat.XP1 <- c(mu_hat = mean(Y_1.XP1),
-		   sigma2_hat = var(Y_1.XP1))
+				   sigma2_hat = var(Y_1.XP1))
 Theta_hat.XP1
 \end{lstlisting}
 
@@ -1294,7 +1308,7 @@ Clearly the estimated coefficients vary across experiments:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 Theta_hat.XP2 <- c(mu_hat = mean(Y_1.XP2),
-		   sigma2_hat = var(Y_1.XP2))
+				   sigma2_hat = var(Y_1.XP2))
 Theta_hat.XP2
 \end{lstlisting}
 
@@ -1304,7 +1318,7 @@ Theta_hat.XP2
 \end{verbatim}
 
 \subsection{Parameter of interest}
-\label{sec:org9b368dd}
+\label{sec:org1e1fe88}
 
 The statistical model may contain many parameters, most of them are
 often not of interest but are needed to obtain valid estimates
@@ -1338,7 +1352,7 @@ estimate with lower variance. Note that we have no guarantee that it
 will reduce the bias.
 
 \subsection{Contrast matrix}
-\label{sec:org7305d2c}
+\label{sec:org9dfe908}
 
 When dealing with many parameters it is convenient to define the null
 hypothesis via a contrast matrix. An example of null hypothesis is:
@@ -1392,7 +1406,7 @@ matrix:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 Clin <- createContrast(e.lm, par = c("MDI - BMI = 0"),
-		       add.variance = FALSE, rowname.rhs = FALSE)
+					   add.variance = FALSE, rowname.rhs = FALSE)
 Clin$contrast
 \end{lstlisting}
 
@@ -1404,7 +1418,7 @@ Clin$contrast
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 Csim <- createContrast(e.lm, par = c("BMI = 0","MDI = 0"),
-		       add.variance = FALSE, rowname.rhs = FALSE)
+					   add.variance = FALSE, rowname.rhs = FALSE)
 Csim$contrast
 \end{lstlisting}
 

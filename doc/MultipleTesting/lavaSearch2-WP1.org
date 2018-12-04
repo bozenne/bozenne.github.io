@@ -13,65 +13,61 @@ path <-  "c:/Users/hpl802/Documents/GitHub/lavaSearch2/inst/vignettes/"
 :UNNUMBERED: t
 :END:
 
-We propose two strategies to assess the effect of an exposure (e.g. a
+We propose a strategy to assess the effect of an exposure (e.g. a
 disease, a genetic factor) on several outcomes (e.g. psychological
 outcomes, the binding potential measured in several brain regions)
-while accounting for possible risk factors and confounders:
-- /Multiple univariate regressions/: we use a separate model to model
-  the relationship between an outcome and the exposure. 
-- /Joint model/: we model the relationship between the outcomes and
-  the exposure in a single latent variable model
-  citep:holst2013linear. 
-Once the model(s) has(have) been correctly fitted, a global test can
-  be used to test whether there is any effect of the exposure on the
-  outcomes. After that, multiple tests are performed to test
-  outcome-specific effects of the exposure where the Dunnett
-  adjustment is used to control the type 1 error
-  citep:pipper2012versatile. An adjustment is used to improved the
-  control of the type 1 error in small sample sizes (e.g. n<100). This
-  adjustment has been shown to beneficial in several settings (using
-  simulation studies) but does not always perfectly control the type 1
-  error rate. It is advised to check that validity of the adjustment
-  when using very small samples or models with many parameters.
+while accounting for possible risk factors and confounders. This
+strategy, called /multiple univariage regressions/ strategy, models
+the relationship between each outcome and the exposure using a
+separate model. Once the models have been correctly fitted, a global
+test can be used to test whether there is any effect of the exposure
+on the outcomes. After that, multiple tests are performed to test
+outcome-specific effects of the exposure where the Dunnett adjustment
+is used to control the type 1 error citep:pipper2012versatile. An
+adjustment is used to improved the control of the type 1 error in
+small sample sizes (e.g. n<100). This adjustment has been shown to
+beneficial in several settings (using simulation studies) but does not
+always perfectly control the type 1 error rate. It is advised to check
+that validity of the adjustment when using very small samples or
+models with many parameters.
 
 \bigskip
 
-The proposed strategies can be used with continuous outcomes,
-  categorical outcomes, or a mixture of the two. The number of
-  outcomes should be smaller than the number of observations
-  (low-dimensional setting). By explicitly modeling the correlation
-  between the outcomes, the /joint model/ strategy, when valid, will
-  provide more powerful tests compared to the /multiple univariate
-  regressions/ strategy. Another benefit of the /joint model/ strategy
-  is the use of latent variables that may reflect unmeasured
-  biological mechanisms and therefore help the interpretation of the
-  results. The drawbacks with this approach is that it relies on more
-  assumptions and a more complex statistical modeling.
+The proposed strategy can be used with any type of outcomes for which
+  a can fit a model with asymptotically linear estimators
+  (cite:tsiatis2007semiparametric, section 3). This includes
+  generalized linear model or Cox models. It makes it very flexible
+  and the strategy makes only few assumptions on the joint
+  distribution. The drawback is that it is not the most efficient
+  approach. For instance modelling the joint distribution of the
+  outcomes, e.g. using a latent variable model / mixed model in the
+  case of normally distributed outcomes, will be a more efficient
+  strategy. Another limitation is that with the proposed approach a
+  treatment effect specific to each outcome will be estimated, while
+  in some context the investigator may want to constrain the treatment
+  effect to be the same for some outcomes. Finally, to be feasible the
+  strategy requires the number of outcomes to be not too large (<100)
+  and smaller than the number of observations (low-dimensional
+  setting).
 
 \bigskip
 
-This document we aim at giving a basic understanding of the two
-  strategies[fn:1], how to implement them, and their limitations. In
-  particular, we don't claim that the proposed strategies give valid
-  or optimal results in every application (they probably do not) and
-  many other approaches exists (e.g. MANOVA) but won't be discussed
-  here. The document is organized as follow: first section
-  [[#sec:Rsoftware]] present how to install and set up the \Rlogo{}
-  software. Then basic functions to import and process the data are
-  presented in section [[#sec:dataManagement]]. The goals, a minima, of
-  the descriptive analysis are presented in section [[#sec:descriptive]],
-  as well as code to export figures and tables to Word
-  documents. Section [[#sec:LM]] recalls how to perform a univariate
+This document we aim at giving a basic understanding of the strategy
+  and how to implement it. In particular, we don't claim that the
+  proposed strategy is valid or optimal results in every application
+  (it is probably not the case) and many other approaches exists but
+  won't be discussed here. The document is organized as follow: first
+  section [[#sec:Rsoftware]] present how to install and set up the
+  \Rlogo{} software. Then basic functions to import and process the
+  data are presented in section [[#sec:dataManagement]]. The goals, a
+  minima, of the descriptive analysis are presented in section
+  [[#sec:descriptive]], as well as code to export figures and tables to
+  Word documents. Section [[#sec:LM]] recalls how to perform a univariate
   linear regression in \Rlogo{} and present tools to assess the
   parametric assumptions and section [[#sec:multipleLM]] presents the
   /multiple univariate regressions/ strategy. Finally appendix
   [[#SM:statistics]] recalls some statistical concepts about modeling and
   hypothesis testing.
-
-[fn:1] For now, only the "multiple univariate regressions" is
-presented in this document.
-
-
 
 \clearpage
 
@@ -272,10 +268,13 @@ We can see that the columns are separated with =,= and that the =.=
 indicates the decimal values. Moreover the words such as the columns
 names or the subject identities are surrounded by =\"= (e.g. =\"Id\"=
 stand for Id). Finally in this example there is no missing values but
-if there was it is important to know how they are encoded. The command
-to import the data depends on the type of file. Here for a =.csv= file
-we use =read.csv=. Luckily the default arguments =sep=, =dec=, =quote=
-are correctly specified:
+if there was it is important to know how they are encoded.
+
+\clearpage
+
+ The command to import the data depends on the type of file. Here for
+a =.csv= file we use =read.csv=. Luckily the default arguments =sep=,
+=dec=, =quote= are correctly specified:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 args(read.csv)
 #+END_SRC
@@ -338,6 +337,9 @@ This is already better:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 female <- c(1,0,1,0,1) ## we can guess that 1: female and 0: male
 #+END_SRC
+
+\clearpage 
+
 but it is a good practice in such situation to rename the actual
 values into something understandable:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -461,6 +463,8 @@ To keep the code simple, we only present here a very basic application
 of these tools. More complex tables with a nicer display in word can
 be obtain with a bit of coding.
 
+\clearpage
+
 - *make synthetic representations of your data* using graphs or
   images. This can be useful to visualize your data and help your
   collaborators to understand what you have collected or what you are
@@ -545,6 +549,8 @@ addition make causal assumptions (mainly no unobserved confounder)
 then we can interpret \(\beta_{MDI}\) as the effect of MDI on the
 outcome. This means that if we could change the MDI of an individual
 by one unit then its variation in outcome should be \(\beta_{MDI}\).
+
+\clearpage
 
 ** Diagnostics tools for univariate linear regression in \Rlogo{}
 :PROPERTIES:
@@ -645,6 +651,8 @@ shapiro.test(dfW$resid.lm)
 : W = 0.98104, p-value = 0.5967
 Here the null hypothesis is that the residuals follow a normal
 distribution.
+
+\clearpage
 
 *** Testing (A2)
 
@@ -851,6 +859,8 @@ vec.p.value <- unlist(lapply(ls.lm, function(x){
 
 #+RESULTS:
 
+\clearpage
+
 and adjust them for multiple comparisons using Bonferroni:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 p.adjust(vec.p.value, method = "bonferroni")
@@ -912,6 +922,8 @@ resC$null
 #+RESULTS:
 : Y1: MDI Y2: MDI Y3: MDI Y4: MDI Y5: MDI 
 :       0       0       0       0       0
+
+\clearpage
 
 We will now call =glht2= to perform the adjustment for multiple
 comparisons but first we need to convert the list into a =mmm= object:

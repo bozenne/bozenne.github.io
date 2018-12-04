@@ -1,15 +1,15 @@
 \begin{thebibliography}{}
 
-\bibitem[Holst and Budtz-J{\o}rgensen, 2013]{holst2013linear}
-Holst, K.~K. and Budtz-J{\o}rgensen, E. (2013).
-\newblock Linear latent variable models: the lava-package.
-\newblock {\em Computational Statistics}, 28(4):1385--1452.
-
 \bibitem[Pipper et~al., 2012]{pipper2012versatile}
 Pipper, C.~B., Ritz, C., and Bisgaard, H. (2012).
 \newblock A versatile method for confirmatory evaluation of the effects of a
   covariate in multiple models.
 \newblock {\em Journal of the Royal Statistical Society: Series C (Applied
   Statistics)}, 61(2):315--326.
+
+\bibitem[Tsiatis, 2007]{tsiatis2007semiparametric}
+Tsiatis, A. (2007).
+\newblock {\em Semiparametric theory and missing data}.
+\newblock Springer Science \& Business Media.
 
 \end{thebibliography}
