@@ -109,7 +109,7 @@ NOTE: the 20/11, 27/11, 04/11, I won't take consultations (I'm teaching at KU)
 
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also
-  expect to have a good place (first, second, last).
+  expect to have a good place (e.g. second, third, second to last).
 
 ## Response time 
 
