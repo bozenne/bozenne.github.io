@@ -69,50 +69,74 @@ dfL.calcium$treatment <- as.character(dfL.calcium$group)
 dfL.calcium[dfL.calcium$visit == "obstime1", 
             "treatment"] <- "none"
 dfL.calcium$treatment <- factor(dfL.calcium$treatment, 
-                                levels = c("none","C","P"))
+                                levels = c("none","C","P"),
+                                labels = c("none","pl","tr"))
 
 ## chunk 14
 table(dfL.calcium$treatment, dfL.calcium$visit, dfL.calcium$group)
 
 ## chunk 15
-dfL.calcium$treatmentIgroup <- as.character(dfL.calcium$visit)
-dfL.calcium[dfL.calcium$group=="C" | dfL.calcium$visit=="obstime1", 
-            "treatmentIgroup"] <- "none"
+dfL.calcium$ii <- droplevels(interaction(dfL.calcium$visit, 
+                                         dfL.calcium$treatment))
 
 ## chunk 16
-table(dfL.calcium$treatmentIgroup, 
-      dfL.calcium$visit,
-      dfL.calcium$group)
+dfL.calcium$ii <- factor(dfL.calcium$ii, 
+                         levels = levels(dfL.calcium$ii),
+                         labels = paste0("_",levels(dfL.calcium$ii))
+)
+
+## chunk 17
+baselineAdj <- function(x,y){
+    if(is.null(x)){stop("Argument \'x\' must not be NULL \n")}
+    if(is.null(y)){stop("Argument \'y\' must not be NULL \n")}
+
+    z <- droplevels(interaction(x,y))
+    z.levels <- levels(z)
+    out <- factor(z, levels = z.levels, labels = paste0("_",z.levels))
+    return(out)
+}
+
+## chunk 18
+identical(baselineAdj(dfL.calcium$visit, dfL.calcium$treatment),
+          dfL.calcium$ii)
 
 ## ** Model fitting
 
-## chunk 17
-e.lme <- try(lme(bmd ~ visit + treatmentIgroup,
+## chunk 19
+e.lme <- try(lme(bmd ~ ii,
                  data = dfL.calcium, na.action = na.omit,
                  random =~ 1|id,
                  correlation = corSymm(form =~ visit.num|id),
                  weights = varIdent(form =~ 1|visit)))
 
-## chunk 18
-e.gls <- gls(bmd ~ visit + treatmentIgroup,
+## chunk 20
+e.gls <- gls(bmd ~ ii,
              data = dfL.calcium, na.action = na.omit,
              correlation = corSymm(form =~ visit.num|id),
              weights = varIdent(form =~ 1|visit))
 logLik(e.gls)
 
-## chunk 19
+## chunk 21
 summary(e.gls)$tTable
 
-## chunk 20
-anova(e.gls, type = "marginal")
+## chunk 22
+e.gls0 <- gls(bmd ~ visit,
+              data = dfL.calcium, na.action = na.omit,
+              correlation = corSymm(form =~ visit.num|id),
+              weights = varIdent(form =~ 1|visit))
+logLik(e.gls0)
+
+## chunk 23
+anova(update(e.gls0, method = "ML"), 
+      update(e.gls, method = "ML"))
 
 ## * Question 4: Multiple imputation
 
-## chunk 21
+## chunk 24
 keep.col <- c("id","group","bmd1","bmd2","bmd3","bmd4","bmd5")
 dfW.red <- dfW.calcium[,keep.col]
 
-## chunk 22
+## chunk 25
 name.var <- names(dfW.red)
 n.var <- length(name.var)
 
@@ -121,7 +145,7 @@ Mpred <- matrix(0, nrow = n.var, ncol = n.var,
 Mpred[paste0("bmd",1:5),paste0("bmd",1:5)] <- 1
 Mpred
 
-## chunk 23
+## chunk 26
 n.imputed <- 10
 system.time(
     dfW.calciumMI <- mice(dfW.red,
@@ -133,13 +157,13 @@ system.time(
 
 ## * Question 5: Assess the imputed values
 
-## chunk 24
+## chunk 27
 lapply(dfW.calciumMI$imp,dim)
 
-## chunk 25
+## chunk 28
 stripplot(dfW.calciumMI, pch = 20, cex = 1.2)
 
-## chunk 27
+## chunk 30
 df.merge <- rbind(data.frame(visit = "obstime2", type = "MI", 
                              bmd = unlist(dfW.calciumMI$imp$bmd2)),
                   data.frame(visit = "obstime3", type = "MI", 
@@ -154,11 +178,11 @@ df.merge <- rbind(data.frame(visit = "obstime2", type = "MI",
                   )
 head(df.merge)
 
-## chunk 28
+## chunk 31
 aggregate(bmd ~ visit + type, data = df.merge, 
           FUN = quantile)
 
-## chunk 29
+## chunk 32
 df.merge$visit <- relevel(df.merge$visit, "obstime1")
 gg.MI <- ggplot(df.merge, aes(x = visit, y = bmd, 
                               color = type))
@@ -168,7 +192,7 @@ gg.MI
 ## * Question 6: Analysis with the imputed dataset
 ## ** Function
 
-## chunk 31
+## chunk 34
 fitFCT <- function(dataW = NULL, ...){
 
     ## gather data 
@@ -189,25 +213,32 @@ fitFCT <- function(dataW = NULL, ...){
                   value.name = "bmd",
                   variable.name = "visit")
 
-    dataL$visit.num <- as.numeric(dataL$visit)
-
-    ## sort dataset 
-    dataL <- dataL[order(dataL$id,dataL$group),]
+    ## rename the visit variable
+    dataL$visit <- gsub(pattern = "bmd",
+                        replacement = "obstime", 
+                        x = as.character(dataL$visit))
 
     ## treatment variable
     dataL$treatment <- as.character(dataL$group)
-    dataL[dataL$visit.num == 1, "treatment"] <- "none"
+    dataL[dataL$visit == "obstime1", "treatment"] <- "none"
+    dataL$treatment <- factor(dataL$treatment, 
+                              levels = c("none","C","P"),
+                              labels = c("none","pl","tr"))
 
-    ## interaction
-    dataL$treatmentIgroup <- as.character(dataL$visit)
-    dataL[dataL$visit.num==1," treatmentIgroup"] <- "baseline"
-    dataL[dataL$group=="C" | dataL$visit.num==1,
-          "treatmentIgroup"] <- "none"
+    ## convert to factor and define reference level
+    dataL$visit <- relevel(as.factor(dataL$visit), 
+                           ref = "obstime1")
+    dataL$treatment <- relevel(as.factor(dataL$treatment), 
+                               ref = "none")
+
+    ## interaction variable
+    dataL$ii <- baselineAdj(x = dataL$visit, 
+                            y = dataL$treatment)
 
     ## fit model
-    e.gls <- gls(bmd ~ visit + treatmentIgroup,
+    e.gls <- gls(bmd ~ ii,
                  data = dataL, na.action = na.omit,
-                 correlation = corSymm(form =~ visit.num|id),
+                 correlation = corSymm(form =~ as.numeric(visit)|id),
                  weights = varIdent(form =~ 1|visit))
 
     ## export
@@ -215,27 +246,28 @@ fitFCT <- function(dataW = NULL, ...){
 
 }
 
-## chunk 32
+## chunk 35
 e.tempo <- fitFCT(data = dfW.calcium)
 
-## chunk 33
+## chunk 36
 logLik(e.tempo)
 logLik(e.gls)
+identical(coef(e.tempo),coef(e.gls))
 
 ## ** Model fitting
 
-## chunk 34
-  system.time(
-      e.MI2 <- with(data = dfW.calciumMI,
-                    fitFCT())
-  )
+## chunk 37
+system.time(
+    e.MI2 <- with(data = dfW.calciumMI,
+                  fitFCT())
+)
 
 ## * Question 7: Combine the results of the analysis
 
-## chunk 35
+## chunk 38
 try(pool(e.MI2))
 
-## chunk 36
+## chunk 39
 glance.gls <- function(x){
 
     s.x <- summary(x)
@@ -261,7 +293,29 @@ tidy.gls <- function(x,
                   p.value="p-value")
 }
 
-## chunk 37
+## chunk 40
 e.pool <- pool(e.MI2)
 summary(e.pool)
+
+## * Definition of the interaction time-treatment
+
+## chunk 41
+dfL.calcium$treatmentXvisit <- as.character(dfL.calcium$visit)
+dfL.calcium[dfL.calcium$group=="C" | dfL.calcium$visit=="obstime1", 
+            "treatmentXvisit"] <- "none"
+
+## chunk 42
+table(dfL.calcium$treatmentXvisit, 
+      dfL.calcium$visit,
+      dfL.calcium$group)
+
+## chunk 43
+e.glsBis <- gls(bmd ~ visit + treatmentXvisit,
+             data = dfL.calcium, na.action = na.omit,
+             correlation = corSymm(form =~ visit.num|id),
+             weights = varIdent(form =~ 1|visit))
+logLik(e.glsBis)
+
+## chunk 44
+logLik(e.gls)
 
