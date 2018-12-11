@@ -88,6 +88,8 @@ If this is completely incompatible with your schedule, for instance
 because you're running weekly experiments those days, just ask me and
 we will figure out a solution.
 
+NOTE: no consultation between the 20-th of december and the 2-nd of January
+
 ## Authorship
 
 - **Assistance for performing a statistical analysis**: This help
