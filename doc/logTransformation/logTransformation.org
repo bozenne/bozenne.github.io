@@ -1,0 +1,302 @@
+#+TITLE: Estimating a relative change using a log-transformation of the outcome
+#+Author: Brice Ozenne
+
+* Theory
+Let's denote by \(Y\) the outcome and by \(G\) a group variable
+\(G\) (binary variable). We are interested in the relative change in \(Y\) between the
+groups. We decide to model the group effect on the log scale:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+\end{align*}
+#+END_EXPORT
+Using a second order Taylor expansion of \(\exp(Z)\) around
+\(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
+\(Z\) are finite and the remaining moments are neglectable regarding
+the factorial of the moment order (i.e. \(\forall i \geq 1 \),
+\(\frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\) and \(\sum_{i=1}^{\infty} \frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\)), we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y &= e^{Z} = e^{\mu} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \mu)^i \frac{\partial^i e^{\mu}}{(\partial \mu)^i} \\
+&= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \alpha - \beta G)^i e^{\alpha + \beta G} \\
+\Esp[Y|G=g] &= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[(Z - \alpha - \beta g)^i] e^{\alpha + \beta G} \\
+&= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^i] \right)
+\end{align*}
+#+END_EXPORT
+where we used that the distribution of \(\varepsilon\) is independent
+of \(g\). [Optional] \(\varepsilon\) follows a zero-mean normal distribution, so
+the uneven moments are 0:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[Y|G=g] &= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)
+\end{align*}
+#+END_EXPORT
+We can now express our parameter of interest:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Delta_G &= \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \frac{\Esp[Y|G=1]}{\Esp[Y|G=0]} - 1 \\
+&= \frac{e^{\alpha + \beta} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)}{e^{\alpha} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)} - 1 \\
+&= e^{\beta} - 1
+\end{align*}
+#+END_EXPORT
+
+
+# @@latex:any arbitrary LaTeX code@@
+
+* Example :noexport:
+
+Simulate data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+m <- lvm(Y[5] ~ G)
+categorical(m, K=2) <- ~G
+transform(m, Z~Y) <- function(z){log(z)}
+
+d <- lava::sim(m, n = 1e5)
+head(d)
+#+END_SRC
+
+#+RESULTS:
+:          Y G        Z
+: 1 4.941076 1 1.597583
+: 2 4.184619 0 1.431416
+: 3 4.757324 0 1.559685
+: 4 5.596557 1 1.722152
+: 5 5.368230 0 1.680498
+: 6 5.668698 0 1.734960
+
+Fit models:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+coef.id <- coef(lm(Y ~ G, data = d))
+coef.log <- coef(lm(Z ~ G, data = d))
+
+list(id = coef.id,
+     log = coef.log)
+#+END_SRC
+
+#+RESULTS:
+: $id
+: (Intercept)           G 
+:   5.0035836   0.9923204 
+: 
+: $log
+: (Intercept)           G 
+:   1.5888092   0.1879317
+
+Relative change estimated by several methods:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(id = as.double(coef.id["G"]/coef.id["(Intercept)"]), 
+  log = as.double(exp(coef.log["G"])-1), 
+  GS = as.double(mean(d[d$G==1,"Y"])/mean(d[d$G==0,"Y"]) - 1),
+  true = 1/5)
+#+END_SRC
+
+#+RESULTS:
+:        id       log        GS      true 
+: 0.1983219 0.2067510 0.1983219 0.2000000
+
+Performance in small samples:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+warper <- function(m, n){
+    d <- lava::sim(m, n = n)
+    coef.id <- coef(lm(Y ~ G, data = d))
+    coef.log <- coef(lm(Z ~ G, data = d))
+    out <- c(id = as.double(coef.id["G"]/coef.id["(Intercept)"]), 
+             log = as.double(exp(coef.log["G"])-1))
+    return(out)
+}
+M.res <- do.call(rbind,lapply(1:1000, function(i){warper(m, n = 12)}))
+#+END_SRC
+
+#+RESULTS:
+
+Bias:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+colMeans(M.res-1/5)
+#+END_SRC
+
+#+RESULTS:
+:         id        log 
+: 0.01062298 0.01824621
+
+Variance:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+apply(M.res,2,var)
+#+END_SRC
+
+#+RESULTS:
+:         id        log 
+: 0.01973720 0.02136166
+
+Root mean squared error:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+colMeans((M.res-1/5)^2)
+#+END_SRC
+
+#+RESULTS:
+:  change.id change.log 
+: 0.01946796 0.02202432
+
+In this simulation, the change computed with the log model has a
+slightly larger bias and variance, with a quite similar root mean
+squared error are quite similar. Here the true model was the additive
+one (i.e. no tranformation) but we see that the multiplicative
+one(i.e. log-transformation) gives valid results (even though the
+distribution of the residuals is not normal on the log-scale). So the
+model choice should be made on which of the two models: additive or
+multiplicative is more likely to be correctly specified.
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Latex command
+#+LATEX_HEADER: \RequirePackage{ifthen}
+#+LATEX_HEADER: \RequirePackage{xifthen}
+#+LATEX_HEADER: \RequirePackage{xargs}
+#+LATEX_HEADER: \RequirePackage{xspace}
+
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Notations
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\usepackage{authblk} % enable several affiliations (clash with beamer)
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+#+LATEX_HEADER:\geometry{top=1cm}
+
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+*** Shortcuts
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\left( \partial #2\right)^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
