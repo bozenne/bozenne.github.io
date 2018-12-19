@@ -1,4 +1,4 @@
-% Created 2018-12-18 ti 19:05
+% Created 2018-12-19 on 17:48
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -169,14 +169,43 @@ emphstyle=\color{blue}
 
 \maketitle
 
-\section{Theory}
-\label{sec:org9bf99a8}
+\section{Result}
+\label{sec:org11272e6}
 Let's denote by \(Y\) the outcome and by \(G\) a group variable
 \(G\) (binary variable). We are interested in the relative change in \(Y\) between the
 groups. We decide to model the group effect on the log scale:
 \begin{align*}
 \log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
 \end{align*}
+We claim that:
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = e^{\beta} - 1
+\end{align*}
+
+\section{Proof}
+\label{sec:orga40700a}
+
+\subsection{Re-writting the model as a multiplicative model}
+\label{sec:org26ccf64}
+We can re-write the model as:
+\begin{align*}
+Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+\end{align*}
+So for \(g\in\{1,2\}\):
+\begin{align*}
+\Esp[Y|G=g] = e^{\alpha + \beta g} \Esp[e^{\varepsilon}]
+\end{align*}
+Then:
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]}
+& = \frac{e^{\alpha + \beta} \Esp[e^{\varepsilon}]-e^{\alpha} \Esp[e^{\varepsilon}]}{e^{\alpha} \Esp[e^{\varepsilon}]} \\
+& = \frac{e^{\alpha + \beta} -e^{\alpha}}{e^{\alpha}}  = e^{\beta} - 1 \\
+\end{align*}
+
+\subsection{Using a Taylor expansion}
+\label{sec:org5b55a60}
+
+
 Using a second order Taylor expansion of \(\exp(Z)\) around
 \(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
 \(Z\) are finite and the remaining moments are neglectable regarding
