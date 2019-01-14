@@ -114,20 +114,29 @@ Publié:
     \item \bibentry{ozenne2015spatially}
   \end{enumerate}
 #+END_EXPORT
+
+\pagebreak[3]
+
 Soumis:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
+    \item \bibentry{ozenne20XXcontroling}
   \end{enumerate}
 #+END_EXPORT
+
+\pagebreak[3]
+
 En cours de rédaction:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
+    \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
+
+\pagebreak[3]
 
 ** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
 #+LaTeX: \begin{minipage}{0.01\textwidth}
@@ -136,23 +145,27 @@ En cours de rédaction:
 #+LaTeX: \begin{minipage}{0.92\textwidth}
 - *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
   généralisées. Implémentation de la méthode décrite dans
-  citep:peron2016extension. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] et sur [[https://github.com/bozenne/BuyseTest][Github]].
+  citep:peron2016extension,peron20XXunbiased. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]]
+  et sur [[https://github.com/bozenne/BuyseTest][Github]].
 
 - *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
   diagnostiques dans les modèles à variables latentes. Papier
-  décrivant la méthode soumis. Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+  décrivant la méthode soumis (citep:ozenne20XXsmall and citep:ozenne20XXcontroling). Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
 
 - *riskRegression* (Contributeur) : Calculateur du risque
   d'évènenement en présence de risques compétitifs. Implémentation de
-  la méthode décrite dans citep:ozenne2017riskregression. Disponible
-  sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+  la méthode décrite dans citep:ozenne2017riskregression et
+  citep:ozenne20XXestimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
-\bigskip
+\pagebreak[3]
 
 ** /Publications (applications cliniques)/
+
+Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
     \item \bibentry{hjordt2018self}
     \item \bibentry{foged2018verbal}
@@ -171,8 +184,32 @@ En cours de rédaction:
   \end{enumerate}
 #+END_EXPORT
 
+\pagebreak[3]
 
-* Enseignement                                         :ignore:
+Soumis:
+#+BEGIN_EXPORT latex
+\begin{enumerate}
+    \item \bibentry{ebert20XXmolecular}
+\end{enumerate}
+#+END_EXPORT
+
+\pagebreak[3]
+
+En cours de rédaction:
+#+BEGIN_EXPORT latex
+\begin{enumerate}
+    \item \bibentry{beliveau20XXstructure}
+    \item \bibentry{vadskjaer20XXpsychometric}
+\end{enumerate}
+#+END_EXPORT
+
+\pagebreak[3]
+
+* RELECTURE D'ARTICLES                                              :ignore:
+#+LaTeX: \resheading{Relecture d'article}
+Je relis occasionnellement des articles pour Biometrics, Statistics in Medicine, et
+International Journal of Biostatistics.
+* ENSEIGNEMENT                                                       :ignore:
 #+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}

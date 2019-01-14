@@ -118,16 +118,18 @@ Submitted:
  \begin{enumerate}
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
+    \item \bibentry{ozenne20XXcontroling}
   \end{enumerate}
 #+END_EXPORT
 In progress:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
+    \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
 
+\pagebreak[3]
 
 ** /Software development (package for the [[https://www.r-project.org/][R]] software)/
 #+LaTeX: \begin{minipage}{0.01\textwidth}
@@ -136,7 +138,7 @@ In progress:
 #+LaTeX: \begin{minipage}{0.92\textwidth}
 - *BuyseTest* (author and maintainer): generalized pairwise
   comparisons. Implementation of the extension described in
-  citep:peron2016extension. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on [[https://github.com/bozenne/BuyseTest][Github]].
+  citep:peron2016extension,peron20XXunbiased. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on [[https://github.com/bozenne/BuyseTest][Github]].
 
 - *lavaSearch2* (author and maintainer): Inference and diagnostic
   tools for latent variable models.  Methodology described in
@@ -152,8 +154,11 @@ In progress:
 \pagebreak[3]
 
 ** /Publications (clinical applications)/
+
+Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
     \item \bibentry{hjordt2018self}
     \item \bibentry{foged2018verbal}
@@ -172,7 +177,29 @@ In progress:
   \end{enumerate}
 #+END_EXPORT
 
+\pagebreak[3]
 
+Submitted:
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{ebert20XXmolecular}
+  \end{enumerate}
+#+END_EXPORT
+
+\pagebreak[3]
+
+In progress:
+#+BEGIN_EXPORT latex
+ \begin{enumerate}
+    \item \bibentry{beliveau20XXstructure}
+    \item \bibentry{vadskjaer20XXpsychometric}
+  \end{enumerate}
+#+END_EXPORT
+
+* PEER REVIEW       :ignore:
+#+LaTeX: \resheading{PEER REVIEW}
+I have reviewed papers for Biometrics, Statistics in Medicine, and the
+International Journal of Biostatistics.
 * TEACHING                                                           :ignore:
 #+LaTeX: \resheading{TEACHING \hfill L : lecture, PC : practical classes}
 #+BEGIN_EXPORT latex

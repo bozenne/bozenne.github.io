@@ -1,9 +1,16 @@
-\begin{thebibliography}{23}
+\begin{thebibliography}{28}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Beliveau et~al.()Beliveau, {\myname{Ozenne, Brice}}, Strother, Greve,
+  Knudsen, and Ganz]{beliveau20XXstructure}
+Vincent Beliveau, {\myname{Ozenne, Brice}}, Stephen Strother, Douglas~N. Greve,
+  Gitte~Moos Knudsen, and Melanie Ganz.
+\newblock The structure of the serotonin system: a pet imaging study.
+\newblock \emph{Neuroimage}.
 
 \bibitem[Beliveau et~al.(2017)Beliveau, Ganz, Feng, {\myname{Ozenne, Brice}},
   H{\o}jgaard, Fisher, Svarer, Greve, and Knudsen]{beliveau2017high}
@@ -29,6 +36,16 @@ Camilla Borgsted, {\myname{Ozenne, Brice}}, Brenda Mc~Mahon, Martin~K Madsen,
   2018.
 \newblock \doi{10.1016/j.jad.2017.12.097}.
 \newblock URL \url{https://doi.org/10.1016\%2Fj.jad.2017.12.097}.
+
+\bibitem[Ebert et~al.()Ebert, Jensen, {\myname{Ozenne, Brice}}, Armand, Svarer,
+  Stenbaek, Moeller, Dyssegaard, Thomsen, Steinmetz, Forchhammer, Knudsen, and
+  Pinborg]{ebert20XXmolecular}
+Sebastian~E Ebert, Per Jensen, {\myname{Ozenne, Brice}}, Sophia Armand, Claus
+  Svarer, Dea~S Stenbaek, Kirsten Moeller, Agnete Dyssegaard, Gerda Thomsen,
+  Jacob Steinmetz, Birgitte~H Forchhammer, Gitte~M Knudsen, and Lars~H Pinborg.
+\newblock Molecular imaging of neuroinflammation in patients after mild
+  traumatic brain injury: a longitudinal 123i-clinde spect study.
+\newblock \emph{European Journal og Neurology}.
 
 \bibitem[Fisher et~al.(2017)Fisher, {\myname{Ozenne, B}}, Svarer, Adamsen,
   Lehel, Baar{\'e}, Jensen, and Knudsen]{fisher2017bdnf}
@@ -99,6 +116,25 @@ Liv~Vadskj{\ae}r Hjordt, Vibeke~H Dam, {\myname{Ozenne, Brice}}, Ida Hageman,
 \newblock \doi{10.1016/j.psychres.2018.02.015}.
 \newblock URL \url{https://doi.org/10.1016\%2Fj.psychres.2018.02.015}.
 
+\bibitem[Ip et~al.(2018)Ip, Ganz, {\myname{Ozenne, Brice}}, Sluth, Gram,
+  Viardot, l'Hostis, Danjou, Knudsen, and Christensen]{ip2018pre}
+Cheng-Teng Ip, Melanie Ganz, {\myname{Ozenne, Brice}}, Lasse~B Sluth, Mikkel
+  Gram, Geoffrey Viardot, Philippe l'Hostis, Philippe Danjou, Gitte~M Knudsen,
+  and S{\o}ren~R Christensen.
+\newblock Pre-intervention test-retest reliability of eeg and erp over four
+  recording intervals.
+\newblock \emph{International Journal of Psychophysiology}, 134:\penalty0
+  30--43, 2018.
+
+\bibitem[Nørgaard et~al.()Nørgaard, {\myname{Ozenne, Brice}}, Svarer,
+  Strother, Frokjaer, Knudsen, and Ganz]{norgaard20XXpreprocessing}
+Martin Nørgaard, {\myname{Ozenne, Brice}}, Claus Svarer, Stephen~C. Strother,
+  Vibe~G. Frokjaer, Gitte~M. Knudsen, and Melanie Ganz.
+\newblock Preprocessing, prediction and signicance: Framework and application
+  to brain imaging.
+\newblock \emph{Information Processing in Medical Imaging (IPMI) conference
+  2019}.
+
 \bibitem[{\myname{Ozenne, Brice}} et~al.({\natexlab{a}}){\myname{Ozenne,
   Brice}}, Ebert, and Budtz-J{\o}rgensen]{ozenne20XXcontroling}
 {\myname{Ozenne, Brice}}, Sebastian~Elgaard Ebert, and Esben
@@ -111,7 +147,7 @@ Liv~Vadskj{\ae}r Hjordt, Vibeke~H Dam, {\myname{Ozenne, Brice}}, Ida Hageman,
   Brice}}, Fisher, and Budtz-J{\o}rgensen]{ozenne20XXsmall}
 {\myname{Ozenne, Brice}}, Patrick Fisher, and Esben Budtz-J{\o}rgensen.
 \newblock Small sample maximum likelihood inference in latent variable models.
-\newblock \emph{Submitted (JRSS-C)}, {\natexlab{b}}.
+\newblock \emph{In revision (JRSS-C)}, {\natexlab{b}}.
 
 \bibitem[{\myname{Ozenne, Brice}} et~al.({\natexlab{c}}){\myname{Ozenne,
   Brice}}, Scheike, St\ae{}rk, and Gerds]{ozenne20XXestimation}
@@ -256,5 +292,12 @@ Dea~S Stenb{\ae}k, Patrick~M Fisher, {\myname{Ozenne, Brice}}, Emil Andersen,
 \newblock \emph{Brain and behavior}, 7\penalty0 (4):\penalty0 e00674, mar 2017.
 \newblock \doi{10.1002/brb3.674}.
 \newblock URL \url{https://doi.org/10.1002\%2Fbrb3.674}.
+
+\bibitem[Vadskjær et~al.()Vadskjær, {\myname{Ozenne, Brice}}, Armanda, Dam,
+  Jensen, Knudsen, and Stenbæk]{vadskjaer20XXpsychometric}
+Liv~Hjordt Vadskjær, {\myname{Ozenne, Brice}}, Sophia Armanda, Vibeke~H. Dam,
+  Christian~Gaden Jensen, Gitte~M. Knudsen, and Dea~Siggaard Stenbæk.
+\newblock Psychometric evaluation of an extended version of the verbal
+  affective memory test–26.
 
 \end{thebibliography}
