@@ -123,6 +123,7 @@ Soumis:
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
     \item \bibentry{ozenne20XXcontroling}
+    \item \bibentry{peron20XXunbiased}
   \end{enumerate}
 #+END_EXPORT
 
@@ -131,7 +132,6 @@ Soumis:
 En cours de rédaction:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{peron20XXunbiased}
     \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
@@ -205,11 +205,11 @@ En cours de rédaction:
 
 \pagebreak[3]
 
-* RELECTURE D'ARTICLES                                              :ignore:
+* Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
 Je relis occasionnellement des articles pour Biometrics, Statistics in Medicine, et
 International Journal of Biostatistics.
-* ENSEIGNEMENT                                                       :ignore:
+* Enseignement                                                       :ignore:
 #+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}

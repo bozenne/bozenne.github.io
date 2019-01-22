@@ -119,12 +119,12 @@ Submitted:
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
     \item \bibentry{ozenne20XXcontroling}
+    \item \bibentry{peron20XXunbiased}
   \end{enumerate}
 #+END_EXPORT
 In progress:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{peron20XXunbiased}
     \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
