@@ -1,4 +1,4 @@
-% Created 2019-02-19 ti 14:13
+% Created 2019-02-19 ti 14:33
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
 
@@ -173,7 +173,7 @@ emphstyle=\color{blue}
 \maketitle
 
 \section*{Summary}
-\label{sec:orga3ba3d3}
+\label{sec:org04a108f}
 We propose a strategy to assess the effect of an exposure (e.g. a
 disease, a genetic factor) on several outcomes (e.g. psychological
 outcomes, the binding potential measured in several brain regions)
@@ -293,7 +293,7 @@ synthetic description of the functionalities can be found at
 \section{Data management}
 \label{sec:dataManagement}
 \subsection{Working directory}
-\label{sec:orgcedb5ff}
+\label{sec:org32d43a8}
 
 The working directory is where R, by default, look for files
 to import and export data or figures. The current working directory
@@ -310,7 +310,7 @@ getwd()
 It can be changed using the function \texttt{setwd()}:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-path <- "c:/Users/hpl802/Documents/GitHub/lavaSearch2/inst/vignettes/"
+path <- "c:/"
 setwd(path)
 \end{lstlisting}
 
@@ -322,11 +322,11 @@ getwd()
 \end{lstlisting}
 
 \begin{verbatim}
-[1] "c:/Users/hpl802/Documents/GitHub/lavaSearch2/inst/vignettes"
+[1] "c:/"
 \end{verbatim}
 
 \subsection{Importing the data}
-\label{sec:org80660ec}
+\label{sec:orgfc3be2b}
 
 It is a good idea to start by checking that the working directory
 contains the data we want to import. For instance the file \texttt{data.csv}
@@ -424,7 +424,7 @@ is a type of character strings in R) and the rest contains numerical
 values.
 
 \subsection{Data processing}
-\label{sec:orgbfe0761}
+\label{sec:org92f8a64}
 
 Often the raw data needs to be transformed before being analyzed:
 \begin{itemize}
@@ -493,7 +493,17 @@ for instance be done by defining the variables of interest:
 keep.var <- c("Id","BMI","MDI","Y1","Y2","Y3","Y4","Y5")
 \end{lstlisting}
 
-and subsetting the initial dataset:
+We can check that the variables defined in \texttt{keep.var} are in \texttt{dfW}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+keep.var %in% names(dfW)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+\end{verbatim}
+
+and then subset the initial dataset:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 dfW.red <- dfW[,keep.var]
@@ -508,6 +518,77 @@ head(dfW.red)
 4 Subj4 23.22 16.46 8.99 14.38 13.82 11.44 9.75
 5 Subj5 19.78 18.56 7.60  8.77  8.38  7.94 6.17
 6 Subj6 16.13 17.82 6.99  9.97  6.74  8.29 8.78
+\end{verbatim}
+
+\begin{itemize}
+\item Often after having imported the data we want to change its column
+names. First we need to know the current column names. The \texttt{names}
+function can be used to output all the column names:
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+names(dfW.red)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "Id"  "BMI" "MDI" "Y1"  "Y2"  "Y3"  "Y4"  "Y5"
+\end{verbatim}
+
+Alternatively the \texttt{grep} function will output any column name
+containing a given string of characters:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+grep(pattern = "Y", x = names(dfW), value = TRUE)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "Y1" "Y2" "Y3" "Y4" "Y5"
+\end{verbatim}
+
+Then, we can rename a specific column using:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+names(dfW.red)[names(dfW.red) == "Id"] <- "new.Id.name"
+head(dfW.red)
+\end{lstlisting}
+
+\begin{verbatim}
+  new.Id.name   BMI   MDI   Y1    Y2    Y3    Y4   Y5
+1       Subj1 21.76 25.82 7.64  8.73  7.72 10.42 8.44
+2       Subj2 25.55 12.38 7.11  8.79  6.99  8.45 8.26
+3       Subj3 28.56  7.41 7.88  9.89 13.51 10.79 7.90
+4       Subj4 23.22 16.46 8.99 14.38 13.82 11.44 9.75
+5       Subj5 19.78 18.56 7.60  8.77  8.38  7.94 6.17
+6       Subj6 16.13 17.82 6.99  9.97  6.74  8.29 8.78
+\end{verbatim}
+
+To rename several columns at the same time we can use:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+old2new <- c("Y1" = "y1", "Y2" = "y2", "Y3" = "y3")
+names(dfW.red)[match(names(old2new),names(dfW.red))] <- old2new
+head(dfW.red)
+\end{lstlisting}
+
+\begin{verbatim}
+  new.Id.name   BMI   MDI   y1    y2    y3    Y4   Y5
+1       Subj1 21.76 25.82 7.64  8.73  7.72 10.42 8.44
+2       Subj2 25.55 12.38 7.11  8.79  6.99  8.45 8.26
+3       Subj3 28.56  7.41 7.88  9.89 13.51 10.79 7.90
+4       Subj4 23.22 16.46 8.99 14.38 13.82 11.44 9.75
+5       Subj5 19.78 18.56 7.60  8.77  8.38  7.94 6.17
+6       Subj6 16.13 17.82 6.99  9.97  6.74  8.29 8.78
+\end{verbatim}
+
+Other useful functions are \texttt{tolower} to convert characters to lower
+case and \texttt{gsub} to remove a specific pattern in a character vector, e.g.:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gsub(pattern = ".", replacement = "", x = c("a..","b..."), fixed = TRUE)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] "a" "b"
 \end{verbatim}
 
 Many of the other data processing steps are specific to each study and
@@ -631,7 +712,7 @@ practice. Univariate linear regression are also not recommended in
 presence of extreme values (A3) or very correlated covariates (A4).
 
 \subsection{Fitting a univariate linear regression in \Rlogo{}}
-\label{sec:org2100597}
+\label{sec:orgfef48e7}
 
 We can use:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -687,7 +768,7 @@ shape) and the bottom right plot can be used to identify observation
 that have a huge influence on the fitted values.
 
 \subsubsection{Testing (A1)}
-\label{sec:org019a661}
+\label{sec:org13e1726}
 
 The qqtest package provides a more readable qqplot. To use it, we
 first need to extract the residuals. This can be achieved using the
@@ -752,7 +833,7 @@ distribution.
 \clearpage
 
 \subsubsection{Testing (A2)}
-\label{sec:org7053d4a}
+\label{sec:org382908e}
 
 A statistical test can also be used to assess whether there is
 evidence for a more complex functional form for the linear predictor:
@@ -781,7 +862,7 @@ Based on 1000 realizations. Cumulated residuals ordered by MDI-variable.
 \end{verbatim}
 
 \subsubsection{Testing (A3)}
-\label{sec:orgb03933d}
+\label{sec:org8922bb6}
 
 The \texttt{influence} method can be used to output what is the impact of
 each observation on each estimated parameter:
@@ -803,7 +884,7 @@ head(influence(e.lm)$coefficient)
 Large values (positive or negative) indicate influential observations.
 
 \subsubsection{Testing (A4)}
-\label{sec:org56883f7}
+\label{sec:org7503db2}
 
 The correlation among the explanatory variables can be assessed using
 the VIF (variance inflation factor):
@@ -821,7 +902,7 @@ arbitrary).
 
 
 \subsection{Hypothesis testing}
-\label{sec:org6b118fe}
+\label{sec:orgf9fc33d}
 
 We want to formally test whether there is an effect of MDI on the
 outcome. This is equivalent to test the null hypothesis:
@@ -905,7 +986,7 @@ we make no assumption on the correlation structure between the
 residuals.
 
 \subsection{Fitting multiple linear regression in \Rlogo{}}
-\label{sec:org199dcc4}
+\label{sec:org5bbb16f}
 
 We can estimate all the 5 models and store them into a list:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -919,18 +1000,18 @@ ls.lm <- list(Y1 = lm(Y1 ~ age + BMI + MDI, data = dfW),
 \end{lstlisting}
 
 \subsection{Interpretation of the regression coefficients}
-\label{sec:org9c45684}
+\label{sec:org3746056}
 
 Same as in the univariate case (see section \ref{sec:interpretationLM}).
 
 \subsection{Diagnostics tools for univariate linear regression in \Rlogo{}}
-\label{sec:orgfe1e600}
+\label{sec:org3819252}
 
 Same as in the univariate case (see section \ref{sec:diagLM}). This model
 checking needs to be done for each outcome.
 
 \subsection{Hypothesis testing}
-\label{sec:org1e0c170}
+\label{sec:org22df8a0}
 
 We now want to test:
 \begin{align*}
@@ -1122,7 +1203,7 @@ intervals using the (single-step) Dunnett approach.
 \clearpage
 
 \section{References}
-\label{sec:org823a2b9}
+\label{sec:orgb26c6a9}
 
 \begingroup
 \renewcommand{\section}[2]{}
@@ -1137,7 +1218,7 @@ intervals using the (single-step) Dunnett approach.
 \section{Statistics: definitions and notations}
 \label{SM:statistics}
 \subsection{Variables}
-\label{sec:orgf9cc467}
+\label{sec:org273002f}
 
 We can differentiate several types of random variables: outcomes,
 exposure, risk factors, confounders, and mediators. To explicit the
@@ -1194,7 +1275,7 @@ Path diagram relating the variables Y, E, M, \(X_1\) and \(X_2\)}
 \clearpage 
 
 \subsection{Assumptions}
-\label{sec:org961182d}
+\label{sec:org41dfc97}
 
 We can distinguish two types of assumptions:
 \begin{itemize}
@@ -1217,7 +1298,7 @@ complex.
 \end{itemize}
 
 \subsection{Statistical model}
-\label{sec:org5aa1e49}
+\label{sec:orgae28476}
 A statistical model \(\model\) is set of possible probability
 distributions. For instance when we fit a Gaussian linear model for
 \(Y_1\) with just an intercept \(\model=\left\{\Gaus[\mu,\sigma^2];\mu
@@ -1225,7 +1306,7 @@ distributions. For instance when we fit a Gaussian linear model for
 containing all possible univariate normal distributions.
 
 \subsection{Model parameters}
-\label{sec:orgc44f1a6}
+\label{sec:org85bf93a}
 
 The model parameters are the (non random) variables that enable the
 statistical model to "adapt" to different settings. They will be
@@ -1317,7 +1398,7 @@ Theta_hat.XP2
 \end{verbatim}
 
 \subsection{Parameter of interest}
-\label{sec:orge13fdf3}
+\label{sec:org5770421}
 
 The statistical model may contain many parameters, most of them are
 often not of interest but are needed to obtain valid estimates
@@ -1351,7 +1432,7 @@ estimate with lower variance. Note that we have no guarantee that it
 will reduce the bias.
 
 \subsection{Contrast matrix}
-\label{sec:org5ed6fcd}
+\label{sec:org006d7cd}
 
 When dealing with many parameters it is convenient to define the null
 hypothesis via a contrast matrix. An example of null hypothesis is:
