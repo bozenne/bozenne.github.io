@@ -1,4 +1,4 @@
-% Created 2018-12-04 ti 10:42
+% Created 2019-02-19 ti 14:13
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
 
@@ -53,7 +53,6 @@ emphstyle=\color{blue}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{dsfont}
-\usepackage{textcomp}
 \usepackage{array}
 \usepackage{ifthen}
 \usepackage{hyperref}
@@ -174,7 +173,7 @@ emphstyle=\color{blue}
 \maketitle
 
 \section*{Summary}
-\label{sec:org8f71312}
+\label{sec:orga3ba3d3}
 We propose a strategy to assess the effect of an exposure (e.g. a
 disease, a genetic factor) on several outcomes (e.g. psychological
 outcomes, the binding potential measured in several brain regions)
@@ -294,7 +293,7 @@ synthetic description of the functionalities can be found at
 \section{Data management}
 \label{sec:dataManagement}
 \subsection{Working directory}
-\label{sec:orgdc24857}
+\label{sec:orgcedb5ff}
 
 The working directory is where R, by default, look for files
 to import and export data or figures. The current working directory
@@ -327,7 +326,7 @@ getwd()
 \end{verbatim}
 
 \subsection{Importing the data}
-\label{sec:org4e202cc}
+\label{sec:org80660ec}
 
 It is a good idea to start by checking that the working directory
 contains the data we want to import. For instance the file \texttt{data.csv}
@@ -425,7 +424,7 @@ is a type of character strings in R) and the rest contains numerical
 values.
 
 \subsection{Data processing}
-\label{sec:org826f765}
+\label{sec:orgbfe0761}
 
 Often the raw data needs to be transformed before being analyzed:
 \begin{itemize}
@@ -632,7 +631,7 @@ practice. Univariate linear regression are also not recommended in
 presence of extreme values (A3) or very correlated covariates (A4).
 
 \subsection{Fitting a univariate linear regression in \Rlogo{}}
-\label{sec:org569a9bc}
+\label{sec:org2100597}
 
 We can use:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -688,7 +687,7 @@ shape) and the bottom right plot can be used to identify observation
 that have a huge influence on the fitted values.
 
 \subsubsection{Testing (A1)}
-\label{sec:orgcec1e51}
+\label{sec:org019a661}
 
 The qqtest package provides a more readable qqplot. To use it, we
 first need to extract the residuals. This can be achieved using the
@@ -753,7 +752,7 @@ distribution.
 \clearpage
 
 \subsubsection{Testing (A2)}
-\label{sec:orgfccfbdf}
+\label{sec:org7053d4a}
 
 A statistical test can also be used to assess whether there is
 evidence for a more complex functional form for the linear predictor:
@@ -782,7 +781,7 @@ Based on 1000 realizations. Cumulated residuals ordered by MDI-variable.
 \end{verbatim}
 
 \subsubsection{Testing (A3)}
-\label{sec:orgb15ca4f}
+\label{sec:orgb03933d}
 
 The \texttt{influence} method can be used to output what is the impact of
 each observation on each estimated parameter:
@@ -804,7 +803,7 @@ head(influence(e.lm)$coefficient)
 Large values (positive or negative) indicate influential observations.
 
 \subsubsection{Testing (A4)}
-\label{sec:org9124794}
+\label{sec:org56883f7}
 
 The correlation among the explanatory variables can be assessed using
 the VIF (variance inflation factor):
@@ -822,7 +821,7 @@ arbitrary).
 
 
 \subsection{Hypothesis testing}
-\label{sec:org33074eb}
+\label{sec:org6b118fe}
 
 We want to formally test whether there is an effect of MDI on the
 outcome. This is equivalent to test the null hypothesis:
@@ -906,7 +905,7 @@ we make no assumption on the correlation structure between the
 residuals.
 
 \subsection{Fitting multiple linear regression in \Rlogo{}}
-\label{sec:org579dfe3}
+\label{sec:org199dcc4}
 
 We can estimate all the 5 models and store them into a list:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -920,26 +919,26 @@ ls.lm <- list(Y1 = lm(Y1 ~ age + BMI + MDI, data = dfW),
 \end{lstlisting}
 
 \subsection{Interpretation of the regression coefficients}
-\label{sec:org744f64f}
+\label{sec:org9c45684}
 
 Same as in the univariate case (see section \ref{sec:interpretationLM}).
 
 \subsection{Diagnostics tools for univariate linear regression in \Rlogo{}}
-\label{sec:orga17204e}
+\label{sec:orgfe1e600}
 
 Same as in the univariate case (see section \ref{sec:diagLM}). This model
 checking needs to be done for each outcome.
 
 \subsection{Hypothesis testing}
-\label{sec:orga039532}
+\label{sec:org1e0c170}
 
 We now want to test:
 \begin{align*}
 (\Hypothesis[0]) \; \beta_{Y_1, MDI, 0} = 0
- \text{ or } \beta_{Y_2, MDI, 0} = 0
- \text{ or } \beta_{Y_3, MDI, 0} = 0
- \text{ or } \beta_{Y_4, MDI, 0} = 0
- \text{ or } \beta_{Y_5, MDI, 0} = 0
+ \text{ and } \beta_{Y_2, MDI, 0} = 0
+ \text{ and } \beta_{Y_3, MDI, 0} = 0
+ \text{ and } \beta_{Y_4, MDI, 0} = 0
+ \text{ and } \beta_{Y_5, MDI, 0} = 0
 \end{align*}
 
 The p-values returned by \texttt{summary} are no more valid since we are
@@ -1123,7 +1122,7 @@ intervals using the (single-step) Dunnett approach.
 \clearpage
 
 \section{References}
-\label{sec:org16e0531}
+\label{sec:org823a2b9}
 
 \begingroup
 \renewcommand{\section}[2]{}
@@ -1138,7 +1137,7 @@ intervals using the (single-step) Dunnett approach.
 \section{Statistics: definitions and notations}
 \label{SM:statistics}
 \subsection{Variables}
-\label{sec:orgc681c6b}
+\label{sec:orgf9cc467}
 
 We can differentiate several types of random variables: outcomes,
 exposure, risk factors, confounders, and mediators. To explicit the
@@ -1195,7 +1194,7 @@ Path diagram relating the variables Y, E, M, \(X_1\) and \(X_2\)}
 \clearpage 
 
 \subsection{Assumptions}
-\label{sec:org581343e}
+\label{sec:org961182d}
 
 We can distinguish two types of assumptions:
 \begin{itemize}
@@ -1218,7 +1217,7 @@ complex.
 \end{itemize}
 
 \subsection{Statistical model}
-\label{sec:orgecdc20a}
+\label{sec:org5aa1e49}
 A statistical model \(\model\) is set of possible probability
 distributions. For instance when we fit a Gaussian linear model for
 \(Y_1\) with just an intercept \(\model=\left\{\Gaus[\mu,\sigma^2];\mu
@@ -1226,7 +1225,7 @@ distributions. For instance when we fit a Gaussian linear model for
 containing all possible univariate normal distributions.
 
 \subsection{Model parameters}
-\label{sec:orgc1d03c1}
+\label{sec:orgc44f1a6}
 
 The model parameters are the (non random) variables that enable the
 statistical model to "adapt" to different settings. They will be
@@ -1318,7 +1317,7 @@ Theta_hat.XP2
 \end{verbatim}
 
 \subsection{Parameter of interest}
-\label{sec:org1e1fe88}
+\label{sec:orge13fdf3}
 
 The statistical model may contain many parameters, most of them are
 often not of interest but are needed to obtain valid estimates
@@ -1352,7 +1351,7 @@ estimate with lower variance. Note that we have no guarantee that it
 will reduce the bias.
 
 \subsection{Contrast matrix}
-\label{sec:org9dfe908}
+\label{sec:org5ed6fcd}
 
 When dealing with many parameters it is convenient to define the null
 hypothesis via a contrast matrix. An example of null hypothesis is:

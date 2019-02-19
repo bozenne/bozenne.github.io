@@ -841,10 +841,10 @@ We now want to test:
 #+BEGIN_EXPORT latex
 \begin{align*}
 (\Hypothesis[0]) \; \beta_{Y_1, MDI, 0} = 0
- \text{ or } \beta_{Y_2, MDI, 0} = 0
- \text{ or } \beta_{Y_3, MDI, 0} = 0
- \text{ or } \beta_{Y_4, MDI, 0} = 0
- \text{ or } \beta_{Y_5, MDI, 0} = 0
+ \text{ and } \beta_{Y_2, MDI, 0} = 0
+ \text{ and } \beta_{Y_3, MDI, 0} = 0
+ \text{ and } \beta_{Y_4, MDI, 0} = 0
+ \text{ and } \beta_{Y_5, MDI, 0} = 0
 \end{align*}
 #+END_EXPORT
 
