@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  6 MAR 2019 09:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  6 MAR 2019 09:56
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
-**./CV-FR-briceOzenne.tex
-(./CV-FR-briceOzenne.tex
+**./CV-EN-briceOzenne.tex
+(./CV-EN-briceOzenne.tex
 LaTeX2e <2016/02/01>
 Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -1060,8 +1060,11 @@ Package frenchb.ldf Warning: Please load the "listings" package
 \labelwidthFB=\skip68
 \leftmarginFB=\skip69
 \parindentFFN=\dimen152
-) (/usr/share/texlive/texmf-dist/tex/generic/babel-french/frenchb.ldf
-Language: frenchb 2016/02/13 v3.1l French support from the babel system
+) (/usr/share/texlive/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2012/08/20 v3.3p English support from the babel system
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/carlisle/scalefnt.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/eurosym/eurosym.sty
@@ -1376,10 +1379,10 @@ Package zref Info: New property: mdf@pagevalue on input line 895.
 (/usr/share/texlive/texmf-dist/tex/latex/natbib/bibentry.sty
 Package: bibentry 2007/10/30 1.5 (PWD)
 )
-(./CV-FR-briceOzenne.bbl)
+(./CV-EN-briceOzenne.bbl)
 Package hyperref Info: Option `colorlinks' set `true' on input line 117.
- (./CV-FR-briceOzenne.aux)
-\openout1 = `CV-FR-briceOzenne.aux'.
+ (./CV-EN-briceOzenne.aux)
+\openout1 = `CV-EN-briceOzenne.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
 LaTeX Font Info:    ... okay on input line 118.
@@ -1486,15 +1489,12 @@ LaTeX Info: Redefining \ref on input line 118.
 LaTeX Info: Redefining \pageref on input line 118.
 LaTeX Info: Redefining \nameref on input line 118.
 
-(./CV-FR-briceOzenne.out) (./CV-FR-briceOzenne.out)
+(./CV-EN-briceOzenne.out) (./CV-EN-briceOzenne.out)
 \@outlinefile=\write3
-\openout3 = `CV-FR-briceOzenne.out'.
+\openout3 = `CV-EN-briceOzenne.out'.
 
 LaTeX Info: Redefining \degres on input line 118.
 LaTeX Info: Redefining \dots on input line 118.
-Package frenchb.ldf Info: Setting StandardEnumerateEnv=true for
-(frenchb.ldf)             compatibility with enumerate package,
-(frenchb.ldf)              on input line 118.
 LaTeX Info: Redefining \up on input line 118.
 LaTeX Font Info:    Try loading font information for OT1+lmr on input line 120.
 
@@ -1560,80 +1560,62 @@ Overfull \hbox (130.52701pt too wide) in paragraph at lines 130--137
 [][] 
  []
 
-LaTeX Font Info:    Try loading font information for T1+lmss on input line 140.
+LaTeX Font Info:    Try loading font information for T1+lmss on input line 141.
 
 (/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-Overfull \hbox (2.7775pt too wide) in paragraph at lines 140--150
-[]  
- []
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 154.
 
 
-Overfull \hbox (45.93129pt too wide) in paragraph at lines 188--199
-[]  
- []
+(/usr/share/texmf/tex/latex/lm/ts1lmr.fd
+File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [1
 
-[1
-
-{/home/brice/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./photoId.png>]
-Overfull \hbox (53.05464pt too wide) in paragraph at lines 208--213
-[][]  
- []
-
-[2] [3] [4] [5]
-Overfull \hbox (18.324pt too wide) in paragraph at lines 317--329
-[]  
- []
-
-
-Overfull \hbox (11.14983pt too wide) in paragraph at lines 330--335
-[]  
- []
-
-
-Overfull \hbox (18.97772pt too wide) in paragraph at lines 338--345
+{/home/brice/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./photoId.png>] [2
+] [3] [4] [5]
+Overfull \hbox (64.67488pt too wide) in paragraph at lines 300--312
 []  
  []
 
 [6]
-Overfull \hbox (11.23914pt too wide) in paragraph at lines 360--372
+Overfull \hbox (9.93361pt too wide) in paragraph at lines 347--359
 [][]  
  []
 
-(./CV-FR-briceOzenne.bbl)
+(./CV-EN-briceOzenne.bbl)
 \Changes@OutFile=\write4
-\openout4 = `CV-FR-briceOzenne.soc'.
+\openout4 = `CV-EN-briceOzenne.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 386.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 374.
  [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 386.
- (./CV-FR-briceOzenne.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 386.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 386.
-Package rerunfilecheck Info: File `CV-FR-briceOzenne.out' has not changed.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 374.
+ (./CV-EN-briceOzenne.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 374.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 374.
+Package rerunfilecheck Info: File `CV-EN-briceOzenne.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 386.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 374.
  ) 
 Here is how much of TeX's memory you used:
- 20608 strings out of 493029
- 340707 string characters out of 6136233
- 444660 words of memory out of 5000000
- 23757 multiletter control sequences out of 15000+600000
- 52528 words of font info for 46 fonts, out of 8000000 for 9000
+ 20633 strings out of 493029
+ 341416 string characters out of 6136233
+ 444744 words of memory out of 5000000
+ 23778 multiletter control sequences out of 15000+600000
+ 52903 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,10n,55p,10456b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texlive/texmf-dist
-/fonts/type1/public/eurosym/feymr10.pfb></usr/share/texmf/fonts/type1/public/lm
-/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx6.pfb></usr/share/texmf
-/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.p
-fb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/t
-ype1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-
-Output written on CV-FR-briceOzenne.pdf (7 pages, 351280 bytes).
+ 40i,10n,55p,10456b,474s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
+ips/lm/lm-ts1.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/eurosym/fey
+mr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/f
+onts/type1/public/lm/lmbx6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type
+1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></u
+sr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
+Output written on CV-EN-briceOzenne.pdf (7 pages, 348006 bytes).
 PDF statistics:
- 205 PDF objects out of 1000 (max. 8388607)
- 184 compressed objects within 2 object streams
- 66 named destinations out of 1000 (max. 500000)
+ 207 PDF objects out of 1000 (max. 8388607)
+ 186 compressed objects within 2 object streams
+ 64 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

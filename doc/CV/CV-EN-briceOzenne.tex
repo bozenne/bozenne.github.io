@@ -1,4 +1,4 @@
-% Created 2019-01-22 ti 09:49
+% Created 2019-03-06 ons 09:56
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -112,7 +112,7 @@ bottom=20mm
  pdftitle={},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 25.2.1 (Org mode 9.0.4)},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.0.4)},
  pdflang={English}
  }
 \begin{document}
@@ -132,7 +132,7 @@ bottom=20mm
 	Date of birth&:& February 8, 1990  \\
 	Personal email&:& \url{brice.ozenne@orange.fr} \\ 
 	Personal phone number&:& (+45) 52 328 128 \\ 
-        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Denmark \\
+        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen \O{}, Denmark \\
 \end{tabular*}
 \end{minipage}
 
@@ -140,17 +140,16 @@ bottom=20mm
 
 \resheading{CURRENT POSITION}
 \begin{tabular}{l@{ }l}
-	November 2015- Now:& \textbf{Postdoctoral researcher} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{page personnelle})\\
+	November 2015- Now:& \textbf{Postdoctoral researcher} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{website})\\
 	& Section of Biostatistics, University of Copenhagen \\
-	& Øster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
+	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
 	& Neurobiology Research Unit \\
 	& Copenhagen University Hospital, Rigshospitalet \\
 	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark
 \end{tabular}
 
 \bigskip
-
-Mon research work is organized around three topics:
+My research work is organized around three topics:
 \begin{itemize}
 \item the development of \textbf{latent variable models} for the analysis of
 complex data (software \texttt{lavaSearch2}). I apply these developments on
@@ -177,11 +176,22 @@ to balance the benefit (longer in survival time) and the risk
 (treatment side effects) in an interpretable way is important.
 \end{itemize}
 
+\resheading{SKILLS}
+\section*{\emph{Language}}
+\label{sec:orgc1bf4f7}
+French (native language), english (fluent), basics in italian and danish.
+
+\section*{\emph{Software}}
+\label{sec:org3be9c32}
+Good knowledge of \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
+Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
+git/github (via \href{https://magit.vc/}{magit}).
 \resheading{EDUCATION}
 \begin{tabular}{l@{ }l}
 2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
-              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ [3mm]
-2011 - 2012 : & Master’s degree in biostatistics (m2 b3s), university lyon, Lyon, France. \\ 
+              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
+              & Advisor: Pr. Delphine Maucort-Boulch and Pr. Norbert Nighoghossian \\ [3mm]
+2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University lyon, Lyon, France. \\ 
               & Carried out in double degree with the École Centrale de Lyon. \\ [3mm]
 2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
               & Erasmus at Politecnico di Milano (2nd semester 2011). \\
@@ -189,16 +199,6 @@ to balance the benefit (longer in survival time) and the risk
 
 \pagebreak[3]
 
-\resheading{SKILLS}
-\section*{\emph{Language}}
-\label{sec:org1b3f907}
-French (native language), english (fluent), basics in italian and danish.
-
-\section*{\emph{Software}}
-\label{sec:orga470111}
-Good knowledge of \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
-Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
-git/github (via \href{https://magit.vc/}{magit}).
 \resheading{GRANTS}
 \begin{tabular}{l@{ }l}
 2017-2019: MARIE CURIE Individual Fellowships (200 000\euro) \\
@@ -206,10 +206,9 @@ git/github (via \href{https://magit.vc/}{magit}).
 
 \end{tabular}
 
-
 \resheading{SCIENTIFIC OUTPUT}
 \section*{\emph{Publications (methodological)}}
-\label{sec:org132f7c5}
+\label{sec:orgf1bce54}
 
 Published:
 \begin{enumerate}
@@ -221,22 +220,23 @@ Published:
 
 \pagebreak[3]
 
+In revision:
+\begin{enumerate}
+    \item \bibentry{ozenne20XXestimation}
+    \item \bibentry{ozenne20XXsmall}
+    \item \bibentry{peron20XXunbiased}
+\end{enumerate}
+
 Submitted:
 \begin{enumerate}
-   \item \bibentry{ozenne20XXestimation}
-   \item \bibentry{ozenne20XXsmall}
-   \item \bibentry{ozenne20XXcontroling}
-   \item \bibentry{peron20XXunbiased}
- \end{enumerate}
-In progress:
-\begin{enumerate}
-   \item \bibentry{norgaard20XXpreprocessing}
- \end{enumerate}
+    \item \bibentry{ozenne20XXcontroling}
+    \item \bibentry{norgaard20XXpreprocessing} 
+\end{enumerate}
 
 \pagebreak[3]
 
 \section*{\emph{Software development (package for the \href{https://www.r-project.org/}{R} software)}}
-\label{sec:org95044e1}
+\label{sec:org8c315e7}
 \begin{minipage}{0.01\textwidth}
 \hspace{\fill}
 \end{minipage}
@@ -261,7 +261,7 @@ average treatment effects. Methodology described in
 \pagebreak[3]
 
 \section*{\emph{Publications (clinical applications)}}
-\label{sec:org932ba10}
+\label{sec:org74d4914}
 
 Published:
 \begin{enumerate}
@@ -298,7 +298,7 @@ In progress:
    \item \bibentry{vadskjaer20XXpsychometric}
  \end{enumerate}
 \resheading{PEER REVIEW}
-I have reviewed papers for Biometrics, Statistics in Medicine, and the
+I have reviewed a paper for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
 \resheading{TEACHING \hfill L : lecture, PC : practical classes}
 \begin{tabular}{l@{ }l}
@@ -314,6 +314,57 @@ International Journal of Biostatistics.
 \begin{tabular}{l@{ }l@{ }l}
 2015 - Now &:& \textbf{statistical consultant} at NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
 \multicolumn{3}{l}{Advise neuroscientists and psychologists.} \\ [3mm]
+\end{tabular}
+
+\bigskip
+
+Co-superviser of \textbf{master 2} students:
+\smallskip
+
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Ceren Tozlu \\
+\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke.} \\ [3mm]
+2019 &:& Alice Brouquet-Laglaire \\
+\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
+\end{tabular}
+
+\bigskip
+
+Contribution to the supervision of \textbf{Phd} students:
+\smallskip
+
+\begin{tabular}{l@{ }l@{ }l}
+2015-2018 &:& Vincent Beliveau \\
+\multicolumn{3}{l}{Functional and Molecular Imaging of the Serotonin System in the Human Brain} \\ [3mm]
+2016-2019 &:& Martin N\o{}rgaard \\
+\multicolumn{3}{l}{Optimizing preprocessing pipelines in PET/MRI neuroimaging} \\ [3mm]
+\end{tabular}
+
+\resheading{ORAL COMMUNICATIONS}
+Oral presentation at international conferences: 
+\smallskip
+
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Image segmentation using a spatially regularized mixture model \\
+&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italia \\
+2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
+&& Rencontres R, Grenoble, France \\
+2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
+&& Computational statistics, Oviedo, Spain \\
+2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
+&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Spain \\
+2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \\
+\end{tabular}
+
+\bigskip
+
+Chairman at international conferences:
+\smallskip
+
+\begin{tabular}{l@{ }l@{ }l}
+2019 &:& Mathematical Statistics \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark
 \end{tabular}
 
 

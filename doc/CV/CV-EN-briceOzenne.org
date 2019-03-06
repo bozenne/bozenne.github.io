@@ -18,7 +18,7 @@
 	Date of birth&:& February 8, 1990  \\
 	Personal email&:& \url{brice.ozenne@orange.fr} \\ 
 	Personal phone number&:& (+45) 52 328 128 \\ 
-        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Denmark \\
+        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen \O{}, Denmark \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
@@ -29,9 +29,9 @@
 #+LaTeX: \resheading{CURRENT POSITION}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	November 2015- Now:& \textbf{Postdoctoral researcher} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{page personnelle})\\
+	November 2015- Now:& \textbf{Postdoctoral researcher} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{website})\\
 	& Section of Biostatistics, University of Copenhagen \\
-	& Øster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
+	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
 	& Neurobiology Research Unit \\
 	& Copenhagen University Hospital, Rigshospitalet \\
 	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark
@@ -39,8 +39,7 @@
 #+END_EXPORT
 
 \bigskip
-
-Mon research work is organized around three topics:
+My research work is organized around three topics:
 - the development of *latent variable models* for the analysis of
   complex data (software =lavaSearch2=). I apply these developments on
   neuroimaging data and data from psychological tests to investigate
@@ -61,21 +60,6 @@ Mon research work is organized around three topics:
   to balance the benefit (longer in survival time) and the risk
   (treatment side effects) in an interpretable way is important.
 
-* EDUCATION :ignore:
-#+LaTeX: \resheading{EDUCATION}
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l}
-2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
-              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ [3mm]
-2011 - 2012 : & Master’s degree in biostatistics (m2 b3s), university lyon, Lyon, France. \\ 
-              & Carried out in double degree with the École Centrale de Lyon. \\ [3mm]
-2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
-              & Erasmus at Politecnico di Milano (2nd semester 2011). \\
-\end{tabular}
-#+END_EXPORT
-
-\pagebreak[3]
-
 * SKILLS                                                             :ignore:
 #+LaTeX: \resheading{SKILLS}
 ** /Language/
@@ -86,6 +70,23 @@ Good knowledge of \Rlogo{}, \LaTeX{} and [[https://orgmode.org/][orgmode]]. @@la
 Basic knowledge but common use of \Cpp{}, lisp (for [[https://www.gnu.org/software/emacs/][GNU Emacs]]) and
 git/github (via [[https://magit.vc/][magit]]).
 
+
+* EDUCATION :ignore:
+#+LaTeX: \resheading{EDUCATION}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
+              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
+              & Advisor: Pr. Delphine Maucort-Boulch and Pr. Norbert Nighoghossian \\ [3mm]
+2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University lyon, Lyon, France. \\ 
+              & Carried out in double degree with the École Centrale de Lyon. \\ [3mm]
+2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
+              & Erasmus at Politecnico di Milano (2nd semester 2011). \\
+\end{tabular}
+#+END_EXPORT
+
+\pagebreak[3]
+
 * GRANTS                                                             :ignore:
 #+LaTeX: \resheading{GRANTS}
 #+BEGIN_EXPORT latex
@@ -95,7 +96,6 @@ git/github (via [[https://magit.vc/][magit]]).
 
 \end{tabular}
 #+END_EXPORT
-
 
 * SCIENTIFIC OUTPUT                                                  :ignore:
 #+LaTeX: \resheading{SCIENTIFIC OUTPUT}
@@ -113,20 +113,21 @@ Published:
 
 \pagebreak[3]
 
-Submitted:
+In revision:
 #+BEGIN_EXPORT latex
- \begin{enumerate}
+\begin{enumerate}
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
-    \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
-  \end{enumerate}
+\end{enumerate}
 #+END_EXPORT
-In progress:
+
+Submitted:
 #+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{norgaard20XXpreprocessing}
-  \end{enumerate}
+\begin{enumerate}
+    \item \bibentry{ozenne20XXcontroling}
+    \item \bibentry{norgaard20XXpreprocessing} 
+\end{enumerate}
 #+END_EXPORT
 
 \pagebreak[3]
@@ -198,7 +199,7 @@ In progress:
 
 * PEER REVIEW       :ignore:
 #+LaTeX: \resheading{PEER REVIEW}
-I have reviewed papers for Biometrics, Statistics in Medicine, and the
+I have reviewed a paper for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
 * TEACHING                                                           :ignore:
 #+LaTeX: \resheading{TEACHING \hfill L : lecture, PC : practical classes}
@@ -219,6 +220,66 @@ International Journal of Biostatistics.
 \begin{tabular}{l@{ }l@{ }l}
 2015 - Now &:& \textbf{statistical consultant} at NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
 \multicolumn{3}{l}{Advise neuroscientists and psychologists.} \\ [3mm]
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+Co-superviser of *master 2* students:
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Ceren Tozlu \\
+\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke.} \\ [3mm]
+2019 &:& Alice Brouquet-Laglaire \\
+\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+Contribution to the supervision of *Phd* students:
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2015-2018 &:& Vincent Beliveau \\
+\multicolumn{3}{l}{Functional and Molecular Imaging of the Serotonin System in the Human Brain} \\ [3mm]
+2016-2019 &:& Martin N\o{}rgaard \\
+\multicolumn{3}{l}{Optimizing preprocessing pipelines in PET/MRI neuroimaging} \\ [3mm]
+\end{tabular}
+#+END_EXPORT
+
+* ORAL COMMUNICATIONS                                                         :ignore:
+#+LaTeX: \resheading{ORAL COMMUNICATIONS}
+Oral presentation at international conferences: 
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Image segmentation using a spatially regularized mixture model \\
+&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italia \\
+2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
+&& Rencontres R, Grenoble, France \\
+2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
+&& Computational statistics, Oviedo, Spain \\
+2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
+&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Spain \\
+2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \\
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+Chairman at international conferences:
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2019 &:& Mathematical Statistics \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark
 \end{tabular}
 #+END_EXPORT
 
