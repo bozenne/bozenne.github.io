@@ -134,7 +134,6 @@ En révision:
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
     \item \bibentry{peron20XXunbiased}
-    \item \bibentry{norgaard20XXpreprocessing}
 \end{enumerate}
 #+END_EXPORT
 
@@ -144,6 +143,7 @@ Soumis:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
     \item \bibentry{ozenne20XXcontroling}    
+    \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
 
