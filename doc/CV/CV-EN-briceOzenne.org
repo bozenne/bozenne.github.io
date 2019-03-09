@@ -159,6 +159,7 @@ Submitted:
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{madsen2019psychedelic}
     \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
     \item \bibentry{hjordt2018self}
