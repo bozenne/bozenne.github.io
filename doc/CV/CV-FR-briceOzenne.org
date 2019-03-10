@@ -228,7 +228,7 @@ International Journal of Biostatistics.
 2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
               & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h). \\
 2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (6h).\\
               & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
 2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
 \end{tabular}
@@ -267,7 +267,7 @@ Participation à l'encadrement de *thèses*:
 \end{tabular}
 #+END_EXPORT
 
-*  Communications orales                                             :ignore:
+* Communications orales                                             :ignore:
 #+LaTeX: \resheading{Conférences}
 Présentations orales lors de conférences internationales: 
 \smallskip
