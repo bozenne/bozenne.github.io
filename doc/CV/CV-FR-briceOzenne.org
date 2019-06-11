@@ -14,11 +14,11 @@
 \end{minipage}
 \begin{minipage}{0.75\linewidth}
 \begin{tabular*}{7in}{ll@{ }l}
-	Nationalité&:& français  \\
+	Nationalité&:& française  \\
 	Né&:& le 8 février 1990 à Saint Hilaire du Harcouët (50)  \\
 	Courriel personnel&:& \url{brice.ozenne@orange.fr} \\ 
 	Téléphone personnel&:& (+45) 52 328 128 \\ 
-        Adresse personnelle&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen Ø, Danemark \\
+        Adresse personnelle&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen \O{}, Danemark \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
@@ -30,7 +30,7 @@
 \begin{tabular}{l@{ }l}
 	Novembre 2015- Actuellement:& \textbf{Post doctorant} (\href{http://publichealth.ku.dk/staff/?pure=en/persons/540231}{page personnelle})\\
 	& Section of Biostatistics, University of Copenhagen \\
-	& Øster Farimagsgade 5, 1014 Copenhague, Danemark \\
+	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\
 	& \\
 	& Neurobiology Research Unit \\
 	& Copenhagen University Hospital, Rigshospitalet \\
@@ -71,7 +71,7 @@ Bonne connaissance de \Rlogo{}, \LaTeX{} et [[https://orgmode.org/][orgmode]]. @
 Utilisation courante mais basique de \Cpp{}, lisp (pour [[https://www.gnu.org/software/emacs/][GNU Emacs]]),
 git/github et inkscape.
 
-* Formation :ignore:
+* Formation                                                          :ignore:
 #+LaTeX: \resheading{Formation Universitaire}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
@@ -102,7 +102,6 @@ git/github et inkscape.
 \end{tabular}
 #+END_EXPORT
 
-
 * Financement                                                        :ignore:
 #+LaTeX: \resheading{Financement}
 #+BEGIN_EXPORT latex
@@ -112,7 +111,6 @@ git/github et inkscape.
 
 \end{tabular}
 #+END_EXPORT
-
 
 * Production scientifique                                            :ignore:
 #+LaTeX: \resheading{Production scientifique}
@@ -130,21 +128,21 @@ Publié:
 
 \pagebreak[3]
 
-Soumis:
+En révision:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
     \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
-    \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
-  \end{enumerate}
+\end{enumerate}
 #+END_EXPORT
 
 \pagebreak[3]
 
-En cours de rédaction:
+Soumis:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ozenne20XXcontroling}    
     \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
@@ -200,7 +198,7 @@ Publié:
 
 \pagebreak[3]
 
-Soumis:
+En révision:
 #+BEGIN_EXPORT latex
 \begin{enumerate}
     \item \bibentry{ebert20XXmolecular}
@@ -221,33 +219,87 @@ En cours de rédaction:
 
 * Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
-Je relis occasionnellement des articles pour Biometrics, Statistics in Medicine, et
+J'ai relu un article pour Biometrics, Statistics in Medicine, et
 International Journal of Biostatistics.
 * Enseignement                                                       :ignore:
 #+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
 2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h) \\
+              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h). \\
 2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (6h).\\
               & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
 2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
 \end{tabular}
 #+END_EXPORT
 
-* Encadrement :ignore:
+* Encadrement                                                        :ignore:
 #+LaTeX: \resheading{Encadrement}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
 2015 - Actuellement &:& \textbf{consultant} en statistiques pour NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
 \multicolumn{3}{l}{ Conseille les chercheurs en neuroscience dans l'analyse de leurs données et la rédaction d'articles.} \\ [3mm]
-                        2014 &:& encadrement d'une étudiante de master 2 dans son stage de fin d'étude. \\
 \end{tabular}
 #+END_EXPORT
 
+\bigskip
 
-* Reference :ignore:
+Co-encadrant d'étudiant en *master 2*:
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Ceren Tozlu \\
+\multicolumn{3}{l}{Comparaison de méthodes de classification pour la prédiction du devenir des tissus lors d'un AVC.} \\ [3mm]
+2019 &:& Alice Brouquet-Laglaire \\
+\multicolumn{3}{l}{Comparaison de méthodes d’inférence dans le cadre des comparaisons par paires généralisées.} \\ [3mm]
+\end{tabular}
+#+END_EXPORT
+
+\pagebreak[3]
+
+Participation à l'encadrement de *thèses*:
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2015-2018 &:& Vincent Beliveau \\
+\multicolumn{3}{l}{Imagerie fonctionnelle et moléculaire du système cérébral de sérotonine chez l'humain} \\ [3mm]
+2016-2019 &:& Martin N\o{}rgaard \\
+\multicolumn{3}{l}{Optimisation de la stratégie de traitement des données IRM et TEP en neuroimagerie} \\ [3mm]
+\end{tabular}
+#+END_EXPORT
+
+* Communications orales                                             :ignore:
+#+LaTeX: \resheading{Conférences}
+Présentations orales lors de conférences internationales: 
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2014 &:& Image segmentation using a spatially regularized mixture model \\
+&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italie \\
+2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
+&& Rencontres R, Grenoble, France \\
+2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
+&& Computational statistics, Oviedo, Espagne \\
+2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
+&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Espagne \\
+2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \\
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+Responsable de session ("chairman"):
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2019 &:& Mathematical Statistics \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark
+\end{tabular}
+#+END_EXPORT
+
+* Reference                                                          :ignore:
 
 # bibliographystyle:apalike
  bibliographystyle:plainnat

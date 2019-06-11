@@ -97,8 +97,7 @@ we will figure out a solution.
   + Neurobiology Research Unit, Rigshospitalet and University of
     Copenhagen, 9 Blegdamsvej, 2100 Copenhagen, Denmark
   + Department of Public Health, Section of Biostatistics, University
-  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen K, Denmark,
-  Denmark <br> <br>
+  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen K, Denmark <br> <br>
 
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also
