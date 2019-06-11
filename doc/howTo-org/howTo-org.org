@@ -1,0 +1,242 @@
+#+TITLE: "How to" in orgmode
+#+Author: Brice Ozenne
+
+* Box
+
+*** Round box 
+(see header for the definition of uppercol and lowercol)
+
+#+BEGIN_EXPORT latex
+\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]
+{Patient preference} 
+\begin{enumerate}
+\item increase survival by at least 2 months
+\item otherwise, least serious adverse events
+\end{enumerate}
+\end{beamerboxesrounded}
+#+END_EXPORT
+
+* Code
+
+*** Set output size
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(model)
+#+END_SRC
+
+
+#+LaTeX: {
+#+LaTeX: \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize,formatcom = {\color[rgb]{0.5,0,0}}}
+
+#+RESULTS:
+#+begin_example
+________________________________________________________________________________
+Layer (type)                        Output Shape                    Param #     
+================================================================================
+dense_22 (Dense)                    (None, 256)                     200960      
+________________________________________________________________________________
+dense_23 (Dense)                    (None, 128)                     32896       
+________________________________________________________________________________
+dense_24 (Dense)                    (None, 10)                      1290        
+================================================================================
+Total params: 235,146
+Trainable params: 235,146
+Non-trainable params: 0
+________________________________________________________________________________
+#+end_example
+
+#+LaTeX: }
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+model$weights[[1]]
+#+END_SRC
+
+#+LaTeX: {
+#+LaTeX: \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize,formatcom = {\color[rgb]{0.5,0,0}}}
+
+#+RESULTS:
+: <tf.Variable 'dense_4/kernel:0' shape=(784, 256) dtype=float32_ref>
+
+#+LaTeX: }
+
+* List
+
+*** Choose item
+- (A) :: yyy
+- (1) :: xxx
+
+
+* Table
+
+*** Nice latex table
+(require booktabs)
+
+#+BEGIN_EXPORT latex
+\begin{table}
+\begin{tabular}{lll}
+\toprule
+A  & \textcolor{orange}{B} & \textcolor{blue}{C} \\
+D & (n=282)  & (n=280) \\
+\midrule
+Grade 1 & 48 (17\%)  & 69 (24.6\%) \\
+Grade 2 & 118 (41.8\%)  & 89 (31.5\%) \\
+Grade 3 & 72 (25.5\%)  & 47 (16.8\%) \\
+Grade 4 & 11 (3.9\%) & 6 (2.1\%) \\
+Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+#+END_EXPORT
+
+* Miscellaneous
+
+*** Inline latex
+@@latex:any arbitrary LaTeX code@@
+
+*** Color tex
+(see header for the definition of darkgreen)
+- \textcolor{\darkgreen}{risk factor}: adjust (will increase precision)
+
+*** Footnote
+This is a footnote[fn:1].
+
+[fn:1] blaa
+*** Big centered text
+
+#+BEGIN_EXPORT latex
+\vfill
+
+\begin{center}
+\Huge Quiz
+\end{center}
+
+\vfill
+#+END_EXPORT
+
+*** Change margin
+(require changepage)
+#+LaTeX: \begin{adjustwidth}{-1em}{-1em}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#+LaTeX: \end{adjustwidth}
+#+LaTeX: \begin{adjustwidth}{-3em}{-3em}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#+LaTeX: \end{adjustwidth}
+
+*** Figure :noexport:
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\includegraphics[trim = 0mm 0mm 0mm 0mm, clip,width=\textwidth]{figures/xxx}
+\end{figure}
+#+END_EXPORT
+
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_class_options: [table] 
+#+LaTeX_HEADER: \subtitle{}
+#+LaTeX_HEADER: \setbeamertemplate{footline}[frame number]
+#+LaTeX_HEADER: \setbeamertemplate{navigation symbols}{}
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+#+LATEX_HEADER: %
+#+LATEX_HEADER: %%%% specifications %%%%
+#+LATEX_HEADER: %
+
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Notations
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+#+LATEX_HEADER: \usepackage{changepage}
+
+** Table
+#+LaTeX_HEADER: \usepackage{booktabs}
+
+** Color
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+
+** Box
+#+LaTeX_HEADER: \setbeamercolor{uppercol}{fg=black,bg=blue!35}
+#+LaTeX_HEADER: \setbeamercolor{lowercol}{fg=black,bg=blue!10}
+
+** Lists
+# # fix bug with beamer when specifying options for itemize
+# #  https://tex.stackexchange.com/questions/24371/does-enumitem-conflict-with-beamer-for-lists/24491#24491
+# #+LaTeX_HEADER: \usepackage{enumitem}
+# #+LaTeX_HEADER: \setitemize{label=\usebeamerfont*{itemize item}%
+# #+LaTeX_HEADER: \usebeamercolor[fg]{itemize item}
+# #+LaTeX_HEADER: \usebeamertemplate{itemize item}}
+
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+*** Backup slides
+#+LATEX_HEADER: \newcommand{\backupbegin}{
+#+LATEX_HEADER:   \newcounter{finalframe}
+#+LATEX_HEADER:   \setcounter{finalframe}{\value{framenumber}}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand{\backupend}{
+#+LATEX_HEADER:   \setcounter{framenumber}{\value{finalframe}}
+#+LATEX_HEADER:}
+
+*** Footnotes
+#+LaTeX_HEADER: \RequirePackage{hanging}
+#+LaTeX_HEADER: \setbeamertemplate{footnote}{%
+#+LaTeX_HEADER:   \hangpara{2em}{1}%
+#+LaTeX_HEADER:   \makebox[2em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par%
+#+LaTeX_HEADER: } 
+
+** Theme
+#+BEAMER_THEME: Singapore [height=20pt]

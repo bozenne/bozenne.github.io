@@ -1,0 +1,38 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/brice/Dropbox/PostDoc/Teaching/Doc/howTo/howTo.org
+
+
+* Increase the font size
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2017-11-26 søn 16:15
+  :ARCHIVE_FILE: ~/Dropbox/PostDoc/Teaching/Doc/howTo/howTo.org
+  :ARCHIVE_OLPATH: Graphical display/Customize graphic
+  :ARCHIVE_CATEGORY: howTo
+  :END:
+
+All text:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(text = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+Only axis labels:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(axis.text = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+Only axis title:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
+#+END_SRC
+
+#+RESULTS:
+
+
+
+

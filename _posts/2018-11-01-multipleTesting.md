@@ -1,6 +1,6 @@
 --- 
 layout: post 
-title: "Multiple testing using multcomp and lavaSearch2" 
+title: "Max-test procedure for multiple linear models" 
 categories: jekyll update
 ---
 

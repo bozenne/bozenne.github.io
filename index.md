@@ -21,7 +21,9 @@ For information about the statistical consultations see the tab
 [here](https://bozenne.github.io/Consultation.html). <br>
 
 My recipe book in R can be downloaded
-[here](https://bozenne.github.io/doc/howTo/howTo.pdf).
+[here](https://bozenne.github.io/doc/howTo/howTo-R.pdf).
+Some useful commands in orgmode are summarized
+[here](https://bozenne.github.io/doc/howTo/howTo-org.pdf).
 
 Below you will find links to documents addressing questions that I have
 been asked during statistical consultations.
