@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  11 JUN 2019 10:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  21 JUN 2019 10:52
 entering extended mode
 **./howTo-org.tex
 (howTo-org.tex
@@ -1793,30 +1793,35 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
 (Font)              Font shape `T1/lmss/m/sl' tried instead on input line 221.
  [5
 
-] [6
-
 ]
-LaTeX Font Info:    Try loading font information for TS1+lmss on input line 235
+LaTeX Font Info:    Try loading font information for TS1+lmss on input line 233
 .
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmss.fd"
 File: ts1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [7
+) [6
+
+] [7
+
+] [8
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 239.
+(Font)              <9> on input line 251.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 239.
+(Font)              <5> on input line 251.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 239.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 251.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 239.
- [8
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 251.
+ [9
 
-] [9
+]
+[10
 
-] [10
+] [11
+
+] (howTo-org.bbl) [12
 
 ]
 \tf@nav=\write7
@@ -1831,20 +1836,19 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
 \Changes@OutFile=\write10
 \openout10 = `howTo-org.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 259.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 259.
-
-(howTo-org.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 259.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 259.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 281.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 281.
+ (howTo-org.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 281.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 281.
 Package rerunfilecheck Info: File `howTo-org.out' has not changed.
-(rerunfilecheck)             Checksum: DA4E3960F529151032F51EEFBCD12390;209.
+(rerunfilecheck)             Checksum: FE25DBB02F8B02B88B196E4814832BC1;301.
  ) 
 Here is how much of TeX's memory you used:
- 24496 strings out of 493323
- 432114 string characters out of 3139064
- 552535 words of memory out of 3000000
- 27353 multiletter control sequences out of 15000+200000
+ 24536 strings out of 493323
+ 432807 string characters out of 3139064
+ 553213 words of memory out of 3000000
+ 27380 multiletter control sequences out of 15000+200000
  65327 words of font info for 64 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,15n,96p,777b,1979s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1854,10 +1858,11 @@ iKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.enc}<C:/Program Files/MiKTeX 2.9/fonts/type
 2.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmss17.pfb><C:/Program
  Files/MiKTeX 2.9/fonts/type1/public/lm/lmss8.pfb><C:/Program Files/MiKTeX 2.9/
 fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
-/lm/lmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt8.pfb>
-Output written on howTo-org.pdf (10 pages, 171470 bytes).
+/lm/lmsso10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt10.pfb><
+C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt8.pfb>
+Output written on howTo-org.pdf (12 pages, 199988 bytes).
 PDF statistics:
- 220 PDF objects out of 1000 (max. 8388607)
- 49 named destinations out of 1000 (max. 500000)
- 113 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 287 PDF objects out of 1000 (max. 8388607)
+ 59 named destinations out of 1000 (max. 500000)
+ 129 words of extra memory for PDF output out of 10000 (max. 10000000)
 

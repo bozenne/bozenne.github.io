@@ -88,6 +88,15 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{table}
 #+END_EXPORT
 
+* References
+
+*** Citations
+
+ - citep:pearson1905problem
+ - cite:pearson1905problem
+ - [[citep:pearson1905problem][xx]]
+#+LaTeX: \cite[p.~150]{pearson1905problem}
+
 * Miscellaneous
 
 *** Inline latex
@@ -129,6 +138,19 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \includegraphics[trim = 0mm 0mm 0mm 0mm, clip,width=\textwidth]{figures/xxx}
 \end{figure}
 #+END_EXPORT
+
+
+* References
+:PROPERTIES:
+:BEAMER_OPT: fragile,allowframebreaks
+:END:  
+
+#+LaTeX: \begingroup
+#+LaTeX: \renewcommand{\section}[2]{}
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]]
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+#+LaTeX: \endgroup
 
 
 * CONFIG :noexport:
