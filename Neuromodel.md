@@ -10,9 +10,7 @@ I am the happy beneficiary of an EU grant Marie Sklodowska-Curie
 Individual Fellowship (MSCA-IF) for the period June 2017 -
 June 2019. The project aims to meet the need in neuroscience for
 flexible statistical tools able to jointly analyze clinical, genetic,
-psychological and imaging data by adapting a class of statistical
-models, latent variable models (LVMs), to the specificities of
-neuroscience data.
+psychological and imaging data.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-NeuroscienceData.png)
 *Variables involved in an integrative model of depression.*
@@ -26,7 +24,7 @@ variables such as depression as latent variables and attempt to
 identify them using the observed data and the modeling assumptions.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-LVM.png)
-*Example of LVM: the square boxes represent observed variables while the round boxes contain the latent variabels. BP denotes binding potential and the Y some psychological measurements (e.g. memory). This LVM can be used to study the impact of serotonin on the mood when only indirect measurements of both quantities are available.*
+*Example of LVM: the square boxes represent observed variables while the round boxes contain the latent variables. BP denotes binding potential and the Y some psychological measurements (e.g. memory). This LVM can be used to study the impact of serotonin on the mood when only indirect measurements of both quantities are available.*
 
 The project aims at adapting LVMs to the context of neuroscience. This
 is a particular challenging field because studies have often a very
@@ -38,9 +36,9 @@ application in neuroscience.
 
 ## Work package 1: regularized LVMs
 
-As often in statistics, LVMs provides correct answers when they are
+As often in statistics, LVMs provide correct estimates when they are
   correctly specified, i.e. we correctly model the relationship
-  between variables. However a correct specification require usually
+  between variables. However a correct specification usually requires
   more background knowledge than available. A data-driven procedure is
   therefore often used to check the validity of the proposed
   model. The traditional method, forward stepwise search, is not
@@ -70,34 +68,34 @@ shape.*
 The original aim of this work package was to better understand the
 statistical properties of estimators in regularized LVMs. But, to
 begin with, I first studied the behavior of statistical tests used
-with LVM in neuroscience studies. These studies are characterized by
+with LVM traditionally in neuroscience studies. These studies are characterized by
 small samples and multiple hypotheses to test, which make the
 traditional asymptotic results from maximum likelihood theory
 difficult to apply.
 
-In a first article, currently in revision in JRSS-C, I develop a
+In a first article (currently in revision in JRSS-C) I developed a
 correction for the bias of the maximum likelihood estimator of the
-variance parameters, and derive the degrees of freedom of the
+variance parameters, and derived the degrees of freedom of the
 corresponding variance parameters. Then, as in univariate linear
 models or when using the Kenward and Roger correction in mixed model,
-I proposed to model the Wald test statistic of LVMs as Student's t-distributed
-distributed (instead of normally distributed). This leads to an
-improved control of the type 1 error.
+I proposed to model the Wald test statistic of LVMs as Student's
+t-distributed distributed (instead of normally distributed). This
+leads to an improved control of the type 1 error.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-ssc.png) 
 *Control of the
 type 1 error in a latent factor model using no correction (dark blue)
 or the proposed correction (green).*
 
-In a second article, I addressed the problem of controlling the type 1
-error when performing multiple comparisons. One solution is to use a
-Bonferroni correction but this solution is known to be too
-conservative. This is unsatisfactory in clinical studies for ethical
-and economical reason. Fortunately, correlation can be accounted for
-using max-test procedures: while still controlling the type 1 error
-max-test are more powerful than Bonferroni procedure. I therefore
-integrate max-test procedures in the LVM framework for both Wald tests
-and score tests. 
+In a second article (to be submitted to Psychometrika) I addressed the
+problem of controlling the type 1 error when performing multiple
+comparisons. One solution is to use a Bonferroni correction but this
+solution is known to be too conservative. This is unsatisfactory in
+clinical studies for ethical and economical reasons. Fortunately,
+correlation can be accounted for using max-test procedures: while
+still controlling the type 1 error max-test procedure are more
+powerful than Bonferroni procedure. I therefore integrate max-test
+procedures in the LVM framework for both Wald tests and score tests.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-maxProc.png) *Control of
 the type 1 error when performing multiple testing using or not a
@@ -115,7 +113,7 @@ pre-defined value. The green dots refer to the voxels where a significant
 difference is identified.*
 
 Thanks to a collaboration with research from the [section of
-biostatistics from the university of
+biostatistics from the University of
 Copenhagen](https://biostat.ku.dk/), I have also been working on
 deriving estimators robust to model misspecification. One result of
 this work is ate function from the
@@ -132,8 +130,8 @@ journal.
 effect. Three statistical models can be specified: one for the risk of
 getting the disease, one for the treatment allocation, and one for the
 probability of dropping out from the study. The AIPTW.AIPCW estimator
-is robust (i.e. unbiased) to the misspecification of one statistical
-model.*
+is robust (i.e. unbiased) to the misspecification of one of the statistical
+models.*
 
 ## Work package 3: Dissemination and application in neuroscience
 
@@ -152,26 +150,26 @@ Reasearch Unit](https://nru.dk/). There, I developped several collaborations:
 ![](https://bozenne.github.io/img/NEUROMODEL-TSPO.png)
 *Normalized 123I-CLINDE across groups.*
 
-- with Martin Nørgaard who works on integrated the uncertainty related to
-  the pre-processing of the data in medical data analysis. Indeed, raw
-  data are typically transform to remove measurement artefacts,
-  increase signal to noise ratio, or normalize data across
-  individuals. However there are several method available which may
-  make results depend on the investigator choice of pre-processing
-  pipeline. Taking the example of classifier trained on imaging data,
-  we show that the choice of the pre-processing method have a critical
-  impact that should accounted for when assessing the
-  performance. This is a slight modification of the max-test procedure
-  used in WP2; here we use permutations to obtain a non-parametric
-  procedure. This article has been accepted at the MICCAI conference
-  2019.
+- with Martin Nørgaard who works on integrating the uncertainty
+  related to the pre-processing of the data in medical data
+  analysis. Indeed, raw data are typically transformed to remove
+  measurement artefacts, increase signal to noise ratio, or normalize
+  data across individuals. However there are several method available
+  which may make the results depend on the investigator choice of
+  pre-processing pipeline. Taking the example of a classifier trained
+  on imaging data, we show that the choice of the pre-processing
+  method have a critical impact that should be accounted for when
+  assessing its performance. This is a slight modification of the
+  max-test procedure used in WP2; here we use permutations to obtain a
+  non-parametric procedure. This article has been accepted at the
+  MICCAI conference 2019.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-maxperm.png)
 *Classification accuracies for different pre-processing
 pipelines. Accuracies are estimated from a Monte-Carlo experiment;
 only the average accuracy is reported (red curve). The green curve
 represent the distribution of the accuracy under the null hypothesis
-for a single pipepline while the blue curves uses the best pipeline.*
+for a single pipepline while the blue curve uses the best pipeline.*
 
 - with Vincent Beliveau who works on identifying brain regions
   specific to the serotonin system. I assisted him in developping a
@@ -186,11 +184,11 @@ represent one brain region.*
 
 Other projects are on their way. Two projects with Liv V. H. Bruel:
 one where we compare the structure of memory between "normal"
-individuals and agressive people and another were we identify stable
+individuals and aggressive people and another where we identified stable
 concepts between two versions of a questionnaire measuring short,
 intermediate, and long-term memory. Another project with Sebastian
 Holst and Emily Beaman who are using the ate function developped in
-WP2 to study the effect of beta blocker vs. alternative
+WP2 to study the effect of beta blockers vs. alternative
 antihypertensives on the risk of Alzheimer disease.
 
 
