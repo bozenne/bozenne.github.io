@@ -14,7 +14,7 @@ psychological and imaging data by adapting a class of statistical
 models, latent variable models (LVMs), to the specificities of
 neuroscience data.
 
-![Variables involved in an integrative model of depression](https://bozenne.github.io/img/NEUROMODEL-NeuroscienceData.png)
+{% include image.html file="https://bozenne.github.io/img/NEUROMODEL-NeuroscienceData.png" description="Variables involved in an integrative model of depression." %}
 
 LVMs is a tool of choice for studying systems of variables and in
 particular when considering noisy or indirect measurements of the
@@ -24,7 +24,8 @@ effect on memory, reaction time, ... . LVMs define unobserved
 variables such as depression as latent variables and attempt to
 identify them using the observed data and the modeling assumptions.
 
-![Example of LVM: the square boxes represent observed variables while the round boxes contain the latent variabels. BP denotes binding potential and the Y some psychological measurements (e.g. memory). This LVM can be used to study the impact of serotonin on the mood when only indirect measurements of both quantities are available.](https://bozenne.github.io/img/NEUROMODEL-LVM.png)
+![](https://bozenne.github.io/img/NEUROMODEL-LVM.png)
+*Example of LVM: the square boxes represent observed variables while the round boxes contain the latent variabels. BP denotes binding potential and the Y some psychological measurements (e.g. memory). This LVM can be used to study the impact of serotonin on the mood when only indirect measurements of both quantities are available.*
 
 The project aims at adapting LVMs to the context of neuroscience. This
 is a particular challenging field because studies have often a very
