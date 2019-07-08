@@ -50,5 +50,8 @@ consists in the development of LVMs for high-dimensional data
 
 ## Work package 2: Inference in LVMs
 
+<img src="http://sparkandshine.net/wordpress/wp-content/uploads/2016/02/dominating_sets_example2.png" alt="dominating_sets_example2"/>
+*Fig. 2: The minimum dominating set of a graph*
 
 ## Work package 3: Dissemination and application in neuroscience
+
