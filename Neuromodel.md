@@ -177,7 +177,7 @@ for a single pipepline while the blue curve uses the best pipeline.*
   of the serotonin system, and finding the appropriate metrics to
   assess the quality of the segmentation.
 
-![](https://bozenne.github.io/img/NEUROMODEL-clustering.png)
+![](https://bozenne.github.io/img/NEUROMODEL-clustering.png  =100x100)
 *Definition of the brain regions for the serotonin system based on the
 proposed clustering algorithm when using 18 cluster. Each color
 represent one brain region.*
