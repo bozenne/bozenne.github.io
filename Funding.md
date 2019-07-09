@@ -191,10 +191,15 @@ antihypertensives on the risk of Alzheimer disease.
 # Training and dissemination
 
  Thanks to the grant I have been able to attend the following workshops:
-- Advanced Topics in Machine Learning 2016, August 28th - September 1st, 2018.
-- Survival Analysis for Junior Researchers Copenhagen, April 24th - 26th, 2019.
-- Mediation analysis, pre-conference course, Nordic-Baltic Biometric
-  Conference, 2 June 2019.
+- Advanced Topics in Machine Learning 2016, DTU compute (Lyngby,
+  Denmark; August 28th - September 1st, 2018).
+- Survival Analysis for Junior Researchers (Copenhagen, Denmark; April
+  24th - 26th, 2019).
+- Mediation analysis, pre-conference course of the Nordic-Baltic
+  Biometric (Vilnius, Lithuania, 2 June 2019).
+- Analysis of interval-censored data, pre-conference course of the
+  Annual Conference of the International Society for Clinical
+  Biostatistics (Leven, Belgium; July 14 2019).
 
  and to present my work at international conferences:
 - 40th Annual Conference of the International Society for Clinical
