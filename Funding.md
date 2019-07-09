@@ -126,7 +126,7 @@ corresponding manuscript is currently in revision in the Biometrical
 journal.
 
 ![](https://bozenne.github.io/img/NEUROMODEL-doubleRobust.png)
-*Comparison of various estimator of the average treatment
+*Comparison of various estimators of the average treatment
 effect. Three statistical models can be specified: one for the risk of
 getting the disease, one for the treatment allocation, and one for the
 probability of dropping out from the study. The AIPTW.AIPCW estimator
@@ -175,12 +175,8 @@ for a single pipepline while the blue curve uses the best pipeline.*
   specific to the serotonin system. I assisted him in developping a
   clustering algorithm flexible enough to capture the spatial patterns
   of the serotonin system, and finding the appropriate metrics to
-  assess the quality of the segmentation.
-
-![](https://bozenne.github.io/img/NEUROMODEL-clustering.png  =100x100)
-*Definition of the brain regions for the serotonin system based on the
-proposed clustering algorithm when using 18 cluster. Each color
-represent one brain region.*
+  assess the quality of the segmentation. The corresponding article is
+  currently is revision in Neuroimage.
 
 Other projects are on their way. Two projects with Liv V. H. Bruel:
 one where we compare the structure of memory between "normal"
@@ -197,6 +193,8 @@ antihypertensives on the risk of Alzheimer disease.
  Thanks to the grant I have been able to attend the following workshops:
 - Advanced Topics in Machine Learning 2016, August 28th - September 1st, 2018.
 - Survival Analysis for Junior Researchers Copenhagen, April 24th - 26th, 2019.
+- Mediation analysis, pre-conference course, Nordic-Baltic Biometric
+  Conference, 2 June 2019.
 
  and to present my work at international conferences:
 - 40th Annual Conference of the International Society for Clinical
