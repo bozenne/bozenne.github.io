@@ -1,3 +1,4 @@
+
 #+TITLE: "How to" in \Rlogo
 #+Author: Brice Ozenne
 
@@ -242,7 +243,7 @@ To load .rds files use =readRDS= and to load .rdata files use =load=.
 To export a data.frame to a file one can use:
 - =write.csv= to export a .csv file
 - =write.table= to export a .txt file
-- =xlsx::write.xlsx= to export a .xlsx file
+- =readxl::read_excel= to export a .xlsx file
 - =data.table::fwrite=
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 fwrite(dtW.data, file = "./mydata.csv", sep = ";", dec = ",")

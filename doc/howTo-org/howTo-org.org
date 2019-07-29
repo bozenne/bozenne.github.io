@@ -65,7 +65,6 @@ model$weights[[1]]
 - (A) :: yyy
 - (1) :: xxx
 
-
 * Table
 
 *** Nice latex table
@@ -138,7 +137,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \includegraphics[trim = 0mm 0mm 0mm 0mm, clip,width=\textwidth]{figures/xxx}
 \end{figure}
 #+END_EXPORT
-
+# trim={<left> <lower> <right> <upper>}
 
 * References
 :PROPERTIES:

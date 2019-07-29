@@ -112,27 +112,6 @@ a t-test at each voxel or only at voxels with a signal greater than a
 pre-defined value. The green dots refer to the voxels where a significant
 difference is identified.*
 
-Thanks to a collaboration with research from the [section of
-biostatistics from the University of
-Copenhagen](https://biostat.ku.dk/), I have also been working on
-deriving estimators robust to model misspecification. One result of
-this work is ate function from the
-[riskRegression](https://github.com/tagteam/riskRegression) that can
-be use to estimate averate treatment effect, even in the presence of
-missing values. It is being used by our clinical collaborators that
-study risk factors and treatments associated brain or cardio-vascular
-diseases based data from on the danish national patient registry. The
-corresponding manuscript is currently in revision in the Biometrical
-journal.
-
-![](https://bozenne.github.io/img/NEUROMODEL-doubleRobust.png)
-*Comparison of various estimators of the average treatment
-effect. Three statistical models can be specified: one for the risk of
-getting the disease, one for the treatment allocation, and one for the
-probability of dropping out from the study. The AIPTW.AIPCW estimator
-is robust (i.e. unbiased) to the misspecification of one of the statistical
-models.*
-
 ## Work package 3: Dissemination and application in neuroscience
 
 The last WP aimed at disseminating the developped method in
@@ -178,14 +157,38 @@ for a single pipepline while the blue curve uses the best pipeline.*
   assess the quality of the segmentation. The corresponding article is
   currently is revision in Neuroimage.
 
-Other projects are on their way. Two projects with Liv V. H. Bruel:
-one where we compare the structure of memory between "normal"
-individuals and aggressive people and another where we identified stable
-concepts between two versions of a questionnaire measuring short,
-intermediate, and long-term memory. Another project with Sebastian
-Holst and Emily Beaman who are using the ate function developped in
-WP2 to study the effect of beta blockers vs. alternative
-antihypertensives on the risk of Alzheimer disease.
+Two projects with Liv V. H. Bruel on their way: one where we compare
+the structure of memory between "normal" individuals and aggressive
+people and another where we identified stable concepts between two
+versions of a questionnaire measuring short, intermediate, and
+long-term memory. 
+
+<br>
+<br>
+
+Thanks to a collaboration with research from the [section of
+biostatistics from the University of
+Copenhagen](https://biostat.ku.dk/), I have also been working on
+deriving estimators robust to model misspecification. One result of
+this work is ate function from the
+[riskRegression](https://github.com/tagteam/riskRegression) that can
+be use to estimate averate treatment effect, even in the presence of
+missing values. The corresponding manuscript is currently in revision
+in the Biometrical journal. 
+
+![](https://bozenne.github.io/img/NEUROMODEL-doubleRobust.png)
+*Comparison of various estimators of the average treatment
+effect. Three statistical models can be specified: one for the risk of
+getting the disease, one for the treatment allocation, and one for the
+probability of dropping out from the study. The AIPTW.AIPCW estimator
+is robust (i.e. unbiased) to the misspecification of one of the statistical
+models.*
+
+This approach, and in particular the ate function, is being used by
+our clinical collaborators to study the effect of beta blockers
+vs. alternative antihypertensives on the risk of Alzheimer disease and
+to study risk factor of cardio-vascular diseases based data from on
+the danish national patient registry.
 
 
 # Training and dissemination
