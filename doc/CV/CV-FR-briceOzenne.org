@@ -16,9 +16,9 @@
 \begin{tabular*}{7in}{ll@{ }l}
 	Nationalité&:& française  \\
 	Né&:& le 8 février 1990 à Saint Hilaire du Harcouët (50)  \\
-	Courriel personnel&:& \url{brice.ozenne@orange.fr} \\ 
+	Courriel personnel&:& \url{brice.mh.ozenne@gmail.com} \\ 
 	Téléphone personnel&:& (+45) 52 328 128 \\ 
-        Adresse personnelle&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen \O{}, Danemark \\
+        Adresse personnelle&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhagen SV, Danemark \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
