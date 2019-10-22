@@ -5,5 +5,5 @@ categories: jekyll update
 ---
 
 See
-[here](https://bozenne.github.io/doc/LaplaceApprox/multipleImputation.pdf)
+[here](https://bozenne.github.io/doc/MultipleImputation/multipleImputation.pdf)
 for a simple example of multiple imputation using the mice package.
