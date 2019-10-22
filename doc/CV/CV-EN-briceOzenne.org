@@ -16,9 +16,9 @@
 \begin{tabular*}{7in}{ll@{ }l}
 	Nationality&:& french  \\
 	Date of birth&:& February 8, 1990  \\
-	Personal email&:& \url{brice.ozenne@orange.fr} \\ 
+	Personal email&:& \url{brice.mh.ozenne@gmail.com} \\ 
 	Personal phone number&:& (+45) 52 328 128 \\ 
-        Personal address&:& 3 Emblasgade, 1 t.h., 2100 Copenhagen \O{}, Denmark \\
+        Personal address&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhagen SV, Denmark \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
