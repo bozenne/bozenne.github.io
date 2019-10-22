@@ -224,6 +224,7 @@ of these functions.
 ** Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)
 
 There are many packages that can be used to read excel files, e.g.:
+- *readxl* package (no dependency)
 - *xlsx* package: function =read.xlsx=.
 - *gdata* package: function =read.xls=.
 - *XLConnect* package: function =readWorksheet=.
@@ -1586,6 +1587,10 @@ print(gg.mean2)
 [[file:./figures/fig-meanTime2.pdf]]
 
 \clearpage
+*** Change the name of the legend
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean2 + labs(colour="xyz")
+#+END_SRC
 
 *** Increase the font size
 
@@ -2327,6 +2332,18 @@ print(sProfile <- summaryRprof(filename))
 resProfile <- proftools::readProfileData(filename)
 proftools::plotProfileCallGraph(resProfile, score = "total", nodeSizeScore = "none")
 #+END_SRC
+
+** Debug
+To not show to many line before debug:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+options(deparse.max.lines = 200)
+#+END_SRC
+
+To show at which line in the program an error occured:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+options(error = function()revTraceback(max.lines = 5))
+#+END_SRC
+#+RESULTS:
 
 ** Find all function names from a package
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no

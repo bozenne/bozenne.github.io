@@ -1,4 +1,4 @@
-% Created 2019-06-21 fr 10:52
+% Created 2019-10-22 ti 10:04
 % Intended LaTeX compiler: pdflatex
 \documentclass[table]{beamer}
 
@@ -127,9 +127,9 @@ emphstyle=\color{blue}
 \maketitle
 
 \section{Box}
-\label{sec:orgcbf280f}
+\label{sec:org1d9b72e}
 
-\begin{frame}[label={sec:org5ea2e6e}]{Round box}
+\begin{frame}[label={sec:orgf159a62}]{Round box}
 (see header for the definition of uppercol and lowercol)
 
 \begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]
@@ -142,9 +142,9 @@ emphstyle=\color{blue}
 \end{frame}
 
 \section{Code}
-\label{sec:org6dfe46f}
+\label{sec:org8731614}
 
-\begin{frame}[fragile,label={sec:orgeea14ea}]{Set output size}
+\begin{frame}[fragile,label={sec:org9744c8c}]{Set output size}
  \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 summary(model)
@@ -188,20 +188,30 @@ model$weights[[1]]
 \end{frame}
 
 \section{List}
-\label{sec:org056d5a6}
+\label{sec:org5231a71}
 
-\begin{frame}[label={sec:orgb779e42}]{Choose item}
+\begin{frame}[label={sec:orga44e0e8}]{Choose item}
 \begin{description}
 \item[{(A)}] yyy
 \item[{(1)}] xxx
 \end{description}
 \end{frame}
 
+\begin{frame}[label={sec:orgfd37ec4}]{Choose item (2)}
+\begin{enumerate}
+\setcounter{enumi}{0}
+\item xxx
+\setcounter{enumi}{3}
+\item yyy
+\setcounter{enumi}{4}
+\item zzz
+\end{enumerate}
+\end{frame}
 
 \section{Table}
-\label{sec:org63f91ae}
+\label{sec:orgae34ab3}
 
-\begin{frame}[label={sec:orgbc8bfed}]{Nice latex table}
+\begin{frame}[label={sec:org0faae8e}]{Nice latex table}
 (require booktabs)
 
 \begin{table}
@@ -221,9 +231,9 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{References}
-\label{sec:orgc63bc24}
+\label{sec:org1a5bfb8}
 
-\begin{frame}[label={sec:org51c1c9c}]{Citations}
+\begin{frame}[label={sec:org890b2af}]{Citations}
 \begin{itemize}
 \item \citep{pearson1905problem}
 \item \cite{pearson1905problem}
@@ -233,23 +243,67 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{Miscellaneous}
-\label{sec:org8312b6b}
+\label{sec:org59c124d}
 
-\begin{frame}[label={sec:org35eb60d}]{Inline latex}
+\begin{frame}[label={sec:org77cd7aa}]{Divide the page (align at the middle)}
+\begin{columns}
+\begin{column}{0.45\columnwidth}
+\begin{itemize}
+\item topic
+\begin{itemize}
+\item subtopic
+\item sub
+\end{itemize}
+\item topic
+\end{itemize}
+\end{column}
+
+\begin{column}{0.45\columnwidth}
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/myplot.pdf}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[label={sec:orgdb9c9ec}]{Divide the page (align at the top)}
+\begin{columns}
+\begin{column}[t]{0.45\columnwidth}
+\begin{itemize}
+\item topic
+\begin{itemize}
+\item subtopic
+\item sub
+\end{itemize}
+\item topic
+\end{itemize}
+\end{column}
+
+\begin{column}[T]{0.45\columnwidth}
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/myplot.pdf}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[label={sec:org3366087}]{Inline latex}
 any arbitrary LaTeX code
 \end{frame}
 
-\begin{frame}[label={sec:org63285b9}]{Color tex}
+\begin{frame}[label={sec:orgdad6ace}]{Color tex}
 (see header for the definition of darkgreen)
 \begin{itemize}
 \item \textcolor{\darkgreen}{risk factor}: adjust (will increase precision)
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orga5a5f58}]{Footnote}
+\begin{frame}[label={sec:org0db9721}]{Footnote}
 This is a footnote\footnote{blaa}.
 \end{frame}
-\begin{frame}[label={sec:orgad3b4b9}]{Big centered text}
+\begin{frame}[label={sec:org33ef0de}]{Big centered text}
 \vfill
 
 \begin{center}
@@ -259,7 +313,7 @@ This is a footnote\footnote{blaa}.
 \vfill
 \end{frame}
 
-\begin{frame}[label={sec:orgd7a186e}]{Change margin}
+\begin{frame}[label={sec:orgf0d3e2f}]{Change margin}
 (require changepage)
 \begin{adjustwidth}{-1em}{-1em}
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -269,9 +323,8 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \end{adjustwidth}
 \end{frame}
 
-
 \section{References}
-\label{sec:org9a67c8b}
+\label{sec:org677b369}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}

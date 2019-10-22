@@ -1,0 +1,590 @@
+% Created 2019-10-22 ti 11:00
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstset{
+backgroundcolor=\color{white},
+basewidth={0.5em,0.4em},
+basicstyle=\ttfamily\small,
+breakatwhitespace=false,
+breaklines=true,
+columns=fullflexible,
+commentstyle=\color[rgb]{0.5,0,0.5},
+frame=single,
+keepspaces=true,
+keywordstyle=\color{black},
+literate={~}{$\sim$}{1},
+numbers=left,
+numbersep=10pt,
+numberstyle=\ttfamily\tiny\color{gray},
+showspaces=false,
+showstringspaces=false,
+stepnumber=1,
+stringstyle=\color[rgb]{0,.5,0},
+tabsize=4,
+xleftmargin=.23in,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+emphstyle=\color{blue}
+}
+
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+%
+%%%% specifications %%%%
+%
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{xargs}
+\usepackage{xspace}
+\newcommand\Rlogo{\textbf{\textsf{R}}\xspace} %
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\geometry{top=1cm}
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{capt-of} %
+\RequirePackage{caption} % newlines in graphics
+\RequirePackage{amsmath}
+\RequirePackage{algorithm}
+\RequirePackage[noend]{algpseudocode}
+\RequirePackage{dsfont}
+\RequirePackage{amsmath,stmaryrd,graphicx}
+\RequirePackage{prodint} % product integral symbol (\PRODI)
+\newcommand\defOperator[7]{%
+\ifthenelse{\isempty{#2}}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+}
+}
+\newcommand\defUOperator[5]{%
+\ifthenelse{\isempty{#1}}{
+#5\left#3 #2 \right#4
+}{
+\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+}
+}
+\newcommand{\defBoldVar}[2]{
+\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+}
+\newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+\newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+\newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+\newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+\newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+\newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+\newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+\newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+\newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+\newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+\newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+\newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+\newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+\newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+\newcommandx\Hypothesis[2][1=,2=]{
+\ifthenelse{\isempty{#1}}{
+\mathcal{H}
+}{
+\ifthenelse{\isempty{#2}}{
+\mathcal{H}_{#1}
+}{
+\mathcal{H}^{(#2)}_{#1}
+}
+}
+}
+\newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+\ifthenelse{\isempty{#3}}{
+\frac{#4 #1}{#4 #2}
+}{
+\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+}
+}
+\newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+\newcommandx\ddpartial[3][1=,2=,3=]{
+\ifthenelse{\isempty{#3}}{
+\frac{\partial^{2} #1}{\left( \partial #2\right)^2}
+}{
+\frac{\partial^2 #1}{\partial #2\partial #3}
+}
+}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Natural{\mathbb{N}}
+\newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+\newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+\newcommand\half{\frac{1}{2}}
+\newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+\newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+\author{Brice Ozenne}
+\date{\today}
+\title{A simple example of multiple imputation using the mice package}
+\hypersetup{
+ colorlinks=true,
+ citecolor=[rgb]{0,0.5,0},
+ urlcolor=[rgb]{0,0,0.5},
+ linkcolor=[rgb]{0,0,0.5},
+ pdfauthor={Brice Ozenne},
+ pdftitle={A simple example of multiple imputation using the mice package},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.1 (Org mode 9.0.4)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+This document gather code from the documentation of the mice
+package. See \url{https://stefvanbuuren.name/mice/}.
+
+\bigskip
+
+Load packages
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(lava)
+library(mice)
+library(data.table)
+library(ggplot2)
+\end{lstlisting}
+
+\section{Simulate data (just to have an example to work with)}
+\label{sec:org5825c78}
+Generative model
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mSim <- lvm(Y~group+season+bmi+gender+age)
+categorical(mSim, labels = c("winter","summer")) <- ~season
+categorical(mSim, labels = c("SAD","HC")) <- ~group
+categorical(mSim, labels = c("Male","Female")) <- ~gender
+distribution(mSim,~bmi) <- lava::gaussian.lvm(mean = 22, sd = 3)
+distribution(mSim,~age) <- lava::uniform.lvm(20,80)
+\end{lstlisting}
+
+Sampling
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n <- 1e2
+set.seed(10)
+dt.data <- as.data.table(sim(mSim,n))
+\end{lstlisting}
+
+Add missing values
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.data[1:10, bmi:=NA]
+\end{lstlisting}
+
+\clearpage
+
+\section{Working with mice}
+\label{sec:orgcb1beb2}
+
+\subsection{Step 1: Inspect the missing data pattern}
+\label{sec:org4bf12a3}
+Check the number of missing values in the dataset:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+colSums(is.na(dt.data))
+\end{lstlisting}
+
+\begin{verbatim}
+Y  group season    bmi gender    age 
+0      0      0     10      0      0
+\end{verbatim}
+
+Missing data patterns:   
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./missingDataPattern.pdf}
+\end{center}
+
+\clearpage
+
+\subsection{Step 2: Define imputation model}
+\label{sec:orge0bb547}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+all.variables <- c("Y","group","season","bmi","gender","age")
+n.variables <- length(all.variables)
+Mlink <- matrix(0, n.variables, n.variables,
+				dimnames = list(all.variables,all.variables))
+Mlink[c("group","season","gender","age"),"bmi"] <- 1
+Mlink
+\end{lstlisting}
+
+\begin{verbatim}
+       Y group season bmi gender age
+Y      0     0      0   0      0   0
+group  0     0      0   1      0   0
+season 0     0      0   1      0   0
+bmi    0     0      0   0      0   0
+gender 0     0      0   1      0   0
+age    0     0      0   1      0   0
+\end{verbatim}
+
+A value 1 indicates that the column variable was used to impute the
+row variable, e.g. group was used to impute bmi.
+
+\clearpage
+
+\subsection{Step 3: Generate imputed datasets}
+\label{sec:org3581bb1}
+Generate imputed values
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.imputed <- 3 ## number of imputed datasets
+dt.mice <- mice(dt.data,
+				m=n.imputed, 
+				maxit = 50, # number of iterations to obtain the imputed dataset
+				predictorMatrix = Mlink,
+				method = 'pmm', # Predictive mean matching, only ok for continuous variables, it is possible to set constrains for positive variables
+				seed = 500, printFlag = FALSE)
+summary(dt.mice)
+\end{lstlisting}
+
+\begin{verbatim}
+Class: mids
+Number of multiple imputations:  3 
+Imputation methods:
+     Y  group season    bmi gender    age 
+    ""     ""     ""  "pmm"     ""     "" 
+PredictorMatrix:
+       Y group season bmi gender age
+Y      0     0      0   0      0   0
+group  0     0      0   1      0   0
+season 0     0      0   1      0   0
+bmi    0     0      0   0      0   0
+gender 0     0      0   1      0   0
+age    0     0      0   1      0   0
+\end{verbatim}
+
+\clearpage
+
+\subsection{Step 4: Check the imputed datasets}
+\label{sec:orgeb1feb9}
+\subsubsection{Convergence of the imputation algorithm}
+\label{sec:org0228353}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+plot(dt.mice)
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleImputation/traceCVimputed.pdf}
+\end{center}
+
+\subsubsection{Visualizing the imputed values}
+\label{sec:org5823cd1}
+Visualize imputed value values and check they are plausible (e.g. mice
+is not imputed a BMI of 75):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.mice$imp$BMI
+\end{lstlisting}
+
+\begin{verbatim}
+          1        2        3
+1  23.83614 20.69408 22.10424
+2  25.19558 24.51607 25.31909
+3  26.64024 25.98147 27.25524
+4  22.05849 21.88207 21.88207
+5  20.62111 20.62111 20.62111
+6  17.60500 15.38820 17.42985
+7  15.52519 15.52519 16.68404
+8  18.29777 18.98739 18.29777
+9  25.69917 24.76365 23.12360
+10 19.76892 20.97076 20.97076
+\end{verbatim}
+
+The rows correspond to the 3 different imputed datasets and the
+columns to 10 imputed values per dataset. One can also summarizes the
+imputed values computing their quantiles:
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+apply(dt.mice$imp$BMI,2,quantile)
+\end{lstlisting}
+
+\begin{verbatim}
+            1        2        3
+0%   15.52519 15.38820 16.68404
+25%  18.66555 19.39582 18.87860
+50%  21.33980 20.83242 21.42642
+75%  24.85572 23.85757 22.86876
+100% 26.64024 25.98147 27.25524
+\end{verbatim}
+
+Boxplot of the imputed values:
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleImputation/boxplotImputed.pdf}
+\end{center}
+
+Imputed values vs. observed values
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.BMI <- rbind(data.table(BMI = unlist(dt.mice$imp$BMI), imputed = TRUE),
+				data.table(BMI = na.omit(dt.data$BMI), imputed = FALSE))
+\end{lstlisting}
+
+Histogram
+\begin{center}
+\includegraphics[width=.9\linewidth]{c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleImputation/histImputed.pdf}
+\end{center}
+
+One more plot:
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleImputation/striplotImputed.pdf}
+\end{center}
+
+
+
+\subsection{Step 3: Fit the statical model on each imputed dataset}
+\label{sec:org3b02298}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.mice <- with(data = dt.mice,
+			   lm(Y~group+season+BMI+gender+Age)
+			   )
+e.mice
+\end{lstlisting}
+
+\begin{verbatim}
+call :
+with.mids(data = dt.mice, expr = lm(Y ~ group + season + BMI + 
+    gender + Age))
+
+call1 :
+mice(data = dt.data, m = n.imputed, method = "pmm", maxit = 50, 
+    printFlag = FALSE, seed = 500)
+
+nmis :
+     Y  group season    BMI gender    Age 
+     0      0      0     10      0      0 
+
+analyses :
+[[1]]
+
+Call:
+lm(formula = Y ~ group + season + BMI + gender + Age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age  
+     -0.1716        0.9024        1.1196        1.0000        0.9155        1.0015  
+
+
+[[2]]
+
+Call:
+lm(formula = Y ~ group + season + BMI + gender + Age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age  
+     -0.3464        0.9058        1.2736        1.0010        1.0250        1.0028  
+
+
+[[3]]
+
+Call:
+lm(formula = Y ~ group + season + BMI + gender + Age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age  
+     -0.5288        0.8881        1.0849        1.0123        0.9646        1.0035
+\end{verbatim}
+
+Check that using \texttt{with}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.mice$analyses[[1]]
+\end{lstlisting}
+
+\begin{verbatim}
+
+Call:
+lm(formula = Y ~ group + season + BMI + gender + Age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age  
+     -0.1716        0.9024        1.1196        1.0000        0.9155        1.0015
+\end{verbatim}
+
+is equivalent to run the linear regression on the imputed dataset:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.tempo <- copy(dt.data)
+dt.tempo[is.na(BMI), BMI := dt.mice$imp$BMI[,1]]
+lm(Y ~ group + season + BMI + gender + Age, data  = dt.tempo)
+\end{lstlisting}
+
+\begin{verbatim}
+
+Call:
+lm(formula = Y ~ group + season + BMI + gender + Age, data = dt.tempo)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age  
+     -0.1716        0.9024        1.1196        1.0000        0.9155        1.0015
+\end{verbatim}
+
+\subsection{Step 4: Pool the results over the imputed datasets}
+\label{sec:orgf17faf2}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+ePool.mice <- pool(e.mice)
+summary(ePool.mice)
+\end{lstlisting}
+
+\begin{verbatim}
+               estimate   std.error   statistic       df      p.value
+(Intercept)  -0.3489423 0.744297026  -0.4688213 67.96353 6.403094e-01
+groupHC       0.8987563 0.198790594   4.5211207 91.75092 1.833186e-05
+seasonsummer  1.1593825 0.228668346   5.0701485 20.94322 2.056381e-06
+BMI           1.0044317 0.030690688  32.7275724 72.19762 0.000000e+00
+genderFemale  0.9683833 0.206315648   4.6936978 60.85185 9.350019e-06
+Age           1.0025916 0.005623804 178.2764047 80.70840 0.000000e+00
+\end{verbatim}
+
+
+The (pooled) estimate is the average of the estimates relative to each
+imputed dataset:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Q.coef <- colMeans(do.call(rbind,lapply(e.mice$analyses, coef)))
+Q.coef
+\end{lstlisting}
+
+\begin{verbatim}
+(Intercept)      groupHC seasonsummer          BMI genderFemale          Age 
+ -0.3489423    0.8987563    1.1593825    1.0044317    0.9683833    1.0025916
+\end{verbatim}
+
+The variance is a bit more complex and involves:
+\begin{itemize}
+\item the within-imputation variance (depends on the sample size)
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+covW <- Reduce("+",lapply(e.mice$analyses, vcov))/n.imputed
+covW
+\end{lstlisting}
+
+\begin{verbatim}
+              (Intercept)       groupHC  seasonsummer           BMI  genderFemale           Age
+(Intercept)   0.511440142 -0.0323588205 -0.0142427125 -1.863793e-02 -3.090082e-02 -1.078947e-03
+groupHC      -0.032358821  0.0394002082  0.0032104086  8.072671e-04  1.748305e-03 -1.609977e-04
+seasonsummer -0.014242712  0.0032104086  0.0388312105 -3.878623e-04  3.460786e-03 -4.370890e-05
+BMI          -0.018637930  0.0008072671 -0.0003878623  8.792368e-04  1.722530e-04 -1.668364e-05
+genderFemale -0.030900823  0.0017483045  0.0034607858  1.722530e-04  3.855458e-02  6.268964e-05
+Age          -0.001078947 -0.0001609977 -0.0000437089 -1.668364e-05  6.268964e-05  3.020190e-05
+\end{verbatim}
+
+\begin{itemize}
+\item the between-imputation variance (depends on the amount of missin data)
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+ls.diffCoef <- lapply(e.mice$analyses, function(iI){coef(iI)-Q.coef})
+covB <- Reduce("+",lapply(ls.diffCoef,tcrossprod))/(n.imputed-1)
+covB
+\end{lstlisting}
+
+\begin{verbatim}
+              [,1]          [,2]          [,3]          [,4]          [,5]          [,6]
+[1,]  0.0319034405  1.288913e-03  3.317015e-03 -1.110046e-03 -4.272671e-03 -1.821858e-04
+[2,]  0.0012889131  8.811917e-05  7.268023e-04 -6.223511e-05  1.237364e-04 -6.345501e-06
+[3,]  0.0033170152  7.268023e-04  1.009350e-02 -4.013745e-04  4.429383e-03 -2.251893e-06
+[4,] -0.0011100456 -6.223511e-05 -4.013745e-04  4.701115e-05  5.702180e-06  5.849379e-06
+[5,] -0.0042726705  1.237364e-04  4.429383e-03  5.702180e-06  3.008675e-03  3.274308e-05
+[6,] -0.0001821858 -6.345501e-06 -2.251893e-06  5.849379e-06  3.274308e-05  1.068953e-06
+\end{verbatim}
+
+\begin{itemize}
+\item the simulation errro
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+covE <- covB/n.imputed
+covE
+\end{lstlisting}
+
+\begin{verbatim}
+              [,1]          [,2]          [,3]          [,4]          [,5]          [,6]
+[1,]  1.063448e-02  4.296377e-04  1.105672e-03 -3.700152e-04 -1.424224e-03 -6.072861e-05
+[2,]  4.296377e-04  2.937306e-05  2.422674e-04 -2.074504e-05  4.124546e-05 -2.115167e-06
+[3,]  1.105672e-03  2.422674e-04  3.364500e-03 -1.337915e-04  1.476461e-03 -7.506311e-07
+[4,] -3.700152e-04 -2.074504e-05 -1.337915e-04  1.567038e-05  1.900727e-06  1.949793e-06
+[5,] -1.424224e-03  4.124546e-05  1.476461e-03  1.900727e-06  1.002892e-03  1.091436e-05
+[6,] -6.072861e-05 -2.115167e-06 -7.506311e-07  1.949793e-06  1.091436e-05  3.563177e-07
+\end{verbatim}
+
+The total variance is:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sqrt(diag(covW + covB + covE))
+\end{lstlisting}
+
+\begin{verbatim}
+(Intercept)      groupHC seasonsummer          BMI genderFemale          Age 
+0.744297026  0.198790594  0.228668346  0.030690688  0.206315648  0.005623804
+\end{verbatim}
+
+\section{Reporting guideline}
+\label{sec:org403976f}
+From \url{https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf}:
+\begin{itemize}
+\item Amount of missing data
+\item Reasons for missingness
+\item Differences between complete and incomplete data
+\item Method used to account for missing data
+\item Software
+\item Number of imputed datasets
+\item Imputation model
+\item Derived variables
+\item Diagnostics
+\item Pooling
+\item Listwise deletion
+\item Sensitivity analysis
+\end{itemize}
+\end{document}

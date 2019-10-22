@@ -562,6 +562,8 @@ dev.off()
 #+RESULTS:
 : null device 
 :           1
+
+# ## test for proportion exact2x2::binomMeld.test 
    
 \clearpage
 
