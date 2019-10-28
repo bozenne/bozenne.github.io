@@ -426,6 +426,95 @@ sqrt(diag(covT))
 
 \clearpage
 
+* Special case: imputation using a specific law and no covariate
+Mice can be adapted in order, for instance, to sample from a uniform
+distribution or a truncated normal distributioon. First define a
+function doing the imputation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mice.impute.SI_uninf <- function(y, ry, ...){ ## uniform distribution
+    n.NA <- sum(ry==FALSE)
+    sample <- stats::runif(n.NA, min = 0, max = 1)
+    return(cbind(sample))
+}
+
+mice.impute.SI_tnorm <- function(y, ry, ...){ ## truncated normal law
+    require(truncnorm)
+    n.NA <- sum(ry==FALSE)
+    sample <- rtruncnorm(n.NA, a = 0, b = 1, mean = 1, sd = 0.1)
+    return(cbind(sample))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Then run mice as usual except that the method should correspond to one of the previous functions:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.imputed <- 50 ## number of imputed datasets
+dt.mice2 <- mice(dt.data,
+                m=n.imputed, 
+                maxit = 1, # not relevant
+                predictorMatrix = Mlink, # not relevant
+                method = 'SI_tnorm', # function previous define (without "mice.impute.")
+                seed = 500, printFlag = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Then as usual one should check that the imputed values are satisfying:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+quantile(unlist(dt.mice$imp$bmi))
+#+END_SRC
+
+#+RESULTS:
+:        0%       25%       50%       75%      100% 
+: 0.7041556 0.8790477 0.9317021 0.9687630 0.9997288
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+hist(unlist(dt.mice2$imp$bmi))
+#+END_SRC
+
+# #+BEGIN_SRC R :results graphics :file "./histImputed2.pdf" :exports results :session *R* :cache no
+# hist(unlist(dt.mice2$imp$bmi))
+# #+END_SRC
+
+#+RESULTS:
+[[file:./histImputed2.pdf]]
+
+One more plot:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
+#+END_SRC
+# #+BEGIN_SRC R :results graphics :file "./striplotImputed2.pdf" :exports results :session *R* :cache no
+# stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
+# #+END_SRC
+
+#+RESULTS:
+[[file:./striplotImputed2.pdf]]
+
+Here for instance the imputed values does not overlap the observed one
+so something (i.e. the parameters of the distribution used for the
+imputation) is wrong.
+
+# \bigskip
+
+# Then as before one can fit the statistical model using =with=:
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+# e.mice2 <- with(data = dt.mice2,
+#                 lm(Y~group+season+bmi+gender+age)
+#                 )
+# ePool.mice2 <- pool(e.mice2)
+# summary(ePool.mice2)
+# #+END_SRC
+
+# #+RESULTS:
+# :                estimate  std.error statistic       df      p.value
+# : (Intercept)  16.3571621 1.44891707 11.289233 92.05265 0.000000e+00
+# : groupHC       0.3117620 0.64131399  0.486130 92.05265 6.280303e-01
+# : seasonsummer  1.6171573 0.63762913  2.536204 92.05265 1.289066e-02
+# : bmi           0.2207013 0.04502684  4.901550 92.05265 4.065644e-06
+# : genderFemale  0.9072630 0.63710993  1.424029 92.05265 1.578191e-01
+# : age           1.0209777 0.01772960 57.586060 92.05265 0.000000e+00
+
 * Reporting guideline 
 From https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf:
 - Amount of missing data

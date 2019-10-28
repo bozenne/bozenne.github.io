@@ -1,4 +1,3 @@
-
 #+TITLE: "How to" in \Rlogo
 #+Author: Brice Ozenne
 

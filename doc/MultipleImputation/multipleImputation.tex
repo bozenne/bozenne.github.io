@@ -1,4 +1,4 @@
-% Created 2019-10-22 ti 11:10
+% Created 2019-10-28 ma 14:16
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -169,7 +169,7 @@ emphstyle=\color{blue}
 \begin{document}
 
 \maketitle
-This document gather code from the documentation of the mice
+This document gathers code from the documentation of the mice
 package. See \url{https://stefvanbuuren.name/mice/}.
 
 \bigskip
@@ -184,7 +184,7 @@ library(ggplot2)
 \end{lstlisting}
 
 \section{Simulate data (just to have an example to work with)}
-\label{sec:org9e85ddf}
+\label{sec:org3cfbfd0}
 Generative model
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -213,10 +213,10 @@ dt.data[1:10, bmi:=NA]
 \clearpage
 
 \section{Working with mice}
-\label{sec:org37e734f}
+\label{sec:org06dab34}
 
 \subsection{Step 1: Inspect the missing data pattern}
-\label{sec:org59c8972}
+\label{sec:org274092c}
 Check the number of missing values in the dataset:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -241,7 +241,7 @@ md.pattern(dt.data)
 \clearpage
 
 \subsection{Step 2: Define imputation model}
-\label{sec:org3ca7387}
+\label{sec:org643f39c}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -269,7 +269,7 @@ row variable, e.g. group was used to impute bmi.
 \clearpage
 
 \subsection{Step 3: Generate imputed datasets}
-\label{sec:orgef4a2e5}
+\label{sec:orgf7a6599}
 Generate imputed values
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -302,9 +302,9 @@ age    0     0      0   1      0   0
 \clearpage
 
 \subsection{Step 4: Check the imputed datasets}
-\label{sec:orga49f6c5}
+\label{sec:org07beeaf}
 \subsubsection{Convergence of the imputation algorithm}
-\label{sec:orgf31e1b7}
+\label{sec:orgc3dd8f3}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -316,7 +316,7 @@ plot(dt.mice)
 \end{center}
 
 \subsubsection{Visualizing the imputed values}
-\label{sec:org6fb57d8}
+\label{sec:org6fb4a51}
 Visualize imputed value values and check they are plausible (e.g. mice
 is not imputed a BMI of 75):
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -404,7 +404,7 @@ stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
 \clearpage
 
 \subsection{Step 3: Fit the statical model on each imputed dataset}
-\label{sec:org7e31945}
+\label{sec:org6d3cdbf}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -495,7 +495,7 @@ Coefficients:
 \clearpage
 
 \subsection{Step 4: Pool the results over the imputed datasets}
-\label{sec:org16ce1fb}
+\label{sec:org4929b21}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -604,8 +604,75 @@ sqrt(diag(covT))
 
 \clearpage
 
+\section{Special case: imputation using a specific law and no covariate}
+\label{sec:org6a231b5}
+Mice can be adapted in order, for instance, to sample from a uniform
+distribution or a truncated normal distributioon. First define a
+function doing the imputation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mice.impute.SI_uninf <- function(y, ry, ...){ ## uniform distribution
+	n.NA <- sum(ry==FALSE)
+	sample <- stats::runif(n.NA, min = 0, max = 1)
+	return(cbind(sample))
+}
+
+mice.impute.SI_tnorm <- function(y, ry, ...){ ## truncated normal law
+	require(truncnorm)
+	n.NA <- sum(ry==FALSE)
+	sample <- rtruncnorm(n.NA, a = 0, b = 1, mean = 1, sd = 0.1)
+	return(cbind(sample))
+}
+\end{lstlisting}
+
+Then run mice as usual except that the method should correspond to one of the previous functions:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.imputed <- 50 ## number of imputed datasets
+dt.mice2 <- mice(dt.data,
+				m=n.imputed, 
+				maxit = 1, # not relevant
+				predictorMatrix = Mlink, # not relevant
+				method = 'SI_tnorm', # function previous define (without "mice.impute.")
+				seed = 500, printFlag = FALSE)
+\end{lstlisting}
+
+Then as usual one should check that the imputed values are satisfying:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+quantile(unlist(dt.mice$imp$bmi))
+\end{lstlisting}
+
+\begin{verbatim}
+       0%       25%       50%       75%      100% 
+0.7041556 0.8790477 0.9317021 0.9687630 0.9997288
+\end{verbatim}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+hist(unlist(dt.mice2$imp$bmi))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./histImputed2.pdf}
+\end{center}
+
+One more plot:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./striplotImputed2.pdf}
+\end{center}
+
+Here for instance the imputed values does not overlap the observed one
+so something (i.e. the parameters of the distribution used for the
+imputation) is wrong.
+
 \section{Reporting guideline}
-\label{sec:orgf206599}
+\label{sec:orgfddd78d}
 From \url{https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf}:
 \begin{itemize}
 \item Amount of missing data
