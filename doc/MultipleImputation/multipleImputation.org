@@ -443,8 +443,7 @@ Mice can be adapted in order, for instance, to sample from a uniform
 distribution or a truncated normal distribution. First define a
 function able to generate data like:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-mice.impute.SI_unif <- function(y, ry, ...){ ## truncated normal law
-    require(truncnorm)
+mice.impute.SI_unif <- function(y, ry, ...){ ## uniform law
     n.NA <- sum(ry==FALSE)
     sample <- runif(n.NA, min = 0, max = 1)
     return(cbind(sample))
