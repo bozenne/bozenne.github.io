@@ -563,8 +563,94 @@ dev.off()
 : null device 
 :           1
 
-# ## test for proportion exact2x2::binomMeld.test 
-   
+- *Compare percentage when considering categorical data*: the usual
+  way to compare the distribution of a categorical variable between
+  two groups is to run a Fisher test using =fisher.test= in the R
+  software. It returns a p-value and an estimate of the odd ratio with
+  its confidence interval. For instance, consider the following
+  dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mytable <- rbind(c(8,5),
+                 c(4,16))
+dimnames(mytable) <- list(c("control","treatment"),
+                          c("-","+"))
+mytable
+#+END_SRC
+
+#+RESULTS:
+:           -  +
+: control   8  5
+: treatment 4 16
+The Fisher test outputs:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+fisher.test(mytable)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Fisher's Exact Test for Count Data
+
+data:  mytable
+p-value = 0.02654
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  1.068537 41.095757
+sample estimates:
+odds ratio 
+  5.989993
+#+end_example
+
+This approach admits two drawbacks:
+- the p-value may not agree with the confidence interval of the odd
+  ratio regarding the rejection of the null hypothesis
+- the odd ratio is a rather complex quantity to understand.
+Instead one can use the function =binomMeld.test= (package /exact2x2/)
+to perform a test on the proportions:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+binomMeld.test(x1=mytable["control","+"],n1=sum(mytable["control",]),
+               x2=mytable["treatment","+"],n2=sum(mytable["treatment",]),
+               parmtype="difference")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference
+
+data:  sample 1:(5/13), sample 2:(16/20)
+proportion 1 = 0.38462, proportion 2 = 0.8, p-value = 0.04006
+alternative hypothesis: true difference is not equal to 0
+95 percent confidence interval:
+ 0.01535131 0.72131993
+sample estimates:
+difference (p2-p1) 
+         0.4153846
+#+end_example
+
+This time the p-value is consistent with the confidence interval. In
+fact, the p-value is matches the p-value of the confidence interval of
+=fisher.test=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2(mytable, tsmethod = "central")
+#+END_SRC   
+
+#+RESULTS:
+#+begin_example
+
+	Central Fisher's Exact Test
+
+data:  mytable
+p-value = 0.04006
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  1.068537 41.095757
+sample estimates:
+odds ratio 
+  5.989993
+#+end_example
+
+The appropriate reference for this approach is citep:fay2015combining.
 \clearpage
 
 * Univariate analysis using a univariate linear regression
