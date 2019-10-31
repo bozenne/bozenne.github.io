@@ -1,10 +1,7 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  31 OCT 2019 17:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  31 OCT 2019 18:07
 entering extended mode
-**c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleTesting/lavaSe
-arch2-WP1.tex
-
-(c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/MultipleTesting/lavaSea
-rch2-WP1.tex
+**./lavaSearch2-WP1.tex
+(lavaSearch2-WP1.tex
 LaTeX2e <2017-04-15>
 Babel <3.10> and hyphenation patterns for 75 language(s) loaded.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls"
@@ -1445,13 +1442,13 @@ Package rerunfilecheck Info: File `lavaSearch2-WP1.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1641.
  ) 
 Here is how much of TeX's memory you used:
- 15201 strings out of 493323
- 215720 string characters out of 3139064
+ 15200 strings out of 493323
+ 215507 string characters out of 3139064
  418851 words of memory out of 3000000
  18144 multiletter control sequences out of 15000+200000
  97920 words of font info for 84 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 53i,16n,92p,357b,1860s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 53i,16n,92p,288b,1860s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -1482,7 +1479,7 @@ pe1/public/lm/lmsy7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmsy
  Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt9.pfb><C:/Program Files/MiKTeX 2.9/
 fonts/type1/public/amsfonts/symbols/msam7.pfb><C:/Program Files/MiKTeX 2.9/font
 s/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on lavaSearch2-WP1.pdf (27 pages, 535588 bytes).
+Output written on lavaSearch2-WP1.pdf (27 pages, 535600 bytes).
 PDF statistics:
  665 PDF objects out of 1000 (max. 8388607)
  248 named destinations out of 1000 (max. 500000)

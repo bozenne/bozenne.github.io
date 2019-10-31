@@ -563,7 +563,7 @@ dev.off()
 : null device 
 :           1
 
-- *Compare percentage when considering categorical data*: the usual
+- *Compare percentages when considering categorical data*: the usual
   way to compare the distribution of a categorical variable between
   two groups is to run a Fisher test using =fisher.test= in the R
   software. It returns a p-value and an estimate of the odd ratio with
@@ -571,7 +571,7 @@ dev.off()
   dataset:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 mytable <- rbind(c(8,5),
-                 c(4,16))
+                 c(4,15))
 dimnames(mytable) <- list(c("control","treatment"),
                           c("-","+"))
 mytable
@@ -580,7 +580,7 @@ mytable
 #+RESULTS:
 :           -  +
 : control   8  5
-: treatment 4 16
+: treatment 4 15
 The Fisher test outputs:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 fisher.test(mytable)
@@ -592,13 +592,13 @@ fisher.test(mytable)
 	Fisher's Exact Test for Count Data
 
 data:  mytable
-p-value = 0.02654
+p-value = 0.02996
 alternative hypothesis: true odds ratio is not equal to 1
 95 percent confidence interval:
-  1.068537 41.095757
+  0.9953576 38.7853302
 sample estimates:
 odds ratio 
-  5.989993
+  5.622612
 #+end_example
 
 This approach admits two drawbacks:
@@ -618,14 +618,14 @@ binomMeld.test(x1=mytable["control","+"],n1=sum(mytable["control",]),
 
 	melded binomial test for difference
 
-data:  sample 1:(5/13), sample 2:(16/20)
-proportion 1 = 0.38462, proportion 2 = 0.8, p-value = 0.04006
+data:  sample 1:(5/13), sample 2:(15/19)
+proportion 1 = 0.38462, proportion 2 = 0.78947, p-value = 0.05077
 alternative hypothesis: true difference is not equal to 0
 95 percent confidence interval:
- 0.01535131 0.72131993
+ -0.001077177  0.715576028
 sample estimates:
 difference (p2-p1) 
-         0.4153846
+         0.4048583
 #+end_example
 
 This time the p-value is consistent with the confidence interval. In
@@ -641,13 +641,13 @@ exact2x2(mytable, tsmethod = "central")
 	Central Fisher's Exact Test
 
 data:  mytable
-p-value = 0.04006
+p-value = 0.05077
 alternative hypothesis: true odds ratio is not equal to 1
 95 percent confidence interval:
-  1.068537 41.095757
+  0.9953576 38.7853302
 sample estimates:
 odds ratio 
-  5.989993
+  5.622612
 #+end_example
 
 The appropriate reference for this approach is citep:fay2015combining.
