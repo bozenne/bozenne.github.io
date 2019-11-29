@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: nov 29 2019 (12:31) 
 ## Version: 
-## Last-Updated: nov 29 2019 (13:16) 
+## Last-Updated: nov 29 2019 (13:47) 
 ##           By: Brice Ozenne
-##     Update #: 2
+##     Update #: 3
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -226,6 +226,159 @@ M <- cbind(
 )
 colnames(M) <- c("estimate.gls","se.gls","estimate.lm","se.lm")
 M
+
+
+## ** Comparison
+
+## chunk 49
+getTreatmentEstimate <- function(object){
+
+    object.coef <- coef(object)
+    object.coef.se <- sqrt(diag(vcov(object)))
+
+    out <- cbind(estimate = object.coef, 
+                 se = object.coef.se)
+    return(out[c("treatmentC","treatmentB"),])
+}
+
+## chunk 50
+list(gls.CS = getTreatmentEstimate(e.glsCS),
+     ANOVA.1way = getTreatmentEstimate(e.aov1),
+     ANOVA.2way = getTreatmentEstimate(e.aov2))
+
+## chunk 51
+e.lm <- lm(duration ~ period + id + treatment,
+           data = dfL.pressure)
+getTreatmentEstimate(e.lm)
+
+## * Question 6: Choice of the covariance structure
+
+## chunk 52
+dfL.pressure$sequence <- relevel(dfL.pressure$sequence, ref = "ABC")
+dfL.pressure$treatment <- relevel(dfL.pressure$treatment, ref = "A")
+dfL.pressure$period <- relevel(dfL.pressure$period, ref = "1")
+dfL.pressure$id <- relevel(dfL.pressure$id, ref = "1")
+
+## ** (a) Unstructured covariance matrix with period-specific variance/correlation
+
+## chunk 53
+e.glsUNperiod <- gls(duration ~ period + treatment,
+          data = dfL.pressure,
+          correlation = corSymm(form =~ as.numeric(period) | id),
+          weight = varIdent(form =~ 1 | period))
+logLik(e.glsUNperiod)
+
+## chunk 54
+Sigma.UNperiod <- getVarCov(e.glsUNperiod)
+Sigma.UNperiod
+
+## chunk 55
+label.UNperiod <- attr(e.glsUNperiod$modelStruct$varStruct, 
+                       "groupNames")
+
+## chunk 56
+rownames(Sigma.UNperiod) <- label.UNperiod
+colnames(Sigma.UNperiod) <- label.UNperiod
+print(Sigma.UNperiod)
+
+## chunk 57
+summary(e.glsUNperiod)$tTable
+
+## ** (b) Unstructured covariance matrix with treatment-specific variance/correlation
+
+## chunk 58
+e.glsUNtreat <- gls(duration ~ period + treatment,
+                        data = dfL.pressure,
+                        correlation = corSymm(form =~ as.numeric(treatment) | id),
+                        weight = varIdent(form =~ 1 | treatment))
+logLik(e.glsUNtreat)
+
+## chunk 59
+Sigma.UNtreat <- getVarCov(e.glsUNtreat, type = "conditional")
+
+label.UNtreat <- attr(e.glsUNtreat$modelStruct$varStruct, 
+                      "groupNames")
+
+rownames(Sigma.UNtreat) <- label.UNtreat
+colnames(Sigma.UNtreat) <- label.UNtreat
+print(Sigma.UNtreat)
+
+## chunk 60
+summary(e.glsUNtreat)$tTable
+
+## ** Comparison
+
+## chunk 61
+anova(e.glsCS, e.glsUNperiod)
+
+## chunk 62
+anova(e.glsCS, e.glsUNtreat)
+
+## ** [Extra] Other specification of the covariance matrix
+
+## chunk 63
+e.lmeCSseq <- lme(duration ~ period + treatment,
+                  data = dfL.pressure,
+                  random = list(id = pdDiag(~sequence - 1 )),
+                  )
+logLik(e.lmeCSseq)
+
+## chunk 64
+summary(e.lmeCS$modelStruct)
+
+## chunk 65
+summary(e.lmeCSseq$modelStruct)
+
+## chunk 66
+index.159 <- which(dfL.pressure$id %in% c(1,5,9))
+dfL.pressure[index.159,]
+
+## chunk 67
+vec.SigmaCS <- list(
+    "ABC" = getVarCov(e.lmeCS, individual = 1, type = "marginal"),
+    "BCA" = getVarCov(e.lmeCS, individual = 5, type = "marginal"),
+    "CAB" = getVarCov(e.lmeCS, individual = 9, type = "marginal")
+)
+print(vec.SigmaCS)
+
+## chunk 68
+vec.SigmaCSseq <- list(
+    "ABC" = getVarCov(e.lmeCSseq, individual = 1, type = "marginal"),
+    "BCA" = getVarCov(e.lmeCSseq, individual = 5, type = "marginal"),
+    "CAB" = getVarCov(e.lmeCSseq, individual = 9, type = "marginal")
+)
+print(vec.SigmaCSseq)
+
+## chunk 69
+e.lmeUNfull <- lme(duration ~ period + treatment,
+            data = dfL.pressure,
+            random = list(id = pdDiag(~sequence - 1 )),
+            correlation = corSymm(form =~ as.numeric(treatment)|id),
+            weights = varIdent(form =~ 1|period)
+                   )
+logLik(e.lmeUNfull)
+
+## chunk 70
+vec.SigmaUNfull <- list(
+    "ABC" = getVarCov(e.lmeUNfull, individual = 1, type = "marginal")[[1]],
+    "BCA" = getVarCov(e.lmeUNfull, individual = 5, type = "marginal")[[1]],
+    "CAB" = getVarCov(e.lmeUNfull, individual = 9, type = "marginal")[[1]]
+)
+lapply(vec.SigmaUNfull, cov2cor)
+
+## * Question 7: Influence of the sequence on the correlation structure
+
+## chunk 71
+getTreatmentEstimate2 <- function(object){
+    object.table <- summary(object)$tTable
+    out <- object.table[c("treatmentC","treatmentB"),c(1:2,4)]
+    return(out)
+}
+
+## chunk 72
+list(CS = getTreatmentEstimate2(e.glsCS),
+     UN.period = getTreatmentEstimate2(e.glsUNperiod),
+     UN.treatment = getTreatmentEstimate2(e.glsUNtreat))
 
 
 ######################################################################
