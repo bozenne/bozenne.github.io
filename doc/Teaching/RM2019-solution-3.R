@@ -1,5 +1,3 @@
-setwd("c:/Users/hpl802/Documents/Teaching/repeated measurements 2018/3-Variance-components/")
-
 ## chunk 2
 library(reshape2)  # for converting data.frame from wide to long format
 library(nlme) # models for repeated measurements (gls, lme)
