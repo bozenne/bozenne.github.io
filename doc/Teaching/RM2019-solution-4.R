@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: nov 29 2019 (12:31) 
 ## Version: 
-## Last-Updated: nov 29 2019 (13:47) 
+## Last-Updated: nov 29 2019 (14:46) 
 ##           By: Brice Ozenne
-##     Update #: 3
+##     Update #: 4
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -208,8 +208,9 @@ M
 ## ** Two way ANOVA
 
 ## chunk 45
-e.aov2 <- lm(duration ~ id + treatment, data = dfL.pressure)
-
+dfL.pressure$id <- as.factor(dfL.pressure$id)
+e.aov2 <- lm(duration ~ id + treatment + period , data = dfL.pressure)
+summary(e.aov2)
 ## chunk 46
 anova(e.aov2)
 
@@ -267,7 +268,7 @@ e.glsUNperiod <- gls(duration ~ period + treatment,
           correlation = corSymm(form =~ as.numeric(period) | id),
           weight = varIdent(form =~ 1 | period))
 logLik(e.glsUNperiod)
-
+summary(e.glsUNperiod)
 ## chunk 54
 Sigma.UNperiod <- getVarCov(e.glsUNperiod)
 Sigma.UNperiod
@@ -288,11 +289,11 @@ summary(e.glsUNperiod)$tTable
 
 ## chunk 58
 e.glsUNtreat <- gls(duration ~ period + treatment,
-                        data = dfL.pressure,
-                        correlation = corSymm(form =~ as.numeric(treatment) | id),
-                        weight = varIdent(form =~ 1 | treatment))
+                    data = dfL.pressure,
+                    correlation = corSymm(form =~ as.numeric(treatment) | id),
+                    weight = varIdent(form =~ 1 | treatment))
 logLik(e.glsUNtreat)
-
+summary(e.glsUNtreat)
 ## chunk 59
 Sigma.UNtreat <- getVarCov(e.glsUNtreat, type = "conditional")
 
@@ -379,6 +380,195 @@ getTreatmentEstimate2 <- function(object){
 list(CS = getTreatmentEstimate2(e.glsCS),
      UN.period = getTreatmentEstimate2(e.glsUNperiod),
      UN.treatment = getTreatmentEstimate2(e.glsUNtreat))
+
+## * Question 8: Cross over effect 
+## ** Definition of variable indicating the previous treatment
+
+## chunk 73
+dfL.pressure <- dfL.pressure[order(dfL.pressure$id,
+                                   dfL.pressure$period.num),]
+head(dfL.pressure)
+
+## chunk 74
+dfL.pressure$previousTreatment <- as.character(NA)
+
+## chunk 75
+ls.previousTreatment <- tapply(as.character(dfL.pressure$treatment), 
+                               INDEX = dfL.pressure$id, 
+                               FUN = function(x){c("none",x[1],x[2])}
+                               )
+
+## chunk 76
+is.list(ls.previousTreatment)
+
+## chunk 77
+dfL.pressure$previousTreatment <- unlist(ls.previousTreatment)
+
+## chunk 78
+ls.previousTreatment2 <- tapply(as.character(dfL.pressure$treatment), 
+                                INDEX = dfL.pressure$id, 
+                                FUN = function(x){c("none","none",x[1])}
+                                )
+dfL.pressure$previousTreatment2 <- unlist(ls.previousTreatment2)
+
+## chunk 79
+dfL.pressure$previousTreatment <- as.factor(dfL.pressure$previousTreatment)
+dfL.pressure$previousTreatment2 <- as.factor(dfL.pressure$previousTreatment2)
+
+## chunk 80
+list(ABC = table(dfL.pressure[dfL.pressure$sequence=="ABC","period"],
+     dfL.pressure[dfL.pressure$sequence=="ABC","previousTreatment"]),
+     BCA = table(dfL.pressure[dfL.pressure$sequence=="BCA","period"],
+     dfL.pressure[dfL.pressure$sequence=="BCA","previousTreatment"]),
+     CAB = table(dfL.pressure[dfL.pressure$sequence=="CAB","period"],
+     dfL.pressure[dfL.pressure$sequence=="CAB","previousTreatment"]))
+
+## chunk 81
+list(ABC = table(dfL.pressure[dfL.pressure$sequence=="ABC","period"],
+     dfL.pressure[dfL.pressure$sequence=="ABC","previousTreatment2"]),
+     BCA = table(dfL.pressure[dfL.pressure$sequence=="BCA","period"],
+     dfL.pressure[dfL.pressure$sequence=="BCA","previousTreatment2"]),
+     CAB = table(dfL.pressure[dfL.pressure$sequence=="CAB","period"],
+     dfL.pressure[dfL.pressure$sequence=="CAB","previousTreatment2"]))
+
+## ** Model with carry over effects
+
+## chunk 82
+dfL.pressure$previousTreatment <- relevel(dfL.pressure$previousTreatment, "none")
+dfL.pressure$previousTreatment2 <- relevel(dfL.pressure$previousTreatment2, "none")
+
+## chunk 83
+ff <- duration ~ treatment + previousTreatment + previousTreatment2
+gls.UN_CO2 <- gls(ff,
+           data = dfL.pressure,
+           correlation = corSymm(form =~ as.numeric(treatment) | id),
+           weight = varIdent(form =~ 1 | treatment))
+logLik(gls.UN_CO2)
+
+## chunk 84
+anova(gls.UN_CO2, type = "marginal")
+
+## chunk 85
+gls.UN_CO <- gls(duration ~ treatment + previousTreatment,
+          data = dfL.pressure,
+          correlation = corSymm(form =~ as.numeric(treatment) | id),
+          weight = varIdent(form =~1 | treatment))
+logLik(gls.UN_CO)
+
+## chunk 86
+anova(gls.UN_CO, type = "marginal")
+
+## chunk 87
+summary(gls.UN_CO)$tTable
+
+## chunk 88
+dfL.pressure$previousC <- (dfL.pressure$previousTreatment == "C")
+
+gls.UN_COc <- gls(duration ~ treatment + previousC,
+            data = dfL.pressure,
+            correlation = corSymm(form =~ as.numeric(treatment) | id),
+            weight = varIdent(form =~ 1 | treatment))
+logLik(gls.UN_COc)
+
+## chunk 89
+anova(update(gls.UN_COc, method = "ML"),
+      update(gls.UN_CO, method = "ML"))
+
+## chunk 90
+dfL.pressure$fit <- predict(gls.UN_CO)
+
+xy.fitted <- xyplot(fit ~ treatment, group = sequence, 
+             data = dfL.pressure[order(dfL.pressure$treatment),], 
+             type = "b",
+             auto.key = TRUE)
+xy.fitted
+
+## * Using =data.table= 
+
+## chunk 92
+library(data.table)
+
+## chunk 93
+dtL.pressure <- as.data.table(dfL.pressure)
+
+## ** Question 8
+
+## chunk 94
+dtL.pressure[, treatment.char := as.character(treatment)]
+
+## chunk 95
+dtL.pressure[,previous.treatment := c("none",treatment.char[1],treatment.char[2]),
+             by="id"]
+dtL.pressure[,previous.treatment2 := c("none","none",treatment.char[1]),
+             by="id"]
+
+## chunk 96
+dtL.pressure[,table(previousTreatment, previous.treatment)]
+
+## chunk 97
+dtL.pressure[,table(previousTreatment2, previous.treatment2)]
+
+## * Using =ggplot2= 
+
+## chunk 98
+library(ggplot2)
+
+## ** Question 1
+
+## chunk 99
+gg.spaguettiP <- ggplot(dfL.pressure, aes(x = period, y = duration,
+                                          group = id, color = id))
+gg.spaguettiP <- gg.spaguettiP + geom_line() + geom_point()
+gg.spaguettiP <- gg.spaguettiP + facet_grid(~sequence, 
+                                            labeller = label_both)
+gg.spaguettiP
+
+## chunk 101
+gg.spaguettiT <- ggplot(dfL.pressure, aes(x = treatment, y = duration,
+                                          group = id, color = id))
+gg.spaguettiT <- gg.spaguettiT + geom_line() + geom_point()
+gg.spaguettiT <- gg.spaguettiT + facet_grid(~sequence, 
+                                            labeller = label_both)
+gg.spaguettiT
+
+## chunk 103
+gg.mean <- ggplot(dfL.pressure, aes(x = period, y = duration,
+                                    group = sequence, color = sequence))
+gg.mean <- gg.mean + stat_summary(geom = "line", fun.y = mean,
+                                  size = 3, fun.data = NULL)
+gg.mean <- gg.mean + ylab("average duration")
+gg.mean
+
+## ** Question 8
+
+## chunk 105
+gg.fit <- ggplot(dfL.pressure, aes(x = treatment, y = fit,
+                                   group = sequence, color = sequence))
+gg.fit <- gg.fit + geom_point(size = 2) + geom_line(size = 1.5)
+gg.fit <- gg.fit + ylab("fitted duration")
+gg.fit
+
+## * =intervals= vs. =confint=
+
+## chunk 107
+vec.prob <- c(lower = 0.025, estimate = 0.5, upper = 0.975)
+
+## chunk 108
+beta <- summary(e.glsCS)$tTable["treatmentB","Value"]
+beta.se <- summary(e.glsCS)$tTable["treatmentB","Std.Error"]
+df.beta <- e.glsCS$dims$N - e.glsCS$dims$p
+quantile_student <- qt(vec.prob, 
+                       df = df.beta)
+
+beta + quantile_student * beta.se
+
+## chunk 109
+confint(e.glsCS)["treatmentB",]
+
+## chunk 110
+quantile_gaussian <- qnorm(vec.prob)
+beta + quantile_gaussian * beta.se
+
 
 
 ######################################################################
