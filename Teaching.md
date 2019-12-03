@@ -8,4 +8,5 @@ Statistical analysis of correlated and repeated measurements: [course webpage](h
 - Solution for day 1: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-1.R)
 - Solution for day 2: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-2.R)
 - Solution for day 3: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-3.R)
-- Solution for day 4 (question 1-5): [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-4.R)
+- Solution for day 4: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-4.R)
+- Solution for day 5: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-5.R)

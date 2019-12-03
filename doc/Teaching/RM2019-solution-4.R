@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: nov 29 2019 (12:31) 
 ## Version: 
-## Last-Updated: nov 29 2019 (14:46) 
+## Last-Updated: nov 29 2019 (18:36) 
 ##           By: Brice Ozenne
-##     Update #: 4
+##     Update #: 5
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -393,17 +393,18 @@ head(dfL.pressure)
 dfL.pressure$previousTreatment <- as.character(NA)
 
 ## chunk 75
+dfL.pressure$treatment[1:3]
 ls.previousTreatment <- tapply(as.character(dfL.pressure$treatment), 
                                INDEX = dfL.pressure$id, 
                                FUN = function(x){c("none",x[1],x[2])}
                                )
-
+ls.previousTreatment[1:3]
 ## chunk 76
 is.list(ls.previousTreatment)
 
 ## chunk 77
 dfL.pressure$previousTreatment <- unlist(ls.previousTreatment)
-
+head(dfL.pressure)
 ## chunk 78
 ls.previousTreatment2 <- tapply(as.character(dfL.pressure$treatment), 
                                 INDEX = dfL.pressure$id, 
@@ -438,8 +439,8 @@ dfL.pressure$previousTreatment <- relevel(dfL.pressure$previousTreatment, "none"
 dfL.pressure$previousTreatment2 <- relevel(dfL.pressure$previousTreatment2, "none")
 
 ## chunk 83
-ff <- duration ~ treatment + previousTreatment + previousTreatment2
-gls.UN_CO2 <- gls(ff,
+
+gls.UN_CO2 <- gls(duration ~ treatment + previousTreatment,
            data = dfL.pressure,
            correlation = corSymm(form =~ as.numeric(treatment) | id),
            weight = varIdent(form =~ 1 | treatment))
@@ -447,7 +448,7 @@ logLik(gls.UN_CO2)
 
 ## chunk 84
 anova(gls.UN_CO2, type = "marginal")
-
+summary(gls.UN_CO2)
 ## chunk 85
 gls.UN_CO <- gls(duration ~ treatment + previousTreatment,
           data = dfL.pressure,
