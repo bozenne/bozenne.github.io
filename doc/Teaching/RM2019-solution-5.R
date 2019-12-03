@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: dec  3 2019 (11:14) 
 ## Version: 
-## Last-Updated: dec  3 2019 (12:23) 
+## Last-Updated: dec  3 2019 (12:31) 
 ##           By: Brice Ozenne
-##     Update #: 3
+##     Update #: 4
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -127,14 +127,20 @@ points(expected.timeweek ~ visit, data = dfL.ony,
        col = "red", pch = 21, cex = 2)
 
 ## * Question 3: Discrete time population average model
+dfL.ony <- dfL.ony[order(dfL.ony$id,dfL.ony$visit),]
+dfL.ony[1:10,c("id","treatment","visit","time","response")]
+
+head(dfL.ony)
 
 ## chunk 23
-simplified.gee <- geeglm(response ~ visit, 
+simplified.gee <- geeglm(response ~ visit + group, 
                          id = id,
                          data = dfL.ony, 
                          family = binomial(link = "logit"),
                          corstr = "unstructured")
-    
+summary(simplified.gee)
+
+
 try(capture.output(geeglm(response ~ treatment*visit, 
                           id = id,
                           data = dfL.ony, 
