@@ -1,4 +1,4 @@
-% Created 2019-02-19 ti 14:33
+% Created 2019-10-31 to 18:07
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
 
@@ -173,7 +173,7 @@ emphstyle=\color{blue}
 \maketitle
 
 \section*{Summary}
-\label{sec:org04a108f}
+\label{sec:orgb4c3585}
 We propose a strategy to assess the effect of an exposure (e.g. a
 disease, a genetic factor) on several outcomes (e.g. psychological
 outcomes, the binding potential measured in several brain regions)
@@ -293,7 +293,7 @@ synthetic description of the functionalities can be found at
 \section{Data management}
 \label{sec:dataManagement}
 \subsection{Working directory}
-\label{sec:org32d43a8}
+\label{sec:org47efbee}
 
 The working directory is where R, by default, look for files
 to import and export data or figures. The current working directory
@@ -326,7 +326,7 @@ getwd()
 \end{verbatim}
 
 \subsection{Importing the data}
-\label{sec:orgfc3be2b}
+\label{sec:org63acd04}
 
 It is a good idea to start by checking that the working directory
 contains the data we want to import. For instance the file \texttt{data.csv}
@@ -424,7 +424,7 @@ is a type of character strings in R) and the rest contains numerical
 values.
 
 \subsection{Data processing}
-\label{sec:org92f8a64}
+\label{sec:orgf47fb73}
 
 Often the raw data needs to be transformed before being analyzed:
 \begin{itemize}
@@ -688,6 +688,97 @@ gg
 dev.off()
 \end{lstlisting}
 
+\begin{itemize}
+\item \textbf{Compare percentages when considering categorical data}: the usual
+way to compare the distribution of a categorical variable between
+two groups is to run a Fisher test using \texttt{fisher.test} in the R
+software. It returns a p-value and an estimate of the odd ratio with
+its confidence interval. For instance, consider the following
+dataset:
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+mytable <- rbind(c(8,5),
+				 c(4,15))
+dimnames(mytable) <- list(c("control","treatment"),
+						  c("-","+"))
+mytable
+\end{lstlisting}
+
+\begin{verbatim}
+          -  +
+control   8  5
+treatment 4 15
+\end{verbatim}
+The Fisher test outputs:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+fisher.test(mytable)
+\end{lstlisting}
+
+\begin{verbatim}
+	Fisher's Exact Test for Count Data
+
+data:  mytable
+p-value = 0.02996
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  0.9953576 38.7853302
+sample estimates:
+odds ratio 
+  5.622612
+\end{verbatim}
+
+This approach admits two drawbacks:
+\begin{itemize}
+\item the p-value may not agree with the confidence interval of the odd
+ratio regarding the rejection of the null hypothesis
+\item the odd ratio is a rather complex quantity to understand.
+\end{itemize}
+Instead one can use the function \texttt{binomMeld.test} (package \emph{exact2x2})
+to perform a test on the proportions:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+binomMeld.test(x1=mytable["control","+"],n1=sum(mytable["control",]),
+			   x2=mytable["treatment","+"],n2=sum(mytable["treatment",]),
+			   parmtype="difference")
+\end{lstlisting}
+
+\begin{verbatim}
+	melded binomial test for difference
+
+data:  sample 1:(5/13), sample 2:(15/19)
+proportion 1 = 0.38462, proportion 2 = 0.78947, p-value = 0.05077
+alternative hypothesis: true difference is not equal to 0
+95 percent confidence interval:
+ -0.001077177  0.715576028
+sample estimates:
+difference (p2-p1) 
+         0.4048583
+\end{verbatim}
+
+This time the p-value is consistent with the confidence interval. In
+fact, the p-value is matches the p-value of the confidence interval of
+\texttt{fisher.test}:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+exact2x2(mytable, tsmethod = "central")
+\end{lstlisting}
+
+\begin{verbatim}
+	Central Fisher's Exact Test
+
+data:  mytable
+p-value = 0.05077
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  0.9953576 38.7853302
+sample estimates:
+odds ratio 
+  5.622612
+\end{verbatim}
+
+The appropriate reference for this approach is \citep{fay2015combining}.
 \clearpage
 
 \section{Univariate analysis using a univariate linear regression}
@@ -712,7 +803,7 @@ practice. Univariate linear regression are also not recommended in
 presence of extreme values (A3) or very correlated covariates (A4).
 
 \subsection{Fitting a univariate linear regression in \Rlogo{}}
-\label{sec:orgfef48e7}
+\label{sec:org0163929}
 
 We can use:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -768,7 +859,7 @@ shape) and the bottom right plot can be used to identify observation
 that have a huge influence on the fitted values.
 
 \subsubsection{Testing (A1)}
-\label{sec:org13e1726}
+\label{sec:org0502a4f}
 
 The qqtest package provides a more readable qqplot. To use it, we
 first need to extract the residuals. This can be achieved using the
@@ -833,7 +924,7 @@ distribution.
 \clearpage
 
 \subsubsection{Testing (A2)}
-\label{sec:org382908e}
+\label{sec:orga50855a}
 
 A statistical test can also be used to assess whether there is
 evidence for a more complex functional form for the linear predictor:
@@ -862,7 +953,7 @@ Based on 1000 realizations. Cumulated residuals ordered by MDI-variable.
 \end{verbatim}
 
 \subsubsection{Testing (A3)}
-\label{sec:org8922bb6}
+\label{sec:org00ff818}
 
 The \texttt{influence} method can be used to output what is the impact of
 each observation on each estimated parameter:
@@ -884,7 +975,7 @@ head(influence(e.lm)$coefficient)
 Large values (positive or negative) indicate influential observations.
 
 \subsubsection{Testing (A4)}
-\label{sec:org7503db2}
+\label{sec:org6e5096c}
 
 The correlation among the explanatory variables can be assessed using
 the VIF (variance inflation factor):
@@ -902,7 +993,7 @@ arbitrary).
 
 
 \subsection{Hypothesis testing}
-\label{sec:orgf9fc33d}
+\label{sec:orgc9d99d6}
 
 We want to formally test whether there is an effect of MDI on the
 outcome. This is equivalent to test the null hypothesis:
@@ -986,7 +1077,7 @@ we make no assumption on the correlation structure between the
 residuals.
 
 \subsection{Fitting multiple linear regression in \Rlogo{}}
-\label{sec:org5bbb16f}
+\label{sec:orgd3260cb}
 
 We can estimate all the 5 models and store them into a list:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1000,18 +1091,18 @@ ls.lm <- list(Y1 = lm(Y1 ~ age + BMI + MDI, data = dfW),
 \end{lstlisting}
 
 \subsection{Interpretation of the regression coefficients}
-\label{sec:org3746056}
+\label{sec:orga3cb513}
 
 Same as in the univariate case (see section \ref{sec:interpretationLM}).
 
 \subsection{Diagnostics tools for univariate linear regression in \Rlogo{}}
-\label{sec:org3819252}
+\label{sec:org7cc3cb1}
 
 Same as in the univariate case (see section \ref{sec:diagLM}). This model
 checking needs to be done for each outcome.
 
 \subsection{Hypothesis testing}
-\label{sec:org22df8a0}
+\label{sec:org038e05b}
 
 We now want to test:
 \begin{align*}
@@ -1203,7 +1294,7 @@ intervals using the (single-step) Dunnett approach.
 \clearpage
 
 \section{References}
-\label{sec:orgb26c6a9}
+\label{sec:org6a582b5}
 
 \begingroup
 \renewcommand{\section}[2]{}
@@ -1218,7 +1309,7 @@ intervals using the (single-step) Dunnett approach.
 \section{Statistics: definitions and notations}
 \label{SM:statistics}
 \subsection{Variables}
-\label{sec:org273002f}
+\label{sec:orge3bd53a}
 
 We can differentiate several types of random variables: outcomes,
 exposure, risk factors, confounders, and mediators. To explicit the
@@ -1275,7 +1366,7 @@ Path diagram relating the variables Y, E, M, \(X_1\) and \(X_2\)}
 \clearpage 
 
 \subsection{Assumptions}
-\label{sec:org41dfc97}
+\label{sec:orgb182bdb}
 
 We can distinguish two types of assumptions:
 \begin{itemize}
@@ -1298,7 +1389,7 @@ complex.
 \end{itemize}
 
 \subsection{Statistical model}
-\label{sec:orgae28476}
+\label{sec:org532bc2a}
 A statistical model \(\model\) is set of possible probability
 distributions. For instance when we fit a Gaussian linear model for
 \(Y_1\) with just an intercept \(\model=\left\{\Gaus[\mu,\sigma^2];\mu
@@ -1306,7 +1397,7 @@ distributions. For instance when we fit a Gaussian linear model for
 containing all possible univariate normal distributions.
 
 \subsection{Model parameters}
-\label{sec:org85bf93a}
+\label{sec:orgf69b02d}
 
 The model parameters are the (non random) variables that enable the
 statistical model to "adapt" to different settings. They will be
@@ -1398,7 +1489,7 @@ Theta_hat.XP2
 \end{verbatim}
 
 \subsection{Parameter of interest}
-\label{sec:org5770421}
+\label{sec:org3782e89}
 
 The statistical model may contain many parameters, most of them are
 often not of interest but are needed to obtain valid estimates
@@ -1432,7 +1523,7 @@ estimate with lower variance. Note that we have no guarantee that it
 will reduce the bias.
 
 \subsection{Contrast matrix}
-\label{sec:org006d7cd}
+\label{sec:org4346371}
 
 When dealing with many parameters it is convenient to define the null
 hypothesis via a contrast matrix. An example of null hypothesis is:

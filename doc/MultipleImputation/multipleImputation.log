@@ -1,13 +1,13 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  31 OCT 2019 18:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2018.8.8)  28 OCT 2019 14:56
 entering extended mode
-**./lavaSearch2-WP1.tex
-(lavaSearch2-WP1.tex
+**./multipleImputation.tex
+(multipleImputation.tex
 LaTeX2e <2017-04-15>
 Babel <3.10> and hyphenation patterns for 75 language(s) loaded.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls"
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\size10.clo"
-File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
+File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -1036,33 +1036,34 @@ Package: natbib 2010/09/13 8.31b (PWD, AO)
 LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count148
 )
+("C:\Program Files\MiKTeX 2.9\tex\latex\xargs\xargs.sty"
+Package: xargs 2008/03/22 v1.1  extended macro definitions  (mpg)
+\xargs@max=\count149
+\xargs@toksa=\toks34
+\xargs@toksb=\toks35
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\tools\xspace.sty"
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
 ("C:\Program Files\MiKTeX 2.9\tex\latex\fancyvrb\fancyvrb.sty"
 Package: fancyvrb 2008/02/07
 
 Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
 <2008/02/07> (tvz)
-\FV@CodeLineNo=\count149
+\FV@CodeLineNo=\count150
 \FV@InFile=\read1
 \FV@TabBox=\box65
-\c@FancyVerbLine=\count150
-\FV@StepNumber=\count151
+\c@FancyVerbLine=\count151
+\FV@StepNumber=\count152
 \FV@OutFile=\write3
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\colortbl\colortbl.sty"
 Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
-\everycr=\toks34
+\everycr=\toks36
 \minrowclearance=\skip66
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\setspace\setspace.sty"
 Package: setspace 2011/12/19 v6.7a set line spacing
-)
-("C:\Program Files\MiKTeX 2.9\tex\latex\preprint\authblk.sty"
-Package: authblk 2001/02/27 1.3 (PWD)
-\affilsep=\skip67
-\@affilsep=\skip68
-\c@Maxaffil=\count152
-\c@authors=\count153
-\c@affil=\count154
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf.sty"
 Package: epstopdf 2016/05/15 v2.6 Conversion with epstopdf on the fly (HO)
@@ -1097,7 +1098,7 @@ Package caption3 Info: TeX engine: e-TeX on input line 67.
 \caption@parindent=\dimen155
 \caption@hangindent=\dimen156
 )
-\c@ContinuedFloat=\count155
+\c@ContinuedFloat=\count153
 Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
@@ -1114,14 +1115,14 @@ nment
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\float\float.sty"
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count156
-\float@exts=\toks35
+\c@float@type=\count154
+\float@exts=\toks37
 \float@box=\box66
-\@float@everytoks=\toks36
+\@float@everytoks=\toks38
 \@floatcapt=\box67
 )
-\@float@every@algorithm=\toks37
-\c@algorithm=\count157
+\@float@every@algorithm=\toks39
+\c@algorithm=\count155
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\algorithmicx\algpseudocode.sty"
 Package: algpseudocode 
@@ -1130,28 +1131,19 @@ Package: algpseudocode
 Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
 
 Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
-\c@ALG@line=\count158
-\c@ALG@rem=\count159
-\c@ALG@nested=\count160
-\ALG@tlm=\skip69
-\ALG@thistlm=\skip70
-\c@ALG@Lnr=\count161
-\c@ALG@blocknr=\count162
-\c@ALG@storecount=\count163
-\c@ALG@tmpcounter=\count164
-\ALG@tmplength=\skip71
+\c@ALG@line=\count156
+\c@ALG@rem=\count157
+\c@ALG@nested=\count158
+\ALG@tlm=\skip67
+\ALG@thistlm=\skip68
+\c@ALG@Lnr=\count159
+\c@ALG@blocknr=\count160
+\c@ALG@storecount=\count161
+\c@ALG@tmpcounter=\count162
+\ALG@tmplength=\skip69
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
-) ("C:\Program Files\MiKTeX 2.9\tex\latex\tools\xspace.sty"
-Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
-)
-("C:\Program Files\MiKTeX 2.9\tex\latex\xargs\xargs.sty"
-Package: xargs 2008/03/22 v1.1  extended macro definitions  (mpg)
-\xargs@max=\count165
-\xargs@toksa=\toks38
-\xargs@toksb=\toks39
-)
-("C:\Program Files\MiKTeX 2.9\tex\latex\stmaryrd\stmaryrd.sty"
+) ("C:\Program Files\MiKTeX 2.9\tex\latex\stmaryrd\stmaryrd.sty"
 Package: stmaryrd 1994/03/03 St Mary's Road symbol package
 \symstmry=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `stmry' in version `bold'
@@ -1161,65 +1153,51 @@ LaTeX Font Info:    Overwriting symbol font `stmry' in version `bold'
 Package: prodint 
 \symProdint=\mathgroup7
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amscls\amsthm.sty"
-Package: amsthm 2015/03/04 v2.20.2
-\thm@style=\toks40
-\thm@bodyfont=\toks41
-\thm@headfont=\toks42
-\thm@notefont=\toks43
-\thm@headpunct=\toks44
-\thm@preskip=\skip72
-\thm@postskip=\skip73
-\thm@headsep=\skip74
-\dth@everypar=\toks45
-)
-\c@theorem=\count166
-Package hyperref Info: Option `colorlinks' set `true' on input line 170.
+Package hyperref Info: Option `colorlinks' set `true' on input line 168.
 
-(lavaSearch2-WP1.aux)
-\openout1 = `lavaSearch2-WP1.aux'.
+(multipleImputation.aux)
+\openout1 = `multipleImputation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 171.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 171.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 169.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 169.
 
  ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 171.
-LaTeX Font Info:    ... okay on input line 171.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 171.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmr.fd"
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 169.
+LaTeX Font Info:    ... okay on input line 169.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 169.
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmr.fd"
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-\c@lstlisting=\count167
+\c@lstlisting=\count163
 
 ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count168
+\scratchcounter=\count164
 \scratchdimen=\dimen157
 \scratchbox=\box68
-\nofMPsegments=\count169
-\nofMParguments=\count170
-\everyMPshowfont=\toks46
-\MPscratchCnt=\count171
+\nofMPsegments=\count165
+\nofMParguments=\count166
+\everyMPshowfont=\toks40
+\MPscratchCnt=\count167
 \MPscratchDim=\dimen158
-\MPnumerator=\count172
-\makeMPintoPDFobject=\count173
-\everyMPtoPDFconversion=\toks47
+\MPnumerator=\count168
+\makeMPintoPDFobject=\count169
+\everyMPtoPDFconversion=\toks41
 )
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1230,22 +1208,22 @@ File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
 * h-part:(L,W,R)=(92.14519pt, 430.00462pt, 92.14519pt)
-* v-part:(T,H,B)=(56.9055pt, 642.66711pt, 95.39737pt)
+* v-part:(T,H,B)=(28.45274pt, 671.11987pt, 95.39737pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
 * \textwidth=430.00462pt
-* \textheight=642.66711pt
+* \textheight=671.11987pt
 * \oddsidemargin=19.8752pt
 * \evensidemargin=19.8752pt
-* \topmargin=-52.36449pt
+* \topmargin=-80.81725pt
 * \headheight=12.0pt
 * \headsep=25.0pt
-* \topskip=10.0pt
+* \topskip=12.0pt
 * \footskip=30.0pt
-* \marginparwidth=65.0pt
-* \marginparsep=11.0pt
+* \marginparwidth=44.0pt
+* \marginparsep=10.0pt
 * \columnsep=10.0pt
-* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1256,84 +1234,83 @@ File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \AtBeginShipoutBox=\box69
-Package hyperref Info: Link coloring ON on input line 171.
+Package hyperref Info: Link coloring ON on input line 169.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count174
+\c@section@level=\count170
 )
-LaTeX Info: Redefining \ref on input line 171.
-LaTeX Info: Redefining \pageref on input line 171.
-LaTeX Info: Redefining \nameref on input line 171.
+LaTeX Info: Redefining \ref on input line 169.
+LaTeX Info: Redefining \pageref on input line 169.
+LaTeX Info: Redefining \nameref on input line 169.
 
-(lavaSearch2-WP1.out) (lavaSearch2-WP1.out)
+(multipleImputation.out) (multipleImputation.out)
 \@outlinefile=\write4
-\openout4 = `lavaSearch2-WP1.out'.
+\openout4 = `multipleImputation.out'.
 
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Try loading font information for T1+lmss on input line 173.
-
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmss.fd"
-File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [1
-
-{C:/Users/hpl802/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 238.
-
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmtt.fd"
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 238.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 172.
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmr.fd"
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 238.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 172.
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omllmm.fd"
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 238
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 172
 .
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omslmsy.fd"
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 238
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 172
 .
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omxlmex.fd"
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 238.
+(Font)              <14.4> on input line 172.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 238.
+(Font)              <10> on input line 172.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 238.
-LaTeX Font Info:    Try loading font information for U+msa on input line 238.
+(Font)              <7> on input line 172.
+LaTeX Font Info:    Try loading font information for U+msa on input line 172.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 238.
+LaTeX Font Info:    Try loading font information for U+msb on input line 172.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+stmry on input line 238.
+LaTeX Font Info:    Try loading font information for U+stmry on input line 172.
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\stmaryrd\ustmry.fd")
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 173.
+
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmtt.fd"
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 173.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 173.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 173.
+
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
 File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
@@ -1343,145 +1320,114 @@ File: lstlang2.sty 2015/06/04 1.6 listings language file
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang3.sty"
 File: lstlang3.sty 2015/06/04 1.6 listings language file
 )
-Overfull \hbox (9.04822pt too wide) in paragraph at lines 255--260
-\T1/lmr/m/n/10 tion-al-i-ties called pack-ages can be down-loaded from the CRAN
- us-ing the com-mand \T1/lmtt/m/n/10 install.packages\T1/lmr/m/n/10 .
- []
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10.95> on input line 191.
+ [1
 
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 278.
+{C:/Users/hpl802/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<./missingDataPattern.pdf, id=81, 505.89pt x 505.89pt>
+File: ./missingDataPattern.pdf Graphic file (type pdf)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmr.fd"
-File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [2
+<use ./missingDataPattern.pdf>
+Package pdftex.def Info: ./missingDataPattern.pdf used on input line 245.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
+ [2
 
-] [3
+ <./missingDataPattern.pdf>] [3
 
 ] [4
 
-] [5
-
-] [6]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 629.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 629.
-
-[7
-
-] <./figures/descriptive.pdf, id=253, 505.89pt x 505.89pt>
-File: ./figures/descriptive.pdf Graphic file (type pdf)
-
-<use ./figures/descriptive.pdf>
-Package pdftex.def Info: ./figures/descriptive.pdf used on input line 680.
-(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
- [8
-
- <./figures/descriptive.pdf>] [9] [10]
-[11
-
-] <./figures/diag-lm.pdf, id=314, 505.89pt x 505.89pt>
-File: ./figures/diag-lm.pdf Graphic file (type pdf)
-
-<use ./figures/diag-lm.pdf>
-Package pdftex.def Info: ./figures/diag-lm.pdf used on input line 850.
-(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
- [12
-
- <./figures/diag-lm.pdf>]
-<./figures/qqplot-lm.pdf, id=330, 505.89pt x 505.89pt>
-File: ./figures/qqplot-lm.pdf Graphic file (type pdf)
-
-<use ./figures/qqplot-lm.pdf>
-Package pdftex.def Info: ./figures/qqplot-lm.pdf used on input line 891.
-(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
-
-<./figures/hist-lm.pdf, id=331, 505.89pt x 505.89pt>
-File: ./figures/hist-lm.pdf Graphic file (type pdf)
-
-<use ./figures/hist-lm.pdf>
-Package pdftex.def Info: ./figures/hist-lm.pdf used on input line 905.
-(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
- [13 <./figures/qqplot-lm.pdf>] [14 <./figures/hist-lm.pdf>] [15
-
 ]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 1026.
- [16] [17
+<./traceCVimputed.pdf, id=122, 505.89pt x 505.89pt>
+File: ./traceCVimputed.pdf Graphic file (type pdf)
+ <use ./traceCVimputed.pdf>
+Package pdftex.def Info: ./traceCVimputed.pdf used on input line 322.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
 
-] [18
+[5
 
-] [19
+ <./traceCVimputed.pdf>] <./boxplotImputed.pdf, id=136, 505.89pt x 505.89pt>
+File: ./boxplotImputed.pdf Graphic file (type pdf)
 
-] [20] (lavaSearch2-WP1.bbl) [21
+<use ./boxplotImputed.pdf>
+Package pdftex.def Info: ./boxplotImputed.pdf used on input line 374.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
+ [6]
+<./histImputed.pdf, id=145, 505.89pt x 505.89pt>
+File: ./histImputed.pdf Graphic file (type pdf)
+ <use ./histImputed.pdf>
+Package pdftex.def Info: ./histImputed.pdf used on input line 397.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
 
-]
-<./figures/pathDiagram.pdf, id=457, 216.81pt x 216.81pt>
-File: ./figures/pathDiagram.pdf Graphic file (type pdf)
+[7 <./boxplotImputed.pdf>]
+<./striplotImputed.pdf, id=163, 505.89pt x 505.89pt>
+File: ./striplotImputed.pdf Graphic file (type pdf)
 
-<use ./figures/pathDiagram.pdf>
-Package pdftex.def Info: ./figures/pathDiagram.pdf used on input line 1361.
-(pdftex.def)             Requested size: 301.00192pt x 301.0408pt.
- [22
+<use ./striplotImputed.pdf>
+Package pdftex.def Info: ./striplotImputed.pdf used on input line 408.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
+ [8 <./histImputed.pdf>] [9 <./striplotImputed.pdf>] [10
 
-] [23 <./figures/pathDiagram.pdf>] [24
+] [11]
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 539.
 
-]
-[25] [26]
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmr.fd"
+File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [12
+
+] [13]
+[14
+
+] <./histImputed2.pdf, id=262, 505.89pt x 505.89pt>
+File: ./histImputed2.pdf Graphic file (type pdf)
+
+<use ./histImputed2.pdf>
+Package pdftex.def Info: ./histImputed2.pdf used on input line 692.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
+ [15
+
+] [16 <./histImputed2.pdf>]
+<./striplotImputed2.pdf, id=290, 505.89pt x 505.89pt>
+File: ./striplotImputed2.pdf Graphic file (type pdf)
+
+<use ./striplotImputed2.pdf>
+Package pdftex.def Info: ./striplotImputed2.pdf used on input line 704.
+(pdftex.def)             Requested size: 387.00153pt x 387.00458pt.
+ [17
+
+ <./striplotImputed2.pdf>]
 \Changes@OutFile=\write5
-\openout5 = `lavaSearch2-WP1.soc'.
+\openout5 = `multipleImputation.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1641.
- [27]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1641.
- (lavaSearch2-WP1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1641.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1641.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 728.
+ [18]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 728.
 
-Package rerunfilecheck Info: File `lavaSearch2-WP1.out' has not changed.
-(rerunfilecheck)             Checksum: 30362328597768C14413C65997BCAABA;2095.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1641.
+(multipleImputation.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 728.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 728.
+Package rerunfilecheck Info: File `multipleImputation.out' has not changed.
+(rerunfilecheck)             Checksum: 653C867D868A8325E854C390F8132D71;1030.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 728.
  ) 
 Here is how much of TeX's memory you used:
- 15200 strings out of 493323
- 215507 string characters out of 3139064
- 418851 words of memory out of 3000000
- 18144 multiletter control sequences out of 15000+200000
- 97920 words of font info for 84 fonts, out of 3000000 for 9000
+ 14783 strings out of 493323
+ 210294 string characters out of 3139064
+ 426323 words of memory out of 3000000
+ 17855 multiletter control sequences out of 15000+200000
+ 60380 words of font info for 78 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 53i,16n,92p,288b,1860s stack positions out of 5000i,500n,10000p,200000b,50000s
-pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exi
-st, replaced by a fixed one
-
-pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist
-, replaced by a fixed one
-
-{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Program Files
-/MiKTeX 2.9/fonts/enc/dvips/lm/lm-rm.enc}{C:/Program Files/MiKTeX 2.9/fonts/enc
-/dvips/lm/lm-ec.enc}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathex.e
-nc}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Program Fi
-les/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.enc}<C:/Program Files/MiKTeX 2.9/fonts
-/type1/public/lm/lmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/
-lmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmex10.pfb><C:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/public/lm/lmmi10.pfb><C:/Program Files/MiKTe
-X 2.9/fonts/type1/public/lm/lmmi5.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
-public/lm/lmmi6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmmi7.pf
-b><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmmi8.pfb><C:/Program File
-s/MiKTeX 2.9/fonts/type1/public/lm/lmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts
-/type1/public/lm/lmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/l
-mr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmr5.pfb><C:/Progra
-m Files/MiKTeX 2.9/fonts/type1/public/lm/lmr6.pfb><C:/Program Files/MiKTeX 2.9/
-fonts/type1/public/lm/lmr7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
-lm/lmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmri10.pfb><C:/P
-rogram Files/MiKTeX 2.9/fonts/type1/public/lm/lmssbx10.pfb><C:/Program Files/Mi
-KTeX 2.9/fonts/type1/public/lm/lmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/ty
-pe1/public/lm/lmsy7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmsy
-9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt10.pfb><C:/Program
- Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt9.pfb><C:/Program Files/MiKTeX 2.9/
-fonts/type1/public/amsfonts/symbols/msam7.pfb><C:/Program Files/MiKTeX 2.9/font
-s/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on lavaSearch2-WP1.pdf (27 pages, 535600 bytes).
+ 53i,7n,92p,291b,1797s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.enc}{C:/Program Files/
+MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Program Files/MiKTeX 2.9/fonts/
+enc/dvips/lm/lm-ec.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmbx1
+2.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmr12.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/lm/lmr17.pfb><C:/Program Files/MiKTeX 2.9/f
+onts/type1/public/lm/lmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/lm/lmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt12.pfb>
+Output written on multipleImputation.pdf (18 pages, 492135 bytes).
 PDF statistics:
- 665 PDF objects out of 1000 (max. 8388607)
- 248 named destinations out of 1000 (max. 500000)
- 250 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 368 PDF objects out of 1000 (max. 8388607)
+ 154 named destinations out of 1000 (max. 500000)
+ 132 words of extra memory for PDF output out of 10000 (max. 10000000)
 

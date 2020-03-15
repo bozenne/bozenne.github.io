@@ -1,4 +1,3 @@
-
 #+TITLE: "How to" in \Rlogo
 #+Author: Brice Ozenne
 
@@ -224,6 +223,7 @@ of these functions.
 ** Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)
 
 There are many packages that can be used to read excel files, e.g.:
+- *readxl* package (no dependency)
 - *xlsx* package: function =read.xlsx=.
 - *gdata* package: function =read.xls=.
 - *XLConnect* package: function =readWorksheet=.
@@ -1413,6 +1413,7 @@ dtW.data
 #+end_example
 
 * Graphical display
+# http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization
 ** Descriptive plots
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -1534,6 +1535,8 @@ print(gg.mean)
 #+RESULTS[<2019-06-11 09:32:47> a8ccb1ef2a2e1176e7af9777333aae4b77d046a1]:
 [[file:./figures/fig-meanTime.pdf]]
 
+*** Boxplot + points (non-overlapping)
+# geom_boxplot + geom_dotplot(binaxis = "y", stackdir = "center")
 ** Diagnostic plots
 
 Consider the linear model:
@@ -1586,6 +1589,10 @@ print(gg.mean2)
 [[file:./figures/fig-meanTime2.pdf]]
 
 \clearpage
+*** Change the name of the legend
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean3 <- gg.mean2 + labs(colour="xyz")
+#+END_SRC
 
 *** Increase the font size
 
@@ -1745,6 +1752,109 @@ plot(m, plot.engine="visnetwork")
 #+RESULTS:
 
 * Modeling
+** Test proportions (from Paul Blanche)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(exact2x2)
+library(Publish)
+specdec <- function(x,k=0){
+    format(round(x,k),nsmall=k)
+}
+#+END_SRC
+
+Data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+tab <- rbind(c(8,3),
+             c(5,12))
+colnames(tab) <- c("worse","better")
+rownames(tab) <- c("Dalteparin","Placebo")
+tab <- tab[2:1,]
+tab
+#+END_SRC
+
+#+RESULTS:
+:            worse better
+: Placebo        5     12
+: Dalteparin     8      3
+
+Prepare output:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+AllRes <- matrix("",nrow=4,ncol=3)
+colnames(AllRes) <- c("Exact: usual Fisher","Asymptotic","Exact: central Fisher")
+rownames(AllRes) <- c("Risk differrence","Relative risk","Odds ratio","p-value")
+AllRes
+#+END_SRC
+
+#+RESULTS:
+:                  Exact: usual Fisher Asymptotic Exact: central Fisher
+: Risk differrence ""                  ""         ""                   
+: Relative risk    ""                  ""         ""                   
+: Odds ratio       ""                  ""         ""                   
+: p-value          ""                  ""         ""
+
+Usual fisher test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+xEuF <- fisher.test(tab)
+AllRes[4,1] <- specdec(xEuF$p.value,k=3)
+AllRes[3,1] <- paste0(specdec(xEuF$estimate,k=3)," (",specdec(xEuF$conf.int[1],k=3),";",specdec(xEuF$conf.int[2],k=3),")")
+#+END_SRC
+
+#+RESULTS:
+
+Central Fisher test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+xEcF <- exact2x2(tab,tsmethod="central")
+AllRes[4,3] <- specdec(xEcF$p.value,k=3)
+AllRes[3,3] <- paste0(specdec(xEcF$estimate,k=3)," (",specdec(xEcF$conf.int[1],k=3),";",specdec(xEcF$conf.int[2],k=3),")")
+
+ciRDEcF <- binomMeld.test(x1=tab[2,1],n1=sum(tab[2,]),
+                          x2=tab[1,1],n2=sum(tab[1,]),
+                          parmtype="difference")
+AllRes[1,3] <- paste0(specdec(ciRDEcF$estimate,k=3)," (",specdec(ciRDEcF$conf.int[1],k=3),";",specdec(ciRDEcF$conf.int[2],k=3),")")
+
+ciRREcF <- binomMeld.test(x1=tab[2,1],n1=sum(tab[2,]),
+                          x2=tab[1,1],n2=sum(tab[1,]),
+                          parmtype="ratio")
+AllRes[2,3] <- paste0(specdec(ciRREcF$estimate,k=3)," (",specdec(ciRREcF$conf.int[1],k=3),";",specdec(ciRREcF$conf.int[2],k=3),")")
+#+END_SRC
+
+#+RESULTS:
+
+Asymptotics:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+xA <- table2x2(tab)
+AllRes[4,2] <- specdec(chisq.test(tab)$p.value,k=3)
+AllRes[3,2] <- paste0(specdec(xA$or,k=3)," (",specdec(xA$or.lower,k=3),";",specdec(xA$or.upper,k=3),")")
+AllRes[2,2] <- paste0(specdec(xA$rr,k=3)," (",specdec(xA$rr.lower,k=3),";",specdec(xA$rr.upper,k=3),")")
+AllRes[1,2] <- paste0(specdec(xA$rd,k=3)," (",specdec(xA$rd.lower,k=3),";",specdec(xA$rd.upper,k=3),")")
+chisq.test(tab)$expected
+sum(tab[,1]/sum(tab))*sum(tab[1,])
+sum(tab[,2]/sum(tab))*sum(tab[1,])
+sum(tab[,1]/sum(tab))*sum(tab[2,])
+sum(tab[,2]/sum(tab))*sum(tab[2,])
+#+END_SRC
+
+#+RESULTS:
+:               worse   better
+: Placebo    7.892857 9.107143
+: Dalteparin 5.107143 5.892857
+: [1] 7.892857
+: [1] 9.107143
+: [1] 5.107143
+: [1] 5.892857
+
+Comparisons
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+AllRes
+#+END_SRC
+
+#+RESULTS:
+:                  Exact: usual Fisher   Asymptotic               Exact: central Fisher  
+: Risk differrence ""                    "-0.433 (-0.774;-0.092)" "-0.433 (-0.748;0.017)"
+: Relative risk    ""                    "0.404 (0.178;0.919)"    "0.404 (0.133;1.038)"  
+: Odds ratio       "0.169 (0.020;1.072)" "0.156 (0.029;0.845)"    "0.169 (0.020;1.072)"  
+: p-value          "0.051"               "0.063"                  "0.062"
+
+
 ** Testing linear hypotheses
 
 Consider the linear model:
@@ -2327,6 +2437,18 @@ print(sProfile <- summaryRprof(filename))
 resProfile <- proftools::readProfileData(filename)
 proftools::plotProfileCallGraph(resProfile, score = "total", nodeSizeScore = "none")
 #+END_SRC
+
+** Debug
+To not show to many line before debug:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+options(deparse.max.lines = 200)
+#+END_SRC
+
+To show at which line in the program an error occured:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+options(error = function()revTraceback(max.lines = 5))
+#+END_SRC
+#+RESULTS:
 
 ** Find all function names from a package
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
