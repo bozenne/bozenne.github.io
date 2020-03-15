@@ -18,8 +18,7 @@ France.
 atteints d’un AVC](https://bozenne.github.io/doc/Talks/2015-Phd.pdf). Phd defense, 23 October 2015, Lyon, France.
 - [Penalized latent variable models](https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf), Computational statistics, 23-26
 August 2016, Oviedo, Spain.
-- [Assessing treatment effects using registry data](https://bozenne.github.io/doc/Talks/2016-Dantrip-Assessing treatment effect using registry
-data.pdf). Dantrip, 28 October
+- [Assessing treatment effects using registry data](https://bozenne.github.io/doc/Talks/2016-Dantrip-ate_assumptions.pdf). Dantrip, 28 October
   2016, Copenhagen, Denmark.
 - [Modèles à Variables Latentes application en neuroimagerie](https://bozenne.github.io/doc/Talks/2016-HCL-LVMneuro.pdf). HCL,
   14 December 2016, Lyon, France.
@@ -35,7 +34,7 @@ Copenhagen, Denmark
 
 
 And also some more pedagogical talks given at the Christmas symposium
-of NRU: about: 
+of NRU: about:
 -[statistical
 power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in 2017.
 - [DAGs (2018)](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
