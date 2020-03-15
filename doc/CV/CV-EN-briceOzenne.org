@@ -45,14 +45,10 @@ My research work is organized around three topics:
   neuroimaging data and data from psychological tests to investigate
   the relationship between the brain response and depression.
 
-\smallskip
-
 - the analysis of registry data with *time to events outcomes* and
   *competing risks* (software =riskRegression=). My developments have,
   for instance, been applied to compare preventive stroke treatments
   using the danish registry data.
-
-\smallskip
 
 - the development of *generalized pairwise comparisons* to handle
   multiple and heterogenous outcomes (software =BuyseTest=). A typical
@@ -104,6 +100,9 @@ git/github (via [[https://magit.vc/][magit]]).
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{verbeeck2020evaluation}
+    \item \bibentry{ozenne2020estimation}
+    \item \bibentry{norgaard2019preprocessing}
     \item \bibentry{ozenne2017riskregression}
     \item \bibentry{peron2016extension}
     \item \bibentry{ozenne2015precision}
@@ -116,17 +115,9 @@ Published:
 In revision:
 #+BEGIN_EXPORT latex
 \begin{enumerate}
-    \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
-    \item \bibentry{peron20XXunbiased}
-\end{enumerate}
-#+END_EXPORT
-
-Submitted:
-#+BEGIN_EXPORT latex
-\begin{enumerate}
     \item \bibentry{ozenne20XXcontroling}
-    \item \bibentry{norgaard20XXpreprocessing} 
+    \item \bibentry{peron20XXunbiased}
 \end{enumerate}
 #+END_EXPORT
 
@@ -149,7 +140,7 @@ Submitted:
 - *riskRegression* (contributor): computation of absolute risks and
   average treatment effects. Methodology described in
   citep:ozenne2017riskregression and
-  citep:ozenne20XXestimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
+  citep:ozenne2020estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
 \pagebreak[3]
@@ -159,6 +150,10 @@ Submitted:
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{beliveau2020structure}
+    \item \bibentry{madsen2020single}
+    \item \bibentry{ozenne2019individualized}
+    \item \bibentry{ebert2019molecular}
     \item \bibentry{madsen2019psychedelic}
     \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
@@ -181,37 +176,21 @@ Published:
 
 \pagebreak[3]
 
-Submitted:
-#+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{ebert20XXmolecular}
-  \end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-In progress:
-#+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{beliveau20XXstructure}
-    \item \bibentry{vadskjaer20XXpsychometric}
-  \end{enumerate}
-#+END_EXPORT
-
 * PEER REVIEW       :ignore:
 #+LaTeX: \resheading{PEER REVIEW}
-I have reviewed a paper for Biometrics, Statistics in Medicine, and the
+I have reviewed papers for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
+
+\clearpage
+
 * TEACHING                                                           :ignore:
 #+LaTeX: \resheading{TEACHING \hfill L : lecture, PC : practical classes}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
-              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Structural Equation Models} for Master students in statistics (2h, L). \\
-2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
+2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
+2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Structural Equation Models} for Master students in statistics (2h, L). \\
 2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
-              & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
-2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).
+2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
 \end{tabular}
 #+END_EXPORT
 
@@ -220,13 +199,15 @@ International Journal of Biostatistics.
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
 2015 - Now &:& \textbf{statistical consultant} at NRU (\href{https://nru.dk/}{Neurobiology Research Unit}).  \\ 
-\multicolumn{3}{l}{Advise neuroscientists and psychologists.} \\ [3mm]
+\multicolumn{3}{l}{Advice and guidance to neuroscientists medical doctors and psychologists} \\
+\multicolumn{3}{l}{(study design, data visualization and analysis, interpretation of the results, scientific writing)} \\ [3mm]
 \end{tabular}
 #+END_EXPORT
 
 \bigskip
 
 Co-superviser of *master 2* students:
+
 \smallskip
 
 #+BEGIN_EXPORT latex
@@ -252,6 +233,8 @@ Contribution to the supervision of *Phd* students:
 \end{tabular}
 #+END_EXPORT
 
+\clearpage
+
 * ORAL COMMUNICATIONS                                                         :ignore:
 #+LaTeX: \resheading{ORAL COMMUNICATIONS}
 Oral presentation at international conferences: 
@@ -259,8 +242,8 @@ Oral presentation at international conferences:
 
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
-2014 &:& Image segmentation using a spatially regularized mixture model \\
-&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italia \\
+2014 &:& Lesion Segmentation using a Spatially Regularized Mixture Model \\
+&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovenia \\
 2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
 && Rencontres R, Grenoble, France \\
 2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
@@ -269,6 +252,10 @@ Oral presentation at international conferences:
 && \href{http://www.iscb2017.info/}{ISCB}, Vigo, Spain \\
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
 && \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \\
+2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
+&& \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
+2019 &:& Multiple testing in latent variable models \\
+&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgium \\
 \end{tabular}
 #+END_EXPORT
 

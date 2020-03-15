@@ -119,6 +119,9 @@ git/github et inkscape.
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{verbeeck2020evaluation}
+    \item \bibentry{ozenne2020estimation}
+    \item \bibentry{norgaard2019preprocessing}
     \item \bibentry{ozenne2017riskregression}
     \item \bibentry{peron2016extension}
     \item \bibentry{ozenne2015precision}
@@ -131,19 +134,9 @@ Publié:
 En révision:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{ozenne20XXestimation}
     \item \bibentry{ozenne20XXsmall}
+    \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
-\end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-Soumis:
-#+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{ozenne20XXcontroling}    
-    \item \bibentry{norgaard20XXpreprocessing}
   \end{enumerate}
 #+END_EXPORT
 
@@ -166,7 +159,7 @@ Soumis:
 - *riskRegression* (Contributeur) : Calculateur du risque
   d'évènenement en présence de risques compétitifs. Implémentation de
   la méthode décrite dans citep:ozenne2017riskregression et
-  citep:ozenne20XXestimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+  citep:ozenne2020estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
 \pagebreak[3]
@@ -176,6 +169,10 @@ Soumis:
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{beliveau2020structure}
+    \item \bibentry{madsen2020single}
+    \item \bibentry{ozenne2019individualized}
+    \item \bibentry{ebert2019molecular}
     \item \bibentry{madsen2019psychedelic}
     \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
@@ -193,25 +190,6 @@ Publié:
     \item \bibentry{peron2016assessment}
     \item \bibentry{ozenne2015evaluation}
     \item \bibentry{hermitte2013very}
-  \end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-En révision:
-#+BEGIN_EXPORT latex
-\begin{enumerate}
-    \item \bibentry{ebert20XXmolecular}
-\end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-En cours de rédaction:
-#+BEGIN_EXPORT latex
-\begin{enumerate}
-    \item \bibentry{beliveau20XXstructure}
-    \item \bibentry{vadskjaer20XXpsychometric}
 \end{enumerate}
 #+END_EXPORT
 
@@ -219,18 +197,15 @@ En cours de rédaction:
 
 * Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
-J'ai relu un article pour Biometrics, Statistics in Medicine, et
-International Journal of Biostatistics.
+Biometrics, Statistics in Medicine, et International Journal of Biostatistics.
 * Enseignement                                                       :ignore:
 #+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-              & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h). \\
-2015 - 2016 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasuresE2015.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
+2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
+2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Modèles d'équations structurelles}. CM pour étudiants de master en statistiques (2h). \\
 2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Modèles de Survie}. TD pour étudiants de master en santé publique (6h).\\
-              & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
-2013 - 2014 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
+2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
 \end{tabular}
 #+END_EXPORT
 
@@ -274,16 +249,20 @@ Présentations orales lors de conférences internationales:
 
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
-2014 &:& Image segmentation using a spatially regularized mixture model \\
-&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italie \\
+2014 &:& Lesion Segmentation using a Spatially Regularized Mixture Model \\
+&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovenia \\
 2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
 && Rencontres R, Grenoble, France \\
 2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
-&& Computational statistics, Oviedo, Espagne \\
+&& Computational statistics, Oviedo, Spain \\
 2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
-&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Espagne \\
+&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Spain \\
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
-&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \\
+2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
+&& \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
+2019 &:& Multiple testing in latent variable models \\
+&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgium \\
 \end{tabular}
 #+END_EXPORT
 

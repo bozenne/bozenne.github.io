@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  20 OCT 2019 12:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  15 MAR 2020 15:30
 entering extended mode
- \write18 enabled.
+ restricted \write18 enabled.
  %&-line parsing enabled.
-**./CV-FR-briceOzenne.tex
-(./CV-FR-briceOzenne.tex
+**/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
+(/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
 LaTeX2e <2016/02/01>
 Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -1582,22 +1582,22 @@ Overfull \hbox (53.05464pt too wide) in paragraph at lines 207--212
  []
 
 [2] [3] [4] [5]
-Overfull \hbox (18.324pt too wide) in paragraph at lines 316--328
+Overfull \hbox (18.324pt too wide) in paragraph at lines 300--309
 []  
  []
 
 
-Overfull \hbox (11.14983pt too wide) in paragraph at lines 329--334
+Overfull \hbox (11.14983pt too wide) in paragraph at lines 310--315
 []  
  []
 
 
-Overfull \hbox (18.97772pt too wide) in paragraph at lines 337--344
+Overfull \hbox (18.97772pt too wide) in paragraph at lines 318--325
 []  
  []
 
 [6]
-Overfull \hbox (11.23914pt too wide) in paragraph at lines 359--371
+Overfull \hbox (11.23914pt too wide) in paragraph at lines 340--356
 [][]  
  []
 
@@ -1605,24 +1605,24 @@ Overfull \hbox (11.23914pt too wide) in paragraph at lines 359--371
 \Changes@OutFile=\write4
 \openout4 = `CV-FR-briceOzenne.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 385.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 370.
  [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 385.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 370.
  (./CV-FR-briceOzenne.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 385.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 385.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 370.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 370.
 Package rerunfilecheck Info: File `CV-FR-briceOzenne.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 385.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 370.
  ) 
 Here is how much of TeX's memory you used:
- 20608 strings out of 493029
- 340707 string characters out of 6136233
- 444720 words of memory out of 5000000
- 23757 multiletter control sequences out of 15000+600000
+ 20621 strings out of 493029
+ 341132 string characters out of 6136233
+ 445650 words of memory out of 5000000
+ 23765 multiletter control sequences out of 15000+600000
  52528 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,10n,55p,10456b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 40i,10n,55p,10508b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texlive/texmf-dist
 /fonts/type1/public/eurosym/feymr10.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx6.pfb></usr/share/texmf
@@ -1630,10 +1630,10 @@ Here is how much of TeX's memory you used:
 fb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
 
-Output written on CV-FR-briceOzenne.pdf (7 pages, 350996 bytes).
+Output written on CV-FR-briceOzenne.pdf (7 pages, 352586 bytes).
 PDF statistics:
- 205 PDF objects out of 1000 (max. 8388607)
- 184 compressed objects within 2 object streams
- 66 named destinations out of 1000 (max. 500000)
+ 219 PDF objects out of 1000 (max. 8388607)
+ 198 compressed objects within 2 object streams
+ 70 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
