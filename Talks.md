@@ -34,9 +34,10 @@ Copenhagen, Denmark
 
 
 And also some more pedagogical talks given at the Christmas symposium
-of NRU: about:
+of NRU about:
 -[statistical
-power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in 2017.
+power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
+2017.
 - [DAGs (2018)](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
 - [multiple
 comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
