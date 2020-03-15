@@ -27,19 +27,18 @@ competing risks](https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf). ISCB, 9
 - [Generalized pairwise comparisons for right-censored time to event
 outcomes](https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf), Survival Analysis for Junior Researchers, 24-26 April 2019,
 Copenhagen, Denmark
-- [Region-Based and Voxel-Wise Analysis of Medical Images Using Latent
-  Variables](https://bozenne.github.io/doc/Talks/2019-NBBC-LVMneuro.pdf), 7th NBBC, 3-5 June, 2019, Vilnius, Lithuania.
 - [Multiple testing in latent variable models](https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf), ISCB, 14-18 July 2019,
   Leuven, Belgium.
 
 
 And also some more pedagogical talks given at the Christmas symposium
-of NRU about:
--[statistical
+of NRU:
+
+- about [statistical
 power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
 2017.
-- [DAGs (2018)](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
-- [multiple
+- about [DAGs](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
+- about [multiple
 comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
 
 
