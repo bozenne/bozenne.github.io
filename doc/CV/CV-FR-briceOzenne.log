@@ -1,11 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  15 MAR 2020 15:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  17 MAR 2020 00:41
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
-(/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
-LaTeX2e <2016/02/01>
-Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
+**\input CV-FR-briceOzenne.tex
+(./CV-FR-briceOzenne.tex
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
@@ -1373,56 +1372,86 @@ File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
 \c@mdf@zref@counter=\count189
 Package zref Info: New property: mdf@pagevalue on input line 895.
 )
+(/usr/share/texlive/texmf-dist/tex/latex/ms/ragged2e.sty
+Package: ragged2e 2009/05/21 v2.1 ragged2e Package (MS)
+
+(/usr/share/texlive/texmf-dist/tex/latex/ms/everysel.sty
+Package: everysel 2011/10/28 v1.2 EverySelectfont Package (MS)
+)
+\CenteringLeftskip=\skip178
+\RaggedLeftLeftskip=\skip179
+\RaggedRightLeftskip=\skip180
+\CenteringRightskip=\skip181
+\RaggedLeftRightskip=\skip182
+\RaggedRightRightskip=\skip183
+\CenteringParfillskip=\skip184
+\RaggedLeftParfillskip=\skip185
+\RaggedRightParfillskip=\skip186
+\JustifyingParfillskip=\skip187
+\CenteringParindent=\skip188
+\RaggedLeftParindent=\skip189
+\RaggedRightParindent=\skip190
+\JustifyingParindent=\skip191
+)
 (/usr/share/texlive/texmf-dist/tex/latex/natbib/bibentry.sty
 Package: bibentry 2007/10/30 1.5 (PWD)
 )
 (./CV-FR-briceOzenne.bbl)
-Package hyperref Info: Option `colorlinks' set `true' on input line 116.
- (./CV-FR-briceOzenne.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2011/09/28 v3.5.2 Customized lists
+\labelindent=\skip192
+\enit@outerparindent=\dimen193
+\enit@toks=\toks36
+\enit@inbox=\box87
+\enitdp@description=\count190
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 118.
+
+(./CV-FR-briceOzenne.aux)
 \openout1 = `CV-FR-briceOzenne.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 117.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 117.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 119.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 119.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 117.
-LaTeX Font Info:    ... okay on input line 117.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 117.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 119.
 
 (/usr/share/texmf/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-\c@lstlisting=\count190
+\c@lstlisting=\count191
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count191
-\scratchdimen=\dimen193
-\scratchbox=\box87
-\nofMPsegments=\count192
-\nofMParguments=\count193
-\everyMPshowfont=\toks36
-\MPscratchCnt=\count194
-\MPscratchDim=\dimen194
-\MPnumerator=\count195
-\makeMPintoPDFobject=\count196
-\everyMPtoPDFconversion=\toks37
+\scratchcounter=\count192
+\scratchdimen=\dimen194
+\scratchbox=\box88
+\nofMPsegments=\count193
+\nofMParguments=\count194
+\everyMPshowfont=\toks37
+\MPscratchCnt=\count195
+\MPscratchDim=\dimen195
+\MPnumerator=\count196
+\makeMPintoPDFobject=\count197
+\everyMPtoPDFconversion=\toks38
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
@@ -1472,132 +1501,142 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\AtBeginShipoutBox=\box88
-Package hyperref Info: Link coloring ON on input line 117.
+\AtBeginShipoutBox=\box89
+Package hyperref Info: Link coloring ON on input line 119.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count197
+\c@section@level=\count198
 )
-LaTeX Info: Redefining \ref on input line 117.
-LaTeX Info: Redefining \pageref on input line 117.
-LaTeX Info: Redefining \nameref on input line 117.
+LaTeX Info: Redefining \ref on input line 119.
+LaTeX Info: Redefining \pageref on input line 119.
+LaTeX Info: Redefining \nameref on input line 119.
 
 (./CV-FR-briceOzenne.out) (./CV-FR-briceOzenne.out)
 \@outlinefile=\write3
 \openout3 = `CV-FR-briceOzenne.out'.
 
-LaTeX Info: Redefining \degres on input line 117.
-LaTeX Info: Redefining \dots on input line 117.
+LaTeX Info: Redefining \degres on input line 119.
+LaTeX Info: Redefining \dots on input line 119.
+Package frenchb.ldf Info: Setting StandardItemizeEnv=true for
+(frenchb.ldf)             compatibility with enumitem package,
+(frenchb.ldf)              on input line 119.
 Package frenchb.ldf Info: Setting StandardEnumerateEnv=true for
-(frenchb.ldf)             compatibility with enumerate package,
-(frenchb.ldf)              on input line 117.
-LaTeX Info: Redefining \up on input line 117.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 119.
+(frenchb.ldf)             compatibility with enumitem package,
+(frenchb.ldf)              on input line 119.
+LaTeX Info: Redefining \up on input line 119.
+
+ABD: EverySelectfont initializing macros
+LaTeX Info: Redefining \selectfont on input line 119.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 121.
 
 
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 119.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 121.
 
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 119
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 121
 .
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 119
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 121
 .
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 119.
+(Font)              <12> on input line 121.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 119.
+(Font)              <8> on input line 121.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 119.
-LaTeX Font Info:    Try loading font information for U+msa on input line 119.
+(Font)              <6> on input line 121.
+LaTeX Font Info:    Try loading font information for U+msa on input line 121.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 119.
+LaTeX Font Info:    Try loading font information for U+msb on input line 121.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (5.406pt too wide) in paragraph at lines 119--122
+Overfull \hbox (5.406pt too wide) in paragraph at lines 121--124
 [][]  
  []
 
 <photoId.png, id=4, 668.899pt x 668.899pt>
 File: photoId.png Graphic file (type png)
  <use photoId.png>
-Package pdftex.def Info: photoId.png used on input line 126.
+Package pdftex.def Info: photoId.png used on input line 128.
 (pdftex.def)             Requested size: 100.09526pt x 100.09576pt.
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 132.
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 134.
 
 
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-Underfull \hbox (badness 10000) in alignment at lines 129--135
+Underfull \hbox (badness 10000) in alignment at lines 131--139
 [][][] 
  []
 
 
-Overfull \hbox (130.52701pt too wide) in paragraph at lines 129--136
+Overfull \hbox (130.52701pt too wide) in paragraph at lines 131--140
 [][] 
  []
 
-LaTeX Font Info:    Try loading font information for T1+lmss on input line 139.
+LaTeX Font Info:    Try loading font information for T1+lmss on input line 142.
 
 (/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-Overfull \hbox (2.7775pt too wide) in paragraph at lines 139--149
-[]  
- []
-
-
-Overfull \hbox (45.93129pt too wide) in paragraph at lines 187--198
-[]  
+Overfull \hbox (3.2049pt too wide) in paragraph at lines 148--160
+[][]  
  []
 
 [1
 
 {/home/brice/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./photoId.png>]
-Overfull \hbox (53.05464pt too wide) in paragraph at lines 207--212
+Overfull \hbox (44.9563pt too wide) in paragraph at lines 229--240
+[]  
+ []
+
+
+Overfull \hbox (47.83855pt too wide) in paragraph at lines 249--254
 [][]  
  []
 
-[2] [3] [4] [5]
-Overfull \hbox (18.324pt too wide) in paragraph at lines 300--309
-[]  
+[2]
+Overfull \hbox (18.324pt too wide) in paragraph at lines 262--268
+[][]  
  []
 
 
-Overfull \hbox (11.14983pt too wide) in paragraph at lines 310--315
+Overfull \hbox (14.17523pt too wide) in paragraph at lines 319--324
 []  
  []
 
+[3
 
-Overfull \hbox (18.97772pt too wide) in paragraph at lines 318--325
-[]  
+] [4] [5] [6] [7]
+Overfull \hbox (11.23914pt too wide) in paragraph at lines 418--432
+[][]  
  []
 
-[6]
-Overfull \hbox (11.23914pt too wide) in paragraph at lines 340--356
+[8
+
+]
+Overfull \hbox (18.00174pt too wide) in paragraph at lines 440--447
 [][]  
  []
 
@@ -1605,24 +1644,26 @@ Overfull \hbox (11.23914pt too wide) in paragraph at lines 340--356
 \Changes@OutFile=\write4
 \openout4 = `CV-FR-briceOzenne.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 370.
- [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 370.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 462.
+ [9
+
+]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 462.
  (./CV-FR-briceOzenne.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 370.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 370.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 462.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 462.
 Package rerunfilecheck Info: File `CV-FR-briceOzenne.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 370.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 462.
  ) 
 Here is how much of TeX's memory you used:
- 20621 strings out of 493029
- 341132 string characters out of 6136233
- 445650 words of memory out of 5000000
- 23765 multiletter control sequences out of 15000+600000
+ 20989 strings out of 493029
+ 347523 string characters out of 6136233
+ 452638 words of memory out of 5000000
+ 24119 multiletter control sequences out of 15000+600000
  52528 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,10n,55p,10508b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 40i,10n,57p,10461b,536s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texlive/texmf-dist
 /fonts/type1/public/eurosym/feymr10.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx6.pfb></usr/share/texmf
@@ -1630,10 +1671,10 @@ Here is how much of TeX's memory you used:
 fb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
 
-Output written on CV-FR-briceOzenne.pdf (7 pages, 352586 bytes).
+Output written on CV-FR-briceOzenne.pdf (9 pages, 358927 bytes).
 PDF statistics:
- 219 PDF objects out of 1000 (max. 8388607)
- 198 compressed objects within 2 object streams
- 70 named destinations out of 1000 (max. 500000)
+ 284 PDF objects out of 1000 (max. 8388607)
+ 260 compressed objects within 3 object streams
+ 74 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
