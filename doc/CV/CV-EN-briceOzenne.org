@@ -34,7 +34,7 @@
 	November 2015- Now:& \textbf{Postdoctoral researcher in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
-	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
+	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
 	& - a research unit in neuroscience \\
 	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} \\
 	& Copenhagen University Hospital, Rigshospitalet \\
