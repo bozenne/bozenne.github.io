@@ -1,10 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  17 MAR 2020 00:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.13)  18 MAR 2020 10:12
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**\input CV-FR-briceOzenne.tex
-(./CV-FR-briceOzenne.tex
+**/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
+(/home/brice/Documents/GitHub/bozenne.github.io/doc/CV/CV-FR-briceOzenne.tex
+LaTeX2e <2016/02/01>
+Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
@@ -1657,13 +1658,13 @@ Package rerunfilecheck Info: File `CV-FR-briceOzenne.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 462.
  ) 
 Here is how much of TeX's memory you used:
- 20989 strings out of 493029
- 347523 string characters out of 6136233
- 452638 words of memory out of 5000000
+ 20990 strings out of 493029
+ 347683 string characters out of 6136233
+ 452695 words of memory out of 5000000
  24119 multiletter control sequences out of 15000+600000
  52528 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,10n,57p,10461b,536s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 40i,10n,57p,10508b,536s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texlive/texmf-dist
 /fonts/type1/public/eurosym/feymr10.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx6.pfb></usr/share/texmf
@@ -1671,7 +1672,7 @@ Here is how much of TeX's memory you used:
 fb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
 
-Output written on CV-FR-briceOzenne.pdf (9 pages, 358927 bytes).
+Output written on CV-FR-briceOzenne.pdf (9 pages, 358975 bytes).
 PDF statistics:
  284 PDF objects out of 1000 (max. 8388607)
  260 compressed objects within 3 object streams

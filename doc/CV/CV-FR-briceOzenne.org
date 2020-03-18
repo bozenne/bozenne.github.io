@@ -317,17 +317,17 @@ Présentations orales lors de conférences internationales:
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
 2014 &:& Lesion Segmentation using a Spatially Regularized Mixture Model \\
-&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovenia \hfill (\href{https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf}{support de présentation}) \\ [3mm]
+&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovénie \hfill (\href{https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf}{support de présentation}) \\ [3mm]
 2015 &:& MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie\\
 && \href{https://r2015-grenoble.sciencesconf.org/66037}{Rencontres R, Grenoble, France}  \hfill   (\href{https://bozenne.github.io/doc/Talks/2015-R-MRIaggr.pdf}{support de présentation})  \\ [3mm]
 2016 &:& Penalized latent variable models  \\
-&& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Computational statistics}, Oviedo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf}{support de présentation}) \\ [3mm]
+&& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Computational statistics}, Oviedo, Espagne \hfill (\href{https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf}{support de présentation}) \\ [3mm]
 2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
-&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf}{support de présentation}) \\ [3mm]
+&& ISCB, Vigo, Espagne \hfill (\href{https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf}{support de présentation}) \\ [3mm]
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
-&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \hfill (\href{https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf}{support de présentation}) \\ [3mm]
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \hfill (\href{https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf}{support de présentation}) \\ [3mm]
 2019 &:& Multiple testing in latent variable models \\
-&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgium \hfill (\href{https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf}{support de présentation}) \\
+&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgique \hfill (\href{https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf}{support de présentation}) \\
 \end{tabular}
 #+END_EXPORT
 
@@ -341,7 +341,7 @@ Invitation à des conférences internationales:
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
 2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
-&& \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
+&& \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuanie \\
 2020 (à venir) &:& Robust estimation of the average treatment effects in presence of right-censoring \\
 && and competing risks \\
 && \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, Londres, Angleterre \\
