@@ -119,6 +119,8 @@ git/github et inkscape.
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ozenne2019estimation}
+    \item \bibentry{norgaard2019preprocessing}
     \item \bibentry{ozenne2017riskregression}
     \item \bibentry{peron2016extension}
     \item \bibentry{ozenne2015precision}
@@ -131,9 +133,9 @@ Publié:
 En révision:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{ozenne20XXestimation}
+    \item \bibentry{verbeeck20XXevaluation}
     \item \bibentry{ozenne20XXsmall}
-    \item \bibentry{peron20XXunbiased}
+    \item \bibentry{ozenne20XXcontroling}
 \end{enumerate}
 #+END_EXPORT
 
@@ -142,8 +144,8 @@ En révision:
 Soumis:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
-    \item \bibentry{ozenne20XXcontroling}    
-    \item \bibentry{norgaard20XXpreprocessing}
+    \item \bibentry{peron20XXunbiased}
+    \item \bibentry{cantagallo20XXnew}
   \end{enumerate}
 #+END_EXPORT
 
@@ -166,7 +168,7 @@ Soumis:
 - *riskRegression* (Contributeur) : Calculateur du risque
   d'évènenement en présence de risques compétitifs. Implémentation de
   la méthode décrite dans citep:ozenne2017riskregression et
-  citep:ozenne20XXestimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+  citep:ozenne2019estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
 \pagebreak[3]
@@ -176,9 +178,15 @@ Soumis:
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{beliveau2020structure}
+    \item \bibentry{ozenne2019individualized}
+    \item \bibentry{ebert2019molecular}
     \item \bibentry{madsen2019psychedelic}
+    \item \bibentry{peron2019assessing}
+    \item \bibentry{tozlu2019comparison}
     \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
+    \item \bibentry{peron2018analyser}
     \item \bibentry{hjordt2018self}
     \item \bibentry{foged2018verbal}
     \item \bibentry{staerk2018standard}
@@ -198,29 +206,14 @@ Publié:
 
 \pagebreak[3]
 
-En révision:
-#+BEGIN_EXPORT latex
-\begin{enumerate}
-    \item \bibentry{ebert20XXmolecular}
-\end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-En cours de rédaction:
-#+BEGIN_EXPORT latex
-\begin{enumerate}
-    \item \bibentry{beliveau20XXstructure}
-    \item \bibentry{vadskjaer20XXpsychometric}
-\end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
 * Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
-J'ai relu un article pour Biometrics, Statistics in Medicine, et
-International Journal of Biostatistics.
+J'ai relu des articles pour Biometrics, Statistics in Medicine,
+International Journal of Biostatistics, and BMC medical reasearch
+methodology. Voir mon [[https://publons.com/researcher/1214277/brice-maxime-hugues-ozenne/][profile publons]] pour plus d'informations.
+
+\clearpage
+
 * Enseignement                                                       :ignore:
 #+LaTeX: \resheading{Enseignement \hfill CM : cours magistral, TD : travaux dirigés}
 #+BEGIN_EXPORT latex

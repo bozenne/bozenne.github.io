@@ -104,6 +104,8 @@ git/github (via [[https://magit.vc/][magit]]).
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ozenne2019estimation}
+    \item \bibentry{norgaard2019preprocessing}
     \item \bibentry{ozenne2017riskregression}
     \item \bibentry{peron2016extension}
     \item \bibentry{ozenne2015precision}
@@ -116,17 +118,17 @@ Published:
 In revision:
 #+BEGIN_EXPORT latex
 \begin{enumerate}
-    \item \bibentry{ozenne20XXestimation}
+    \item \bibentry{verbeeck20XXevaluation}
     \item \bibentry{ozenne20XXsmall}
-    \item \bibentry{peron20XXunbiased}
+    \item \bibentry{ozenne20XXcontroling}
 \end{enumerate}
 #+END_EXPORT
 
 Submitted:
 #+BEGIN_EXPORT latex
 \begin{enumerate}
-    \item \bibentry{ozenne20XXcontroling}
-    \item \bibentry{norgaard20XXpreprocessing} 
+    \item \bibentry{peron20XXunbiased}
+    \item \bibentry{cantagallo20XXnew}
 \end{enumerate}
 #+END_EXPORT
 
@@ -149,7 +151,7 @@ Submitted:
 - *riskRegression* (contributor): computation of absolute risks and
   average treatment effects. Methodology described in
   citep:ozenne2017riskregression and
-  citep:ozenne20XXestimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
+  citep:ozenne2019estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
 #+LaTeX: \end{minipage}
 
 \pagebreak[3]
@@ -159,9 +161,15 @@ Submitted:
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{beliveau2020structure}
+    \item \bibentry{ozenne2019individualized}
+    \item \bibentry{ebert2019molecular}
     \item \bibentry{madsen2019psychedelic}
+    \item \bibentry{peron2019assessing}
+    \item \bibentry{tozlu2019comparison}
     \item \bibentry{ip2018pre}
     \item \bibentry{borgsted2018amygdala}
+    \item \bibentry{peron2018analyser}
     \item \bibentry{hjordt2018self}
     \item \bibentry{foged2018verbal}
     \item \bibentry{staerk2018standard}
@@ -179,29 +187,13 @@ Published:
   \end{enumerate}
 #+END_EXPORT
 
-\pagebreak[3]
-
-Submitted:
-#+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{ebert20XXmolecular}
-  \end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-In progress:
-#+BEGIN_EXPORT latex
- \begin{enumerate}
-    \item \bibentry{beliveau20XXstructure}
-    \item \bibentry{vadskjaer20XXpsychometric}
-  \end{enumerate}
-#+END_EXPORT
+\clearpage
 
 * PEER REVIEW       :ignore:
 #+LaTeX: \resheading{PEER REVIEW}
-I have reviewed a paper for Biometrics, Statistics in Medicine, and the
-International Journal of Biostatistics.
+I have reviewed papers for Biometrics, Statistics in Medicine, the
+International Journal of Biostatistics, and BMC medical reasearch
+methodology. See my [[https://publons.com/researcher/1214277/brice-maxime-hugues-ozenne/][publons profile]] for more details.
 * TEACHING                                                           :ignore:
 #+LaTeX: \resheading{TEACHING \hfill L : lecture, PC : practical classes}
 #+BEGIN_EXPORT latex
