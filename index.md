@@ -5,7 +5,7 @@
 layout: home
 ---
 
-Hello and welcome on my website. <br> I (
+Hello and welcome to my website. <br> I (
 ![](https://bozenne.github.io/img/photoId.jpeg){:height="75px"
 width="75px"} ) am a biostatistician currently working at:
   - the [neurobiology Research Unit](https://nru.dk/) at Rigshspitalet.
