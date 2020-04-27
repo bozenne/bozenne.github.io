@@ -1618,6 +1618,11 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 
 #+RESULTS:
 \clearpage
+*** Increase size of the legend labels 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + theme(axis.title = element_text(size=10), legend.key.size = unit(3,"line"))
+#+END_SRC
+
 *** Put the legend at the bottom
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 gg.mean4 <- gg.mean + theme(legend.position="bottom")
@@ -1632,6 +1637,11 @@ print(gg.mean4)
 #+RESULTS:
 [[file:./figures/fig-meanTime4.pdf]]
 \clearpage
+*** Number of lines in the legend
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + guides(color = guide_legend(nrow = 2, byrow = TRUE))
+#+END_SRC
+
 *** Default ggplot color palette
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
