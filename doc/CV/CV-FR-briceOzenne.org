@@ -58,7 +58,7 @@ Mon travail de recherche s'articule autour de trois thématiques:
   cite:ebert2019molecular,stenbaek2017brain,fisher2017bdnf pour des
   exemples d'application. D'un point de vue méthodologique, je
   m'intéresse à *l'estimation et l'inférence en petits échantillons*
-  citep:ozenne20XXsmall ainsi qu'à développer des corrections
+  citep:ozenne2020small ainsi qu'à développer des corrections
   efficaces en présence de *tests multiples*
   citep:ozenne20XXcontroling. Ces développements sont implémentés dans
   la librairie R =lavaSearch2=.
@@ -179,34 +179,6 @@ Co-encadrant d'étudiant en *master 2*:
 \end{tabular}
 #+END_EXPORT
 
-\bigskip
-
-Participation à l'encadrement de *thèses de sciences* et *thèses de
-médecine* à travers les consultations statistiques à NRU:
-
-\medskip
-
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l@{ }l}
-2017-2020 &:& Martin Korsbak Madsen (thèse de médecine)  \\
-\multicolumn{3}{l}{Neurobiological effects of 5-HT2AR modulation} \\
-\multicolumn{3}{l}{Publications: \cite{madsen2020single,madsen2019psychedelic}} \\ [3mm]
-2016-2019 &:& Martin N\o{}rgaard (thèse de science)  \\
-\multicolumn{3}{l}{Optimisation de la stratégie de traitement des données IRM et TEP en neuroimagerie} \\
-\multicolumn{3}{l}{Publication: \cite{norgaard2019preprocessing}} \\ [3mm]
-2015-2018 &:& Vincent Beliveau (thèse de science) \\
-\multicolumn{3}{l}{Imagerie fonctionnelle et moléculaire du système cérébral de sérotonine chez l'humain} \\ 
-\multicolumn{3}{l}{Publications: \cite{beliveau2020structure,beliveau2017high}} \\ [3mm]
-2015-2018 &:& Liv Vadskj\ae r Hjordt (thèse en psychologie) \\
-\multicolumn{3}{l}{A Study of Cognitive and Personality Factors Involved inSeasonal Affective Disorder} \\ 
-\multicolumn{3}{l}{Publications: \cite{hjordt2018self,hjordt2017season}} \\ [3mm]
-2015-2018 &:& Mette Thrane Foged  (thèse de médecine) \\
-\multicolumn{3}{l}{Epilepsy surgery: Outcomes of the Danish evaluation program and development} \\ 
-\multicolumn{3}{l}{\hphantom{Epilepsy surgery:} of new EEG based methods} \\ 
-\multicolumn{3}{l}{Publications: \cite{foged2017safety,foged2018verbal}} \\ [3mm]
-\end{tabular}
-#+END_EXPORT
-
 * Financement                                                        :ignore:
 #+LaTeX: \resheading{Financement}
 #+BEGIN_EXPORT latex
@@ -223,6 +195,7 @@ médecine* à travers les consultations statistiques à NRU:
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{ozenne2020small}
     \item \bibentry{verbeeck2020evaluation}
     \item \bibentry{ozenne2020estimation}
     \item \bibentry{norgaard2019preprocessing}
@@ -238,9 +211,9 @@ Publié:
 En révision:
 #+BEGIN_EXPORT latex
  \begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXsmall}
     \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
+    \item \bibentry{cantagallo20XXnew}
   \end{enumerate}
 #+END_EXPORT
 
@@ -252,6 +225,8 @@ En révision:
 Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}[resume]
+    \item \bibentry{dam2020hot}
+    \item \bibentry{hjordt2020psychometric}
     \item \bibentry{beliveau2020structure}
     \item \bibentry{madsen2020single}
     \item \bibentry{ozenne2019individualized}
@@ -290,7 +265,7 @@ Librairies de fonctions pour le logiciel [[https://www.r-project.org/][R]]:
 
 - *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
   diagnostiques dans les modèles à variables latentes. Papier
-  décrivant la méthode soumis (citep:ozenne20XXsmall and citep:ozenne20XXcontroling). Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+  décrivant la méthode soumis (citep:ozenne2020small and citep:ozenne20XXcontroling). Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
 
 - *riskRegression* (Contributeur) : Calculateur du risque
   d'évènenement en présence de risques compétitifs. Implémentation de

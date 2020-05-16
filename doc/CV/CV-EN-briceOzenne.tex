@@ -1,4 +1,4 @@
-% Created 2020-03-18 ons 10:11
+% Created 2020-05-16 lør 15:03
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -160,7 +160,7 @@ My research work is organized around three topics:
 neuroscience - see publications
 \cite{ebert2019molecular,stenbaek2017brain,fisher2017bdnf}. From a
 methodological point of view, I study how to perform statistical
-\textbf{estimation and inference in small samples} \citep{ozenne20XXsmall} as
+\textbf{estimation and inference in small samples} \citep{ozenne2020small} as
 well as efficient corrections for \textbf{multiple testing}
 \citep{ozenne20XXcontroling}. These developments are available in the
 R package \texttt{lavaSearch2}.
@@ -192,7 +192,7 @@ U-statistique theory.
 \end{itemize}
 
 \section*{\emph{Other domains of interest in statistics:}}
-\label{sec:orga1f01e5}
+\label{sec:org1e43a0b}
 \begin{itemize}
 \item Smoothing splines and functional data analysis
 \item Causal inference and dynamic treatment regimes
@@ -201,12 +201,12 @@ U-statistique theory.
 
 
 \section*{\emph{Language}}
-\label{sec:org1d50af7}
+\label{sec:org98f5289}
 French (native language), english (fluent), danish (intermediate),
 basics in italian.
 
 \section*{\emph{Software}}
-\label{sec:orgdb72f4d}
+\label{sec:orgd665d95}
 Proficient in \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
 Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
 git/github (via \href{https://magit.vc/}{magit}).
@@ -254,48 +254,21 @@ Co-supervision of \textbf{master 2} student:
 \multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
 \end{tabular}
 
-\bigskip
-
-Contribution to the supervision of \textbf{Phd-students} in science or
-medicine via the statistical consultations:
-
-\medskip
-
-\begin{tabular}{l@{ }l@{ }l}
-2017-2020 &:& Martin Korsbak Madsen (thèse de médecine)  \\
-\multicolumn{3}{l}{Neurobiological effects of 5-HT2AR modulation} \\
-\multicolumn{3}{l}{Publications: \cite{madsen2020single,madsen2019psychedelic}} \\ [3mm]
-2016-2019 &:& Martin N\o{}rgaard (thèse de science)  \\
-\multicolumn{3}{l}{Optimisation de la stratégie de traitement des données IRM et TEP en neuroimagerie} \\
-\multicolumn{3}{l}{Publication: \cite{norgaard2019preprocessing}} \\ [3mm]
-2015-2018 &:& Vincent Beliveau (thèse de science) \\
-\multicolumn{3}{l}{Imagerie fonctionnelle et moléculaire du système cérébral de sérotonine chez l'humain} \\ 
-\multicolumn{3}{l}{Publications: \cite{beliveau2020structure,beliveau2017high}} \\ [3mm]
-2015-2018 &:& Liv Vadskj\ae r Hjordt (thèse en psychologie) \\
-\multicolumn{3}{l}{A Study of Cognitive and Personality Factors Involved inSeasonal Affective Disorder} \\ 
-\multicolumn{3}{l}{Publications: \cite{hjordt2018self,hjordt2017season}} \\ [3mm]
-2015-2018 &:& Mette Thrane Foged  (thèse de médecine) \\
-\multicolumn{3}{l}{Epilepsy surgery: Outcomes of the Danish evaluation program and development} \\ 
-\multicolumn{3}{l}{\hphantom{Epilepsy surgery:} of new EEG based methods} \\ 
-\multicolumn{3}{l}{Publications: \cite{foged2017safety,foged2018verbal}} \\ [3mm]
-\end{tabular}
-
-
 \resheading{Grants}
 \begin{tabular}{l@{ }l}
 2017-2019: MARIE CURIE Individual Fellowships (200 000\euro, EU H2020-MSCA-IF-2016 746850) \\
 2017-2020: Lundbeck Fellowships (140 000\euro, R231-2016-3236) \\
-
 \end{tabular}
 
-\clearpage
-
+\section*{Scientific output}
+\label{sec:orgf3ecead}
 \resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
-\section*{\emph{Publications (methodological)}}
-\label{sec:org52efe72}
+\subsection*{\emph{Publications (methodological)}}
+\label{sec:orga02839a}
 
 Published:
 \begin{enumerate}
+   \item \bibentry{ozenne2020small}
    \item \bibentry{verbeeck2020evaluation}
    \item \bibentry{ozenne2020estimation}
    \item \bibentry{norgaard2019preprocessing}
@@ -309,18 +282,25 @@ Published:
 
 In revision:
 \begin{enumerate}
-    \item \bibentry{ozenne20XXsmall}
     \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
+    \item \bibentry{cantagallo20XXnew}
+\end{enumerate}
+
+In preparation
+\begin{enumerate}
+    \item \bibentry{ozenne20XXasymptotic}
 \end{enumerate}
 
 \pagebreak[3]
 
-\section*{\emph{Publications (clinical applications)}}
-\label{sec:orge1e443d}
+\subsection*{\emph{Publications (clinical applications)}}
+\label{sec:orga7928fc}
 
 Published:
 \begin{enumerate}
+   \item \bibentry{dam2020hot}
+   \item \bibentry{hjordt2020psychometric}
    \item \bibentry{beliveau2020structure}
    \item \bibentry{madsen2020single}
    \item \bibentry{ozenne2019individualized}
@@ -346,6 +326,8 @@ Published:
  \end{enumerate}
 
 \pagebreak[3]
+
+
 \resheading{Software development}
 
 Packages for the \href{https://www.r-project.org/}{R} software:
@@ -356,7 +338,7 @@ comparisons. Implementation of the extension described in
 
 \item \textbf{lavaSearch2} (author and maintainer): Inference and diagnostic
 tools for latent variable models.  Methodology described in
-\citep{ozenne20XXsmall} and \citep{ozenne20XXcontroling}. Available on
+\citep{ozenne2020small} and \citep{ozenne20XXcontroling}. Available on
 \href{https://cran.r-project.org/web/packages/lavaSearch2/index.html}{CRAN} and on \href{https://github.com/bozenne/lavaSearch2}{Github}. .
 
 \item \textbf{riskRegression} (contributor): computation of absolute risks and
@@ -379,7 +361,7 @@ R/C++/orgmode/latex/git. Disponible sur sur \href{https://github.com/bozenne/ema
 I have reviewed papers for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
 
-\bigskip
+\clearpage
 
 \resheading{Oral communications}
 Oral presentation at international conferences: 
@@ -388,20 +370,20 @@ Oral presentation at international conferences:
 
 \begin{tabular}{l@{ }l@{ }l}
 2014 &:& Lesion Segmentation using a Spatially Regularized Mixture Model \\
-&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovenia \hfill (\href{https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf}{support de présentation}) \\ [3mm]
+&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovenia \hfill (\href{https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf}{slides}) \\ [3mm]
 2015 &:& MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie\\
-&& \href{https://r2015-grenoble.sciencesconf.org/66037}{Rencontres R, Grenoble, France}  \hfill   (\href{https://bozenne.github.io/doc/Talks/2015-R-MRIaggr.pdf}{support de présentation})  \\ [3mm]
+&& \href{https://r2015-grenoble.sciencesconf.org/66037}{Rencontres R, Grenoble, France}  \hfill   (\href{https://bozenne.github.io/doc/Talks/2015-R-MRIaggr.pdf}{slides})  \\ [3mm]
 2016 &:& Penalized latent variable models  \\
-&& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Computational statistics}, Oviedo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf}{support de présentation}) \\ [3mm]
+&& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Computational statistics}, Oviedo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf}{slides}) \\ [3mm]
 2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
-&& ISCB, Vigo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf}{support de présentation}) \\ [3mm]
+&& ISCB, Vigo, Spain \hfill (\href{https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf}{slides}) \\ [3mm]
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
-&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \hfill (\href{https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf}{support de présentation}) \\ [3mm]
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark \hfill (\href{https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf}{slides}) \\ [3mm]
 2019 &:& Multiple testing in latent variable models \\
-&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgium \hfill (\href{https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf}{support de présentation}) \\
+&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgium \hfill (\href{https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf}{slides}) \\
 \end{tabular}
 
-\clearpage
+\bigskip
 
 Invited speaker at an internation conference: 
 
@@ -410,7 +392,7 @@ Invited speaker at an internation conference:
 \begin{tabular}{l@{ }l@{ }l}
 2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
 && \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
-2020 (à venir) &:& Robust estimation of the average treatment effects in presence of right-censoring \\
+december 2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
 && and competing risks \\
 && \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, London, England \\
 \end{tabular}

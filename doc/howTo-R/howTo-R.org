@@ -2516,6 +2516,16 @@ loaded via a namespace (and not attached):
 [56] bindr_0.1.1       haven_1.1.2
 #+end_example
 
+** CRAN check rocker
+https://www.brodieg.com/2018/04/06/adventures-in-r-and-compiled-code/
+
+docker run --rm -ti -v $(pwd):/mydir wch1/r-debug
+RDvalgrind -e "install.packages('/mydir/fansi_0.2.1.tar.gz')"
+RDvalgrind -d valgrind  # and run tests
+
+RDcsan
+
+wget -O - https://github.com/bozenne/BuyseTest/tarball/master | tar xz
 
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
