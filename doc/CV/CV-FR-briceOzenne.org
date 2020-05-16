@@ -2,7 +2,6 @@
 #+Author: Brice Ozenne
 
 # header
-
 #+BEGIN_EXPORT latex
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
 	\textbf{\Large Brice Ozenne} & \textbf{\today} \\
@@ -19,57 +18,51 @@
 	Né&:& le 8 février 1990 à Saint Hilaire du Harcouët (50)  \\
 	Courriel personnel&:& \url{brice.mh.ozenne@gmail.com} \\ 
 	Téléphone personnel&:& (+45) 52 328 128 \\ 
-        Adresse personnelle&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhague SV, Danemark \\
+        Adresse personnelle&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhagen SV, Danemark \\
         Site internet&:& \url{https://bozenne.github.io/} \\
-        Github &:& \url{https://github.com/bozenne/} \\
+        Github&:& \url{https://github.com/bozenne/} \\
 \end{tabular*}
 \end{minipage}
 #+END_EXPORT
 
-* Profil                                                             :ignore:
-#+LaTeX: \resheading{Profil}
-** /Position actuelle:/
 
-\medskip
-
+* Poste                                                              :ignore:
+#+LaTeX: \resheading{Activité de recherche}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	Depuis novembre 2015 :& \textbf{Post-doctorat en biostatistiques} avec une position partagée entre: \\ [2mm]
+	Depuis novembre 2015 :& \textbf{Post-doctorat en biostatistiques} avec une position partagée entre \\ [2mm]
       & - une unité de recherche en biostatistiques \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
 	& - une unité de recherche en neuroscience \\
 	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} \\
 	& Copenhagen University Hospital, Rigshospitalet \\
-	& Building 6931, Blegdamsvej 9, DK-2100 Copenhague, Danemark \\ [2mm]
+	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Danemark \\ [2mm]
 	& où j'exerce conjointement une activité de recherche en biostatistiques, \\ 
       & de consultant en statistiques et une activité pédagogique.
 \end{tabular}
 #+END_EXPORT
 
 \bigskip
-# description
 
-** /Thématiques de recherche:/
-#+LaTeX: { \justify
-Mon travail de recherche s'articule autour de trois thématiques:
+Mon travail de recherche s'articule autour de trois thèmes:
 - le développement de *modèles à variables latentes* pour l'analyse de
   données en neuroscience - voir les publications
-  cite:ebert2019molecular,stenbaek2017brain,fisher2017bdnf pour des
+  citep:ebert2019molecular,stenbaek2017brain,fisher2017bdnf pour des
   exemples d'application. D'un point de vue méthodologique, je
   m'intéresse à *l'estimation et l'inférence en petits échantillons*
   citep:ozenne2020small ainsi qu'à développer des corrections
   efficaces en présence de *tests multiples*
   citep:ozenne20XXcontroling. Ces développements sont implémentés dans
   la librairie R =lavaSearch2=.
-  
+
 \bigskip
 
 - l'analyse de données de registre en présence de *censure à droite,
   risques compétitifs, et variables de confusion*, en particulier pour
   comparer l'efficacité de traitements préventifs de maladies
-  cardiovasculaires
-  citep:staerk2016ischaemic,staerk2017resumption,staerk2018standard. En
+  cardiovasculaires (publications
+  cite:staerk2018standard,staerk2017resumption,staerk2016ischaemic). En
   utilisant des résultats de la *théorie semi-paramétrique*, j'ai
   développé un estimateur robuste basé sur plusieurs modèles de
   régressions et utilisé sa fonction d'influence pour obtenir sa
@@ -85,11 +78,11 @@ Mon travail de recherche s'articule autour de trois thématiques:
   d'évaluer la balance bénéfice-risque d'un traitement. Une
   application typique est de proposer une statistique reflétant à la
   fois les gains en survie et les effets secondaires de traitements
-  anti-cancéreux citep:peron2016net,peron2016assessment. Je
-  m'intéresse par exemple à la théorie des U-statistiques pour obtenir
-  la distribution asymptotique de certains estimateurs implémentés
-  dans la librairie R =BuyseTest= (article en cours de rédaction).
-#+LaTeX: }
+  anti-cancéreux (publications citep:peron2016net et
+  citep:peron2016assessment). Je m'intéresse par exemple à la théorie
+  des U-statistiques pour obtenir la distribution asymptotique de
+  certains estimateurs implémentés dans la librairie R =BuyseTest=
+  (citep:ozenne20XXasymptotic, papier en cours de redaction).
 
 \bigskip
 
@@ -98,14 +91,16 @@ Mon travail de recherche s'articule autour de trois thématiques:
 - Inférence causale et régimes de traitement dynamiques
 - Inférence statistique après sélection 
 
-** /Compétences logicielles/
-Maitrise de \Rlogo{}, \LaTeX{} et [[https://orgmode.org/][orgmode]]. @@latex:\\@@
-Utilisation courante mais basique de \Cpp{}, Lisp (pour [[https://www.gnu.org/software/emacs/][GNU Emacs]]),
-Git/Github et Inkscape.
 
-** /Compétences Linguistiques/
-Français (langue maternelle), anglais (courant), danois
-(intermédiaire), notions d'italien.
+* Compétences                                                        :ignore:
+#+LaTeX: \resheading{Compétences}
+** /Linguistiques/
+Français (langue maternelle), anglais (courant), danois (intermédiaire), notions d'italien.
+
+** /Logicielles/
+Bonne connaissance de \Rlogo{}, \LaTeX{} et [[https://orgmode.org/][orgmode]]. @@latex:\\@@
+Utilisation courante mais basique de \Cpp{}, lisp (pour [[https://www.gnu.org/software/emacs/][GNU Emacs]]),
+git/github et inkscape.
 
 * Formation                                                          :ignore:
 #+LaTeX: \resheading{Formation Universitaire}
@@ -183,13 +178,14 @@ Co-encadrant d'étudiant en *master 2*:
 #+LaTeX: \resheading{Financement}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2017-2019: \href{https://nru.dk/index.php/news-menu/187-marie-curie-grant-to-nru}{MARIE CURIE Individual Fellowships} (200 000\euro, EU H2020-MSCA-IF-2016 746850) \\
-2017-2020: Lundbeck Fellowships (140 000\euro, R231-2016-3236) \\
+2017-2019: MARIE CURIE Individual Fellowships (200 000\euro) \\
+2017-2020: Lundbeck Fellowships (140 000\euro) \\
+
 \end{tabular}
 #+END_EXPORT
 
 * Production scientifique                                            :ignore:
-#+LaTeX: \resheading{Production scientifique \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{lien google scholar}}
+#+LaTeX: \resheading{Production scientifique}
 ** /Publications (méthodologiques)/
 
 Publié:
@@ -206,19 +202,27 @@ Publié:
   \end{enumerate}
 #+END_EXPORT
 
-\pagebreak[3]
+\bigskip
 
 En révision:
 #+BEGIN_EXPORT latex
- \begin{enumerate}[resume]
+\begin{enumerate}[resume]
     \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
     \item \bibentry{cantagallo20XXnew}
-  \end{enumerate}
+\end{enumerate}
 #+END_EXPORT
 
-\pagebreak[3]
+\bigskip
 
+En préparation:
+#+BEGIN_EXPORT latex
+\begin{enumerate}[resume]
+    \item \bibentry{ozenne20XXasymptotic}
+\end{enumerate}
+#+END_EXPORT
+
+\clearpage
 
 ** /Publications (applications cliniques)/
 
@@ -249,28 +253,31 @@ Publié:
     \item \bibentry{peron2016assessment}
     \item \bibentry{ozenne2015evaluation}
     \item \bibentry{hermitte2013very}
-\end{enumerate}
+  \end{enumerate}
 #+END_EXPORT
 
-\clearpage
+\pagebreak[3]
 
-* Production logicielle                                              :ignore:
-#+LaTeX: \resheading{Production logicielle}
-
-Librairies de fonctions pour le logiciel [[https://www.r-project.org/][R]]:
+** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
+#+LaTeX: \begin{minipage}{0.01\textwidth}
+#+LaTeX: \hspace{\fill}
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.92\textwidth}
 - *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
   généralisées. Implémentation de la méthode décrite dans
   citep:peron2016extension,peron20XXunbiased. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]]
   et sur [[https://github.com/bozenne/BuyseTest][Github]].
 
 - *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
-  diagnostiques dans les modèles à variables latentes. Papier
-  décrivant la méthode soumis (citep:ozenne2020small and citep:ozenne20XXcontroling). Disponible sur le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+  diagnostiques dans les modèles à variables latentes
+  (cite:ozenne2020small,ozenne20XXcontroling). Disponible sur
+  le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
 
 - *riskRegression* (Contributeur) : Calculateur du risque
   d'évènenement en présence de risques compétitifs. Implémentation de
-  la méthode décrite dans citep:ozenne2017riskregression et
-  citep:ozenne2020estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+  la méthode décrite dans cite:ozenne2017riskregression et
+  cite:ozenne2020estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+#+LaTeX: \end{minipage}
 
 \bigskip
 
@@ -279,55 +286,40 @@ Librairie pour le logiciel [[https://www.gnu.org/software/emacs/][emacs]]:
   l'intéraction avec R/C++/orgmode/latex/git. Disponible sur sur
   [[https://github.com/bozenne/emacs-config][Github]].
 
+\pagebreak[3]
+
 * Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
-Biometrics, Statistics in Medicine, et International Journal of Biostatistics.
+J'ai relu des articles pour Biometrics, Statistics in Medicine,
+International Journal of Biostatistics, and BMC medical reasearch
+methodology. Voir mon [[https://publons.com/researcher/1214277/brice-maxime-hugues-ozenne/][profile publons]] pour plus d'informations.
+
+\pagebreak[3]
 
 * Communications orales                                             :ignore:
 #+LaTeX: \resheading{Conférences}
 Présentations orales lors de conférences internationales: 
-
-\medskip
+\smallskip
 
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
-2014 &:& Lesion Segmentation using a Spatially Regularized Mixture Model \\
-&& \href{http://conferences.nib.si/AS2014/default.htm}{Applied Statistics}, Ribno, Slovénie \hfill (\href{https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf}{support de présentation}) \\ [3mm]
-2015 &:& MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie\\
-&& \href{https://r2015-grenoble.sciencesconf.org/66037}{Rencontres R, Grenoble, France}  \hfill   (\href{https://bozenne.github.io/doc/Talks/2015-R-MRIaggr.pdf}{support de présentation})  \\ [3mm]
-2016 &:& Penalized latent variable models  \\
-&& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Computational statistics}, Oviedo, Espagne \hfill (\href{https://bozenne.github.io/doc/Talks/2016-Compstat-pLVM.pdf}{support de présentation}) \\ [3mm]
+2014 &:& Image segmentation using a spatially regularized mixture model \\
+&& \href{https://www.biometricsociety.org/meetings-events/ibcs/}{IBC}, Florence, Italie \\
+2015 &:& \href{https://r2015-grenoble.sciencesconf.org/66037}{MRIaggr : un package pour la gestion et le traitement de données multivariées d'imagerie} \\
+&& Rencontres R, Grenoble, France \\
+2016 &:& \href{http://cmstatistics.org/RegistrationsV2/COMPSTAT2016/viewSubmission.php?in=440&token=29584n1s18p97n65o7p1r5n36sopq0n4}{Penalized latent variable models} \\
+&& Computational statistics, Oviedo, Espagne \\
 2017 &:& Assessing treatment effects on registry data in presence of competing risks \\ 
-&& ISCB, Vigo, Espagne \hfill (\href{https://bozenne.github.io/doc/Talks/2017-ISCB-ate.pdf}{support de présentation}) \\ [3mm]
+&& \href{http://www.iscb2017.info/}{ISCB}, Vigo, Espagne \\
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
-&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \hfill (\href{https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf}{support de présentation}) \\ [3mm]
-2019 &:& Multiple testing in latent variable models \\
-&& \href{https://kuleuvencongres.be/iscb40/}{ISCB}, Leuven, Belgique \hfill (\href{https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf}{support de présentation}) \\
-\end{tabular}
-#+END_EXPORT
-
-
-\clearpage
-
-Invitation à des conférences internationales: 
-
-\medskip
-
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l@{ }l}
-2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
-&& \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuanie \\
-2020 (à venir) &:& Robust estimation of the average treatment effects in presence of right-censoring \\
-&& and competing risks \\
-&& \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, Londres, Angleterre \\
+&& \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \\
 \end{tabular}
 #+END_EXPORT
 
 \bigskip
 
 Responsable de session ("chairman"):
-
-\medskip
+\smallskip
 
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
@@ -408,8 +400,6 @@ Responsable de session ("chairman"):
 #+LaTeX_HEADER: 		\textit{#3} & \textit{#4} \\
 #+LaTeX_HEADER: \end{tabular*}\vspace{-6pt}}
 
-#+LaTeX_HEADER: \usepackage{ragged2e}
-
 ** List of publications
 # ### list publications
 #+LaTeX_HEADER: \usepackage{bibentry}
@@ -420,5 +410,5 @@ Responsable de session ("chairman"):
 
 #+LaTeX_HEADER:  \usepackage{url}
 
-** list
-#+LaTeX_HEADER:\usepackage{enumitem}
+# ## [resume] (keep the numbering over several enumerate list)
+#+LaTeX_HEADER: \usepackage{enumitem}

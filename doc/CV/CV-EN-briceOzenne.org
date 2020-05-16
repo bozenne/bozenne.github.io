@@ -73,16 +73,20 @@ My research work is organized around three topics:
   handle multiple and heterogeneous endpoints which is especially
   relevant to assess the benefit-risk balance of a treatment. A
   typical application is the evaluation of chemotherapies where
-  jointly considering gains in survival and side effects is
-  critical. I am now working on deriving the asymptotic distribution
-  of some of the estimators implemented in the =BuyseTest= using the
-  U-statistique theory.
+  jointly considering gains in survival and side effects is critical
+  citep:peron2016net,peron2016assessment. I am now working on deriving
+  the asymptotic distribution of some of the estimators implemented in
+  the =BuyseTest= using the U-statistique theory.
+
+\bigskip
 
 ** /Other domains of interest in statistics:/
 - Smoothing splines and functional data analysis
 - Causal inference and dynamic treatment regimes
 - Post-selection inference
 
+* Skills                                                             :ignore:
+#+LaTeX: \resheading{Skills}
 
 ** /Language/
 French (native language), english (fluent), danish (intermediate),
@@ -93,6 +97,7 @@ Proficient in \Rlogo{}, \LaTeX{} and [[https://orgmode.org/][orgmode]]. @@latex:
 Basic knowledge but common use of \Cpp{}, lisp (for [[https://www.gnu.org/software/emacs/][GNU Emacs]]) and
 git/github (via [[https://magit.vc/][magit]]).
 
+\clearpage
 
 * Education                                                  :ignore:
 #+LaTeX: \resheading{Education}
@@ -114,14 +119,14 @@ git/github (via [[https://magit.vc/][magit]]).
 Teaching (L : lecture, PC : practical classes)
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
-2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Structural Equation Models} for Master students in statistics (2h, L). \\
+2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\ 
+2016 - 2017 : & Structural Equation Models for Master students in statistics (2h, L). \\
 2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
 2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
 \end{tabular}
 #+END_EXPORT
 
-\clearpage
+\bigskip
 
 Pedagogical talks for researchers in neuroscience on specific
 statistical tools/issues:
@@ -153,7 +158,9 @@ Co-supervision of *master 2* student:
 \end{tabular}
 #+END_EXPORT
 
-* Scientific output                               
+\clearpage
+
+* Scientific output     :ignore:                          
 #+LaTeX: \resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
 ** /Publications (methodological)/
 
@@ -175,7 +182,7 @@ Published:
 
 In revision:
 #+BEGIN_EXPORT latex
-\begin{enumerate}
+\begin{enumerate}[resume]
     \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
     \item \bibentry{cantagallo20XXnew}
@@ -184,7 +191,7 @@ In revision:
 
 In preparation
 #+BEGIN_EXPORT latex
-\begin{enumerate}
+\begin{enumerate}[resume]
     \item \bibentry{ozenne20XXasymptotic}
 \end{enumerate}
 #+END_EXPORT
@@ -195,7 +202,7 @@ In preparation
 
 Published:
 #+BEGIN_EXPORT latex
- \begin{enumerate}
+ \begin{enumerate}[resume]
     \item \bibentry{dam2020hot}
     \item \bibentry{hjordt2020psychometric}
     \item \bibentry{beliveau2020structure}
@@ -257,7 +264,6 @@ Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 I have reviewed papers for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
 
-\clearpage
 
 * Oral communications                                                         :ignore:
 #+LaTeX: \resheading{Oral communications}
@@ -393,3 +399,6 @@ Chairman at international conferences:
 #+LaTeX_HEADER: \newcommand{\myname}[1]{\textbf{#1}}
 
 #+LaTeX_HEADER:  \usepackage{url}
+
+# ## [resume] (keep the numbering over several enumerate list)
+#+LaTeX_HEADER: \usepackage{enumitem}

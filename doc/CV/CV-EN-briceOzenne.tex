@@ -1,4 +1,4 @@
-% Created 2020-05-16 lør 15:03
+% Created 2020-05-16 lør 15:48
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -100,6 +100,7 @@ bottom=20mm
 \nobibliography*
 \newcommand{\myname}[1]{\textbf{#1}}
 \usepackage{url}
+\usepackage{enumitem}
 \date{\today}
 \title{}
 \hypersetup{
@@ -185,31 +186,35 @@ right-censoring \citep{peron2016extension}. GPC is a method able to
 handle multiple and heterogeneous endpoints which is especially
 relevant to assess the benefit-risk balance of a treatment. A
 typical application is the evaluation of chemotherapies where
-jointly considering gains in survival and side effects is
-critical. I am now working on deriving the asymptotic distribution
-of some of the estimators implemented in the \texttt{BuyseTest} using the
-U-statistique theory.
+jointly considering gains in survival and side effects is critical
+\citep{peron2016net,peron2016assessment}. I am now working on deriving
+the asymptotic distribution of some of the estimators implemented in
+the \texttt{BuyseTest} using the U-statistique theory.
 \end{itemize}
 
+\bigskip
+
 \section*{\emph{Other domains of interest in statistics:}}
-\label{sec:org1e43a0b}
+\label{sec:org8d1107e}
 \begin{itemize}
 \item Smoothing splines and functional data analysis
 \item Causal inference and dynamic treatment regimes
 \item Post-selection inference
 \end{itemize}
-
+\resheading{Skills}
 
 \section*{\emph{Language}}
-\label{sec:org98f5289}
+\label{sec:org796eb88}
 French (native language), english (fluent), danish (intermediate),
 basics in italian.
 
 \section*{\emph{Software}}
-\label{sec:orgd665d95}
+\label{sec:orgdd7fb2a}
 Proficient in \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
 Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
 git/github (via \href{https://magit.vc/}{magit}).
+
+\clearpage
 \resheading{Education}
 \begin{tabular}{l@{ }l}
 2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
@@ -225,13 +230,13 @@ git/github (via \href{https://magit.vc/}{magit}).
 
 Teaching (L : lecture, PC : practical classes)
 \begin{tabular}{l@{ }l}
-2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2016.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\
-2016 - 2017 : & \href{http://publicifsv.sund.ku.dk/~kkho/undervisning/sem2016/}{Structural Equation Models} for Master students in statistics (2h, L). \\
+2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\ 
+2016 - 2017 : & Structural Equation Models for Master students in statistics (2h, L). \\
 2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
 2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
 \end{tabular}
 
-\clearpage
+\bigskip
 
 Pedagogical talks for researchers in neuroscience on specific
 statistical tools/issues:
@@ -260,11 +265,11 @@ Co-supervision of \textbf{master 2} student:
 2017-2020: Lundbeck Fellowships (140 000\euro, R231-2016-3236) \\
 \end{tabular}
 
-\section*{Scientific output}
-\label{sec:orgf3ecead}
+\clearpage
+
 \resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
-\subsection*{\emph{Publications (methodological)}}
-\label{sec:orga02839a}
+\section*{\emph{Publications (methodological)}}
+\label{sec:orgc6f0bec}
 
 Published:
 \begin{enumerate}
@@ -281,24 +286,24 @@ Published:
 \pagebreak[3]
 
 In revision:
-\begin{enumerate}
+\begin{enumerate}[resume]
     \item \bibentry{ozenne20XXcontroling}
     \item \bibentry{peron20XXunbiased}
     \item \bibentry{cantagallo20XXnew}
 \end{enumerate}
 
 In preparation
-\begin{enumerate}
+\begin{enumerate}[resume]
     \item \bibentry{ozenne20XXasymptotic}
 \end{enumerate}
 
 \pagebreak[3]
 
-\subsection*{\emph{Publications (clinical applications)}}
-\label{sec:orga7928fc}
+\section*{\emph{Publications (clinical applications)}}
+\label{sec:org4b75e03}
 
 Published:
-\begin{enumerate}
+\begin{enumerate}[resume]
    \item \bibentry{dam2020hot}
    \item \bibentry{hjordt2020psychometric}
    \item \bibentry{beliveau2020structure}
@@ -326,8 +331,6 @@ Published:
  \end{enumerate}
 
 \pagebreak[3]
-
-
 \resheading{Software development}
 
 Packages for the \href{https://www.r-project.org/}{R} software:
@@ -361,7 +364,6 @@ R/C++/orgmode/latex/git. Disponible sur sur \href{https://github.com/bozenne/ema
 I have reviewed papers for Biometrics, Statistics in Medicine, and the
 International Journal of Biostatistics.
 
-\clearpage
 
 \resheading{Oral communications}
 Oral presentation at international conferences: 
