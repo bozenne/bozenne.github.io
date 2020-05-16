@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: dec  3 2019 (11:14) 
 ## Version: 
-## Last-Updated: dec  3 2019 (13:20) 
+## Last-Updated: dec  3 2019 (18:34) 
 ##           By: Brice Ozenne
-##     Update #: 6
+##     Update #: 9
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -158,6 +158,7 @@ try(capture.output(geeglm(response ~ treatment*visit,
 
 ## chunk 24
 X <- model.matrix(response ~ visit*treatment, data = dfL.ony)
+head(X)
 colnames(X)
 
 ## chunk 25
@@ -166,7 +167,7 @@ table(dfL.ony$treatment.visit)
 
 ## chunk 26
 dfL.ony$treatment.visit <- droplevels(dfL.ony$treatment.visit)
-table(dfL.ony$treatment.visit)
+length(table(dfL.ony$treatment.visit))
 
 summary(geeglm(response ~ treatment.visit, 
                id = id,
@@ -212,6 +213,11 @@ logLik(e.geeUN)
 
 ## chunk 35
 summary(e.geeUN)$coefficients
+anova(e.geeUN)
+
+1/(1+exp(-(-0.5487)))
+1/(1+exp(-(-0.5487-0.1096)))
+1/(1+exp(-(-0.5487-0.1096-0.0955)))
 
 ## chunk 36
 corr.coef <- summary(e.geeUN)$corr[,"Estimate"]
@@ -236,6 +242,8 @@ head(position.corr.coef)
 ## chunk 38
 ORvisit7 <- exp(coef(e.geeUN)["visit7"])
 ORvisit7
+
+exp(coef(e.geeUN)["visit7"]+coef(e.geeUN)["treatmentIvisit7"])
 
 ## chunk 39
 try(confint(e.geeUN))
@@ -312,6 +320,62 @@ grayprevplot_logit <- xyplot(ilogit(response) ~ expected.timeweek,
                              type = "b",
                              ylab = "prevalence", col = "gray")
 plot.fittedGEE_logit + as.layer(grayprevplot_logit)
+
+## * Question 5: Subject specific model with random intercept
+
+
+simplified <- glmer(response ~ timeweek*group + (1|id),
+                    data = dfL.ony[dfL.ony$visit.num < 6,], 
+                    family = binomial(link = "logit"))
+summary(simplified)
+
+
+## chunk 55
+dfL.ony$treatment_week <- dfL.ony$timeweek
+
+## chunk 56
+dfL.ony[dfL.ony$treatment == "200mg", "treatment_week"] <- 0
+
+## chunk 57
+xy.newvar <- xyplot(treatment_week ~ timeweek | treatment,
+                    type = "b", 
+                    data = dfL.ony, layout = c(3,1))
+xy.newvar
+
+## ** Model fitting
+
+## chunk 72
+e.glmer <- glmer(response ~ timeweek + treatment_week + (1|id),
+                 data = dfL.ony[dfL.ony$visit.num < 6,], 
+                 family = binomial(link = "logit"))
+logLik(e.glmer)
+
+## chunk 73
+summary(e.glmer)$coef
+
+## chunk 74
+VarCorr(e.glmer)
+
+## chunk 75
+fixef(e.glmer)[c("timeweek","treatment_week")]  * 52 / 12
+
+## ** Inference
+
+## chunk 76
+resC6 <-  esticon(e.glmer, L = C4, conf.int = TRUE, joint.test = FALSE)
+resC6
+
+## chunk 77
+OR.CI6 <- cbind(exp(resC6[,c("Estimate","Lower","Upper")]), 
+                p.value = resC6[,"Pr(>|X^2|)"])
+OR.CI6
+
+## chunk 78
+factor <-  sqrt(0.304*e.glmer@theta^2+1)
+keep.coef <- c("timeweek","treatment_week")
+rbind(M = coef(e.geeARweek)[keep.coef],
+      SS = fixef(e.glmer)[keep.coef],
+      SS.trans = fixef(e.glmer)[keep.coef] / factor)
 
 
 

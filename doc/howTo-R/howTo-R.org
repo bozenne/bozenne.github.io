@@ -3,8 +3,6 @@
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 options(width = 100)
-path <- "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/"
-setwd(path)
 #+END_SRC
 
 #+RESULTS:
@@ -31,6 +29,8 @@ library(data.table)
 
 ## graphical display
 library(ggplot2)
+library(ggthemes)
+library(abind) # convert list to array
 
 ## modeling
 library(car)
@@ -51,47 +51,6 @@ library(lava)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-data.table 1.12.0  Latest news: r-datatable.com
-Warning message:
-package 'data.table' was built under R version 3.5.3
-Loading required package: carData
-Warning message:
-package 'survival' was built under R version 3.5.3
-Loading required package: mvtnorm
-Loading required package: TH.data
-Loading required package: MASS
-
-Attaching package: 'TH.data'
-
-The following object is masked from 'package:MASS':
-
-    geyser
-Loading required package: foreach
-Loading required package: iterators
-Loading required package: snow
-
-Attaching package: 'parallel'
-
-The following objects are masked from 'package:snow':
-
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ, clusterExport, clusterMap,
-    clusterSplit, makeCluster, parApply, parCapply, parLapply, parRapply, parSapply,
-    splitIndices, stopCluster
-
-Attaching package: 'lava'
-
-The following object is masked from 'package:car':
-
-    logit
-
-The following object is masked from 'package:ggplot2':
-
-    vars
-
-Warning message:
-package 'lava' was built under R version 3.5.3
-#+end_example
 
 \clearpage
 
@@ -106,11 +65,11 @@ getwd()
 #+END_SRC
 
 #+RESULTS:
-: [1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo"
+: [1] "c:/Users/hpl802/AppData/Roaming/R"
 
 It can be changed using the function =setwd()=:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-path <- "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/"
+path <- "c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/howTo-R/"
 setwd(path)
 #+END_SRC
 
@@ -123,7 +82,7 @@ getwd()
 #+END_SRC
 
 #+RESULTS:
-: [1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo"
+: [1] "c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/howTo-R"
 
 ** See which files are present in the current directory
 
@@ -133,19 +92,10 @@ list.files()
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
- [1] "figures"           "howTo.aux"         "howTo.log"         "howTo.org"        
- [5] "howTo.org.~1~"     "howTo.org.~11~"    "howTo.org.~12~"    "howTo.org.~13~"   
- [9] "howTo.org.~14~"    "howTo.org.~15~"    "howTo.org.~16~"    "howTo.org.~17~"   
-[13] "howTo.org.~18~"    "howTo.org.~19~"    "howTo.org.~2~"     "howTo.org.~3~"    
-[17] "howTo.org.~4~"     "howTo.org.~5~"     "howTo.org.~6~"     "howTo.org_archive"
-[21] "howTo.pdf"         "howTo.tex"         "howTo.tex.~1~"     "howTo.tex.~105~"  
-[25] "howTo.tex.~106~"   "howTo.tex.~107~"   "howTo.tex.~108~"   "howTo.tex.~109~"  
-[29] "howTo.tex.~110~"   "howTo.tex.~111~"   "howTo.tex.~112~"   "howTo.tex.~113~"  
-[33] "howTo.tex.~2~"     "howTo.tex.~3~"     "howTo.tex.~4~"     "howTo.tex.~5~"    
-[37] "howTo.tex.~6~"     "howTo.toc"         "mydata.csv"        "mydata.txt"       
-[41] "myplot.png"        "Table1.docx"
-#+end_example
+:  [1] "#howTo-R.org#"       "figures"             "howTo-R.aux"         "howTo-R.log"        
+:  [5] "howTo-R.org"         "howTo-R.org_archive" "howTo-R.pdf"         "howTo-R.tex"        
+:  [9] "howTo-R.toc"         "mydata.csv"          "mydata.txt"          "myplot.png"         
+: [13] "Table1.docx"
 
 There are many files. To list files in the current directory with a
 given extension, e.g. =.txt= use:
@@ -223,7 +173,8 @@ of these functions.
 ** Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)
 
 There are many packages that can be used to read excel files, e.g.:
-- *readxl* package (no dependency)
+- *readxl* package (no dependency): function =read_excel=, =read_xls=,
+  or =read_xlsx=.
 - *xlsx* package: function =read.xlsx=.
 - *gdata* package: function =read.xls=.
 - *XLConnect* package: function =readWorksheet=.
@@ -274,7 +225,7 @@ print(myTable1.doc, target = "./Table1.docx")
 #+END_SRC
 
 #+RESULTS:
-: [1] "c:/Users/hpl802/Documents/Teaching/repeated measurements 2017/Doc/howTo/Table1.docx"
+: [1] "c:/Users/hpl802/Documents/GitHub/bozenne.github.io/doc/howTo-R/Table1.docx"
 
 ** Export graphs
 
@@ -427,6 +378,19 @@ head(dtW.data)
 : 5:  5  42 Female       Yes        52        56        64   52.86   58.41   63.79
 : 6:  6  38   Male       Yes        52        59        65   49.37   57.91   64.45
 
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+dtL.data <- melt(dtW.data, id.vars = c("Id","Gender","Treatment","Age"), 
+                 measure=list(c("weight_t1","weight_t2","weight_t3"), 
+                              c("size_t1","size_t2","size_t3")),
+                 variable.name = "time", value.name = c("weight","size"))
+#+END_SRC
+
+#+RESULTS:
+: Warning message:
+: In melt.data.table(dtW.data, id.vars = c("Id", "Gender", "Treatment",  :
+:   'measure.vars' [weight_t1, weight_t2, weight_t3] are not all of the same type. By order of hierarchy, the molten data value column will be of type 'double'. All measure variables not of type 'double' will be coerced too. Check DETAILS in ?melt.data.table for more on coercion.
+
+
  The *long* format denote a format where the same individual may
 appear on different lines but a given quantity is only stored in one
 column. In case of repeated measurement, an additional column encodes
@@ -436,7 +400,13 @@ head(dtL.data)
 #+END_SRC
 
 #+RESULTS:
-: Error in head(dtL.data) : object 'dtL.data' not found
+:    Id Gender Treatment Age time weight  size
+: 1:  1   Male       Yes  40    1     50 50.67
+: 2:  2 Female        No  38    1     52 50.26
+: 3:  3   Male        No  41    1     47 46.61
+: 4:  4 Female       Yes  41    1     48 45.95
+: 5:  5 Female       Yes  42    1     52 52.86
+: 6:  6   Male       Yes  38    1     52 49.37
 
 ** Display a dataset
 
@@ -1421,13 +1391,13 @@ head(dtL.data)
 #+END_SRC
 
 #+RESULTS:
-:     Id Gender Treatment Age time weight  size
-: 1:  41   Male        No  37    1     53 47.59
-: 2: 101 Female        No  38    1     48 49.51
-: 3:  59 Female       Yes  38    1     49 51.08
-: 4:  91   Male        No  38    1     51 52.05
-: 5:   2 Female        No  38    1     52 50.26
-: 6:   6   Male       Yes  38    1     52 49.37
+:    Id Gender Treatment Age time weight  size
+: 1:  1   Male       Yes  40    1     50 50.67
+: 2:  2 Female        No  38    1     52 50.26
+: 3:  3   Male        No  41    1     47 46.61
+: 4:  4 Female       Yes  41    1     48 45.95
+: 5:  5 Female       Yes  42    1     52 52.86
+: 6:  6   Male       Yes  38    1     52 49.37
 
 *** Spaguetti plot 
 
@@ -1535,8 +1505,27 @@ print(gg.mean)
 #+RESULTS[<2019-06-11 09:32:47> a8ccb1ef2a2e1176e7af9777333aae4b77d046a1]:
 [[file:./figures/fig-meanTime.pdf]]
 
+\clearpage
+
 *** Boxplot + points (non-overlapping)
-# geom_boxplot + geom_dotplot(binaxis = "y", stackdir = "center")
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.hist <- ggplot(dtL.data, aes(x = time, y = weight))
+gg.hist <- gg.hist + geom_boxplot() 
+gg.hist <- gg.hist + geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.5)
+gg.hist
+#+END_SRC
+
+#+RESULTS:
+: `stat_bindot()` using `bins = 30`. Pick better value with `binwidth`.
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-hist.pdf" :exports results :session *R* :cache yes
+print(gg.hist)
+#+END_SRC
+
+#+RESULTS[<2020-04-14 11:32:11> df9525aa02866e0113aa512a94be9fa6304aba1d]:
+[[file:./figures/fig-hist.pdf]]
+ 
 ** Diagnostic plots
 
 Consider the linear model:
@@ -1570,11 +1559,11 @@ hist(epsilon, main = "histogram of the residuals")
 
 ** Customize graphic 
 
-*** Modify the legend of a discrete scale
+*** Modify the legend of a discrete scale (with greek letters)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-gg.mean2 <- gg.mean + scale_colour_manual(name = "Group",
-                                          labels = c("X","Y"),
+gg.mean2 <- gg.mean + scale_colour_manual(name = expression("Group"~(alpha*Omega)),
+                                          labels = c("\u03b1\u2090","X\u1D30"),
                                           values = c("No" = "purple", 
                                                      "Yes" = "black"))
 #+END_SRC
@@ -1585,8 +1574,13 @@ gg.mean2 <- gg.mean + scale_colour_manual(name = "Group",
 print(gg.mean2)
 #+END_SRC
 
-#+RESULTS[<2019-06-11 09:33:05> 02ab681364d6a6d725c701f0e5435f8c93a6baa7]:
+#+ATTR_LaTeX: :width 0.8\textwidth :placement [!h]
 [[file:./figures/fig-meanTime2.pdf]]
+
+See also:
+- https://en.wikipedia.org/wiki/List_of_Unicode_characters
+- https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts
+- https://stackoverflow.com/questions/5293715/how-to-use-greek-symbols-in-ggplot2
 
 \clearpage
 *** Change the name of the legend
@@ -1607,7 +1601,7 @@ gg.mean3 <- gg.mean + theme(text = element_text(size=10))
 print(gg.mean3)
 #+END_SRC
 
-#+RESULTS:
+#+ATTR_LaTeX: :width 0.8\textwidth :placement [!h]
 [[file:./figures/fig-meanTime3.pdf]]
 
 Only x axis labels:
@@ -1624,6 +1618,11 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 
 #+RESULTS:
 \clearpage
+*** Increase size of the legend labels 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + theme(axis.title = element_text(size=10), legend.key.size = unit(3,"line"))
+#+END_SRC
+
 *** Put the legend at the bottom
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 gg.mean4 <- gg.mean + theme(legend.position="bottom")
@@ -1638,6 +1637,11 @@ print(gg.mean4)
 #+RESULTS:
 [[file:./figures/fig-meanTime4.pdf]]
 \clearpage
+*** Number of lines in the legend
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + guides(color = guide_legend(nrow = 2, byrow = TRUE))
+#+END_SRC
+
 *** Default ggplot color palette
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -1651,7 +1655,7 @@ gg_color_hue <- function(n) {
 
 *** Color blind palette
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-ggthemes::colorblind_pal()(8)
+ggthemes::colorblind_pal()(8) ## also consider scale_color_colorblind
 #+END_SRC
 
 #+RESULTS:
@@ -1715,6 +1719,9 @@ out <- ggarrange(p1, p2, p3, p4, ncol=2, nrow=2, common.legend = TRUE, legend="b
 #+END_SRC
 
 #+RESULTS:
+: Loading required package: magrittr
+: Warning message:
+: package 'ggpubr' was built under R version 3.5.3
 
 #+BEGIN_SRC R :results graphics :file "./figures/fig-combine.pdf" :exports results :session *R* :cacheno
 out
@@ -1726,6 +1733,9 @@ out
 *** Symbols in facet names
 # t.Heatmap[method == "sqrt(statistic)", method := "sqrt[statistic]"]
 # facet_grid(a~method, labeller = label_parsed)
+
+\clearpage
+
 ** Path diagram
 Using lava:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
