@@ -121,8 +121,8 @@ Teaching (L : lecture, PC : practical classes)
 \begin{tabular}{l@{ }l}
 2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\ 
 2016 - 2017 : & Structural Equation Models for Master students in statistics (2h, L). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
-2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (6h, PC).\\
+2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (18h, PC).\\
 \end{tabular}
 #+END_EXPORT
 
