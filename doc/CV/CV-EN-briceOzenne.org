@@ -237,9 +237,11 @@ Published:
 #+LaTeX: \resheading{Software development}
 
 Packages for the [[https://www.r-project.org/][R]] software:
-- *BuyseTest* (author and maintainer): generalized pairwise
-  comparisons. Implementation of the extension described in
-  citep:peron2016extension,peron20XXunbiased. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on [[https://github.com/bozenne/BuyseTest][Github]].
+- *BuyseTest* (author and maintainer): implementation of generalized
+  pairwise comparisons, including recent developments to handle
+  right-censoring
+  citep:peron2016extension,peron20XXunbiased. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on
+  [[https://github.com/bozenne/BuyseTest][Github]].
 
 - *lavaSearch2* (author and maintainer): Inference and diagnostic
   tools for latent variable models.  Methodology described in
@@ -256,7 +258,7 @@ Packages for the [[https://www.r-project.org/][R]] software:
 Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 - *emacs-config* (author and maintainer) : Configuration files for
   emacs to ease the interaction with
-  R/C++/orgmode/latex/git. Disponible sur sur [[https://github.com/bozenne/emacs-config][Github]].
+  R/C++/orgmode/latex/git. Disponible on [[https://github.com/bozenne/emacs-config][Github]].
 
 \pagebreak[3]
 * Peer review       :ignore:
