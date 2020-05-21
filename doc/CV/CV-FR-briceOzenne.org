@@ -145,8 +145,8 @@ Enseignement (CM : cours magistral, TD : travaux dirigés):
 \begin{tabular}{l@{ }l}
 2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
 2016 - 2017 : & Modèles d'équations structurelles. CM pour étudiants de master en statistiques (2h). \\
-2014 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733301}{Modèles de Survie}. TD pour étudiants de master en santé publique (6h).\\
-2013 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733304}{Statistique bayésienne}. TD pour étudiants de master en santé publique (18h).\\
+2014 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733301}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
+2013 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733304}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
 \end{tabular}
 #+END_EXPORT
 
