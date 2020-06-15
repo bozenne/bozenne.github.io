@@ -76,6 +76,7 @@ We can now express our parameter of interest:
 
 
 # @@latex:any arbitrary LaTeX code@@
+\clearpage
 
 * Example :noexport:
 
@@ -179,6 +180,215 @@ one(i.e. log-transformation) gives valid results (even though the
 distribution of the residuals is not normal on the log-scale). So the
 model choice should be made on which of the two models: additive or
 multiplicative is more likely to be correctly specified.
+
+\clearpage
+
+* Note for power calculation
+
+** Recall: delta-method for normally distributed variables
+
+\textbf{Theory}: we recall that for a random variable \(Y\) with finite first two
+moments, the delta method applied around the mean for a transformation
+\(f\) is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+f(Y) = f(\mu) + f'(\mu) (Y-\mu) + \frac{1}{2} f''(\mu) (Y-\mu)^2  + \frac{1}{6} f'''(\mu) (Y-\mu)^3 + o\left((Y-\mu)^2\right)
+\end{align*}
+#+END_EXPORT
+where \(\mu=\Esp[Y]\). Introducing \(\sigma^2 = \Var[Y]\), we have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[f(Y)] =& f(\mu) + f'(\mu) (\Esp[Y]-\mu) + \frac{1}{2} f''(\mu) \Esp[(Y-\mu)^2] + \frac{1}{6} f'''(\mu) \Esp[(Y-\mu)^3] + o\left(\Esp[(Y-\mu)^3]\right) \\
+=& f(\mu) + \frac{\sigma^2}{2} f''(\mu)  + o\left(\Esp[(Y-\mu)^3]\right)
+\end{align*}
+#+END_EXPORT
+for a normal distribution since \(\Esp[(Y-\mu)^3]=0\). Also:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[f(Y)] =& \left(f'(\mu)\right)^2 \Var\left[\Esp[Y]-\mu\right] + f'(\mu)f''(\mu) \Esp[(Y-\mu)^3] \\
+& +\left(\frac{f'(\mu) f'''(\mu)}{3} + \frac{\left(f''(\mu)\right)^2}{4}\right) \Esp[(Y-\mu)^4] + o\left(\Esp[(Y-\mu)^4]\right) \\
+=& \left(f'(\mu)\right)^2 \sigma^2 + 3 \sigma^4 \left(\frac{f'(\mu) f'''(\mu)}{3} + \frac{\left(f''(\mu)\right)^2}{4}\right) + o\left(\Esp[(Y-\mu)^4]\right) \\
+\end{align*}
+#+END_EXPORT
+
+\bigskip
+
+\textbf{Application}:  exponential transformation (\(f = \exp\))
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu)\left(1 + \frac{\sigma^2}{2}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu)\left(\sigma^2 + \frac{7}{4} \sigma^4\right) \\
+\end{align*}
+#+END_EXPORT
+
+\textbf{Illustration}: 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n <- 1e4
+mu <- 0.1
+sigma2 <- 0.1
+X <- rnorm(n, mean = mu, sd = sqrt(sigma2))
+fX <- exp(X)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## first order
+c(error_mean = mean(fX) - exp(mu), 
+  errorPC_mean = 100*(mean(fX) - exp(mu))/mean(fX))
+c(error_var = var(fX) - exp(2*mu)*sigma2, 
+  errorPC_var = 100*(var(fX) - exp(2*mu)*sigma2)/var(fX))
+#+END_SRC
+
+#+RESULTS:
+:   error_mean errorPC_mean 
+:   0.05783048   4.97252058
+:   error_var errorPC_var 
+:  0.02343271 16.09687872
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## second order
+c(mean = mean(fX),
+  error_mean = mean(fX) - exp(mu)*(1+sigma2/2), 
+  errorPC_mean = 100*(mean(fX) - exp(mu)*(1+sigma2/2))/mean(fX))
+c(var = var(fX),
+  error_var = var(fX) - exp(2*mu)*(sigma2 + (7/4)*sigma2^2), 
+  errorPC_var = 100*(var(fX) - exp(2*mu)*(sigma2 + (7/4)*sigma2^2))/var(fX))
+#+END_SRC
+
+#+RESULTS:
+:         mean   error_mean errorPC_mean 
+:  1.163001402  0.002571938  0.221146614
+:         var   error_var errorPC_var 
+: 0.145572982 0.002058158 1.413832496
+
+** Two independent groups
+
+\textbf{Theory}: consider two groups \(G=0\) and \(G=1\) for which we want to compare
+the percentage difference in outcome \(Y\). Our parameter of interest
+is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \gamma
+\end{align*}
+#+END_EXPORT
+and we assume that on the original scale:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[Y] = \Var[Y|G=1]  = \Var[Y|G=0] = \sigma_Y^2
+\end{align*}
+#+END_EXPORT
+and
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[Y|G=0] = \alpha_Y
+\end{align*}
+#+END_EXPORT
+
+\bigskip
+
+We only assume that the outcome is normally distribution after log
+transformation, i.e. \(\log(Y) \sim
+\Gaus\left(a_0,s^2_0\right)\) in the first group
+and \(\log(Y) \sim
+\Gaus\left(a_1,s^2_1\right)\). We can use the
+delta method to identify these parameters:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha_Y &= \exp(a_0)\left(1 + \frac{s^2_0}{2}\right) \\
+\sigma^2_Y &= \exp(2 a_0)\left(s^2_0 + \frac{7}{4}s^4_0\right) \\
+\alpha_Y (\gamma+1) &= \exp(a_1)\left(1 + \frac{s^2_1}{2}\right) \\
+\sigma^2_Y &= \exp(2 a_1)\left(s^2_1 + \frac{7}{4}s^4_1\right)
+\end{align*}
+#+END_EXPORT
+i.e.
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\alpha^2_Y}{\sigma_Y^2} &= \frac{\left(1-\frac{s_0^2}{2}\right)^2}{s^2_0 + \frac{7}{4}s^4_0}  \\
+a_0 &= \frac{1}{2}\log\left(\frac{\sigma^2_Y}{\left(s^2_0 + \frac{7}{4}s^4_0\right)}\right) \\
+\frac{\alpha^2_Y(\gamma+1)^2}{\sigma_Y^2} &= \frac{\left(1-\frac{s_1^2}{2}\right)^2}{s^2_1 + \frac{7}{4}s^4_1}  \\
+a_1 &= \frac{1}{2}\log\left(\frac{\sigma^2_Y}{\left(s^2_1 + \frac{7}{4}s^4_1\right)}\right) 
+\end{align*}
+#+END_EXPORT 
+The first and third equation can be solved numerically.
+
+\bigskip
+
+\textbf{Illustration}:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+alpha_Y <- 1.15
+sigma2_Y <- 0.15
+
+s <- uniroot(function(x){alpha_Y^2/sigma2_Y - (1+x/2)^2/(x+x^2*7/4)},
+               interval = c(0,1))$root
+a <- log(sigma2_Y/(s+s^2*7/4))/2
+c(a = a, s = s)
+#+END_SRC
+
+#+RESULTS:
+:          a          s 
+: 0.08802784 0.10608948
+
+
+
+We can check that:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(exp(a)*(1+s/2), exp(2*a)*(s+s^2*7/4))
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.149944 0.150000
+
+i.e.
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Z <- rnorm(1e4, mean=a, sd = sqrt(s))
+mean(exp(Z))
+var(exp(Z))
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.152237
+: [1] 0.1496768
+
+\textbf{Note}: an alternative approach is to use a log-normal distribution with
+parameters:
+#+BEGIN_EXPORT latex
+\begin{align*}
+s^2 =&\log\left(1+\frac{\sigma^2}{\alpha^2}\right) \\
+a =&\log(\alpha) - \frac{s^2}{2} 
+\end{align*}
+#+END_EXPORT
+Here it gives:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+s <- log(1+sigma2_Y/alpha_Y^2)
+a <- log(alpha_Y) - s/2
+c(a = a, s = s)
+#+END_SRC
+
+#+RESULTS:
+:          a          s 
+: 0.08604307 0.10743775
+
+We can check that:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exp(a + s/2) - alpha_Y
+(exp(s)-1)*exp(2*a + s) - sigma2_Y
+#+END_SRC
+
+#+RESULTS:
+: [1] 0
+: [1] -5.551115e-17
+
+and
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Y <- rlnorm(1e4, meanlog=a, sdlog = sqrt(s))
+mean(Y)
+var(Y)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.146438
+: [1] 0.1462818
 
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
