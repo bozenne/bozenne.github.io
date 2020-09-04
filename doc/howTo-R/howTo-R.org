@@ -40,6 +40,12 @@ library(survival) # survival analysis
 
 ## statistical inference
 library(multcomp) # adjust for multiple comparisons
+library(exactci) ##  ci / p-values for proportions 
+library(exact2x2) ## compare proportions between groups
+library(asht) ##  test on the quantile
+library(BuyseTest) ## wilcoxon-test with estimated effect size
+library(perm) ## permutation tests
+library(quantreg) ## quantile regression
 
 ## loops and parallel computing
 library(pbapply)
@@ -1268,12 +1274,6 @@ identical(dtL.data,dtL.data.bis)
 #+END_SRC
 
 #+RESULTS:
-: Warning message:
-: In melt.data.table(dtW.data, id.vars = c("Id", "Gender", "Treatment",  :
-:   'measure.vars' [weight_t1, weight_t2, weight_t3] are not all of the same type. By order of hierarchy, the molten data value column will be of type 'double'. All measure variables not of type 'double' will be coerced too. Check DETAILS in ?melt.data.table for more on coercion.
-: Warning message:
-: In melt.data.table(dtW.data, id.vars = c("Id", "Gender", "Treatment",  :
-:   'measure.vars' [weight_t1, weight_t2, weight_t3] are not all of the same type. By order of hierarchy, the molten data value column will be of type 'double'. All measure variables not of type 'double' will be coerced too. Check DETAILS in ?melt.data.table for more on coercion.
 : [1] TRUE
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -1519,9 +1519,11 @@ gg.hist
 #+RESULTS:
 : `stat_bindot()` using `bins = 30`. Pick better value with `binwidth`.
 
-#+BEGIN_SRC R :results graphics :file "./figures/fig-hist.pdf" :exports results :session *R* :cache yes
+   
+#+BEGIN_SRC R :results graphics :file "./figures/fig-hist.pdf" :exports results :session *R* :cache no
 print(gg.hist)
 #+END_SRC
+
 
 #+RESULTS[<2020-04-14 11:32:11> df9525aa02866e0113aa512a94be9fa6304aba1d]:
 [[file:./figures/fig-hist.pdf]]
@@ -1762,14 +1764,27 @@ plot(m, plot.engine="visnetwork")
 #+RESULTS:
 
 * Modeling
-** Test proportions (from Paul Blanche)
+** Test proportions
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-library(exact2x2)
-library(Publish)
-specdec <- function(x,k=0){
-    format(round(x,k),nsmall=k)
-}
+binom.exact(c(15,4), p = 0.5) ## 15 success, 4 failures
 #+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Exact two-sided binomial test (central method)
+
+data:  c(15, 4)
+number of successes = 15, number of trials = 19, p-value = 0.01921
+alternative hypothesis: true probability of success is not equal to 0.5
+95 percent confidence interval:
+ 0.5443469 0.9394755
+sample estimates:
+probability of success 
+             0.7894737
+#+end_example
+
+** Compare proportions between groups (with fixed margins!)
 
 Data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -1786,84 +1801,199 @@ tab
 : Placebo        5     12
 : Dalteparin     8      3
 
-Prepare output:
+Unpaired: (fisher test)
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-AllRes <- matrix("",nrow=4,ncol=3)
-colnames(AllRes) <- c("Exact: usual Fisher","Asymptotic","Exact: central Fisher")
-rownames(AllRes) <- c("Risk differrence","Relative risk","Odds ratio","p-value")
-AllRes
+fisher.exact(tab)
 #+END_SRC
 
 #+RESULTS:
-:                  Exact: usual Fisher Asymptotic Exact: central Fisher
-: Risk differrence ""                  ""         ""                   
-: Relative risk    ""                  ""         ""                   
-: Odds ratio       ""                  ""         ""                   
-: p-value          ""                  ""         ""
+#+begin_example
 
-Usual fisher test:
+	Two-sided Fisher's Exact Test (usual method using minimum likelihood)
+
+data:  tab
+p-value = 0.05103
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.0272 1.0631
+sample estimates:
+odds ratio 
+  0.168551
+#+end_example
+
+
+Paired: (mc-nemar test)
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-xEuF <- fisher.test(tab)
-AllRes[4,1] <- specdec(xEuF$p.value,k=3)
-AllRes[3,1] <- paste0(specdec(xEuF$estimate,k=3)," (",specdec(xEuF$conf.int[1],k=3),";",specdec(xEuF$conf.int[2],k=3),")")
+mcnemar.exact(tab) 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Exact McNemar test (with central confidence intervals)
+
+data:  tab
+b = 12, c = 8, p-value = 0.5034
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.5638258 4.2303974
+sample estimates:
+odds ratio 
+       1.5
+#+end_example
+
+** permutation t-test 
+
+Data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+X <- rlnorm(10, meanlog = 2, sdlog = 0.5)
+Y <- rlnorm(10, meanlog = 1.8, sdlog = 0.5)
 #+END_SRC
 
 #+RESULTS:
 
-Central Fisher test:
+Approximation based on asymptotic result:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-xEcF <- exact2x2(tab,tsmethod="central")
-AllRes[4,3] <- specdec(xEcF$p.value,k=3)
-AllRes[3,3] <- paste0(specdec(xEcF$estimate,k=3)," (",specdec(xEcF$conf.int[1],k=3),";",specdec(xEcF$conf.int[2],k=3),")")
+permTS(x = X, y = Y, method = "pclt")
+#+END_SRC
 
-ciRDEcF <- binomMeld.test(x1=tab[2,1],n1=sum(tab[2,]),
-                          x2=tab[1,1],n2=sum(tab[1,]),
-                          parmtype="difference")
-AllRes[1,3] <- paste0(specdec(ciRDEcF$estimate,k=3)," (",specdec(ciRDEcF$conf.int[1],k=3),";",specdec(ciRDEcF$conf.int[2],k=3),")")
+#+RESULTS:
+: 
+: 	Permutation Test using Asymptotic Approximation
+: 
+: data:  X and Y
+: Z = -1.5476, p-value = 0.1217
+: alternative hypothesis: true mean X - mean Y is not equal to 0
+: sample estimates:
+: mean X - mean Y 
+:       -1.533514
 
-ciRREcF <- binomMeld.test(x1=tab[2,1],n1=sum(tab[2,]),
-                          x2=tab[1,1],n2=sum(tab[1,]),
-                          parmtype="ratio")
-AllRes[2,3] <- paste0(specdec(ciRREcF$estimate,k=3)," (",specdec(ciRREcF$conf.int[1],k=3),";",specdec(ciRREcF$conf.int[2],k=3),")")
+Approximation based on simulations:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+permTS(x = X, y = Y, method = "exact.mc")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Exact Permutation Test Estimated by Monte Carlo
+
+data:  X and Y
+p-value = 0.112
+alternative hypothesis: true mean X - mean Y is not equal to 0
+sample estimates:
+mean X - mean Y 
+      -1.533514 
+
+p-value estimated from 999 Monte Carlo replications
+99 percent confidence interval on p-value:
+ 0.07625212 0.15272627
+#+end_example
+
+Exact:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+permTS(x = X, y = Y, method = "exact.ce")
+#+END_SRC
+
+#+RESULTS:
+: 
+: 	Exact Permutation Test (complete enumeration)
+: 
+: data:  X and Y
+: p-value = 0.1238
+: alternative hypothesis: true mean X - mean Y is not equal to 0
+: sample estimates:
+: mean X - mean Y 
+:       -1.533514
+
+** Testing median
+
+Data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+X <- rlnorm(100, meanlog = 2, sdlog = 0.5) - 6.5
 #+END_SRC
 
 #+RESULTS:
 
-Asymptotics:
+Median test
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-xA <- table2x2(tab)
-AllRes[4,2] <- specdec(chisq.test(tab)$p.value,k=3)
-AllRes[3,2] <- paste0(specdec(xA$or,k=3)," (",specdec(xA$or.lower,k=3),";",specdec(xA$or.upper,k=3),")")
-AllRes[2,2] <- paste0(specdec(xA$rr,k=3)," (",specdec(xA$rr.lower,k=3),";",specdec(xA$rr.upper,k=3),")")
-AllRes[1,2] <- paste0(specdec(xA$rd,k=3)," (",specdec(xA$rd.lower,k=3),";",specdec(xA$rd.upper,k=3),")")
-chisq.test(tab)$expected
-sum(tab[,1]/sum(tab))*sum(tab[1,])
-sum(tab[,2]/sum(tab))*sum(tab[1,])
-sum(tab[,1]/sum(tab))*sum(tab[2,])
-sum(tab[,2]/sum(tab))*sum(tab[2,])
+quantileTest(X)
 #+END_SRC
 
 #+RESULTS:
-:               worse   better
-: Placebo    7.892857 9.107143
-: Dalteparin 5.107143 5.892857
-: [1] 7.892857
-: [1] 9.107143
-: [1] 5.107143
-: [1] 5.892857
+#+begin_example
 
-Comparisons
+	Exact Test/Confidence Interval for Median
+
+data:  X
+quantile for prob = 0.5, pAG = 0.18410, pAL = 0.86437, pc = 0.36820, p-value = 0.3682
+alternative hypothesis: true median is not equal to 0
+95 percent confidence interval:
+ -0.3701565  1.4997902
+sample estimates:
+   median 
+0.2082777
+#+end_example
+
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-AllRes
+df <- data.frame(value=X)
+e <- rq(value~1, tau = 0.5, data = df)
+summary(e, se = "nid")
 #+END_SRC
 
 #+RESULTS:
-:                  Exact: usual Fisher   Asymptotic               Exact: central Fisher  
-: Risk differrence ""                    "-0.433 (-0.774;-0.092)" "-0.433 (-0.748;0.017)"
-: Relative risk    ""                    "0.404 (0.178;0.919)"    "0.404 (0.133;1.038)"  
-: Odds ratio       "0.169 (0.020;1.072)" "0.156 (0.029;0.845)"    "0.169 (0.020;1.072)"  
-: p-value          "0.051"               "0.063"                  "0.062"
+#+begin_example
+Warning message:
+In rq.fit.br(x, y, tau = tau, ...) : Solution may be nonunique
 
+Call: rq(formula = value ~ 1, tau = 0.5, data = df)
+
+tau: [1] 0.5
+
+Coefficients:
+            Value   Std. Error t value Pr(>|t|)
+(Intercept) 0.20213 0.49381    0.40932 0.68319
+#+end_example
+
+Other quantiles
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e2 <- rq(value~1, tau = c(0.25,0.5,0.75), data = df)
+summary(e2, se = "nid")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Warning messages:
+1: In rq.fit.br(x, y, tau = tau, ...) : Solution may be nonunique
+2: In rq.fit.br(x, y, tau = tau, ...) : Solution may be nonunique
+3: In rq.fit.br(x, y, tau = tau, ...) : Solution may be nonunique
+
+Call: rq(formula = value ~ 1, tau = c(0.25, 0.5, 0.75), data = df)
+
+tau: [1] 0.25
+
+Coefficients:
+            Value    Std. Error t value  Pr(>|t|)
+(Intercept) -1.61744  0.37283   -4.33828  0.00003
+
+Call: rq(formula = value ~ 1, tau = c(0.25, 0.5, 0.75), data = df)
+
+tau: [1] 0.5
+
+Coefficients:
+            Value   Std. Error t value Pr(>|t|)
+(Intercept) 0.20213 0.49381    0.40932 0.68319 
+
+Call: rq(formula = value ~ 1, tau = c(0.25, 0.5, 0.75), data = df)
+
+tau: [1] 0.75
+
+Coefficients:
+            Value   Std. Error t value Pr(>|t|)
+(Intercept) 3.43848 0.68607    5.01186 0.00000
+#+end_example
 
 ** Testing linear hypotheses
 
