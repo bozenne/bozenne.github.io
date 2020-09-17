@@ -666,14 +666,8 @@ regression. Mathematically the model can be written:
 Y_1 = \alpha + \beta_{age} age + \beta_{BMI} BMI + \beta_{MDI} MDI + \varepsilon \label{eq:lm}
 \end{align}
 #+END_EXPORT
-where \(\varepsilon\) are the residuals. that are assumed to be:
-- A0: independent and identically distributed (iid)
-- A1: normally distributed.
-Note that for equation eqref:eq:lm to be valid we assume:
-- A2: linear effect of the covariates (e.g. no interaction)
-(A0-A2) are modeling assumptions and only (A1-A2) can be tested in
-practice. Univariate linear regression are also not recommended in
-presence of extreme values (A3) or very correlated covariates (A4).
+where \(\varepsilon\) are the residuals assumed to be independent and
+identically distributed (iid).
 
 ** Fitting a univariate linear regression in \Rlogo{}
 
@@ -707,172 +701,10 @@ then we can interpret \(\beta_{MDI}\) as the effect of MDI on the
 outcome. This means that if we could change the MDI of an individual
 by one unit then its variation in outcome should be \(\beta_{MDI}\).
 
-\clearpage
-
-** Diagnostics tools for univariate linear regression in \Rlogo{}
-:PROPERTIES:
-:CUSTOM_ID: sec:diagLM
-:END:
-
-\Rlogo{} provides a graphical display that giving an overview of the
-model fit:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-par(mfrow = c(2,2))
-plot(e.lm)
-#+END_SRC
-
-#+RESULTS:
-      
-#+BEGIN_SRC R :results graphics :file "./figures/diag-lm.pdf" :exports results :session *R* :cache no
-par(mfrow = c(2,2))
-plot(e.lm)
-#+END_SRC
-
-#+RESULTS:
-[[file:./figures/diag-lm.pdf]]
-
-The top left plot is useful to detect a misspecification of the linear
-predictor (e.g. a U shape would indicate a missing quadratic
-effect). The top right plot enable to check the normality of the
-residuals, we will describe a more informative qqplot below. The
-bottom left can be used to detect heteroschedasticity (e.g. a trumpet
-shape) and the bottom right plot can be used to identify observation
-that have a huge influence on the fitted values.
-
-*** Testing (A1)
-
-The qqtest package provides a more readable qqplot. To use it, we
-first need to extract the residuals. This can be achieved using the
-=residuals= method:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dfW$resid.lm <- residuals(e.lm, type = "response")
-#+END_SRC
-
-#+RESULTS:
-
-The =type= argument indicates the type of residuals we want to
-extract. Raw residuals are \(\hat{\varepsilon} = Y-\hat{Y}\), i.e. the
-observed minus the fitted values. In models more complex than a
-univariate linear regression, the raw residuals may not be iid. This
-makes it difficult to assess the validity of the assumptions. In such
-cases we display instead diagnostics for normalized residuals that, if
-the assumptions of the model are correct, should follow a standard
-normal distribution.
-
-\bigskip
-
-Having extracted the residuals, we can then obtain the qqplot using
-the =qqtest= function:
-#+BEGIN_SRC R :exports code :results output :session *R* :cache no
-qqtest(dfW$resid.lm)
-#+END_SRC
-
-#+RESULTS:
-
-#+BEGIN_SRC R :results graphics :file "./figures/qqplot-lm.pdf" :exports results :session *R* :cache no
-qqtest(dfW$resid.lm)
-#+END_SRC
-
-#+RESULTS:
-[[file:./figures/qqplot-lm.pdf]]
-
-The shaded area indicates where, if the normality assumption was
-correct, we would expect to observe the points. Alternatively, an
-histogram of the residuals can be used to assess the normality of the
-residuals:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-hist(dfW$resid.lm, prob=TRUE, ylim = c(0,0.4))
-curve(dnorm(x, mean=0, sd=1), add=TRUE, col = "red")
-#+END_SRC
-
-#+RESULTS:
-   
-#+BEGIN_SRC R :results graphics :file "./figures/hist-lm.pdf" :exports results :session *R* :cache no
-hist(dfW$resid.lm, prob=TRUE, ylim = c(0,0.4))
-curve(dnorm(x, mean=0, sd=1), add=TRUE, col = "red")
-#+END_SRC
-
-#+RESULTS:
-[[file:./figures/hist-lm.pdf]]
-
-Statistical tests can also be used to assess deviation from normality:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-shapiro.test(dfW$resid.lm)
-#+END_SRC
-
-#+RESULTS:
-: 
-: 	Shapiro-Wilk normality test
-: 
-: data:  dfW$resid.lm
-: W = 0.98104, p-value = 0.5967
-Here the null hypothesis is that the residuals follow a normal
-distribution.
-
-\clearpage
-
-*** Testing (A2)
-
-A statistical test can also be used to assess whether there is
-evidence for a more complex functional form for the linear predictor:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-cumres(e.lm)
-#+END_SRC
-
-#+RESULTS:
-#+begin_example
-
-Kolmogorov-Smirnov-test: p-value=0.195
-Cramer von Mises-test: p-value=0.06
-Based on 1000 realizations. Cumulated residuals ordered by predicted-variable.
----
-Kolmogorov-Smirnov-test: p-value=0.016
-Cramer von Mises-test: p-value=0.021
-Based on 1000 realizations. Cumulated residuals ordered by age-variable.
----
-Kolmogorov-Smirnov-test: p-value=0.151
-Cramer von Mises-test: p-value=0.29
-Based on 1000 realizations. Cumulated residuals ordered by BMI-variable.
----
-Kolmogorov-Smirnov-test: p-value=0.708
-Cramer von Mises-test: p-value=0.833
-Based on 1000 realizations. Cumulated residuals ordered by MDI-variable.
----
-#+end_example
-
-*** Testing (A3)
-
-The =influence= method can be used to output what is the impact of
-each observation on each estimated parameter:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-head(influence(e.lm)$coefficient)
-#+END_SRC
-
-#+RESULTS:
-:   (Intercept)           age           BMI           MDI
-: 1 -0.06431419  0.0021223892  0.0011037299 -0.0023268582
-: 2 -0.02333311  0.0005276379  0.0007260234 -0.0005075087
-: 3  0.02225432 -0.0037807751  0.0134437130 -0.0084481492
-: 4 -0.31091908  0.0087011324  0.0065717767 -0.0053971745
-: 5 -0.16703438  0.0080674308 -0.0026717037 -0.0019605965
-: 6  0.43406252  0.0002100576 -0.0176591598 -0.0008988258
-
-Large values (positive or negative) indicate influential observations.
-
-*** Testing (A4)
-
-The correlation among the explanatory variables can be assessed using
-the VIF (variance inflation factor):
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-car::vif(e.lm)
-#+END_SRC
-
-#+RESULTS:
-:      age      BMI      MDI 
-: 1.076066 1.034264 1.051645
-Values higher than 5 are considered as high (the threshold of 5 is
-arbitrary).
-
+** Model checking
+This step aims to identify gross violations of model assumptions that
+could compromise the validity or the stability of the estimate. It is
+described in a separate document available at XXXX.
 
 ** Hypothesis testing
 
