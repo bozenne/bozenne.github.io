@@ -36,13 +36,6 @@ library(ggfortify) ## install.packages("ggfortify")
 #+END_SRC
 
 #+RESULTS:
-: Loading required package: carData
-: 
-: Attaching package: 'car'
-: 
-: The following object is masked from 'package:lava':
-: 
-:     logit
 
 The first is hosted on CRAN and can be install directly. The next two
 are hosted on Gihub so you should first install the package devtools
@@ -111,16 +104,17 @@ e.lm
 Denote for the \(i-th\) patient its outcome value by \(Y_i\) (can be
 any real number), its gender value by \(Gender_i\) (can be "Male" or
 "Female"), its gene value by \(Gene_i\) (can be "A", "B", or
-"C"). Mathematically, this linear model can be written:
+"C"), and its BMI value by \(BMI_i\). Mathematically, this linear model can be written:
 #+BEGIN_EXPORT latex
 \begin{align*}
-Y_i = \alpha + \beta_{Gender} \Ind[Gender_i="Female"] + \beta_{Age} Age_i + \beta_{GeneB} \Ind[Gene_i="B"] + \beta_{GeneC} \Ind[Gene_i="C"] + \varepsilon_i
+Y_i =& \alpha + \beta_{Gender} * \Ind[Gender_i="Female"] + \beta_{Age} * Age_i + \beta_{GeneB} *  \Ind[Gene_i="B"] + \beta_{GeneC} * \Ind[Gene_i="C"] \\
+& + \beta_{BMI} * BMI_i + \varepsilon_i
 \end{align*}
 #+END_EXPORT
 where \(\boldsymbol{\beta} =
-(\alpha,\beta_{Gender},\beta_{Age},\beta_{GeneB},\beta_{GeneC})\) is
+(\alpha,\beta_{Gender},\beta_{Age},\beta_{GeneB},\beta_{GeneC},\beta_{BMI})\) is
 the vector of model parameters. Their value is shown just above
-(e.g. \(\alpha=-53.3739\)). Here \(\Ind[.]\) denotes the indicator
+(e.g. \(\alpha=-21.3988\)). Here \(\Ind[.]\) denotes the indicator
 function taking value 1 if "." is true and 0
 otherwise. \(\varepsilon_i\) is the residual error, i.e. the
 difference between the observed value and the observed value. Consider
@@ -132,15 +126,20 @@ d[1,]
 #+RESULTS:
 :       Y Gene Age  BMI Id Gender
 : 1 115.7    A  48 25.2  1   Male
-its observed value is 15 and we can computed its fitted value as:
+its observed value is 115.7 and we can computed its fitted value as:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\hat{Y}_1 &= \alpha + \beta_{Gender} * 0 + \beta_{Age} 48 + \beta_{GeneB} * 0 + \beta_{GeneC} * 1 \\
-          &= -53.3739 + 1.3171 * 0 + 1.5279 * 48 - 0.1058 * 0 + 1.5055 * 1 = 21.4708
+\hat{Y}_1 &= \alpha + \beta_{Gender} * 0 + \beta_{Age} 48 + \beta_{GeneB} * 0 + \beta_{GeneC} * 0 \\
+          &= 21.3988 + 0.9778 * 0 + 1.5326 * 48 + 1.3783 * 0 + 2.6682 * 0 + 1.0351 * 25.2 \\
+          & = 121.048
 \end{align*}
 #+END_EXPORT
-This can also be obtained using (the discrepancy comes from rounding
-at the 4th digit):
+
+\clearpage 
+
+This can also be obtained using the =fitted= method in \Rlogo{} (the
+discrepancy comes from rounding the coefficient values at the 4th
+digit):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 fitted(e.lm)[1] 
 #+END_SRC
@@ -152,11 +151,17 @@ fitted(e.lm)[1]
 Often, for conciseness, this linear model can be abbreviated as:
 #+BEGIN_EXPORT latex
 \begin{align*}
-Y_i = X_i \beta + \varepsilon_i
+Y_i = X_i \boldsymbol{\beta} + \varepsilon_i
 \end{align*}
 #+END_EXPORT
 where \(X_i = \left(1, \Ind[Gender_i="Female"], Age_i,
-\Ind[Gene_i="B"], \Ind[Gene_i="C"]\right)\).
+\Ind[Gene_i="B"], \Ind[Gene_i="C"]\right)\) and \(X_i
+\boldsymbol{\beta}\) is the matrix product between the row vector
+\(X_i\) and the column vector \(\boldsymbol{\beta}\). More generally,
+i.e. at the population level instead of the individual level, we also
+write \(Y = X \boldsymbol{\beta} + \varepsilon\) to describe the
+relationship between the random variables \(Y\), \(X\),
+\(\varepsilon\).
 
 * Assumptions 
 # # https://ademos.people.uic.edu/Chapter12.html#31_getting_a_broad_snapshot:_plot()
@@ -169,15 +174,15 @@ A linear model \(Y = X \beta + \varepsilon\) is a model studying the
 - *(A0)*: no unobserved confounders.
 - *(A1)*: \(\Esp[Y_i|X] = X_i \beta\) correct specification of the
   functional form of the covariates.
-- *(A2)*: identically distributed and *(A3)* independent residuals, which
-  under the normality assumption reduces to *(A2)* homoschedasticity
-  \(\Var[Y_i|X]= \sigma^2\) and *(A3)* uncorrelatedness \(\forall i \neq
-  j\), \(\Cov[Y_i,Y_j|X]= 0\).
+- *(A2)*: identically distributed and *(A3)* independent
+  residuals. \newline Under the normality assumption, it simplifies to
+  *(A2)* homoschedasticity \(\Var[Y_i|X]= \sigma^2\) and *(A3)*
+  uncorrelatedness \(\forall i \neq j\), \(\Cov[Y_i,Y_j|X]= 0\).
 While not needed per se, the assumption of:
 - *(A4)*: normally distributed residuals is often mentioned since (i)
   normality of the estimates holds exactly in finite samples (instead
-  of asymptotically) i.e. p-value/CI are reliable even in small
-  samples, (ii) it ensure that MLE is the best estimation procedure,
+  of asymptotically) i.e. p-values/CIs are reliable even in small
+  samples, (ii) it ensures that MLE is the best estimation procedure,
   (iii) checking *(A2)* and *(A3)* is simplified.
 Additional assumptions are typically necessary to ensure reliable and
 interpretable estimates:
@@ -397,7 +402,7 @@ normal distribution (red curve). We could reject *(A4)* but accept
 *(A4-bis)* in the case where the distribution has heavy tails but is
 still unimodal and symmetric. While intuitive, this method is
 sensitive to the discretization of the residuals values (argument
-break) and qq-plot is often preferred:
+break) and a qq-plot is often preferred:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 qqtest::qqtest(residuals(e.lm.2, type = "pearson"))
 #+END_SRC
@@ -416,7 +421,7 @@ Here the points should follow a straight line and be within the shaded
 area. We could reject *(A4)* but accept *(A4-bis)* in the case where
 deviation to the straight line mostly arise in the tails.  Statistical
 test (like a shapiro test) are not recommended since they do not
-enable us to know whether we reject *(A4)* or *(A4bis)*. Possible
+enable us to know whether we reject *(A4)* or *(A4bis)*. 
 
 \bigskip
 
@@ -454,7 +459,7 @@ function from the car package.
 
 ** *(A2)*: Homeschedasticity
 Homoschedasticity can be inspected by displaying the residuals along
-the fitted values :
+the fitted values:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 d$residuals <- residuals(e.lm.2, type = "pearson")
 d$fitted <- fitted(e.lm.2)
@@ -674,14 +679,14 @@ The partial residuals with respect to age are defined by removing the
 effect of all the covariates but age on the outcome:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\hat{\varepsilon}^{Age}_i &= Y_i - \left(\alpha + \beta_{Gender} \Ind[Gender_i=="Female"] + \beta_{GeneB} \Ind[Gene_i=="B"] + \beta_{GeneC} \Ind[Gene_i=="C"]\right)
+\hat{\varepsilon}^{Age}_i &= Y_i - \left(\alpha + \beta_{Gender} \Ind[Gender_i="Female"] + \beta_{GeneB} \Ind[Gene_i="B"] + \beta_{GeneC} \Ind[Gene_i="C"]  + \beta_{BMI} BMI_i\right)
 \end{align*}
 #+END_EXPORT
 So for instance for the first individual:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\hat{\varepsilon}^{Age}_1 &= 15.0 - \left(-34.2857 + 0.8893 * 0 + 0.8337 * 0 + 1.8057 * 1\right)
-                         &= 15.0 - -32.48 = 47.48
+\hat{\varepsilon}^{Age}_1 &= 115.7 - \left(21.3988 + 0.9778 * 0 + 1.3783 * 0 + 2.6682 * 0 + 1.0351 * 25.2\right) \\
+                         &= 115.7 - 47.48 = 68.22
 \end{align*}
 #+END_EXPORT
 At the dataset level, this type of partial residual is centered around
@@ -727,7 +732,7 @@ gg <- autoplot(pRes.noI)
 - An alternative definition do not remove the intercept effect:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\hat{\varepsilon}^{Age,\alpha}_i &= Y_i - \left(\beta_{Gender} \Ind[Gender_i=="Female"] + \beta_{GeneB} \Ind[Gene_i=="B"] + \beta_{GeneC} \Ind[Gene_i=="C"]\right)
+\hat{\varepsilon}^{Age,\alpha}_i &= Y_i - \left(\beta_{Gender} \Ind[Gender_i="Female"] + \beta_{GeneB} \Ind[Gene_i="B"] + \beta_{GeneC} \Ind[Gene_i="C"] + \beta_{BMI} BMI_i \right)
 \end{align*}
 #+END_EXPORT
 so now the residuals are centered around the intercept plus the
@@ -794,7 +799,7 @@ gg
 Consider now a model where the age effect can be different for males
 and females:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e.lmI <- lm(Y~Gender*Age+Gene, data = d)
+e.lmI <- lm(Y~Gender*Age+Gene+BMI, data = d)
 #+END_SRC
 
 #+RESULTS:
