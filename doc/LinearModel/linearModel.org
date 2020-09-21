@@ -114,10 +114,10 @@ Y_i =& \alpha + \beta_{Gender} * \Ind[Gender_i="Female"] + \beta_{Age} * Age_i +
 where \(\boldsymbol{\beta} =
 (\alpha,\beta_{Gender},\beta_{Age},\beta_{GeneB},\beta_{GeneC},\beta_{BMI})\) is
 the vector of model parameters. Their value is shown just above
-(e.g. \(\alpha=-21.3988\)). Here \(\Ind[.]\) denotes the indicator
+(e.g. \(\alpha=21.3988\)). Here \(\Ind[.]\) denotes the indicator
 function taking value 1 if "." is true and 0
 otherwise. \(\varepsilon_i\) is the residual error, i.e. the
-difference between the observed value and the observed value. Consider
+difference between the observed value and the fitted value. Consider
 for instance the first individual:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 d[1,]

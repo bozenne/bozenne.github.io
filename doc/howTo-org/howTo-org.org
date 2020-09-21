@@ -70,6 +70,14 @@ model$weights[[1]]
 1. [@1] xxx
 2. [@4] yyy
 3. [@5] zzz
+** Remove vertical space enumerate
+
+# # \newenvironment{tightEnumerate}{
+# # \begin{enumerate}
+# #  \setlength{\itemsep}{0pt}
+# #  \setlength{\parskip}{0pt}
+# #  \setlength{\parsep}{0pt}
+# # }{\end{enumerate}}
 
 * Table
 
@@ -124,7 +132,6 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 
 [[file:./figures/myplot.pdf]]
 
-
 ** Divide the page (align at the top)
 # https://stackoverflow.com/questions/23388929/emacs-org-mode-to-beamer-how-to-do-multicolumn-text
 # use [T] for graphics
@@ -146,7 +153,6 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
    :END:
 
 [[file:./figures/myplot.pdf]]
-
 
 ** Inline latex
 @@latex:any arbitrary LaTeX code@@
@@ -188,7 +194,10 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \end{figure}
 #+END_EXPORT
 # trim={<left> <lower> <right> <upper>}
-
+** Comments
+# \usepackage{todonotes}
+# \setlength{\marginparwidth}{3cm}
+# \geometry{top=1cm,left=1cm,right=4cm}
 * References
 :PROPERTIES:
 :BEAMER_OPT: fragile,allowframebreaks

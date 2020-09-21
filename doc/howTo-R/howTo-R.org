@@ -2786,6 +2786,23 @@ loaded via a namespace (and not attached):
 [56] bindr_0.1.1       haven_1.1.2
 #+end_example
 
+** Install and load two version of the same package
+
+Install
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+devtools::install_github("tagteam/riskRegression") ## v1
+install.packages("riskRegression", ## v2
+                 lib = "C:/Users/hpl802/Downloads/LIBRTEMPO")
+#+END_SRC
+
+Load 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(riskRegression) ## v1
+detach("package:riskRegression", unload = TRUE)
+library(riskRegression, lib.loc="C:/Users/hpl802/Downloads/LIBRTEMPO") ## v2
+detach("package:riskRegression", unload = TRUE)
+#+END_SRC
+
 ** CRAN check rocker
 https://www.brodieg.com/2018/04/06/adventures-in-r-and-compiled-code/
 
