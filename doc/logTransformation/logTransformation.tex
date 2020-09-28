@@ -1,4 +1,4 @@
-% Created 2020-06-15 ma 17:16
+% Created 2020-09-28 ma 11:50
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -168,27 +168,24 @@ emphstyle=\color{blue}
 
 \maketitle
 
-\section{Result}
-\label{sec:org6b8bc61}
-Let's denote by \(Y\) the outcome and by \(G\) a group variable
-\(G\) (binary variable). We are interested in the relative change in \(Y\) between the
-groups. We decide to model the group effect on the log scale:
+\section{Interpretation of the regression coefficient after log-transformation}
+\label{sec:orgc0badd2}
+Let's denote by \(Y\) the outcome and by \(G\) a binary group
+variable. We are interested in the relative change in \(Y\) between
+the groups. We decide to model the group effect on the log scale:
 \begin{align*}
-\log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+\log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \Esp[\varepsilon]=0 \text{ and } \Esp[\varepsilon]=\sigma^2
 \end{align*}
 We claim that:
 \begin{align*}
 \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = e^{\beta} - 1
 \end{align*}
 
-\section{Proof}
-\label{sec:org8caff4f}
-
-\subsection{Re-writting the model as a multiplicative model}
-\label{sec:orgb244dee}
+\subsection{Proof: re-writting the model as a multiplicative model}
+\label{sec:orgdfd2edb}
 We can re-write the model as:
 \begin{align*}
-Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where }
 \end{align*}
 So for \(g\in\{1,2\}\):
 \begin{align*}
@@ -201,9 +198,8 @@ Then:
 & = \frac{e^{\alpha + \beta} -e^{\alpha}}{e^{\alpha}}  = e^{\beta} - 1 \\
 \end{align*}
 
-\subsection{Using a Taylor expansion}
-\label{sec:org59193d1}
-
+\subsection{Proof: using a Taylor expansion}
+\label{sec:org8497061}
 
 Using a second order Taylor expansion of \(\exp(Z)\) around
 \(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
@@ -217,15 +213,10 @@ Y &= e^{Z} = e^{\mu} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \mu)^i \frac{\parti
 &= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^i] \right)
 \end{align*}
 where we used that the distribution of \(\varepsilon\) is independent
-of \(g\). [Optional] \(\varepsilon\) follows a zero-mean normal distribution, so
-the uneven moments are 0:
-\begin{align*}
-\Esp[Y|G=g] &= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)
-\end{align*}
-We can now express our parameter of interest:
+of \(g\). We can now express our parameter of interest:
 \begin{align*}
 \Delta_G &= \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \frac{\Esp[Y|G=1]}{\Esp[Y|G=0]} - 1 \\
-&= \frac{e^{\alpha + \beta} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)}{e^{\alpha} \left(1 + \sum_{i=1}^{\infty} \frac{1}{2i!} \Esp[\varepsilon^{2i}] \right)} - 1 \\
+&= \frac{e^{\alpha + \beta} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)}{e^{\alpha} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)} - 1 \\
 &= e^{\beta} - 1
 \end{align*}
 
@@ -233,10 +224,10 @@ We can now express our parameter of interest:
 \clearpage
 
 \section{Note for power calculation}
-\label{sec:orgd6c9c5c}
+\label{sec:orga9a3b5a}
 
 \subsection{Recall: delta-method for normally distributed variables}
-\label{sec:org2be0bf6}
+\label{sec:orgeaad2fd}
 
 \textbf{Theory}: we recall that for a random variable \(Y\) with finite first two
 moments, the delta method applied around the mean for a transformation
@@ -264,176 +255,264 @@ for a normal distribution since \(\Esp[(Y-\mu)^3]=0\). Also:
 \Var[\exp(Y)] &\approx \exp(2\mu)\left(\sigma^2 + \frac{7}{4} \sigma^4\right) \\
 \end{align*}
 
-\textbf{Illustration}: 
+\clearpage
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 0.1 and variance 0.1. What is its expectation and variance
+after log-transformation?
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-n <- 1e4
-mu <- 0.1
-sigma2 <- 0.1
-X <- rnorm(n, mean = mu, sd = sqrt(sigma2))
-fX <- exp(X)
+set.seed(10); n <- 1e4
+mu <- 0.1; sigma2 <- 0.1
+
+## first order method
+mu.exp1 <- exp(mu)
+var.exp1 <- exp(2*mu)*sigma2
+
+## second order method
+mu.exp2 <- exp(mu)*(1+sigma2/2)
+var.exp2 <- exp(2*mu)*(sigma2 + (7/4)*sigma2^2)
+
+## empirical value
+X.exp <- exp(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.expGS <- mean(X.exp)
+var.expGS <-  var(X.exp)
 \end{lstlisting}
 
+Comparison mean:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-## first order
-c(error_mean = mean(fX) - exp(mu), 
-  errorPC_mean = 100*(mean(fX) - exp(mu))/mean(fX))
-c(error_var = var(fX) - exp(2*mu)*sigma2, 
-  errorPC_var = 100*(var(fX) - exp(2*mu)*sigma2)/var(fX))
-\end{lstlisting}
-
-\begin{verbatim}
- error_mean errorPC_mean 
- 0.05783048   4.97252058
- error_var errorPC_var 
-0.02343271 16.09687872
-\end{verbatim}
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-## second order
-c(mean = mean(fX),
-  error_mean = mean(fX) - exp(mu)*(1+sigma2/2), 
-  errorPC_mean = 100*(mean(fX) - exp(mu)*(1+sigma2/2))/mean(fX))
-c(var = var(fX),
-  error_var = var(fX) - exp(2*mu)*(sigma2 + (7/4)*sigma2^2), 
-  errorPC_var = 100*(var(fX) - exp(2*mu)*(sigma2 + (7/4)*sigma2^2))/var(fX))
+rbind(value = c(first.order = mu.exp1, 
+				second.order = mu.exp2, 
+				truth = mu.expGS),
+	  bias = c(mu.exp1,mu.exp2,mu.expGS)-mu.expGS,
+	  relative.bias = (c(mu.exp1,mu.exp2,mu.expGS)-mu.expGS)/mu.expGS)
 \end{lstlisting}
 
 \begin{verbatim}
-        mean   error_mean errorPC_mean 
- 1.163001402  0.002571938  0.221146614
-        var   error_var errorPC_var 
-0.145572982 0.002058158 1.413832496
+              first.order second.order    truth
+value          1.10517092  1.160429464 1.163026
+bias          -0.05785477 -0.002596223 0.000000
+relative.bias -0.04974505 -0.002232301 0.000000
 \end{verbatim}
 
-\subsection{Two independent groups}
-\label{sec:org849702e}
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = var.exp1, 
+				second.order = var.exp2, 
+				truth = var.expGS),
+	  bias = c(var.exp1,var.exp2,var.expGS)-var.expGS,
+	  relative.bias = (c(var.exp1,var.exp2,var.expGS)-var.expGS)/var.expGS)
+\end{lstlisting}
 
-\textbf{Theory}: consider two groups \(G=0\) and \(G=1\) for which we want to compare
-the percentage difference in outcome \(Y\). Our parameter of interest
-is:
+\begin{verbatim}
+              first.order  second.order     truth
+value          0.12214028  0.1435148241 0.1444692
+bias          -0.02232895 -0.0009544035 0.0000000
+relative.bias -0.15455853 -0.0066062752 0.0000000
+\end{verbatim}
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\subsection{Two independent groups - normal distribution}
+\label{sec:org5cc4d0e}
+
+\textbf{Theory}: consider two groups \(G=0\) and \(G=1\) for which we
+want to compare the percentage difference in outcome \(Y\). We are
+willing to assume that on the log-scale \(Y\) is normally
+distributed. Our parameter of interest is:
 \begin{align*}
 \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \gamma
 \end{align*}
-and we assume that on the original scale:
+we denote \(\alpha = \Esp[Y|G=0]\) and we assume that on the original scale:
 \begin{align*}
-\Var[Y] = \Var[Y|G=1]  = \Var[Y|G=0] = \sigma_Y^2
+\Var[Y|G=1]  = \Var[Y|G=0] = \sigma^2
 \end{align*}
-and
+How should be parametrized the gaussian distribution of
+\(\log(Y)|G=0\) and \(\log(Y)|G=1\) to satisfy
+\((\alpha,\gamma,\sigma^2)\)? In other words we want to find
+\(m_0,m_1,s_0,s_1\) such that:
 \begin{align*}
-\Esp[Y|G=0] = \alpha_Y
+Z_0 = \log(Y)|G=0 &\sim \Gaus\left(m_0,s^2_0\right) \\
+Z_1 = \log(Y)|G=1 &\sim \Gaus\left(m_1,s^2_1\right) 
 \end{align*}
-
-\bigskip
-
-We only assume that the outcome is normally distribution after log
-transformation, i.e. \(\log(Y) \sim
-\Gaus\left(a_0,s^2_0\right)\) in the first group
-and \(\log(Y) \sim
-\Gaus\left(a_1,s^2_1\right)\). We can use the
-delta method to identify these parameters:
+We can use the delta method to identify these parameters since:
 \begin{align*}
-\alpha_Y &= \exp(a_0)\left(1 + \frac{s^2_0}{2}\right) \\
-\sigma^2_Y &= \exp(2 a_0)\left(s^2_0 + \frac{7}{4}s^4_0\right) \\
-\alpha_Y (\gamma+1) &= \exp(a_1)\left(1 + \frac{s^2_1}{2}\right) \\
-\sigma^2_Y &= \exp(2 a_1)\left(s^2_1 + \frac{7}{4}s^4_1\right)
+\alpha &= \Esp[\exp(Z_0)] = \exp(a_0)\left(1 + \frac{s^2_0}{2}\right) \\
+\sigma^2 &= \Var[\exp(Z_0)] = \exp(2 a_0)\left(s^2_0 + \frac{7}{4}s^4_0\right) \\
+\alpha (\gamma + 1) &= \Esp[\exp(Z_1)] = \exp(a_1)\left(1 + \frac{s^2_1}{2}\right)\\
+\sigma^2 &= \Var[\exp(Z_1)] = \exp(2 a_1)\left(s^2_1 + \frac{7}{4}s^4_1\right)
 \end{align*}
 i.e.
 \begin{align*}
-\frac{\alpha^2_Y}{\sigma_Y^2} &= \frac{\left(1-\frac{s_0^2}{2}\right)^2}{s^2_0 + \frac{7}{4}s^4_0}  \\
-a_0 &= \frac{1}{2}\log\left(\frac{\sigma^2_Y}{\left(s^2_0 + \frac{7}{4}s^4_0\right)}\right) \\
-\frac{\alpha^2_Y(\gamma+1)^2}{\sigma_Y^2} &= \frac{\left(1-\frac{s_1^2}{2}\right)^2}{s^2_1 + \frac{7}{4}s^4_1}  \\
-a_1 &= \frac{1}{2}\log\left(\frac{\sigma^2_Y}{\left(s^2_1 + \frac{7}{4}s^4_1\right)}\right) 
+\frac{\alpha^2}{\sigma^2} = \frac{\left(1+\frac{s_0^2}{2}\right)^2}{s^2_0 + \frac{7}{4}s^4_0}            \qquad &\rightarrow \text{gives } s_0 \\
+a_0 = \frac{1}{2}\log\left(\frac{\sigma^2}{\left(s^2_0 + \frac{7}{4}s^4_0\right)}\right)                \qquad &\rightarrow \text{gives } a_0 \\
+\frac{\alpha^2(\gamma+1)^2}{\sigma^2} = \frac{\left(1+\frac{s_1^2}{2}\right)^2}{s^2_1 + \frac{7}{4}s^4_1}\qquad &\rightarrow \text{gives } s_1 \\
+a_1 = \frac{1}{2}\log\left(\frac{\sigma^2}{\left(s^2_1 + \frac{7}{4}s^4_1\right)}\right)                \qquad &\rightarrow \text{gives } a_1 
 \end{align*}
 The first and third equation can be solved numerically.
 
-\bigskip
+\clearpage
 
-\textbf{Illustration}:
+\textbf{Illustration}: We consider two groups having a 10\% difference
+in their baseline value (\(\alpha=1.15\)) and a variance of \(\sigma^2
+= 0.15\). What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-alpha_Y <- 1.15
-sigma2_Y <- 0.15
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+\end{lstlisting}
 
-s <- uniroot(function(x){alpha_Y^2/sigma2_Y - (1+x/2)^2/(x+x^2*7/4)},
-			   interval = c(0,1))$root
-a <- log(sigma2_Y/(s+s^2*7/4))/2
-c(a = a, s = s)
+Solve the equations:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+s0 <- uniroot(function(x){alpha^2/sigma2 - (1+x/2)^2/(x+x^2*7/4)},
+			  interval = c(0,1))$root
+a0 <- log(sigma2/(s0+s0^2*7/4))/2
+s1 <- uniroot(function(x){alpha^2*(gamma+1)^2/sigma2 - (1+x/2)^2/(x+x^2*7/4)},
+			  interval = c(0,1))$root
+a1 <- log(sigma2/(s1+s1^2*7/4))/2
+c(a0 = a0, s0 = s0, a1 = a1, s1 = s1)
 \end{lstlisting}
 
 \begin{verbatim}
-         a          s 
-0.08802784 0.10608948
+        a0         s0         a1         s1 
+0.08802784 0.10608948 0.19175319 0.08851048
 \end{verbatim}
 
-
-
-We can check that:
+We can check that \texttt{uniroot} converged correctly:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-c(exp(a)*(1+s/2), exp(2*a)*(s+s^2*7/4))
+c(exp(a0)*(1+s0/2) - alpha, 
+  exp(2*a0)*(s0+s0^2*7/4) - sigma2, 
+  exp(a1)*(1+s1/2) - alpha*(1+gamma), 
+  exp(2*a1)*(s1+s1^2*7/4) - sigma2)
 \end{lstlisting}
 
 \begin{verbatim}
-[1] 1.149944 0.150000
+[1] -5.563198e-05  0.000000e+00 -1.895835e-05  0.000000e+00
 \end{verbatim}
 
-i.e.
+and the variables have the appropriate distribution:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-Z <- rnorm(1e4, mean=a, sd = sqrt(s))
-mean(exp(Z))
-var(exp(Z))
+Z0 <- exp(rnorm(1e4, mean=a0, sd = sqrt(s0)))
+Z1 <- exp(rnorm(1e4, mean=a1, sd = sqrt(s1)))
+c(alpha = mean(Z0), 
+  gamma = (mean(Z1)-mean(Z0))/mean(Z0), 
+  sigma2 = var(Z0), 
+  sigma2 = var(Z1))
 \end{lstlisting}
 
 \begin{verbatim}
-[1] 1.152237
-[1] 0.1496768
+    alpha     gamma    sigma2    sigma2 
+1.1435272 0.1090391 0.1473705 0.1507638
 \end{verbatim}
 
-\textbf{Note}: an alternative approach is to use a log-normal distribution with
-parameters:
+For a power calculation we would use:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
+## dvmisc::power_2t_unequal(n = 143, d = a1-a0, sigsq1 = s0, sigsq2 = s1, alpha = 0.05)
+\end{lstlisting}
+
+\begin{verbatim}
+     Two-sample t test power calculation 
+
+              n = 142.9312
+              d = 0.3325282
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+\end{verbatim}
+
+\subsection{Two independent groups - log-normal distribution}
+\label{sec:orgcd77fca}
+
+An alternative approach is to use a log-normal distribution. Random
+variables with log normal distribution have their logarithm equal to a
+specific value \(a\) and their standard deviation equal to a specific
+value \(s\). So we want to get:
 \begin{align*}
-s^2 =&\log\left(1+\frac{\sigma^2}{\alpha^2}\right) \\
-a =&\log(\alpha) - \frac{s^2}{2} 
+\alpha &= \exp(a_0 + \frac{1}{2} s_0^2) \\
+\sigma^2 &= \exp(2*a_0 + s_0^2)*(\exp(s_0^2)-1) \\
+\alpha (1+\gamma) &= \exp(a_1 + \frac{1}{2} s_1^2) \\
+\sigma^2 &= \exp(2*a_1 + s_1^2)*(\exp(s_1^2)-1)
 \end{align*}
-Here it gives:
+So
+\begin{align*}
+s_0 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+a_0 &= \log(\alpha)-\frac{s_0^2}{2}\\
+s_1 &= \log\left(1+\frac{\sigma^2}{\alpha*(1+\gamma)^2}\right)\\
+a_1 &= \log(\alpha*(1+\gamma))-\frac{s_1^2}{2}
+\end{align*}
+
+\clearpage
+
+\textbf{Illustration}: We still consider two groups having a 10\%
+difference in their baseline value (\(\alpha=1.15\)) and a variance of
+\(\sigma^2 = 0.15\). What are the parameters of the corresponding
+normal distribution on the log-scale and the standardized effect size?
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-s <- log(1+sigma2_Y/alpha_Y^2)
-a <- log(alpha_Y) - s/2
-c(a = a, s = s)
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+\end{lstlisting}
+
+We identify the parameters of the log-normal distributions:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+s0 <- log(1+sigma2/alpha^2)
+a0 <- log(alpha) - s0/2 
+s1 <- log(1+sigma2/(alpha*(1+gamma))^2)
+a1 <- log(alpha*(1+gamma)) - s1/2 
+c(a0 = a0, s0 = s0, a1 = a1, s1 = s1)
 \end{lstlisting}
 
 \begin{verbatim}
-         a          s 
-0.08604307 0.10743775
+        a0         s0         a1         s1 
+0.08604307 0.10743775 0.19027207 0.08960011
 \end{verbatim}
 
-We can check that:
+We can check that the variables have the appropriate distribution:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-exp(a + s/2) - alpha_Y
-(exp(s)-1)*exp(2*a + s) - sigma2_Y
+Z0 <- rlnorm(1e4, mean=a0, sd = sqrt(s0))
+Z1 <- rlnorm(1e4, mean=a1, sd = sqrt(s1))
+c(alpha = mean(Z0), 
+  gamma = (mean(Z1)-mean(Z0))/mean(Z0), 
+  sigma2 = var(Z0), 
+  sigma2 = var(Z1))
 \end{lstlisting}
 
 \begin{verbatim}
-[1] 0
-[1] -5.551115e-17
+    alpha     gamma    sigma2    sigma2 
+1.1480725 0.1019535 0.1455856 0.1510286
 \end{verbatim}
 
-and
+For a power calculation we would use:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-Y <- rlnorm(1e4, meanlog=a, sdlog = sqrt(s))
-mean(Y)
-var(Y)
+pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
+## dvmisc::power_2t_unequal(n = 143, d = a1-a0, sigsq1 = s0, sigsq2 = s1, alpha = 0.05)
 \end{lstlisting}
 
 \begin{verbatim}
-[1] 1.146438
-[1] 0.1462818
+     Two-sample t test power calculation 
+
+              n = 143.3238
+              d = 0.3320693
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group
 \end{verbatim}
 \end{document}
