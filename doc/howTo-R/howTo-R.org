@@ -2684,29 +2684,55 @@ Warning messages:
 * Miscellaneous
 ** Profile code
 
-#+BEGIN_SRC R :exports both :results output :session *R* :cache yes
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
 m <- lvm(Y ~ X + G)
 FUN <- function(n){
     d <- lava::sim(m, n = n)
     estimate(m,d)
 }
-profvis::profvis(FUN(n = 500))
 #+END_SRC
 
 #+RESULTS[<2019-06-27 09:37:37> a0d5077301cabedce939985d9ce7fb7eb9072578]:
 
-# OLD VERSION
-#+BEGIN_SRC R :exports none :results output :session *R* :cache yes
-filename <- tempfile()
-on.exit(unlink(filename))
-Rprof(filename, line.profiling = TRUE, ...)
-FUN(n = 500)
-Rprof(append = FALSE)
-print(sProfile <- summaryRprof(filename))
-resProfile <- proftools::readProfileData(filename)
-proftools::plotProfileCallGraph(resProfile, score = "total", nodeSizeScore = "none")
+# memory and computation time
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+profvis::profvis(FUN(n = 500))
+profvis::profvis(FUN(n = 5000))
+profvis::profvis(FUN(n = 50000))
 #+END_SRC
+
+#+RESULTS:
+
+# memory
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+memoryConsumed <- function(...){
+    ##  https://stackoverflow.com/questions/7856306/monitor-memory-usage-in-r
+    ## upper bound of memory that is in use during the processing of a function and commands (MB)
+    before <- sum(.Internal(gc(verbose = FALSE, reset = TRUE, full = TRUE))[13:14])
+    dots <- list(...)
+    after <- sum(.Internal(gc(verbose = FALSE, reset = FALSE, full = TRUE))[13:14])
+    return(after-before)
+}
+c(memoryConsumed(FUN(n = 500)),
+  memoryConsumed(FUN(n = 5000)),
+  memoryConsumed(FUN(n = 50000)),
+  memoryConsumed(FUN(n = 500000)))
+#+END_SRC
+
+#+RESULTS[<2020-10-02 16:18:56> 92c18ed74489373248881a648660461cb67c6261]:
+: [1] 14.9 16.4 31.4 81.2
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Rprof(tf <- "rprof.log", memory.profiling=TRUE)
+xx <- FUN(n=500000)
+Rprof(NULL)
+max(summaryRprof(tf, memory = "both")$by.total$mem.total)
+
+#+END_SRC
+
+#+RESULTS:
+: [1] 129.8
 
 ** Debug
 To not show to many line before debug:
@@ -2790,17 +2816,17 @@ loaded via a namespace (and not attached):
 
 Install
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-devtools::install_github("tagteam/riskRegression") ## v1
-install.packages("riskRegression", ## v2
-                 lib = "C:/Users/hpl802/Downloads/LIBRTEMPO")
+devtools::install_github("bozenne/BuyseTest") ## v1
+install.packages("http://cran.r-project.org/src/contrib/Archive/BuyseTest/BuyseTest_1.0.tar.gz", 
+                 lib = "C:/Users/hpl802/Downloads/LIBRTEMPO", type = "source", repos = NULL)
 #+END_SRC
 
 Load 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-library(riskRegression) ## v1
-detach("package:riskRegression", unload = TRUE)
-library(riskRegression, lib.loc="C:/Users/hpl802/Downloads/LIBRTEMPO") ## v2
-detach("package:riskRegression", unload = TRUE)
+library(BuyseTest) ## v1
+detach("package:BuyseTest", unload = TRUE)
+library(BuyseTest, lib.loc="C:/Users/hpl802/Downloads/LIBRTEMPO") ## v2
+detach("package:BuyseTest", unload = TRUE)
 #+END_SRC
 
 ** CRAN check rocker

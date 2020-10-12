@@ -30,18 +30,18 @@ packages:
 library(lava) ## install.packages("lava")
 library(car) ## install.packages("car")
 library(nlme) ## install.packages("nlme")
+library(ggfortify) ## install.packages("ggfortify")
 library(butils) ## devtools::install_github("bozenne/butils")
 library(gof) ## devtools::install_github("kkholst/gof")
-library(ggfortify) ## install.packages("ggfortify")
 #+END_SRC
 
 #+RESULTS:
 
-The first is hosted on CRAN and can be install directly. The next two
-are hosted on Gihub so you should first install the package devtools
-(using =install.packages=) and then you will be able to install these
-packages via the command =install_gitub= as shown above (after the
-=##=).
+The first four are hosted on CRAN and can be install directly. The
+last two are hosted on Gihub so you should first install the package
+devtools (using =install.packages=) and then you will be able to
+install these packages via the command =install_gitub= as shown above
+(after the =##=).
 
 \clearpage
 
@@ -643,7 +643,7 @@ autoplot(e.lm.2, which = 4)
 [[file:./figures/A5-cook.pdf]]
 
 
-** Others [no recommanded unless specific reasons]
+** Others [not recommanded unless specific reasons]
 Some people recommand to check the correlation between the explanatory
 variables, with the argument that when very correlated it is difficult
 to disantangle effects and thus to interpret the regression

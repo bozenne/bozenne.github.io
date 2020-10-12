@@ -1,4 +1,4 @@
-% Created 2019-10-22 ti 10:04
+% Created 2020-10-02 fr 10:05
 % Intended LaTeX compiler: pdflatex
 \documentclass[table]{beamer}
 
@@ -37,7 +37,7 @@ emphstyle=\color{blue}
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{color}
-\usepackage{enumerate}
+\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{grffile}
 \usepackage{wrapfig}
@@ -89,8 +89,6 @@ emphstyle=\color{blue}
 \usepackage{changepage}
 \usepackage{booktabs}
 \newcommand{\darkgreen}{green!50!black}
-\setbeamercolor{uppercol}{fg=black,bg=blue!35}
-\setbeamercolor{lowercol}{fg=black,bg=blue!10}
 \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
 \RequirePackage{capt-of} %
 \RequirePackage{caption} % newlines in graphics
@@ -127,24 +125,39 @@ emphstyle=\color{blue}
 \maketitle
 
 \section{Box}
-\label{sec:org1d9b72e}
+\label{sec:org763e58f}
 
-\begin{frame}[label={sec:orgf159a62}]{Round box}
-(see header for the definition of uppercol and lowercol)
+\begin{frame}[label={sec:org5ce5edf}]{Round box}
+\setbeamercolor{block title example}{fg=black,bg=lightgray}
+\setbeamercolor{block body example}{fg=white,bg=gray}
+\setbeamercolor{block body}{fg=white,bg=blue!60}
 
-\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]
-{Patient preference} 
-\begin{enumerate}
-\item increase survival by at least 2 months
-\item otherwise, least serious adverse events
-\end{enumerate}
-\end{beamerboxesrounded}
+\begin{block}{}
+	The \texttt{beamercolorbox} environment!
+\end{block}
+
+\begin{exampleblock}{block title}
+	Box type \texttt{beamerboxesrounded}
+	
+	with shadow.
+	
+	Different colours are possible for the header and box contents. \ldots
+\end{exampleblock}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\begin{example}
+	Box type \texttt{beamerboxesrounded}
+	
+	with shadow.
+	
+	Different colours are possible for the header and box contents. \ldots
+\end{example}
 \end{frame}
 
 \section{Code}
-\label{sec:org8731614}
+\label{sec:org6cb4fee}
 
-\begin{frame}[fragile,label={sec:org9744c8c}]{Set output size}
+\begin{frame}[fragile,label={sec:org198137b}]{Set output size}
  \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 summary(model)
@@ -188,30 +201,27 @@ model$weights[[1]]
 \end{frame}
 
 \section{List}
-\label{sec:org5231a71}
+\label{sec:org81bd660}
 
-\begin{frame}[label={sec:orga44e0e8}]{Choose item}
+\begin{frame}[label={sec:orga93a433}]{Choose item}
 \begin{description}
 \item[{(A)}] yyy
 \item[{(1)}] xxx
 \end{description}
 \end{frame}
 
-\begin{frame}[label={sec:orgfd37ec4}]{Choose item (2)}
-\begin{enumerate}
-\setcounter{enumi}{0}
-\item xxx
-\setcounter{enumi}{3}
-\item yyy
-\setcounter{enumi}{4}
-\item zzz
-\end{enumerate}
+\begin{frame}[label={sec:orgc08f21c}]{Use itemize and modify vertical space}
+\begin{itemize}[label={-},topsep=0pt,itemsep=5ex,partopsep=1ex,parsep=1ex]
+\item a
+\item b
+\item c
+\end{itemize}
 \end{frame}
 
 \section{Table}
-\label{sec:orgae34ab3}
+\label{sec:org3877ab4}
 
-\begin{frame}[label={sec:org0faae8e}]{Nice latex table}
+\begin{frame}[label={sec:org6b230f3}]{Nice latex table}
 (require booktabs)
 
 \begin{table}
@@ -231,9 +241,9 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{References}
-\label{sec:org1a5bfb8}
+\label{sec:org33e30c5}
 
-\begin{frame}[label={sec:org890b2af}]{Citations}
+\begin{frame}[label={sec:org7a231f8}]{Citations}
 \begin{itemize}
 \item \citep{pearson1905problem}
 \item \cite{pearson1905problem}
@@ -243,9 +253,9 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{Miscellaneous}
-\label{sec:org59c124d}
+\label{sec:org18aa711}
 
-\begin{frame}[label={sec:org77cd7aa}]{Divide the page (align at the middle)}
+\begin{frame}[label={sec:orgc3fb514}]{Divide the page (align at the middle)}
 \begin{columns}
 \begin{column}{0.45\columnwidth}
 \begin{itemize}
@@ -266,8 +276,7 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{columns}
 \end{frame}
 
-
-\begin{frame}[label={sec:orgdb9c9ec}]{Divide the page (align at the top)}
+\begin{frame}[label={sec:orgbb2660e}]{Divide the page (align at the top)}
 \begin{columns}
 \begin{column}[t]{0.45\columnwidth}
 \begin{itemize}
@@ -288,22 +297,21 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{columns}
 \end{frame}
 
-
-\begin{frame}[label={sec:org3366087}]{Inline latex}
+\begin{frame}[label={sec:orge70a020}]{Inline latex}
 any arbitrary LaTeX code
 \end{frame}
 
-\begin{frame}[label={sec:orgdad6ace}]{Color tex}
+\begin{frame}[label={sec:org31081ef}]{Color tex}
 (see header for the definition of darkgreen)
 \begin{itemize}
 \item \textcolor{\darkgreen}{risk factor}: adjust (will increase precision)
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org0db9721}]{Footnote}
+\begin{frame}[label={sec:org27355ff}]{Footnote}
 This is a footnote\footnote{blaa}.
 \end{frame}
-\begin{frame}[label={sec:org33ef0de}]{Big centered text}
+\begin{frame}[label={sec:orgcf3fde2}]{Big centered text}
 \vfill
 
 \begin{center}
@@ -313,7 +321,7 @@ This is a footnote\footnote{blaa}.
 \vfill
 \end{frame}
 
-\begin{frame}[label={sec:orgf0d3e2f}]{Change margin}
+\begin{frame}[label={sec:orgf0fbbab}]{Change margin}
 (require changepage)
 \begin{adjustwidth}{-1em}{-1em}
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -323,8 +331,10 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \end{adjustwidth}
 \end{frame}
 
+\begin{frame}[label={sec:org6041882}]{Comments}
+\end{frame}
 \section{References}
-\label{sec:org677b369}
+\label{sec:org867bc6e}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}

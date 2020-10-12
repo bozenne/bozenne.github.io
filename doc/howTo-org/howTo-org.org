@@ -4,16 +4,33 @@
 * Box
 
 ** Round box 
-(see header for the definition of uppercol and lowercol)
+# http://mcclinews.free.fr/latex/introbeamer/elements_contenu.html
 
 #+BEGIN_EXPORT latex
-\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]
-{Patient preference} 
-\begin{enumerate}
-\item increase survival by at least 2 months
-\item otherwise, least serious adverse events
-\end{enumerate}
-\end{beamerboxesrounded}
+\setbeamercolor{block title example}{fg=black,bg=lightgray}
+\setbeamercolor{block body example}{fg=white,bg=gray}
+\setbeamercolor{block body}{fg=white,bg=blue!60}
+
+\begin{block}{}
+	The \texttt{beamercolorbox} environment!
+\end{block}
+
+\begin{exampleblock}{block title}
+	Box type \texttt{beamerboxesrounded}
+	
+	with shadow.
+	
+	Different colours are possible for the header and box contents. \ldots
+\end{exampleblock}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\begin{example}
+	Box type \texttt{beamerboxesrounded}
+	
+	with shadow.
+	
+	Different colours are possible for the header and box contents. \ldots
+\end{example}
 #+END_EXPORT
 
 * Code
@@ -65,12 +82,13 @@ model$weights[[1]]
 - (A) :: yyy
 - (1) :: xxx
 
-** Choose item (2)
+** Use itemize and modify vertical space
 
-1. [@1] xxx
-2. [@4] yyy
-3. [@5] zzz
-** Remove vertical space enumerate
+#+ATTR_LATEX: :environment itemize
+#+ATTR_LATEX: :options [label={-},topsep=0pt,itemsep=5ex,partopsep=1ex,parsep=1ex]
+- a
+- b
+- c
 
 # # \newenvironment{tightEnumerate}{
 # # \begin{enumerate}
@@ -284,10 +302,6 @@ bibliographystyle:apalike
 
 ** Color
 #+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
-
-** Box
-#+LaTeX_HEADER: \setbeamercolor{uppercol}{fg=black,bg=blue!35}
-#+LaTeX_HEADER: \setbeamercolor{lowercol}{fg=black,bg=blue!10}
 
 ** Lists
 # # fix bug with beamer when specifying options for itemize
