@@ -2840,6 +2840,8 @@ RDcsan
 
 wget -O - https://github.com/bozenne/BuyseTest/tarball/master | tar xz
 
+# https://nbviewer.jupyter.org/github/ericspod/ContainersForCollaboration/blob/master/ContainersForCollaboration.ipynb
+
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
