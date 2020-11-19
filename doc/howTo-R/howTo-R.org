@@ -199,6 +199,22 @@ The *foreign* package enable to read a variety for files, e.g.:
  
 To load .rds files use =readRDS= and to load .rdata files use =load=.
 
+** Import data from a Github repository
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+urlfile="https://raw.githubusercontent.com/bozenne/repeated/master/data/calciumL.rda"
+load(url(urlfile))
+head(calciumL)
+#+END_SRC
+
+#+RESULTS:
+:   girl grp visit bmd time.obs time.num time.fac
+: 1  101   C     1 815        0        0  0 years
+: 2  102   P     1 813        0        0  0 years
+: 3  103   P     1 812        0        0  0 years
+: 4  104   C     1 804        0        0  0 years
+: 5  105   C     1 904        0        0  0 years
+: 6  106   P     1 831        0        0  0 years
+
 ** Export data
 
 To export a data.frame to a file one can use:
@@ -1706,6 +1722,8 @@ print(gg.mean5)
 #+RESULTS:
 [[file:./figures/fig-meanTime5.pdf]]
 
+\clearpage
+
 *** Combine ggplots
 (from https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots)
 
@@ -2812,6 +2830,10 @@ loaded via a namespace (and not attached):
 [56] bindr_0.1.1       haven_1.1.2
 #+end_example
 
+** Install a package from a zip file (windows)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+install.packages("package_version.zip", repos = NULL, type = "win.binary")
+#+END_SRC
 ** Install and load two version of the same package
 
 Install
