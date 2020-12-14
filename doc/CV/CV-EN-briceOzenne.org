@@ -31,7 +31,7 @@
 #+LaTeX: \resheading{Current position}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	November 2015- Now:& \textbf{Postdoctoral researcher in biostatistics} with a shared position between \\ [2mm]
+	November 2015- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
@@ -97,12 +97,17 @@ Proficient in \Rlogo{}, \LaTeX{} and [[https://orgmode.org/][orgmode]]. @@latex:
 Basic knowledge but common use of \Cpp{}, lisp (for [[https://www.gnu.org/software/emacs/][GNU Emacs]]) and
 git/github (via [[https://magit.vc/][magit]]).
 
-\clearpage
-
-* Education                                                  :ignore:
-#+LaTeX: \resheading{Education}
+* Education                                                          :ignore:
+#+LaTeX: \resheading{Education and research carrier}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
+2020 - 2015 : & Post-doc in biostatistics with a shared positive between: \\
+              & \emph{University of Copenhagen}: researcher and teacher at the Graduate School \\
+              & of Health and Medical Sciences \\ 
+              & \emph{Copenhagen University Hospital}: consultant and leader of the data analysis workpackage \\ 
+              & of the \href{https://np.nru.dk/}{Neuropharm} project  \\ 
+              & Development of LVM for analysing brain data (\texttt{lavaSearch2} package) and \\
+              & robust estimators of treatment effect for registry data analysis (R package \texttt{riskRegression}) \\ [3mm]
 2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
               & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
               & Advisor: Pr. Delphine Maucort-Boulch and Pr. Norbert Nighoghossian \\ [3mm]

@@ -30,7 +30,7 @@
 #+LaTeX: \resheading{Activité de recherche}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	Depuis novembre 2015 :& \textbf{Post-doctorat en biostatistiques} avec une position partagée entre \\ [2mm]
+	Depuis octobre 2020 :& \textbf{Professeur assistant en biostatistiques} avec une position partagée entre \\ [2mm]
       & - une unité de recherche en biostatistiques \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhague, Danemark \\ [2mm]
@@ -102,8 +102,20 @@ Bonne connaissance de \Rlogo{}, \LaTeX{} et [[https://orgmode.org/][orgmode]]. @
 Utilisation courante mais basique de \Cpp{}, lisp (pour [[https://www.gnu.org/software/emacs/][GNU Emacs]]),
 git/github et inkscape.
 
-* Formation                                                          :ignore:
-#+LaTeX: \resheading{Formation Universitaire}
+* Formation                                                          :ignore: 
+#+LaTeX: \resheading{Formation universitaire et parcours de recherche}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2015 - 2020 :& \textbf{Post-doctorat en biostatistiques} avec une position partagée entre: \\
+\multicolumn{2}{l}{- \emph{l'Université de Copenhague}: rechercheur et enseignant à l'école doctorale de médicine.}  \\
+\multicolumn{2}{l}{- \emph{le CHU de Copenhague (NRU)}: consultant et responsable de l'analyse de données}\\
+\multicolumn{2}{l}{ \hphantom{le CHU de Copenhague (NRU): } au sein du projet \href{https://np.nru.dk/}{Neuropharm}.}\\
+\end{tabular}
+Développement de modèle à variables latents en neuroimagerie (librarie R \texttt{lavaSearch2}) ainsi que d'estimateurs robustes pour l'analyse de données de registre (librarie R \texttt{riskRegression}).
+#+END_EXPORT
+
+\bigskip
+
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
 2012 - 2015 : & \textbf{Doctorat en biostatistiques}, Université Lyon 1. \\
@@ -132,8 +144,6 @@ git/github et inkscape.
               & \textbf{Master en biostatistiques} à l'Université Lyon 1 en double diplôme (\href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215838}{M2 B3S}). \\
 \end{tabular}
 #+END_EXPORT
-
-\clearpage
 
 * Enseignement et encadrement d'étudiants                                 :ignore:
 #+LaTeX: \resheading{Enseignement et encadrement d'étudiants}
@@ -184,6 +194,8 @@ Co-encadrant d'étudiant en *master 2*:
 \end{tabular}
 #+END_EXPORT
 
+\clearpage
+
 * Production scientifique                                            :ignore:
 #+LaTeX: \resheading{Production scientifique}
 ** /Publications (méthodologiques)/
@@ -221,8 +233,6 @@ En préparation:
     \item \bibentry{ozenne20XXasymptotic}
 \end{enumerate}
 #+END_EXPORT
-
-\clearpage
 
 ** /Publications (applications cliniques)/
 
