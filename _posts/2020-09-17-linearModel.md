@@ -1,6 +1,6 @@
 --- 
 layout: post 
-title: "Baseline adjustment in a randomized trial with a binary endpoint" 
+title: "Diagnostics and partial residuals in a linear model" 
 categories: jekyll update
 ---
 
