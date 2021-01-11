@@ -85,7 +85,7 @@ model$weights[[1]]
 ** Use itemize and modify vertical space
 
 #+ATTR_LATEX: :environment itemize
-#+ATTR_LATEX: :options [label={-},topsep=0pt,itemsep=5ex,partopsep=1ex,parsep=1ex]
+#+ATTR_LATEX: :options [label={-},topsep=0pt,itemsep=0mm] 
 - a
 - b
 - c
@@ -97,6 +97,12 @@ model$weights[[1]]
 # #  \setlength{\parsep}{0pt}
 # # }{\end{enumerate}}
 
+** label scheme
+
+- level 1: \textbullet
+- level 2: \textendash
+- level 3: \textasteriskcentered
+- level 4: \textperiodcentered
 * Table
 
 ** Nice latex table
@@ -273,6 +279,8 @@ bibliographystyle:apalike
 # ## change font size output
 # ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
 
+** List
+#+LaTeX_HEADER: \RequirePackage{enumitem}
 ** Display 
 #+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
 
