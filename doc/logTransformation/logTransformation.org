@@ -182,40 +182,55 @@ moments, the delta method applied around the mean for a transformation
 \(f\) is:
 #+BEGIN_EXPORT latex
 \begin{align*}
-f(Y) = f(\mu) + f'(\mu) (Y-\mu) + \frac{1}{2} f''(\mu) (Y-\mu)^2  + \frac{1}{6} f'''(\mu) (Y-\mu)^3 + o\left((Y-\mu)^2\right)
+f(Y) = f(\mu_Y) + f'(\mu_Y) (Y-\mu_Y) + \frac{1}{2} f''(\mu_Y) (Y-\mu_Y)^2  + \frac{1}{6} f'''(\mu_Y) (Y-\mu_Y)^3 + o\left((Y-\mu_Y)^2\right)
 \end{align*}
 #+END_EXPORT
-where \(\mu=\Esp[Y]\). Introducing \(\sigma^2 = \Var[Y]\), we have:
+where \(\mu_Y=\Esp[Y]\). Introducing \(\sigma_Y^2 = \Var[Y]\) and using
+that for a normal distribution \(\Esp[(Y-\mu_Y)^3]=0\), we have:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\Esp[f(Y)] =& f(\mu) + f'(\mu) (\Esp[Y]-\mu) + \frac{1}{2} f''(\mu) \Esp[(Y-\mu)^2] + \frac{1}{6} f'''(\mu) \Esp[(Y-\mu)^3] + o\left(\Esp[(Y-\mu)^3]\right) \\
-=& f(\mu) + \frac{\sigma^2}{2} f''(\mu)  + o\left(\Esp[(Y-\mu)^3]\right)
+\Esp[f(Y)] =& f(\mu_Y) + f'(\mu_Y) (\Esp[Y]-\mu_Y) + \frac{1}{2} f''(\mu_Y) \Esp[(Y-\mu_Y)^2] \\ &+ \frac{1}{6} f'''(\mu_Y) \Esp[(Y-\mu_Y)^3] + o\left(\Esp[(Y-\mu_Y)^3]\right) \\
+=& f(\mu_Y) + \frac{\sigma_Y^2}{2} f''(\mu_Y)  + o\left(\Esp[(Y-\mu_Y)^3]\right)
 \end{align*}
 #+END_EXPORT
-for a normal distribution since \(\Esp[(Y-\mu)^3]=0\). Also:
+Similarly using that for a normal distribution \(\Esp[(Y-\mu_Y)^4]=3\sigma_Y^4\):
 #+BEGIN_EXPORT latex
 \begin{align*}
-\Var[f(Y)] =& \left(f'(\mu)\right)^2 \Var\left[\Esp[Y]-\mu\right] + f'(\mu)f''(\mu) \Esp[(Y-\mu)^3] \\
-& +\left(\frac{f'(\mu) f'''(\mu)}{3} + \frac{\left(f''(\mu)\right)^2}{4}\right) \Esp[(Y-\mu)^4] + o\left(\Esp[(Y-\mu)^4]\right) \\
-=& \left(f'(\mu)\right)^2 \sigma^2 + 3 \sigma^4 \left(\frac{f'(\mu) f'''(\mu)}{3} + \frac{\left(f''(\mu)\right)^2}{4}\right) + o\left(\Esp[(Y-\mu)^4]\right) \\
+\Var[f(Y)] =& \left(f'(\mu_Y)\right)^2 \Var\left[\Esp[Y]-\mu_Y\right] + f'(\mu_Y)f''(\mu_Y) \Esp[(Y-\mu_Y)^3] \\
+& +\left(\frac{f'(\mu_Y) f'''(\mu_Y)}{3} + \frac{\left(f''(\mu_Y)\right)^2}{4}\right) \Esp[(Y-\mu_Y)^4] + o\left(\Esp[(Y-\mu_Y)^4]\right) \\
+=& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + 3 \sigma_Y^4 \left(\frac{f'(\mu_Y) f'''(\mu_Y)}{3} + \frac{\left(f''(\mu_Y)\right)^2}{4}\right) + o\left(\Esp[(Y-\mu_Y)^4]\right) 
+\end{align*}
+#+END_EXPORT
+and introducing \(X\) with mean \(\mu_X\), variance \(\sigma_X^2\), and correlation \(\rho\) with \(Y\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Cov[f(X),f(Y)] =& f'(\mu_X) f'(\mu_Y) \Cov[X-\mu_X,Y-\mu_Y] \\ &+ \frac{1}{4} f''(\mu_X) f''(\mu_Y) \Cov[(X-\mu_X)^2,(Y-\mu_Y)^2] + o\left(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\right)
 \end{align*}
 #+END_EXPORT
 
 \bigskip
 
 \textbf{Application}:  exponential transformation (\(f = \exp\))
+
+\bigskip
+
+Using that \(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\approx2 \rho^2 \sigma_X^2 \sigma_Y^2\):
 #+BEGIN_EXPORT latex
 \begin{align*}
-\Esp[\exp(Y)] &\approx \exp(\mu)\left(1 + \frac{\sigma^2}{2}\right) \\
-\Var[\exp(Y)] &\approx \exp(2\mu)\left(\sigma^2 + \frac{7}{4} \sigma^4\right) \\
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{7}{4} \sigma_Y^4\right)\\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2\right) 
+%\Cor[\exp(X),\exp(Y)] &\approx \rho + \frac{1}{2} \rho^2 \sigma_X \sigma_Y
 \end{align*}
 #+END_EXPORT
+\Warning these approximations are precise when the mean and variance are small
 
-\clearpage
+\bigskip
+
 
 \textbf{Illustration}: We consider a normally distributed outcome with
 expectation 0.1 and variance 0.1. What is its expectation and variance
-after log-transformation?
+after exp-transformation?
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 set.seed(10); n <- 1e4
 mu <- 0.1; sigma2 <- 0.1
@@ -247,9 +262,9 @@ rbind(value = c(first.order = mu.exp1,
 
 #+RESULTS:
 :               first.order second.order    truth
-: value          1.10517092  1.160429464 1.163026
-: bias          -0.05785477 -0.002596223 0.000000
-: relative.bias -0.04974505 -0.002232301 0.000000
+: value           1.1051709   1.38146365 1.425308
+: bias           -0.3201366  -0.04384390 0.000000
+: relative.bias  -0.2246088  -0.03076101 0.000000
 
 Comparison variance:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -261,13 +276,40 @@ rbind(value = c(first.order = var.exp1,
 #+END_SRC
 
 #+RESULTS:
-:               first.order  second.order     truth
-: value          0.12214028  0.1435148241 0.1444692
-: bias          -0.02232895 -0.0009544035 0.0000000
-: relative.bias -0.15455853 -0.0066062752 0.0000000
+:               first.order second.order   truth
+: value           0.6107014    1.1450651 1.35949
+: bias           -0.7487890   -0.2144253 0.00000
+: relative.bias  -0.5507865   -0.1577248 0.00000
 
 The second order estimate is much more accurate, especially for the
 variance.
+
+\clearpage
+
+We now consider a bivariate normally distributed outcome with
+expectation 0.1, variance 0.1, and correlation 0.5. What is the
+correlation after exp-transformation?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e4
+mu <- c(0.1,0.1); sigma2 <- c(0.1,0.1); rho <- 0.5
+Sigma <- matrix(c(sigma2[1],
+                  rho*sqrt(prod(sigma2)),
+                  rho*sqrt(prod(sigma2)),
+                  sigma2[2]),
+                2,2)
+XY <- mvtnorm::rmvnorm(n, mean = mu, sigma = Sigma)
+X <- XY[,1] ; Y <- XY[,2]
+
+cov(exp(X),exp(Y))
+exp(mean(X)+2*mean(Y)) * (cor(X,Y)*sd(Y)*sd(X) + 0.5*cor(X,Y)^2*var(Y)*var(X))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.06839007
+: [1] 0.06846545
+
+
+\clearpage
 
 ** Two independent groups - normal distribution
 
@@ -492,6 +534,203 @@ pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
 NOTE: n is number in *each* group
 #+end_example
 
+\clearpage
+
+* Moments of the normal distribution
+
+Denote \(X\) and \(Y\) two normally distributed variables, with mean
+\(\mu_X\),\(\mu_Y\) and variance \(\sigma^2_X\),\(\sigma^2_Y\). Then:
+- \(\Esp[X^3]=3 \mu_X \sigma^2_X + \mu_X^3\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+mean(X^3)
+mean((X-mean(X)+mean(X))^3)
+mean(((X-mean(X))^2+2*mean(X)*(X-mean(X))+mean(X)^2)*(X-mean(X)+mean(X)))
+mean((2*mean(X)*(X-mean(X)))*(X-mean(X))) + mean(((X-mean(X))^2+mean(X)^2)*(mean(X)))
+2*mean(X)*var(X) + var(X)*mean(X)+mean(X)^3
+3*mean(X)*var(X) + mean(X)^3
+#+END_SRC
+
+#+RESULTS:
+: [1] 1164.078
+: [1] 1164.078
+: [1] 1164.078
+: [1] 1164.051
+: [1] 1164.051
+: [1] 1164.051
+
+- \(\Esp[X^4]=3\left(\sigma^2_X\right)^2 + 6 \sigma^2_X \mu_X^2 + \mu_X^4\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+mean(X^4)
+mean((X-mean(X)+mean(X))^4)
+mean(((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2)^2)
+mean((X-mean(X))^2 * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) + 2*(X-mean(X))*mean(X) * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) + mean(X)^2 * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) )
+cat("\n")
+mean((X-mean(X))^4  + (X-mean(X))^2* mean(X)^2                       + 2*(X-mean(X))*mean(X) * 2*(X-mean(X))*mean(X) + mean(X)^2 * ((X-mean(X))^2+mean(X)^2) )
+mean((X-mean(X))^4) + mean((X-mean(X))^2* mean(X)^2) + mean(2*(X-mean(X))*mean(X) * 2*(X-mean(X))*mean(X)) + mean(mean(X)^2 * (X-mean(X))^2) + mean(X)^4
+mean((X-mean(X))^4) + var(X)* mean(X)^2              + 4*var(X)*mean(X)^2                                  + var(X)*mean(X)^2              + mean(X)^4
+mean((X-mean(X))^4) + 6*var(X)*mean(X)^2 + mean(X)^4
+3*var(X)^2 + 6*var(X)*mean(X)^2 + mean(X)^4
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 13154.17
+[1] 13154.17
+[1] 13154.17
+[1] 13154.17
+
+[1] 13153.69
+[1] 13153.69
+[1] 13153.7
+[1] 13153.7
+[1] 13153.58
+#+end_example
+
+- \(\Cov[X^2,X]=2 \mu_X \sigma^2_X\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+cov(X^2,X)
+mean((X^2-mean(X^2))*(X-mean(X)))
+mean(X^3-X*mean(X^2)-X^2*mean(X)+mean(X^2)*mean(X))
+mean(X^3)-mean(X)*mean(X^2)-mean(X^2)*mean(X)+mean(X^2)*mean(X)
+mean(X^3) - mean(X)*mean(X^2) - mean(X^2)*mean(X) + mean(X^2)*mean(X)
+mean(X^3) - mean(X)*(var(X)+mean(X)^2)
+3*mean(X)*var(X) + mean(X)^3 - mean(X) * (var(X)+mean(X)^2)
+2*mean(X)*var(X)
+#+END_SRC
+
+#+RESULTS:
+: [1] 89.04187
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04173
+: [1] 89.08142
+: [1] 89.08142
+
+- \(\Cov[X^2,Y]=2 \mu_X \rho \sigma_X \sigma_Y \)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 10
+m2 <- 10.2
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov(X^2,Y)
+mean((X^2-mean(X^2))*(Y-mean(Y)))
+mean(X^2*Y)-mean(Y)*mean(X^2)-mean(X^2)*mean(Y)+mean(Y)*mean(X^2)
+mean(X^2*Y)-mean(Y)*(var(X)+mean(X)^2)
+mean(X^2*(mean(Y)+(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)))-mean(Y)*(var(X)+mean(X)^2)
+mean((X^2*mean(Y)+X^2*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)))-mean(Y)*(var(X)+mean(X)^2)
+(mean(X^3)-mean(X^2)*mean(X))*cor(X,Y)*sd(Y)/sd(X)
+(3*mean(X)*var(X) + mean(X)^3-mean(X^2)*mean(X))*cor(X,Y)*sd(Y)/sd(X)
+(3*mean(X)*var(X) + mean(X)^3-var(X)*mean(X)-mean(X)^3)*cor(X,Y)*sd(Y)/sd(X)
+2*mean(X)*sd(X)*cor(X,Y)*sd(Y)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 105.1012
+[1] 105.0907
+[1] 105.0907
+[1] 105.0802
+[1] 104.8445
+[1] 104.8445
+[1] 104.855
+[1] 104.7566
+[1] 104.7513
+[1] 104.7513
+#+end_example
+
+- \(\Esp[X^2*Y^2] = (\sigma^2_X+\mu_X^2)(\sigma^2_Y+\mu_Y^2) + 2 \rho^2 \sigma^2_X \sigma^2_Y + 4 \rho \sigma_Y \sigma_X \mu_X \mu_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 0
+m2 <- 0
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+fit <- mean(Y)+(X-mean(X))*cor(X,Y)*sd(Y)/sd(X) 
+epsilon <- Y-fit
+mean(X^2*Y^2)
+mean(X^2*(fit+epsilon)^2)
+mean(X^2*fit^2) + mean(X^2*epsilon^2) + 2 * mean(X^2*epsilon*fit)
+mean(X^2*fit^2) + mean(X^2)*mean(epsilon^2) + 2 * mean(X^2*fit)*mean(epsilon)
+mean(X^2*fit^2) + mean(X^2)*mean(epsilon^2)
+mean(X^2*fit^2) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(X^2*(mean(Y)^2+(X-mean(X))^2*cor(X,Y)^2*var(Y)/var(X)+2*mean(Y)*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)) ) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*mean(X^2) + mean(X^2*(X-mean(X))^2*cor(X,Y)^2*var(Y)/var(X)) + mean(X^2*2*mean(Y)*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*mean(X^2) + (mean(X^4)-2*mean(X^3)*mean(X)+mean(X^2)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*mean(X^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*mean(X^2) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*(var(X)+mean(X)^2) + (3*var(X)^2 + 6*var(X)*mean(X)^2 + mean(X)^4-2*(3*mean(X)*var(X) + mean(X)^3)*mean(X)+(var(X)+mean(X)^2)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*(3*mean(X)*var(X) + mean(X)^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*(var(X)+mean(X)^2) + (var(X)+mean(X)^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*(var(X)+mean(X)^2) + (3*var(X)^2 + var(X)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*(3*mean(X)*var(X) + mean(X)^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*(var(X)+mean(X)^2) + (var(X)+mean(X)^2)*(1-cor(X,Y)^2)*var(Y)
+(var(X)+mean(X)^2)*(var(Y)+mean(Y)^2) + 2*cor(X,Y)^2*var(Y)*var(X) + 4*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X) 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 163.934
+[1] 163.934
+[1] 163.934
+[1] 165.3792
+[1] 165.3792
+[1] 165.3876
+[1] 165.3876
+[1] 165.3876
+[1] 165.3876
+[1] 167.0229
+[1] 167.0229
+[1] 167.0229
+#+end_example
+
+- \(\Cov[\left(X-\mu_X\right)^2,\left(Y-\mu_Y\right)^2] = 2 \rho^2 \sigma^2_X \sigma^2_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 0
+m2 <- 0
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov((X-mean(X))^2,(Y-mean(Y))^2)
+cov(X^2-2*X*mean(X),Y^2-2*Y*mean(Y))
+cov(X^2,Y^2) + cov(X^2,-2*Y*mean(Y)) + cov(-2*X*mean(X),Y^2) + cov(2*X*mean(X),2*Y*mean(Y))
+mean(X^2*Y^2) - mean(X^2)*mean(Y^2) - 2*mean(Y)*cov(X^2,Y) - 2*mean(X)*cov(X,Y^2) + 4*mean(X)*mean(Y)*cov(X,Y)
+cat("\n")
+(var(X)+mean(X)^2)*(var(Y)+mean(Y)^2) + 2*cor(X,Y)^2*var(Y)*var(X) + 4*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X)  -mean(X^2)*mean(Y^2) - 2*mean(Y)*cov(X^2,Y) - 2*mean(X)*cov(X,Y^2) + 4*mean(X)*mean(Y)*cov(X,Y)
+2*cor(X,Y)^2*var(Y)*var(X) + 8*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X) - 2*mean(Y)*2*mean(X)*sd(X)*cor(X,Y)*sd(Y) - 2*mean(X)*2*mean(Y)*sd(Y)*cor(X,Y)*sd(X)
+2*cor(X,Y)^2*var(Y)*var(X)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.895759
+: [1] 1.895759
+: [1] 1.895759
+: [1] 1.895753
+: 
+: [1] 1.8893
+: [1] 1.880605
+: [1] 1.880605
+
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
@@ -542,6 +781,15 @@ NOTE: n is number in *each* group
 #+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
 
 
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
 ** Algorithm
 #+LATEX_HEADER: \RequirePackage{amsmath}
 #+LATEX_HEADER: \RequirePackage{algorithm}
@@ -582,6 +830,7 @@ NOTE: n is number in *each* group
 *** Shortcuts
 
 **** Probability
+#+LATEX_HEADER: \newcommandx\Cor[2][1=,2=]{\defOperator{#1}{#2}{C}{or}{\lbrack}{\rbrack}{\mathbb}}
 #+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
 #+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
 #+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
@@ -646,3 +895,15 @@ NOTE: n is number in *each* group
 #+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
 #+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
 #+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+#+TITLE:
+#+Author: Brice Ozenne
+
+
+
+# @@latex:any arbitrary LaTeX code@@
+
+
+
+
+
+
