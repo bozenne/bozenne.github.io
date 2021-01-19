@@ -1958,7 +1958,63 @@ odds ratio
          1
 #+end_example
 
-** permutation t-test 
+** Estimate Mann Whitney parameter
+
+Remove ties:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+sleep$Y <- sleep$extra + rnorm(NROW(sleep), sd = 0.1)
+#+END_SRC
+
+#+RESULTS:
+Original p-value:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+suppressWarnings(wilcox.test(Y ~ group, data = sleep, exact = FALSE)$p.value)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.03763531
+
+Mann-Whitney parameter (method 1)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(asht)
+wmwTest(Y ~ group, data = sleep, method = "asymptotic")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Wilcoxon-Mann-Whitney test with continuity correction (confidence interval requires proportional odds assumption,
+	but test does not)
+
+data:  Y by group
+Mann-Whitney estimate = 0.78, tie factor = 1, p-value = 0.03764
+alternative hypothesis: two distributions are not equal
+95 percent confidence interval:
+ 0.5158768 0.9172200
+sample estimates:
+Mann-Whitney estimate 
+                 0.78
+#+end_example
+
+Mann-Whitney parameter (method 2)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(BuyseTest)
+BuyseTest.options(order.Hprojection=2)
+e.BT <- BuyseTest(group ~ cont(Y), data = sleep, 
+                  method.inference = "u-statistic")
+confint(e.BT, statistic = "favorable")
+#+END_SRC
+
+#+RESULTS:
+:         estimate     se  lower.ci  upper.ci    p.value
+: Y_1e-12     0.78 0.1049 0.5168762 0.9215649 0.03841179
+: attr(,"n.resampling")
+: Y_1e-12 
+:      NA
+
+
+** Permutation t-test 
 
 Data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no

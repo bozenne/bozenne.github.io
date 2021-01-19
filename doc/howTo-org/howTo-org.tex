@@ -1,4 +1,4 @@
-% Created 2020-10-02 fr 10:05
+% Created 2021-01-11 ma 10:15
 % Intended LaTeX compiler: pdflatex
 \documentclass[table]{beamer}
 
@@ -37,7 +37,6 @@ emphstyle=\color{blue}
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{color}
-\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{grffile}
 \usepackage{wrapfig}
@@ -70,6 +69,7 @@ emphstyle=\color{blue}
 \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} %
 \RequirePackage{fancyvrb}
 \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{enumitem}
 \RequirePackage{colortbl} % arrayrulecolor to mix colors
 \RequirePackage{pifont}
 \RequirePackage{relsize}
@@ -125,9 +125,9 @@ emphstyle=\color{blue}
 \maketitle
 
 \section{Box}
-\label{sec:org763e58f}
+\label{sec:org156da8b}
 
-\begin{frame}[label={sec:org5ce5edf}]{Round box}
+\begin{frame}[label={sec:org767f7f4}]{Round box}
 \setbeamercolor{block title example}{fg=black,bg=lightgray}
 \setbeamercolor{block body example}{fg=white,bg=gray}
 \setbeamercolor{block body}{fg=white,bg=blue!60}
@@ -155,9 +155,9 @@ emphstyle=\color{blue}
 \end{frame}
 
 \section{Code}
-\label{sec:org6cb4fee}
+\label{sec:orga6b8914}
 
-\begin{frame}[fragile,label={sec:org198137b}]{Set output size}
+\begin{frame}[fragile,label={sec:orga89559e}]{Set output size}
  \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 summary(model)
@@ -201,27 +201,35 @@ model$weights[[1]]
 \end{frame}
 
 \section{List}
-\label{sec:org81bd660}
+\label{sec:org8976527}
 
-\begin{frame}[label={sec:orga93a433}]{Choose item}
+\begin{frame}[label={sec:orgd0eb3ee}]{Choose item}
 \begin{description}
 \item[{(A)}] yyy
 \item[{(1)}] xxx
 \end{description}
 \end{frame}
 
-\begin{frame}[label={sec:orgc08f21c}]{Use itemize and modify vertical space}
-\begin{itemize}[label={-},topsep=0pt,itemsep=5ex,partopsep=1ex,parsep=1ex]
+\begin{frame}[label={sec:orge5a2da2}]{Use itemize and modify vertical space}
+\begin{itemize}[label={-},topsep=0pt,itemsep=0mm]
 \item a
 \item b
 \item c
 \end{itemize}
 \end{frame}
 
+\begin{frame}[label={sec:org5af868c}]{label scheme}
+\begin{itemize}
+\item level 1: \textbullet
+\item level 2: \textendash
+\item level 3: \textasteriskcentered
+\item level 4: \textperiodcentered
+\end{itemize}
+\end{frame}
 \section{Table}
-\label{sec:org3877ab4}
+\label{sec:org13a8a2a}
 
-\begin{frame}[label={sec:org6b230f3}]{Nice latex table}
+\begin{frame}[label={sec:org6089f3c}]{Nice latex table}
 (require booktabs)
 
 \begin{table}
@@ -241,9 +249,9 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{References}
-\label{sec:org33e30c5}
+\label{sec:orgc42459c}
 
-\begin{frame}[label={sec:org7a231f8}]{Citations}
+\begin{frame}[label={sec:org4bb4aac}]{Citations}
 \begin{itemize}
 \item \citep{pearson1905problem}
 \item \cite{pearson1905problem}
@@ -253,9 +261,9 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{frame}
 
 \section{Miscellaneous}
-\label{sec:org18aa711}
+\label{sec:org078015f}
 
-\begin{frame}[label={sec:orgc3fb514}]{Divide the page (align at the middle)}
+\begin{frame}[label={sec:orgfb15cf2}]{Divide the page (align at the middle)}
 \begin{columns}
 \begin{column}{0.45\columnwidth}
 \begin{itemize}
@@ -276,7 +284,7 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orgbb2660e}]{Divide the page (align at the top)}
+\begin{frame}[label={sec:org4415a14}]{Divide the page (align at the top)}
 \begin{columns}
 \begin{column}[t]{0.45\columnwidth}
 \begin{itemize}
@@ -297,21 +305,21 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orge70a020}]{Inline latex}
+\begin{frame}[label={sec:org36f7989}]{Inline latex}
 any arbitrary LaTeX code
 \end{frame}
 
-\begin{frame}[label={sec:org31081ef}]{Color tex}
+\begin{frame}[label={sec:orgea022dc}]{Color tex}
 (see header for the definition of darkgreen)
 \begin{itemize}
 \item \textcolor{\darkgreen}{risk factor}: adjust (will increase precision)
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org27355ff}]{Footnote}
+\begin{frame}[label={sec:org68ccc58}]{Footnote}
 This is a footnote\footnote{blaa}.
 \end{frame}
-\begin{frame}[label={sec:orgcf3fde2}]{Big centered text}
+\begin{frame}[label={sec:org2c7c5be}]{Big centered text}
 \vfill
 
 \begin{center}
@@ -321,7 +329,7 @@ This is a footnote\footnote{blaa}.
 \vfill
 \end{frame}
 
-\begin{frame}[label={sec:orgf0fbbab}]{Change margin}
+\begin{frame}[label={sec:org4cdf08a}]{Change margin}
 (require changepage)
 \begin{adjustwidth}{-1em}{-1em}
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -331,10 +339,10 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \end{adjustwidth}
 \end{frame}
 
-\begin{frame}[label={sec:org6041882}]{Comments}
+\begin{frame}[label={sec:org460afee}]{Comments}
 \end{frame}
 \section{References}
-\label{sec:org867bc6e}
+\label{sec:org28f3c79}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
