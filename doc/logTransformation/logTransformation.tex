@@ -1,4 +1,4 @@
-% Created 2020-12-05 lør 12:30
+% Created 2020-12-17 tor 20:18
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -37,7 +37,6 @@ emphstyle=\color{blue}
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{color}
-\usepackage{enumerate}
 \usepackage{graphicx}
 \usepackage{grffile}
 \usepackage{wrapfig}
@@ -157,7 +156,7 @@ emphstyle=\color{blue}
 \newcommand\half{\frac{1}{2}}
 \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
 \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
-\author{Brice Ozenne Brice Ozenne}
+\author{Brice Ozenne}
 \date{\today}
 \title{Estimating a relative change using a log-transformation of the outcome}
 \hypersetup{
@@ -165,7 +164,7 @@ emphstyle=\color{blue}
  citecolor=[rgb]{0,0.5,0},
  urlcolor=[rgb]{0,0,0.5},
  linkcolor=[rgb]{0,0,0.5},
- pdfauthor={Brice Ozenne Brice Ozenne},
+ pdfauthor={Brice Ozenne},
  pdftitle={Estimating a relative change using a log-transformation of the outcome},
  pdfkeywords={},
  pdfsubject={},
@@ -177,7 +176,7 @@ emphstyle=\color{blue}
 \maketitle
 
 \section{Interpretation of the regression coefficient after log-transformation}
-\label{sec:orgc129c1f}
+\label{sec:org039d702}
 Let's denote by \(Y\) the outcome and by \(G\) a binary group
 variable. We are interested in the relative change in \(Y\) between
 the groups. We decide to model the group effect on the log scale:
@@ -190,7 +189,7 @@ We claim that:
 \end{align*}
 
 \subsection{Proof: re-writting the model as a multiplicative model}
-\label{sec:org0b6e2a1}
+\label{sec:org337839d}
 We can re-write the model as:
 \begin{align*}
 Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where }
@@ -207,7 +206,7 @@ Then:
 \end{align*}
 
 \subsection{Proof: using a Taylor expansion}
-\label{sec:org15fa186}
+\label{sec:org0c11632}
 
 Using a second order Taylor expansion of \(\exp(Z)\) around
 \(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
@@ -231,182 +230,92 @@ of \(g\). We can now express our parameter of interest:
 
 \clearpage
 
-\section{Note for power calculation}
-\label{sec:orgf815396}
+\section{Power calculation: comparison between two groups}
+\label{sec:org5c289c9}
 
-\subsection{Recall: delta-method for normally distributed variables}
-\label{sec:org10cbeff}
-
-\textbf{Theory}: we recall that for a random variable \(Y\) with finite first two
-moments, the delta method applied around the mean for a transformation
-\(f\) is:
-\begin{align*}
-f(Y) = f(\mu_Y) + f'(\mu_Y) (Y-\mu_Y) + \frac{1}{2} f''(\mu_Y) (Y-\mu_Y)^2  + \frac{1}{6} f'''(\mu_Y) (Y-\mu_Y)^3 + o\left((Y-\mu_Y)^2\right)
-\end{align*}
-where \(\mu_Y=\Esp[Y]\). Introducing \(\sigma_Y^2 = \Var[Y]\) and using
-that for a normal distribution \(\Esp[(Y-\mu_Y)^3]=0\), we have:
-\begin{align*}
-\Esp[f(Y)] =& f(\mu_Y) + f'(\mu_Y) (\Esp[Y]-\mu_Y) + \frac{1}{2} f''(\mu_Y) \Esp[(Y-\mu_Y)^2] \\ &+ \frac{1}{6} f'''(\mu_Y) \Esp[(Y-\mu_Y)^3] + o\left(\Esp[(Y-\mu_Y)^3]\right) \\
-=& f(\mu_Y) + \frac{\sigma_Y^2}{2} f''(\mu_Y)  + o\left(\Esp[(Y-\mu_Y)^3]\right)
-\end{align*}
-Similarly using that for a normal distribution \(\Esp[(Y-\mu_Y)^4]=3\sigma_Y^4\):
-\begin{align*}
-\Var[f(Y)] =& \left(f'(\mu_Y)\right)^2 \Var\left[\Esp[Y]-\mu_Y\right] + f'(\mu_Y)f''(\mu_Y) \Esp[(Y-\mu_Y)^3] \\
-& +\left(\frac{f'(\mu_Y) f'''(\mu_Y)}{3} + \frac{\left(f''(\mu_Y)\right)^2}{4}\right) \Esp[(Y-\mu_Y)^4] + o\left(\Esp[(Y-\mu_Y)^4]\right) \\
-=& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + 3 \sigma_Y^4 \left(\frac{f'(\mu_Y) f'''(\mu_Y)}{3} + \frac{\left(f''(\mu_Y)\right)^2}{4}\right) + o\left(\Esp[(Y-\mu_Y)^4]\right) 
-\end{align*}
-and introducing \(X\) with mean \(\mu_X\), variance \(\sigma_X^2\), and correlation \(\rho\) with \(Y\):
-\begin{align*}
-\Cov[f(X),f(Y)] =& f'(\mu_X) f'(\mu_Y) \Cov[X-\mu_X,Y-\mu_Y] \\ &+ \frac{1}{4} f''(\mu_X) f''(\mu_Y) \Cov[(X-\mu_X)^2,(Y-\mu_Y)^2] + o\left(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\right)
-\end{align*}
-
-\bigskip
-
-\textbf{Application}:  exponential transformation (\(f = \exp\))
-
-\bigskip
-
-Using that \(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\approx2 \rho^2 \sigma_X^2 \sigma_Y^2\):
-\begin{align*}
-\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}\right) \\
-\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{7}{4} \sigma_Y^4\right)\\
-\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2\right) 
-%\Cor[\exp(X),\exp(Y)] &\approx \rho + \frac{1}{2} \rho^2 \sigma_X \sigma_Y
-\end{align*}
-\Warning these approximations are precise when the mean and variance are small
-
-\bigskip
-
-
-\textbf{Illustration}: We consider a normally distributed outcome with
-expectation 0.1 and variance 0.1. What is its expectation and variance
-after exp-transformation?
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-set.seed(10); n <- 1e4
-mu <- 0.1; sigma2 <- 0.1
-
-## first order method
-mu.exp1 <- exp(mu)
-var.exp1 <- exp(2*mu)*sigma2
-
-## second order method
-mu.exp2 <- exp(mu)*(1+sigma2/2)
-var.exp2 <- exp(2*mu)*(sigma2 + (7/4)*sigma2^2)
-
-## empirical value
-X.exp <- exp(rnorm(n, mean = mu, sd = sqrt(sigma2)))
-mu.expGS <- mean(X.exp)
-var.expGS <-  var(X.exp)
-\end{lstlisting}
-
-Comparison mean:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-rbind(value = c(first.order = mu.exp1, 
-		second.order = mu.exp2, 
-		truth = mu.expGS),
-      bias = c(mu.exp1,mu.exp2,mu.expGS)-mu.expGS,
-      relative.bias = (c(mu.exp1,mu.exp2,mu.expGS)-mu.expGS)/mu.expGS)
-\end{lstlisting}
-
-\begin{verbatim}
-              first.order second.order    truth
-value           1.1051709   1.38146365 1.425308
-bias           -0.3201366  -0.04384390 0.000000
-relative.bias  -0.2246088  -0.03076101 0.000000
-\end{verbatim}
-
-Comparison variance:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-rbind(value = c(first.order = var.exp1, 
-		second.order = var.exp2, 
-		truth = var.expGS),
-      bias = c(var.exp1,var.exp2,var.expGS)-var.expGS,
-      relative.bias = (c(var.exp1,var.exp2,var.expGS)-var.expGS)/var.expGS)
-\end{lstlisting}
-
-\begin{verbatim}
-              first.order second.order   truth
-value           0.6107014    1.1450651 1.35949
-bias           -0.7487890   -0.2144253 0.00000
-relative.bias  -0.5507865   -0.1577248 0.00000
-\end{verbatim}
-
-The second order estimate is much more accurate, especially for the
-variance.
-
-\clearpage
-
-We now consider a bivariate normally distributed outcome with
-expectation 0.1, variance 0.1, and correlation 0.5. What is the
-correlation after exp-transformation?
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-set.seed(10); n <- 1e4
-mu <- c(0.1,0.1); sigma2 <- c(0.1,0.1); rho <- 0.5
-Sigma <- matrix(c(sigma2[1],
-		  rho*sqrt(prod(sigma2)),
-		  rho*sqrt(prod(sigma2)),
-		  sigma2[2]),
-		2,2)
-XY <- mvtnorm::rmvnorm(n, mean = mu, sigma = Sigma)
-X <- XY[,1] ; Y <- XY[,2]
-
-cov(exp(X),exp(Y))
-exp(mean(X)+2*mean(Y)) * (cor(X,Y)*sd(Y)*sd(X) + 0.5*cor(X,Y)^2*var(Y)*var(X))
-\end{lstlisting}
-
-\begin{verbatim}
-[1] 0.06839007
-[1] 0.06846545
-\end{verbatim}
-
-
-\clearpage
-
-\subsection{Two independent groups - normal distribution}
-\label{sec:orga866718}
-
-\textbf{Theory}: consider two groups \(G=0\) and \(G=1\) for which we
-want to compare the percentage difference in outcome \(Y\). We are
-willing to assume that on the log-scale \(Y\) is normally
-distributed. Our parameter of interest is:
+Consider two groups \(G=0\) and \(G=1\) for which we want to compare
+the percentage difference in outcome \(Y\). We are willing to assume
+that on the log-scale \(Y\) is normally distributed. Our parameter of
+interest is:
 \begin{align*}
 \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \gamma
 \end{align*}
-we denote \(\alpha = \Esp[Y|G=0]\) and we assume that on the original scale:
+We further fix \(\alpha = \Esp[Y|G=0]\) and \(\sigma^2 = \Var[Y|G=0]\)
+and we assume that on the log-scale:
 \begin{align*}
-\Var[Y|G=1]  = \Var[Y|G=0] = \sigma^2
+\Var[\log(Y)|G=1]  = \Var[\log(Y)|G=0] = s^2
 \end{align*}
-How should be parametrized the gaussian distribution of
-\(\log(Y)|G=0\) and \(\log(Y)|G=1\) to satisfy
-\((\alpha,\gamma,\sigma^2)\)? In other words we want to find
-\(m_0,m_1,s_0,s_1\) such that:
+To evaluate the power for a given \((\alpha,\sigma^2,\gamma)\), we need to identify the joint distribution: 
 \begin{align*}
-Z_0 = \log(Y)|G=0 &\sim \Gaus\left(m_0,s^2_0\right) \\
-Z_1 = \log(Y)|G=1 &\sim \Gaus\left(m_1,s^2_1\right) 
+\begin{bmatrix}
+Z_0 = \log(Y)|G=0 \\ Z_1  = \log(Y)|G=1
+\end{bmatrix}
+\sim \Gaus \left(
+\begin{bmatrix}
+m_0 \\ m_1
+\end{bmatrix}
+,
+\begin{bmatrix}
+s^2 & \rho s^2 \\ \rho s^2 & s^2
+\end{bmatrix}
+\right)
 \end{align*}
-We can use the delta method to identify these parameters since:
-\begin{align*}
-\alpha &= \Esp[\exp(Z_0)] = \exp(a_0)\left(1 + \frac{s^2_0}{2}\right) \\
-\sigma^2 &= \Var[\exp(Z_0)] = \exp(2 a_0)\left(s^2_0 + \frac{7}{4}s^4_0\right) \\
-\alpha (\gamma + 1) &= \Esp[\exp(Z_1)] = \exp(a_1)\left(1 + \frac{s^2_1}{2}\right)\\
-\sigma^2 &= \Var[\exp(Z_1)] = \exp(2 a_1)\left(s^2_1 + \frac{7}{4}s^4_1\right)
-\end{align*}
-i.e.
-\begin{align*}
-\frac{\alpha^2}{\sigma^2} = \frac{\left(1+\frac{s_0^2}{2}\right)^2}{s^2_0 + \frac{7}{4}s^4_0}            \qquad &\rightarrow \text{gives } s_0 \\
-a_0 = \frac{1}{2}\log\left(\frac{\sigma^2}{\left(s^2_0 + \frac{7}{4}s^4_0\right)}\right)                \qquad &\rightarrow \text{gives } a_0 \\
-\frac{\alpha^2(\gamma+1)^2}{\sigma^2} = \frac{\left(1+\frac{s_1^2}{2}\right)^2}{s^2_1 + \frac{7}{4}s^4_1}\qquad &\rightarrow \text{gives } s_1 \\
-a_1 = \frac{1}{2}\log\left(\frac{\sigma^2}{\left(s^2_1 + \frac{7}{4}s^4_1\right)}\right)                \qquad &\rightarrow \text{gives } a_1 
-\end{align*}
-The first and third equation can be solved numerically.
+The standardized effect size is then: \(\frac{m_1-m_0}{s\sqrt{2(1-\rho)}}\). 
 
-\clearpage
+\bigskip
 
-\textbf{Illustration}: We consider two groups having a 10\% difference
+Note: in the case of two independent samples \(\rho=0\)
+
+\subsection{Method 1: Taylor expansion}
+\label{sec:orgec6be2e}
+
+We will use the fact that \(Z_0,Z_1\) are jointly normally distributed
+to identify \(m_0,m_1,s^2,\rho\). First we start by identifying
+\(m_0\) and \(s^2\) based on \(\alpha\) and \(\sigma^2\) (reference
+group). A Taylor expansion gives (see appendix \ref{SM:exptrans}):
+\begin{align*}
+\alpha &\approx \exp(m_0)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+\sigma^2 &\approx \exp(2 m_0)\left(s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}\right)
+\end{align*}
+So:
+\begin{align*}
+\frac{\alpha^2}{\sigma^2} - \frac{\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)^2}{s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}} \approx 0
+\end{align*}
+We get \(s^2\) by solving this equation using that \(s^2 \in
+[0;\sigma^2]\) (upper bound follow from Jensen's inequality applied to
+\((X-\mu)^2\), \(\log\) being concave). We can then deduce \(m_0\):
+\begin{align*}
+m_0  &\approx \log\left(\frac{\alpha}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = \log(\alpha) - \log\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)
+\end{align*}
+Then we can identify \(m_1\) using once more a Taylor expansion:
+\begin{align*}
+\alpha(1+\gamma) &\approx \exp(m_1)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+m_1 &\approx \log\left(\frac{\alpha(1+\gamma)}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = m_0 + \log(1+\gamma)
+\end{align*}
+Now
+
+\subsection{Method 2: Log-normal distribution}
+\label{sec:org173cc71}
+We will use the fact that \(Z_0\) follows a log-normal distribution,
+meaning that:
+\begin{align*}
+\alpha &= \exp(m_0 + \frac{1}{2} s^2) \\
+\sigma^2 &= \exp(2*m_0 + s^2)*(\exp(s^2)-1) \\
+\end{align*}
+So
+\begin{align*}
+s^2 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+m_0 &= \log(\alpha)-\frac{s^2}{2}\\
+\end{align*}
+Then we can identify \(m_1\) using that \(Z_1\) follows a log-normal distribution, i.e.:
+\begin{align*}
+\alpha(1+\gamma) &= \exp(m_1 + \frac{1}{2} s^2) \\
+m_1 &= m_0+\log(1+\gamma)\\
+\end{align*}
+\subsection{Illustration 1: two sample t-test}
+\label{sec:org6a59369}
+
+\textbf{Illustration:} We consider two groups having a 10\% difference
 in their baseline value (\(\alpha=1.15\)) and a variance of \(\sigma^2
 = 0.15\). What are the parameters of the corresponding normal
 distribution on the log-scale and the standardized effect size?
@@ -417,18 +326,123 @@ sigma2 <- 0.15
 gamma <- 0.1
 \end{lstlisting}
 
-Solve the equations:
+\textbf{Taylor expansion:} we first identify \(s^2\), \(m_0\), and
+\(m_1\):
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-s0 <- uniroot(function(x){alpha^2/sigma2 - (1+x/2)^2/(x+x^2*7/4)},
-	      interval = c(0,1))$root
-a0 <- log(sigma2/(s0+s0^2*7/4))/2
-s1 <- uniroot(function(x){alpha^2*(gamma+1)^2/sigma2 - (1+x/2)^2/(x+x^2*7/4)},
-	      interval = c(0,1))$root
-a1 <- log(sigma2/(s1+s1^2*7/4))/2
-c(a0 = a0, s0 = s0, a1 = a1, s1 = s1)
+s2.taylor <- uniroot(function(x){
+    alpha^2/sigma2 - (1+x/2+x^2/8+x^3/48)^2/(x+(3/2)*x^2+(7/6)*x^3+(11/24)*x^4+(21/320)*x^5)},
+    interval = c(1e-12,sigma2))$root
+m0.taylor <- log(alpha/(1+s2.taylor/2+s2.taylor^2/8+s2.taylor^3/48))
+m1.taylor <- m0.taylor + log(1+gamma)
 \end{lstlisting}
 
+\textbf{lognormal distribution:} we first identify \(s^2\), \(m_0\),
+and \(m_1\):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+s2.logdist <- log(1+sigma2/alpha^2)
+m0.logdist <- log(alpha) - s2.logdist/2
+m1.logdist <- m0.logdist + log(1+gamma)
+\end{lstlisting}
+
+We can compare the moments of am exp-transformed normal distribution
+based on these values to the input:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+x <- exp(rnorm(1e5, mean = m0.taylor, sd = sqrt(s2.taylor)))
+y <- exp(rnorm(1e5, mean = m1.taylor, sd = sqrt(s2.taylor)))
+yx.x <- mean(y)/mean(x)-1
+X <- exp(rnorm(1e5, mean = m0.logdist, sd = sqrt(s2.logdist)))
+Y <- exp(rnorm(1e5, mean = m1.logdist, sd = sqrt(s2.logdist)))
+YX.X <- mean(Y)/mean(X)-1
+
+rbind(
+    data.frame(method = "taylor", m0=m0.taylor, m1=m1.taylor, s2=s2.taylor), 
+    data.frame(method = "logdist", m0=m0.logdist, m1=m1.logdist, s2=s2.logdist)
+)
+rbind(
+    data.frame(method = "true", 
+	       alpha=alpha, gamma=gamma, sigma2=sigma2), 
+    data.frame(method = "error.taylor", 
+	       alpha=mean(x)-alpha, gamma=yx.x-gamma, sigma2=var(x)-sigma2),
+    data.frame(method = "error.logdist", 
+	       alpha=mean(X)-alpha, gamma=YX.X-gamma, sigma2=var(X)-sigma2)
+)
+\end{lstlisting}
+
+\begin{verbatim}
+   method         m0        m1        s2
+1  taylor 0.08603197 0.1813421 0.1074606
+2 logdist 0.08604307 0.1813532 0.1074378
+         method         alpha         gamma        sigma2
+1          true  1.1500000000  0.1000000000  0.1500000000
+2  error.taylor  0.0012850559 -0.0010820104 -0.0002242144
+3 error.logdist -0.0005174973 -0.0009134562 -0.0012306318
+\end{verbatim}
+Similar performance. Maybe a bit better for log-dist.
+
+\subsection{Illustration 2: paired t-test}
+\label{sec:org9c71eac}
+
+\textbf{Illustration:} We consider one group having a 10\% difference
+between its baseline value (\(\alpha=1.15\)) and its follow-up
+value. We assume a variance of \(\sigma^2 = 0.15\) for the baseline
+value and a correlation of \(\rho=0.5\) between the baseline and
+follow-up value. What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+rho <- 0.5
+\end{lstlisting}
+
+We previously obtained the values for\(s^2\). We can now search for
+the right correlation value on the log-scale
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rho.taylor <- uniroot(function(x){
+    rho - (x+0.5*x^2*s2.taylor)/(1+(3/2)*s2.taylor+(7/6)*s2.taylor^2+(11/24)*s2.taylor^3+(21/320)*s2.taylor^4)
+},interval = c(0,0.9999))$root
+\end{lstlisting}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(mvtnorm)
+Sigma <- diag(s2.taylor*(1 - rho.taylor),2,2)+s2.taylor*rho.taylor
+z <- exp(rmvnorm(1e5, mean = c(m0.taylor, m1.taylor), sigma = Sigma))
+cor(z[,1],z[,2])
+
+cov(z[,1],z[,2])
+exp(m0.taylor+m1.taylor)*(rho.taylor*s2.taylor+0.5*rho.taylor^2*s2.taylor^2)
+
+(rho.taylor+0.5*rho.taylor^2*s2.taylor)/(1+(3/2)*s2.taylor+(7/6)*s2.taylor^2+(11/24)*s2.taylor^3+(21/320)*s2.taylor^4)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.5551681
+[1] 0.09181254
+[1] 0.08250216
+[1] 0.5
+\end{verbatim}
+
+\subsection{Application: two independent groups}
+\label{sec:orgd703435}
+
+We consider two groups having a 10\% difference in their baseline value
+(\(\alpha=1.15\)) and a variance of \(\sigma^2 = 0.15\). What are the
+parameters of the corresponding normal distribution on the log-scale
+and the standardized effect size?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+\end{lstlisting}
+
+Solve the equations:
 \begin{verbatim}
         a0         s0         a1         s1 
 0.08802784 0.10608948 0.19175319 0.08851048
@@ -482,8 +496,270 @@ pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
 NOTE: n is number in *each* group
 \end{verbatim}
 
-\subsection{Two independent groups - log-normal distribution}
-\label{sec:orgaf63aae}
+
+\clearpage
+\appendix
+% \titleformat{\section}
+% {\normalfont\Large\bfseries}{Appendix~\thesection}{1em}{}
+
+\section{Moments of the normal distribution}
+\label{SM:moments}
+Denote \(X\) and \(Y\) two normally distributed variables, with mean
+\(\mu_X\),\(\mu_Y\) and variance \(\sigma^2_X\),\(\sigma^2_Y\). Then:
+\begin{itemize}
+\item \(\Esp[X^2] = \sigma^2_X + \mu_X^2\)
+\item \(\Esp[X^3] = 3 \mu_X \sigma^2_X + \mu_X^3\)
+\item \(\Esp[X^4]=3\left(\sigma^2_X\right)^2 + 6 \sigma^2_X \mu_X^2 + \mu_X^4\)
+\item \(\Esp[X^5]=15 \left(\sigma^2_X\right)^2 \mu + 10 \sigma^2_X \mu^3 + \mu^5\)
+\item \(\Esp[(X-\mu_X)^6]= 15\left(\sigma_X^2\right)^3\)
+\item \(\Esp[(X-\mu_X)^8]= 105\left(\sigma_X^2\right)^4\)
+\end{itemize}
+\bigskip
+
+\begin{itemize}
+\item \(\Cov[X^2,X]=2 \mu_X \sigma^2_X\)
+\item \(\Cov[X^2,Y]=2 \mu_X \rho \sigma_X \sigma_Y\)
+\item \(\Esp[X^2*Y^2] = (\sigma^2_X+\mu_X^2)(\sigma^2_Y+\mu_Y^2) + 2 \rho^2 \sigma^2_X \sigma^2_Y + 4 \rho \sigma_Y \sigma_X \mu_X \mu_Y\)
+\item \(\Cov[\left(X-\mu_X\right)^2,\left(Y-\mu_Y\right)^2] = 2 \rho^2 \sigma^2_X \sigma^2_Y\)
+\item \(\Cov[\left(X-\mu_X\right),\left(Y-\mu_Y\right)^3] = 3 \rho \sigma_X \sigma^3_Y\)
+\item \(\Cov[\left(X-\mu_X\right)^3,\left(Y-\mu_Y\right)^3] = (6 \rho^3 + 9\rho) \sigma^3_X \sigma^3_Y\)
+\end{itemize}
+\clearpage
+
+\section{Moments after transformation}
+\label{sec:orgcfd4115}
+\subsection{Recall: Taylor expansion for normally distributed variables}
+\label{sec:org376b37f}
+
+Taylor expansion for a smooth function \(f\) around the mean value \(\mu_Y=\Esp[Y]\):
+\begin{align*}
+f(Y) = f(\mu_Y) + f'(\mu_Y) (Y-\mu_Y) + \frac{1}{2} f''(\mu_Y) (Y-\mu_Y)^2  + \frac{1}{6} f'''(\mu_Y) (Y-\mu_Y)^3 + R_4(Y-\mu_Y)
+\end{align*}
+where \(R_4\) is a residual term. Introducing \(\bar{Y}=Y-\mu_Y\),
+\(\sigma_Y^2 = \Var[Y]\) and using results for the moments of a normal
+distribution (appendix \ref{SM:moments}), we have:
+\begin{align*}
+\Esp[f(Y)] \approx& f(\mu_Y) + f(\mu_Y) \Esp[\bar{Y}]  + \frac{1}{2} f''(\mu_Y) \Esp[\bar{Y}^2] + \frac{1}{6} f'''(\mu_Y) \Esp[\bar{Y}^3] 
+= f(\mu_Y) + \frac{\sigma_Y^2}{2} f''(\mu_Y) \\
+\Var[f(Y)] \approx& \left(f'(\mu_Y)\right)^2 \Var\left[\bar{Y}\right] + \frac{\left(f''(\mu_Y)\right)^2}{4} \Var\left[\bar{Y}^2\right]  + \frac{\left(f'''(\mu_Y)\right)^2}{36} \Var\left[\bar{Y}^3\right] \\
+& +f'(\mu_Y) f''(\mu_Y)\Cov\left[\bar{Y},\bar{Y}^2\right] + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} \Cov\left[\bar{Y},\bar{Y}^3\right] +\frac{f''(\mu_Y) f'''(\mu_Y)}{6}\Cov\left[\bar{Y}^2,\bar{Y}^3\right]\\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \frac{\left(f''(\mu_Y)\right)^2}{4} \left(3 \sigma_Y^4 - \sigma_Y^4\right)  + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6
+ + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} 3 \sigma_Y^4 \\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f''(\mu_Y)\right)^2}{2} + f'(\mu_Y)f'''(\mu_Y)\right) \sigma_Y^4 + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6 
+\end{align*}
+and introducing \(X\) with mean \(\mu_X\), variance \(\sigma_X^2\), and correlation \(\rho\) with \(Y\):
+\begin{align*}
+\Cov[f(X),f(Y)] \approx& f'(\mu_X) f'(\mu_Y) \Cov[X-\mu_X,Y-\mu_Y] \\ &+ \frac{1}{4} f''(\mu_X) f''(\mu_Y) \Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]
+\end{align*}
+
+\Warning these approximations are precise when the higher order
+moments are small (i.e. mean and variance are small). More precise
+approximations can be obtained considering higher-order terms:
+\begin{align*}
+&\Esp[f(Y)] \approx f(\mu_Y) + \frac{\sigma_Y^2}{2} f^{(2)}(\mu_Y)  + \frac{\sigma_Y^4}{8} f^{(4)}(\mu_Y) + \frac{\sigma_Y^6}{48} f^{(6)}(\mu_Y) \\
+&\Var[f(Y)] \approx \left(f^{(1)}(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f^{(2)}(\mu_Y)\right)^2}{2} + f^{(1)}(\mu_Y)f^{(3)}(\mu_Y)\right) \sigma_Y^4 \\
+                  &+ \left(\frac{5\left(f^{(3)}(\mu_Y)\right)^2}{12} + \frac{f^{(2)}(\mu_Y)f^{(4)}(\mu_Y)}{2}  + \frac{f^{(1)}(\mu_Y)f^{(5)}(\mu_Y)}{4} \right) \sigma_Y^6  \\
+                  &+ \left(\frac{\left(f^{(4)}(\mu_Y)\right)^2}{6} + \frac{7 f^{(3)}(\mu_Y)f^{(5)}(\mu_Y)}{24} \right) \sigma_Y^8 + \frac{21\left(f^{(5)}(\mu_Y)\right)^2}{320} \sigma_Y^{10}
+\end{align*}
+
+\clearpage
+
+\subsection{Application:  exponential transformation (\(f = \exp\))}
+\label{SM:exptrans}
+Using that \(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\approx2 \rho^2 \sigma_X^2 \sigma_Y^2\):
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{15}{36} \sigma_Y^6 \right)\\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2\right) 
+\end{align*}
+
+Note: one can always go one order further to get a better approximation:
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}+\frac{\sigma_Y^4}{8}+\frac{\sigma_Y^6}{48}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{7}{6} \sigma_Y^6 + \frac{11}{24} \sigma_Y^8 + \frac{21}{320} \sigma_Y^{10}\right) \\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2 \right.\\
+& \left. + \frac{1}{2} \rho \left(\sigma_X \sigma_Y^3 + \sigma_Y \sigma_X^3 \right) + \frac{1}{12} \left(2 \rho^3 + 3 \rho\right) \sigma_X^3 \sigma_Y^3 \right)
+\end{align*}
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 1 and variance 0.5 (i.e standard deviation about 0.707). What is its expectation and variance
+after exp-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- 1; sigma2 <- 0.5
+
+## first order method
+mu.exp1 <- exp(mu)
+var.exp1 <- exp(2*mu)*sigma2
+
+## third order method
+mu.exp2 <- exp(mu)*(1+sigma2/2)
+var.exp2 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (15/36)*sigma2^3)
+
+## n order method
+mu.exp3 <- exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+var.exp3 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+
+## empirical value
+X.exp <- exp(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.expGS <- mean(X.exp)
+var.expGS <-  var(X.exp)
+\end{lstlisting}
+
+\clearpage
+
+Comparison mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = mu.exp1, 
+		second.order = mu.exp2, 
+		third.order = mu.exp3, 
+		truth = mu.expGS),
+      bias = c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS,
+      relative.bias = (c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS)/mu.expGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order  third.order    truth
+value           2.7182818   3.39785229  3.489877452 3.505691
+bias           -0.7874091  -0.10783859 -0.015813428 0.000000
+relative.bias  -0.2246088  -0.03076101 -0.004510788 0.000000
+\end{verbatim}
+
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = var.exp1, 
+		second.order = var.exp2, 
+		third.order = var.exp3, 
+		truth = var.expGS),
+      bias = c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS,
+      relative.bias = (c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS)/var.expGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order third.order    truth
+value           3.6945280    6.8502708  7.75513398 8.224438
+bias           -4.5299096   -1.3741669 -0.46930364 0.000000
+relative.bias  -0.5507865   -0.1670834 -0.05706209 0.000000
+\end{verbatim}
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\bigskip
+
+We now consider a bivariate normally distributed outcome with
+expectation 0.1, variance 0.1, and correlation 0.5. What is the
+correlation after exp-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- c(0.1,0.1); sigma2 <- c(0.1,0.1); rho <- 0.5
+Sigma <- matrix(c(sigma2[1], rho*sqrt(prod(sigma2)),
+		  rho*sqrt(prod(sigma2)), sigma2[2]), 2,2)
+XY <- mvtnorm::rmvnorm(n, mean = mu, sigma = Sigma)
+X <- XY[,1] ; Y <- XY[,2]
+
+cov(exp(X),exp(Y))
+exp(mean(X)+2*mean(Y)) * (cor(X,Y)*sd(Y)*sd(X) + 0.5*cor(X,Y)^2*var(Y)*var(X))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.06839007
+[1] 0.06846545
+\end{verbatim}
+
+
+\clearpage
+
+\subsection{Application:  log-transformation (\(f = \log\))}
+\label{sec:orgcd3ff0e}
+
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{5 \sigma^6_Y}{3\mu_Y^6} \\
+\Cov[\log(X),\log(Y)] &\approx \frac{\rho \sigma_X \sigma_Y}{\mu_X\mu_Y} + \frac{\rho^2 \sigma^2_X \sigma^2_Y}{2\mu_X^2\mu_Y^2}
+\end{align*}
+
+Note: one can always go one order further to get a better approximation:
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} - \frac{3\sigma_Y^4}{4\mu_Y^4}  - \frac{5\sigma_Y^6}{2\mu_Y^6}  \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{67 \sigma^6_Y}{6\mu_Y^6} + \frac{20\sigma^8_Y}{6\mu_Y^8} + \frac{189\sigma^{10}_Y}{5\mu_Y^{10}} \\
+\end{align*}
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- 7; sigma2 <- 2
+
+## first order method
+mu.log1 <- log(mu)
+var.log1 <- sigma2/mu^2
+
+## third order method
+mu.log2 <-  log(mu) - sigma2/(2*mu^2)
+var.log2 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 5*sigma2^3/(3*mu^6)
+
+## n order method
+mu.log3 <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+var.log3 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## empirical value
+X.log <- log(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
+\end{lstlisting}
+
+\clearpage
+
+Comparison mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = mu.log1, 
+		second.order = mu.log2, 
+		third.order = mu.log3, 
+		truth = mu.logGS),
+      bias = c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS)/mu.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order  third.order    truth
+value          1.94591015 1.9255019858  1.922892529 1.924102
+bias           0.02180784 0.0013996795 -0.001209777 0.000000
+relative.bias  0.01133403 0.0007274455 -0.000628749 0.000000
+\end{verbatim}
+
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = var.log1, 
+		second.order = var.log2, 
+		third.order = var.log3, 
+		truth = var.logGS),
+      bias = c(var.log1,var.log2,var.log3,var.logGS)-var.logGS,
+      relative.bias = (c(var.log1,var.log2,var.log3,var.logGS)-var.logGS)/var.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+               first.order second.order   third.order      truth
+value          0.040816327  0.045094589  0.0457541123 0.04632675
+bias          -0.005510428 -0.001232166 -0.0005726425 0.00000000
+relative.bias -0.118946995 -0.026597277 -0.0123609457 0.00000000
+\end{verbatim}
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\clearpage
+
+\subsection{Log-normal distribution}
+\label{sec:org35b76dc}
 
 An alternative approach is to use a log-normal distribution. Random
 variables with log normal distribution have their logarithm equal to a
@@ -505,80 +781,72 @@ a_1 &= \log(\alpha*(1+\gamma))-\frac{s_1^2}{2}
 
 \clearpage
 
-\textbf{Illustration}: We still consider two groups having a 10\%
-difference in their baseline value (\(\alpha=1.15\)) and a variance of
-\(\sigma^2 = 0.15\). What are the parameters of the corresponding
-normal distribution on the log-scale and the standardized effect size?
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-alpha <- 1.15
-sigma2 <- 0.15
-gamma <- 0.1
+set.seed(10); n <- 1e4
+X <- rlnorm(1e4, mean=1, sd = 0.5)
+## X <- exp(rnorm(1e4, mean=1, sd = sqrt(0.5)))
+
+mu.exp <- mean(X)
+sigma2.exp <- var(X)
+
+## taylor expansion method
+## mu.exp = exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+## sigma2.exp = exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+getSigma2 <- function(sigma2){
+    mu.exp^2/sigma2.exp - (1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)^2/(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+}
+var.taylor <- uniroot(f = getSigma2, lower = 1e-5, upper = sigma2.exp)$root
+mu.taylor <- log(mu.exp/(1 + var.taylor/2 + var.taylor^2/8 + var.taylor^3/48))
+## mu.taylor <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+## var.taylor <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## log distribution method
+var.logdist <- log(1+sigma2/mu^2)
+mu.logdist <- log(mu) - var.logdist/2 
+
+## empirical value
+X.log <- log(X)
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
 \end{lstlisting}
 
-We identify the parameters of the log-normal distributions:
+Comparison mean:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-s0 <- log(1+sigma2/alpha^2)
-a0 <- log(alpha) - s0/2 
-s1 <- log(1+sigma2/(alpha*(1+gamma))^2)
-a1 <- log(alpha*(1+gamma)) - s1/2 
-c(a0 = a0, s0 = s0, a1 = a1, s1 = s1)
+rbind(value = c(taylor = mu.taylor, 
+		dist = mu.logdist, 
+		truth = mu.logGS),
+      bias = c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS)/mu.logGS)
 \end{lstlisting}
 
 \begin{verbatim}
-        a0         s0         a1         s1 
-0.08604307 0.10743775 0.19027207 0.08960011
+                    taylor         dist    truth
+value          0.999612153  0.998213975 1.000669
+bias          -0.001056824 -0.002455001 0.000000
+relative.bias -0.001056117 -0.002453360 0.000000
 \end{verbatim}
 
-We can check that the variables have the appropriate distribution:
+Comparison variance:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-Z0 <- rlnorm(1e4, mean=a0, sd = sqrt(s0))
-Z1 <- rlnorm(1e4, mean=a1, sd = sqrt(s1))
-c(alpha = mean(Z0), 
-  gamma = (mean(Z1)-mean(Z0))/mean(Z0), 
-  sigma2 = var(Z0), 
-  sigma2 = var(Z1))
+rbind(value = c(taylor = var.taylor, 
+		dist = var.logdist, 
+		truth = var.logGS),
+      bias = c(var.taylor,var.logdist,var.logGS)-var.logGS,
+      relative.bias = (c(var.taylor,var.logdist,var.logGS)-var.logGS)/var.logGS)
 \end{lstlisting}
 
 \begin{verbatim}
-    alpha     gamma    sigma2    sigma2 
-1.1480725 0.1019535 0.1455856 0.1510286
-\end{verbatim}
-
-For a power calculation we would use:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
-## dvmisc::power_2t_unequal(n = 143, d = a1-a0, sigsq1 = s0, sigsq2 = s1, alpha = 0.05)
-\end{lstlisting}
-
-\begin{verbatim}
-     Two-sample t test power calculation 
-
-              n = 143.3238
-              d = 0.3320693
-      sig.level = 0.05
-          power = 0.8
-    alternative = two.sided
-
-NOTE: n is number in *each* group
+                   taylor      dist     truth
+value         0.255318149 0.5123473 0.2528091
+bias          0.002509088 0.2595382 0.0000000
+relative.bias 0.009924835 1.0266175 0.0000000
 \end{verbatim}
 
 \clearpage
-
-\section{Moments of the normal distribution}
-\label{sec:orgd606dd8}
-
-Denote \(X\) and \(Y\) two normally distributed variables, with mean
-\(\mu_X\),\(\mu_Y\) and variance \(\sigma^2_X\),\(\sigma^2_Y\). Then:
-\begin{itemize}
-\item \(\Esp[X^3]=3 \mu_X \sigma^2_X + \mu_X^3\)
-\item \(\Esp[X^4]=3\left(\sigma^2_X\right)^2 + 6 \sigma^2_X \mu_X^2 + \mu_X^4\)
-\item \(\Cov[X^2,X]=2 \mu_X \sigma^2_X\)
-\item \(\Cov[X^2,Y]=2 \mu_X \rho \sigma_X \sigma_Y\)
-\item \(\Esp[X^2*Y^2] = (\sigma^2_X+\mu_X^2)(\sigma^2_Y+\mu_Y^2) + 2 \rho^2 \sigma^2_X \sigma^2_Y + 4 \rho \sigma_Y \sigma_X \mu_X \mu_Y\)
-\item \(\Cov[\left(X-\mu_X\right)^2,\left(Y-\mu_Y\right)^2] = 2 \rho^2 \sigma^2_X \sigma^2_Y\)
-\end{itemize}
 \end{document}
