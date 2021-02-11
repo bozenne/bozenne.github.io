@@ -1639,12 +1639,16 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 \clearpage
 *** Increase size of the legend labels 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-gg.mean + theme(axis.title = element_text(size=10), legend.key.size = unit(3,"line"))
+gg.mean + theme(axis.title = element_text(size=10), 
+                axis.line = element_line(size = 1.25),
+                axis.ticks = element_line(size = 2),
+                axis.ticks.length=unit(.25, "cm"))
 #+END_SRC
 
 *** Put the legend at the bottom
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-gg.mean4 <- gg.mean + theme(legend.position="bottom")
+gg.mean4 <- gg.mean + theme(legend.position="bottom",
+                            legend.direction = "horizontal")
 #+END_SRC
 
 #+RESULTS:
@@ -1803,7 +1807,7 @@ probability of success
              0.7894737
 #+end_example
 
-** Compare proportions between groups (with fixed margins!)
+** Compare proportions between groups
 
 Data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -2013,8 +2017,7 @@ confint(e.BT, statistic = "favorable")
 : Y_1e-12 
 :      NA
 
-
-** Permutation t-test 
+** Permutation t-test: 2 group comparison
 
 Data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -2078,6 +2081,34 @@ permTS(x = X, y = Y, method = "exact.ce")
 : sample estimates:
 : mean X - mean Y 
 :       -1.533514
+
+** Permutation t-test: multiple group comparison
+Data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+X <- rlnorm(10, meanlog = 2, sdlog = 0.5)
+Y <- rlnorm(10, meanlog = 1.8, sdlog = 0.5)
+Z <- rlnorm(10, meanlog = 1.5, sdlog = 0.5)
+df <- rbind(data.frame(value = X, group = "X"),
+            data.frame(value = Y, group = "Y"),
+            data.frame(value = Z, group = "Z"))
+#+END_SRC
+
+#+RESULTS:
+
+NOT VALIDATED!!! 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library("permuco")
+lmperm(value ~ group, data = df, np = 1e4)
+#+END_SRC
+
+#+RESULTS:
+: Table of marginal t-test of the betas
+: Permutation test using freedman_lane to handle nuisance variables and 10000 permutations.
+:             Estimate Std. Error t value parametric Pr(>|t|) permutation Pr(<t) permutation Pr(>t) permutation Pr(>|t|)
+: (Intercept)    6.091     0.5755  10.584           4.142e-11                                                           
+: groupY         1.534     0.8139   1.884           7.035e-02             0.9631             0.0370               0.0716
+: groupZ        -3.095     0.8139  -3.803           7.440e-04             0.0005             0.9996               0.0009
 
 ** Testing median
 

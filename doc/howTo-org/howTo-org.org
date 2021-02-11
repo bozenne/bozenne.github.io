@@ -75,6 +75,13 @@ model$weights[[1]]
 : <tf.Variable 'dense_4/kernel:0' shape=(784, 256) dtype=float32_ref>
 
 #+LaTeX: }
+** Inline R
+
+#+BEGIN_SRC lisp :exports none
+(setq org-babel-inline-result-wrap "%s")
+#+END_SRC
+
+Bla src_R{{{1+1}}} {{{results(=2=)}}}.
 
 * List
 
