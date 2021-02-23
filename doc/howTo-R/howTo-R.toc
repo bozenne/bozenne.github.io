@@ -101,13 +101,14 @@
 \contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{81}{subsection.8.3}
 \contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{83}{subsection.8.4}
 \contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{85}{subsection.8.5}
-\contentsline {section}{\numberline {9}Miscellaneous}{86}{section.9}
-\contentsline {subsection}{\numberline {9.1}Profile code}{86}{subsection.9.1}
-\contentsline {subsection}{\numberline {9.2}Debug}{87}{subsection.9.2}
-\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{88}{subsection.9.3}
-\contentsline {subsection}{\numberline {9.4}Install development version of R}{89}{subsection.9.4}
-\contentsline {subsection}{\numberline {9.5}Install suggested packages}{90}{subsection.9.5}
-\contentsline {subsection}{\numberline {9.6}R version}{91}{subsection.9.6}
-\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{92}{subsection.9.7}
-\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{93}{subsection.9.8}
-\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{94}{subsection.9.9}
+\contentsline {subsection}{\numberline {8.6}Standardized coefficients}{86}{subsection.8.6}
+\contentsline {section}{\numberline {9}Miscellaneous}{88}{section.9}
+\contentsline {subsection}{\numberline {9.1}Profile code}{88}{subsection.9.1}
+\contentsline {subsection}{\numberline {9.2}Debug}{89}{subsection.9.2}
+\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{90}{subsection.9.3}
+\contentsline {subsection}{\numberline {9.4}Install development version of R}{91}{subsection.9.4}
+\contentsline {subsection}{\numberline {9.5}Install suggested packages}{92}{subsection.9.5}
+\contentsline {subsection}{\numberline {9.6}R version}{93}{subsection.9.6}
+\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{94}{subsection.9.7}
+\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{95}{subsection.9.8}
+\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{96}{subsection.9.9}

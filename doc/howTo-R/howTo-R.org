@@ -2998,6 +2998,107 @@ Warning messages:
 2: In sqrt(diag(asVar)) : NaNs produced
 #+end_example
 
+** Standardized coefficients
+
+"The standardized coefficients in the last column are interpreted as
+the change in standard deviation of the outcome when increasing the
+predictor one standard deviation" (Holst 2013).
+
+\bigskip
+
+Simulate some data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache n
+library(data.table);library(lava)
+mSim <- lvm(Y1~X+1*eta,Y2~X+2*eta,Y3~X+3*eta)
+latent(mSim) <- ~eta
+n <- 2500
+set.seed(10)
+d <- sim(mSim, n=n, latent = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Linear regression:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## by hand
+e <- estimate(lvm(Y1~Y2+Y3), data = d)
+coef(e)["Y1~Y2"]*sd(d$Y2)/sd(d$Y1)
+## via the dataset
+eS <- estimate(lvm(Y1~Y2+Y3), data = scale(d))
+as.data.frame(coef(eS, std = "xy", type = 9))[1,,drop=FALSE]
+#+END_SRC
+
+#+RESULTS:
+:     Y1~Y2 
+: 0.4167574
+:        Estimate Std. Error  Z-value     P-value    std.xy
+: Y1~Y2 0.4167574 0.02738807 15.21675 2.73795e-52 0.4167574
+
+LVM with saturated variance model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m <- lvm(Y1~X+eta,Y2~X+eta,Y3~X+eta)
+latent(m) <- ~eta
+
+## by hand
+e <- estimate(m, data = d)
+coef(e)["Y1~X"]*sd(d$X)/sd(d$Y1)
+
+## via the dataset
+eS <- estimate(m, data = scale(d))
+as.data.frame(coef(eS, std = "xy", type = 9))[1,,drop=FALSE]
+
+## in that case the marginal variance equals the modelled one
+c(model=coef(e)["Y1~~Y1"]+coef(e)["eta~~eta"]+var(d$X)*coef(e)["Y1~X"]^2,
+  marginal=var(d$Y1))
+## minor difference due to /(n-1) instead of /n in var
+#+END_SRC
+
+#+RESULTS:
+:      Y1~X 
+: 0.5858683
+:       Estimate Std. Error  Z-value       P-value    std.xy
+: Y1~X 0.5858683 0.01620812 36.14658 4.209965e-286 0.5858683
+: model.Y1~~Y1     marginal 
+:     3.033911     3.034709
+
+Non-saturated LVM:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m <- lvm(Y1~X+1*eta,Y2~X+1*eta,Y3~X+1*eta)
+latent(m) <- ~eta
+
+## by hand
+e <- estimate(m, data = d)
+coef(e)["Y1~X"]*sd(d$X)/sd(d$Y1)
+coef(e)["Y1~X"]*sd(d$X)/sqrt(coef(e)["Y1~~Y1"]+coef(e)["eta~~eta"]+var(d$X)*coef(e)["Y1~X"]^2)
+as.data.frame(coef(e, std = "xy", type = 9))[1,,drop=FALSE]
+
+## real difference between modeled and marginal variance
+c(model=coef(e)["Y1~~Y1"]+coef(e)["eta~~eta"]+var(d$X)*coef(e)["Y1~X"]^2,
+  marginal=var(d$Y1))
+#+END_SRC
+
+#+RESULTS:
+:      Y1~X 
+: 0.5858683
+:      Y1~X 
+: 0.5645535
+:       Estimate Std. Error  Z-value       P-value    std.xy
+: Y1~X 0.9977775 0.02918153 34.19209 3.169765e-256 0.5644766
+: model.Y1~~Y1     marginal 
+:     3.268187     3.034709
+
+After re-scaling the data, not sure what the =std.xy=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eS <- estimate(m, data = scale(d))
+as.data.frame(coef(eS, std = "xy", type = 9))[1,,drop=FALSE]
+#+END_SRC
+
+#+RESULTS:
+:       Estimate Std. Error  Z-value       P-value    std.xy
+: Y1~X 0.5858683 0.02003958 29.23556 6.852072e-188 0.5047583
+
+is though.
+
 * Miscellaneous
 ** Profile code
 
