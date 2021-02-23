@@ -2452,6 +2452,218 @@ autoplot(butils::partialResiduals(e.lm, var = "Age"))
 
 #+RESULTS:
 
+** Twin study
+*** Data
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+mydf <- data.frame("grp" = c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2"), 
+                   "pair" = c("1", "1", "2", "2", "3", "3", "4", "4", "5", "5", "6", "6", "7", "7", "8", "8", "9", "9", "10", "10", "11", "11", "12", "12", "13", "13", "14", "14", "15", "15", "16", "16", "17", "17", "18", "18", "19", "19", "20", "20", "21", "21", "22", "22", "23", "23", "24", "24", "25", "25", "26", "26", "27", "27", "28", "28", "29", "29", "30", "30", "31", "31", "32", "32", "33", "33", "34", "34", "35", "35", "36", "36", "37", "37", "38", "38", "39", "39", "40", "40", "41", "41", "42", "42", "43", "43", "44", "44", "45", "45", "46", "46", "47", "47", "48", "48", "49", "49", "50", "50", "51", "51", "52", "52", "53", "53", "54", "54", "55", "55", "56", "56", "57", "57", "58", "58", "59", "59", "60", "60", "61", "61", "62", "62", "63", "63", "64", "64", "65", "65", "66", "66", "67", "67", "68", "68", "69", "69", "70", "70", "71", "71", "72", "72", "73", "73", "74", "74", "75", "75", "76", "76", "77", "77", "78", "78", "79", "79", "80", "80", "81", "81", "82", "82", "83", "83", "84", "84", "85", "85", "86", "86", "87", "87", "88", "88", "89", "89", "90", "90", "91", "91", "92", "92", "93", "93", "94", "94", "95", "95", "96", "96", "97", "97", "98", "98", "99", "99", "100", "100"), 
+                   "nr" = c("1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2"), 
+                   "y" = c(17.2, 16.5, 18.7, 18.2, 17.5, 16.5, 17.5, 18.8, 18.0, 18.4, 19.2, 17.8, 19.2, 17.5, 17.3, 18.8, 17.3, 18.4, 18.6, 20.0, 19.4, 20.1, 18.3, 19.5, 19.3, 20.5, 19.8, 19.4, 19.2, 17.8, 18.0, 18.1, 20.0, 19.7, 20.3, 20.3, 20.4, 19.6, 20.5, 19.8, 19.7, 17.8, 21.7, 18.4, 21.0, 19.9, 19.2, 18.9, 20.5, 20.9, 19.8, 19.7, 19.5, 20.0, 19.8, 20.1, 22.7, 22.2, 18.8, 20.7, 20.2, 20.4, 21.2, 19.3, 22.2, 19.9, 19.8, 20.1, 21.0, 19.5, 19.8, 20.6, 21.1, 22.1, 20.5, 20.6, 22.6, 22.0, 23.8, 20.2, 20.5, 21.2, 20.9, 22.0, 22.9, 21.5, 22.3, 21.4, 20.4, 22.2, 20.4, 22.0, 21.6, 22.0, 22.6, 21.6, 23.4, 21.5, 23.9, 22.1, 20.2, 17.9, 19.8, 20.3, 19.7, 19.3, 20.5, 20.8, 21.1, 18.9, 20.5, 18.7, 20.0, 20.1, 21.6, 19.8, 22.0, 19.3, 18.5, 18.4, 21.8, 20.4, 18.4, 19.4, 20.5, 20.2, 19.4, 21.2, 20.0, 21.4, 20.1, 21.0, 21.4, 21.2, 20.8, 19.8, 21.2, 22.2, 21.5, 21.0, 19.9, 21.5, 20.0, 20.6, 20.8, 21.7, 20.5, 21.4, 21.6, 20.2, 21.5, 21.1, 20.6, 20.1, 20.6, 20.8, 20.7, 21.4, 20.6, 19.7, 21.8, 20.2, 23.4, 20.2, 20.7, 22.3, 21.9, 19.9, 22.7, 24.1, 22.9, 23.4, 21.2, 21.7, 21.7, 22.2, 23.3, 19.6, 21.6, 21.6, 20.4, 21.9, 21.1, 19.3, 21.8, 22.7, 24.4, 22.6, 21.3, 21.7, 20.0, 22.5, 21.3, 20.1, 20.8, 24.1, 22.1, 20.9, 23.9, 21.6))
+#+END_SRC
+
+#+RESULTS:
+
+#+RESULTS:
+:   grp pair nr        y
+: 1   1    1  1 17.15681
+: 2   1    1  2 16.49743
+: 3   1    2  1 18.65324
+: 4   1    2  2 18.21712
+: 5   1    3  1 17.52322
+: 6   1    3  2 16.50643
+
+Move to wide format
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(reshape2)
+mydfW <- dcast(mydf, id.vars = c("pair"), formula = pair+grp ~ nr, value.var = "y")
+colnames(mydfW)[3:4] <- paste0("y",colnames(mydfW)[3:4])
+head(mydfW)
+#+END_SRC
+
+#+RESULTS:
+:   pair grp   y1   y2
+: 1    1   1 17.2 16.5
+: 2   10   1 18.6 20.0
+: 3  100   2 23.9 21.6
+: 4   11   1 19.4 20.1
+: 5   12   1 18.3 19.5
+: 6   13   1 19.3 20.5
+
+*** REML solution
+Estimation using a different residual correlation and variable for each group:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(nlme)
+e.lme <- lme(y ~ grp,
+             random = list(pair = pdDiag(~grp-1)),
+             weight = varIdent(form =~ 1|grp),
+             data = mydf)
+2*logLik(e.lme)
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -681.5524 (df=6)
+
+\clearpage
+
+Variance-covariance structure:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+list(getVarCov(e.lme, indiv = 1, type = "marginal"),
+     getVarCov(e.lme, indiv = 51, type = "marginal"))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[[1]]
+pair 1 
+Marginal variance covariance matrix
+       1      2
+1 2.6521 1.7993
+2 1.7993 2.6521
+  Standard Deviations: 1.6285 1.6285 
+
+[[2]]
+pair 51 
+Marginal variance covariance matrix
+        1       2
+1 1.66730 0.51944
+2 0.51944 1.66730
+  Standard Deviations: 1.2913 1.2913
+#+end_example
+
+Inference mean structure
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## difference in mean between the two groups (H0: est.=0 i.e. equal means)
+intervals(e.lme)$fixed["grp2",]
+## better calculation of the degree of freedom for the mean comparison
+library(emmeans)
+summary(pairs(emmeans(e.lme, specs = ~grp), reverse = TRUE), infer = TRUE)
+#+END_SRC
+
+#+RESULTS:
+:     lower      est.     upper 
+: 0.3937073 0.9050000 1.4162927
+:  contrast estimate    SE df lower.CL upper.CL t.ratio p.value
+:  2 - 1       0.905 0.258 98    0.394     1.42 3.513   0.0007 
+: 
+: Degrees-of-freedom method: containment 
+: Confidence level used: 0.95
+
+\clearpage
+
+Inference variance structure (WARNING: residual variance)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## ratio between the variances (H0: est.=1 i.e. equal variance)
+as.data.frame(intervals(e.lme)$varStruct)
+#+END_SRC
+
+#+RESULTS:
+:      lower     est.    upper
+: 2 0.879652 1.160188 1.530192
+
+Inference covariance/correlation structure
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## standard deviation of the random effects
+as.data.frame(intervals(e.lme)$reStruct)
+## correlation
+getCor <- function(x){
+    tau <- intervals(x)$reStruct$pair[,"est."]^2
+    sigma2 <- c(1,intervals(x)$varStruct[,"est."]^2)*sigma(x)^2
+    c(tau/(sigma2+tau),
+      diff(tau/(sigma2+tau)))
+}
+getCor(e.lme)
+#+END_SRC
+
+#+RESULTS:
+:          pair.lower pair.est. pair.upper
+: sd(grp1)  1.0463670 1.3413858   1.719584
+: sd(grp2)  0.4505184 0.7207221   1.152984
+: [1]  0.6784453  0.3115382 -0.3669071
+
+No straightforward solution for testing. Resampling is an option:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lmeresampler)
+set.seed(10)
+lmeresampler::bootstrap(e.lme, fn=getCor,type="parametric",B=100)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+PARAMETRIC BOOTSTRAP
+
+
+Call:
+parametric_bootstrap.lme(model = model, fn = fn, B = B)
+
+
+Bootstrap Statistics :
+      original      bias    std. error
+t1*  0.6784453 -0.04854023  0.08868033
+t2*  0.3115382  0.05187772  0.12314478
+t3* -0.3669071  0.10041795  0.11675326
+#+end_example
+
+\clearpage
+
+*** ML solution
+Estimation using a different residual correlation and variable for each group:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+m1 <- lvm(y1[muGRP1:sigmaGRP1] ~ 1, y2[muGRP1:sigmaGRP1] ~ 1)
+covariance(m1) <- y1~y2
+m2 <- lvm(y1[muGRP2:sigmaGRP2] ~ 1, y2[muGRP2:sigmaGRP2] ~ 1)
+covariance(m2) <- y1~y2
+
+e.lvm <- estimate(list(m1,m2), data = split(mydfW, mydfW$grp))
+2*logLik(e.lvm)
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -678.2732 (df=6)
+
+Variance-covariance structure:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(c(variance = coef(e.lvm)["y1~~y1@1"], covariance = coef(e.lvm)["y1~~y2@1"]),
+      c(variance = coef(e.lvm)["y1~~y1@2"], covariance = coef(e.lvm)["y1~~y2@2"]))
+#+END_SRC
+
+#+RESULTS:
+:      variance.y1~~y1@1 covariance.y1~~y2@1
+: [1,]          2.607600            1.754800
+: [2,]          1.645475            0.497575
+
+Inference using delta-method:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(e.lvm, f = function(x){
+    c("mu1" = as.double(x["y1@1"]),
+      "mu2" = as.double(x["y1@2"]),
+      "mu2-mu1" = as.double(x["y1@2"]-x["y1@1"]),
+      "sd1" = as.double(sqrt(x["y1~~y1@1"]-x["y1~~y2@1"])),
+      "sd2" = as.double(sqrt(x["y1~~y1@2"]-x["y1~~y2@2"])),
+      "sd2/sd1" = as.double(sqrt((x["y1~~y1@2"]-x["y1~~y2@2"])/(x["y1~~y1@1"]-x["y1~~y2@1"]))),
+      "rho1" = as.double(x["y1~~y2@1"]/x["y1~~y1@1"]),
+      "rho2" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]),
+      "rho2-rho1" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]-x["y1~~y2@1"]/x["y1~~y1@1"])
+      )
+})
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+          Estimate Std.Err     2.5%    97.5%   P-value
+mu1        20.0600 0.20886 19.65064 20.46936 0.000e+00
+mu2        20.9650 0.14639 20.67807 21.25193 0.000e+00
+mu2-mu1     0.9050 0.25506  0.40509  1.40491 3.879e-04
+sd1         0.9235 0.09376  0.73970  1.10724 6.917e-23
+sd2         1.0714 0.09776  0.87980  1.26300 5.948e-28
+sd2/sd1     1.1602 0.15837  0.84979  1.47059 2.376e-13
+rho1        0.6730 0.06985  0.53606  0.80986 5.716e-22
+rho2        0.3024 0.12989  0.04782  0.55696 1.991e-02
+rho2-rho1  -0.3706 0.14748 -0.65961 -0.08152 1.198e-02
+#+end_example
+
 * Loops and parallel computations  
 ** Apply with progress bar
 
