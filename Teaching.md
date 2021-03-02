@@ -8,6 +8,7 @@ Data set for the Ph.D. course Epidemiological methods in medical research 2021:
 - dataset for pratical 1: [link to bissau data](https://bozenne.github.io/doc/Teaching/bissau.txt)
 - dataset for pratical 2: [link to vamvakas data](https://bozenne.github.io/doc/Teaching/vamvakas.txt)
 - dataset for pratical 3: [link to bcg data](https://bozenne.github.io/doc/Teaching/bcg.txt), [link to bissau data](https://bozenne.github.io/doc/Teaching/bissau.txt)
+- dataset for pratical 4: [link to bissau data](https://bozenne.github.io/doc/Teaching/bissau.txt), [link to diet data](https://bozenne.github.io/doc/Teaching/diet.txt)
 
 Statistical analysis of correlated and repeated measurements: [course webpage](http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html)
 - Solution for day 1: [link](https://bozenne.github.io/doc/Teaching/RM2019-solution-1.R)
