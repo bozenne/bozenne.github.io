@@ -95,10 +95,10 @@ we will figure out a solution.
   you/your superviser disagree we should discuss it at the first
   meeting. My affiliations are:
   + Neurobiology Research Unit, Rigshospitalet and University of
-    Copenhagen, 9 Blegdamsvej, 2100 Copenhagen, Denmark
+    Copenhagen, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark
   + Department of Public Health, Section of Biostatistics, University
-  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen K, Denmark <br> <br>
-
+  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark <br> <br>
+		  
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also
   expect to have a good place (e.g. second, third, second to last).
