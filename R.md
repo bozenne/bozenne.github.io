@@ -41,10 +41,6 @@ A very nice course where you can learn basic notions in statistics and R program
 - tutorial:  [update data table objects](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html)
 - tutorial:  [wide and long format](https://rdatatable.gitlab.io/data.table/articles/datatable-reshape.html)
 - [presentation](https://raw.githubusercontent.com/wiki/Rdatatable/data.table/talks/MontReal2018_Arun.pdf)
-  for an introduction and
-  https://github.com/Rdatatable/data.table/wiki for more
-  documentation.  A synthetic description of the functionalities can
-  be found at
 - [cheat sheet](https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf)
 
 *ggplot2* for generating graphical displays:
