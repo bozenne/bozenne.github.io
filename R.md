@@ -16,6 +16,10 @@ Cheat sheet (synthetic description) :
 - basic R [short](https://rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf) or [long](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf)
 - [R studio](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rstudio-ide.pdf)
 
+## KU basic statistic course
+A very nice course where you can learn basic notions in statistics and R programming:
+- run every fall at KU (in danish or [english](http://paulblanche.com/files/BasicStat2020.html))
+
 ## Specialized (and more advanced) topics
 
 *R markdown* for generating reports, i.e. documents mixing text, R code, R outputs (including graph)
@@ -60,4 +64,4 @@ Cheat sheet (synthetic description) :
 ## Fun facts about R
 
 If you are using R and you think you’re in hell, this is for you:
-- https://www.burns-stat.com/pages/Tutor/R_inferno.pdf
+- [pdf](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf)
