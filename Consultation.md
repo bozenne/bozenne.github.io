@@ -212,7 +212,7 @@ method).
 
 ## Other places where you can find help for data analysis
 
-- [statistical advisory service at Rigshospitalet](http://biostat.ku.dk/statisticaladvisory/)
+- [statistical advisory services](https://publichealth.ku.dk/about-the-department/biostat/) with three types of services: [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/), [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/), and [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
 - [data analysis group at NRU](https://nru.dk/index.php/research-menu/78-data-analysis)
  
 
