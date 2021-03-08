@@ -1,0 +1,505 @@
+#+TITLE: Introduction to Laplace approximation with examples in R
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+options(width = 120)
+path <-  "~/Documents/GitHub/bozenne.github.io/doc/2019-07-29-laplaceApproximation/"
+setwd(path)
+#+END_SRC
+
+Ressource: http://www.imm.dtu.dk/~hmad/GLM/Slides_2012/week11/lect11.pdf
+
+
+* Principle
+
+Consider a positive function \(F\) of two variables \(x\) and \(y\). We would
+like to marginalize \(F\) over \(x\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+F(y) &= \int_x F(x,y) dx \\
+&= \int_x \exp( f(x,y) ) dx
+\end{align*}
+#+END_EXPORT
+where \(f(x,y)=log(F(x,y))\) Assume that \(f(x,y)\) admits a global
+maximum (with respect to x) at \(\hat{x}\). Then, under some
+regularity assumption, we can use a taylor expansion to obtain:
+#+BEGIN_EXPORT latex
+\begin{align*}
+F(y) &= \int_x F(x,y) dx \\
+&= \int_x \exp\left( f(\hat{x},y) + \frac{(\hat{x}-x)^2}{2} f''(\hat{x},y) + o_p\left((\hat{x}-x)^2\right) \right) dx \\
+&= F(\hat{x},y)  \int_x \exp\left( \frac{(\hat{x}-x)^2}{2} f''(\hat{x},y)\right)  dx + o_p\left((\hat{x}-x)^2\right) \\
+&= F(\hat{x},y)  \sqrt{\frac{2\pi}{|f''(\hat{x},y)|}} + o_p\left((\hat{x}-x)^2\right) \\
+\end{align*}
+#+END_EXPORT
+
+\clearpage
+
+* Application
+
+** Linear mixed model
+
+*** Formula 
+
+Consider the following linear mixed model:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{ij} = X_{ij} \beta + u_i + \varepsilon_{ij} 
+\end{align*}
+#+END_EXPORT
+where \(\varepsilon_{ij} \sim \Gaus[0,\sigma^2]\) and \(u_i \sim
+\Gaus[0,\tau]\). Then denoting \(\theta = (\beta,\sigma^2,\tau)\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+F(u_i,\theta) &= \left( \prod_{j=1}^m \frac{1}{(2\pi \sigma^2)^{1/2}} \exp\left(-\frac{1}{2\sigma^2} (Y_{ij}-X_{ij}\beta-u_i)^2 \right) \right)
+ \frac{1}{(2\pi \tau)^{1/2}} \exp\left(-\frac{u_i^2}{2\tau} \right) \\
+f(u_i,\theta) &= - \sum_{j=1}^m \frac{1}{2} \log(2\pi \sigma^2) -\frac{1}{2\sigma^2} (Y_{ij}-X_{ij}\beta-u_i)^2 
+- \frac{1}{2} \log(2\pi \tau) -\frac{u_i^2}{2\tau} \\
+&=  - \frac{m}{2} \log(2\pi \sigma^2) - \frac{1}{2} \log(2\pi \tau) 
+- \frac{1}{2\sigma^2} \sum_{j=1}^m (Y_{ij}-X_{ij}\beta-u_i)^2 
+- \frac{1}{2\tau} u_i^2 
+\end{align*}
+#+END_EXPORT
+So
+#+BEGIN_EXPORT latex
+\begin{align*}
+f''(u_i,\theta) = - \frac{m}{\sigma^2} - \frac{1}{\tau} 
+\end{align*}
+#+END_EXPORT
+and we note that a second order Taylor expansion is enough since
+\(f'''(u_i,\theta)=0\). Therefore we get for the log-likelihood:
+#+BEGIN_EXPORT latex
+\begin{align*}
+f(\theta) =
+& - \frac{m}{2} \log(2\pi \sigma^2) - \frac{1}{2\sigma^2} \sum_{j=1}^m (Y_{ij}-X_{ij}\beta-\hat{u}_i)^2  \\
+& - \frac{1}{2\tau} \hat{u}_i^2 - \frac{1}{2} \log(2\pi \tau) \\
+& + \frac{1}{2} \log\left(\frac{2 \pi}{m\sigma^{-2} + \tau^{-1}}\right) 
+\end{align*}
+#+END_EXPORT
+
+\clearpage 
+
+*** R code
+
+Load packages:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+library(lavaSearch2)
+library(mvtnorm)
+library(nlme)
+library(data.table)
+#+END_SRC
+
+#+RESULTS:
+
+Simulate data
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm(c(Y1,Y2,Y3,Y4,Y5)~tau,
+         tau ~ X1+X2)
+latent(mSim) <- ~tau
+transform(mSim, id ~ tau) <- function(x){1:NROW(x)}
+
+m <- lvm(c(Y1,Y2,Y3,Y4,Y5)~1*tau,
+         tau ~ 0+X1+X2)
+variance(m, ~Y1) <- "sigma"
+variance(m, ~Y2) <- "sigma"
+variance(m, ~Y3) <- "sigma"
+variance(m, ~Y4) <- "sigma"
+variance(m, ~Y5) <- "sigma"
+
+set.seed(10)
+n <- 100
+dW <- as.data.table(lava::sim(mSim, n = n, latent = FALSE))
+dL <- melt(dW, id.vars = c("id","X1","X2"), variable.name = "time", value.name = "Y")
+#+END_SRC
+
+#+RESULTS:
+
+Fit linear mixed effect model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lava <- estimate(m, dW)
+e.nlme <- lme(Y ~ -1 + X1 + X2 + time,
+              random = ~ 1|id, data = dL, method = "ML")
+
+logLik(e.lava)
+logLik(e.nlme)
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -810.9451 (df=9)
+: 'log Lik.' -810.9451 (df=9)
+
+\clearpage
+
+Compute marginal likelihood:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+logLik_marginal <- function(model, data = NULL, param = NULL){
+    ## initialize
+    if(is.null(data)){
+        data <- as.data.frame(model.frame(model))
+    }
+    if(is.null(param)){
+        param <- coef(model)
+    }
+
+    ## find sufficient statisitcs
+    Sigma <- getVarCov2(model, data = data, param = param)
+    epsilon <- residuals(model, newdata = data, p = param)
+    m <- NCOL(epsilon)
+
+    ## compute log likelihood
+    out <- dmvnorm(x = epsilon, mean = rep(0, m), sigma = Sigma, log = TRUE)
+    ## n <- NROW(epsilon)
+    ## out <- -(n*m/2)*log(2*pi) - (n/2)*log(det(Sigma)) - 0.5*sum((epsilon %*% solve(Sigma)) * epsilon)
+    return(out)
+}
+sum(logLik_marginal(e.lava))
+#+END_SRC
+
+#+RESULTS:
+: [1] -810.9451
+
+\clearpage
+
+Compute conditional likelihood:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+logLik_conditional <- function(model, Zb = NULL, 
+                               data = NULL, param = NULL){
+
+    ## initialize
+    if(is.null(data)){
+        data <- as.data.frame(model.frame(model))
+    }
+    if(is.null(param)){
+        param <- coef(model)
+    }
+
+    ## identify variance of the random effect
+    df.type <- coefType(model, as.lava=FALSE)
+    df.type <- df.type[!is.na(df.type$detail),]
+    tau <- param[df.type[df.type$detail=="Psi_var","param"]]
+
+    ## estimate sufficient statistics
+    Sigma.m <- getVarCov2(model, data = data, param = param)
+    Sigma.c <- Sigma.m - tau
+    YmXB <- residuals(model, newdata = data, p = param)
+
+    ## compute random effects
+    m <- NCOL(YmXB)
+    if(is.null(Zb)){
+        Z <- matrix(1, nrow = 1, ncol = m)
+        Omega <- solve(Z %*% solve(Sigma.c) %*% t(Z) + 1/tau) %*% Z %*% solve(Sigma.c)
+        Zb <- as.double(Omega %*% t(YmXB)) ## cbind(ranef(e.nlme),Zb)
+    }
+    epsilon <- YmXB - Zb
+
+    out1 <- dmvnorm(x = epsilon, mean = rep(0, m), sigma = Sigma.c, log = TRUE)
+    out2 <- dnorm(x = Zb, mean = 0, sd = sqrt(tau), log = TRUE)
+    return(out1 + out2)
+}
+#+END_SRC
+
+#+RESULTS:
+
+Laplace approximation
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+d2.f <- 5/coef(e.lava)["Y1~~Y1"]+1/coef(e.lava)["tau~~tau"]
+sum(logLik_conditional(e.lava) + (1/2)*log(2*pi/d2.f))
+#+END_SRC
+
+#+RESULTS:
+: [1] -810.9451
+
+\clearpage
+
+** General gaussian model
+
+Consider the following gaussian mixed model:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{i} \sim \Gaus[\mu(X_{i}, \beta,u_i),\Sigma]
+\end{align*}
+#+END_EXPORT
+Denoting by \(m\) the number of observations per individual we have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+f(u_i,\theta) &= - \frac{1}{2} \log\left((2\pi)^m |\Sigma|\right) - \frac{1}{2} (Y_{i}-\mu(X_{i},\beta,u_i)) \Sigma^{-1} \trans{(Y_{ij}-\mu(X_{i},\beta,u_i))}
+- \frac{1}{2} \log(2\pi \tau) -\frac{u_i^2}{2\tau} \\
+&\propto  - \frac{1}{2} \log|\Sigma| - \frac{1}{2} \log(\tau) 
+- \frac{1}{2} (Y_{i}-\mu(X_{i},\beta,u_i)) \Sigma^{-1} \trans{(Y_{ij}-\mu(X_{i},\beta,u_i))}
+- \frac{1}{2\tau} u_i^2 
+\end{align*}
+#+END_EXPORT
+Since 
+#+BEGIN_EXPORT latex
+\begin{align*}
+f''(u_i,\theta) = - \mu'(X_{i},\beta,u_i) \Sigma^{-1} \trans{\mu'(X_{i},\beta,u_i)} - \frac{1}{\tau}
+\end{align*}
+#+END_EXPORT
+we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+f(\theta) =
+& - \frac{1}{2} \log\left((2\pi)^m |\Sigma|\right) - \frac{1}{2} (Y_{i}-\mu(X_{i},\beta,u_i)) \Sigma^{-1} \trans{(Y_{ij}-\mu(X_{i},\beta,u_i))} \\
+& - \frac{1}{2} \log(2\pi \tau) -\frac{u_i^2}{2\tau} \\
+& + \frac{1}{2} \log\left(\frac{2 \pi}{\mu'(X_{i},\beta,u_i) \Sigma^{-1} \trans{\mu'(X_{i},\beta,u_i)} + \tau^{-1}}\right) 
+\end{align*}
+#+END_EXPORT
+
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+
+** Notations

@@ -1,0 +1,231 @@
+#+TITLE: Splines vs. polynomes for fitting non-linear relationships
+
+\bigskip
+
+/Note:/ this is document is inspired from http://stackoverflow.com/questions/15837763/b-spline-confusion
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+path <- "~/Documents/GitHub/bozenne.github.io/doc/2018-10-18-splines/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+* Simulate data
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
+library(splines)
+library(data.table)
+library(ggplot2)
+library(mgcv)
+
+set.seed(1)
+n <- 400
+
+x <- 0:(n-1)/(n-1)
+dt <- data.table(X = x, 
+                 Ytrue =  0.2*x^11*(10*(1-x))^6+10*(10*x)^3*(1-x)^10)
+dt[,Y := Ytrue + rnorm(n, 0, sd = 0.5)]
+#+END_SRC
+
+#+RESULTS:
+
+* Apply spline transformation to X
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no 
+dt[,c(X2,X3,X4,X5,X6) := .(X^2, X^3,X^4,X^5,X^6)]
+
+SplineTempo <- bs(dt$X, knots = c(0.2, 0.5, 0.7))
+dt <- cbind(dt, 
+            setNames(as.data.frame(SplineTempo), 
+                     paste0("S",1:ncol(SplineTempo))))
+#+END_SRC
+
+#+RESULTS:
+
+* Fit models
+
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no 
+lmPoly <- lm(Y ~ X + X2 + X3 + X4 + X5 + X6, data = dt)
+
+lmSpline <- lm(Y ~ bs(x, knots = c(0.2, 0.5, 0.7)), data = dt)
+
+lmSplineI <- lm(Y ~ S1 + S2 + S3 + S4 + S5 + S6, data = dt)
+
+autoSpline <- gam(Y ~ s(X), data = dt)
+#+END_SRC
+
+Note that
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+range(coef(lmSpline)-coef(lmSplineI)) # same as lmSpline
+#+END_SRC
+
+#+RESULTS[<2021-03-08 10:36:24> 77eb842b6d21e4e7eca5dd934b08c7ab1b1ebba5]:
+: [1] 0 0
+
+Residual degree of freedom:
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no 
+c(df.residual(lmPoly),df.residual(lmSpline), df.residual(autoSpline))
+#+END_SRC
+
+#+RESULTS[<2021-03-08 10:36:28> 93bb4a0e6afe6c7929462c200ffe3a447f14d7bf]:
+: [1] 393.0000 393.0000 390.0559
+
+
+* Extract the fitted values
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no 
+seqX <- seq(min(dt$X), max(dt$X), length = 100)
+
+dt2 <- data.table(Y = dt$Y, X = dt$X, type = "observed")
+
+predPoly <- predict(lmPoly, newdata = data.frame(X = seqX, X2 = seqX^2, X3 = seqX^3, X4 = seqX^4, X5 = seqX^5, X6 = seqX^6))
+dt2 <- rbind(dt2, data.frame(Y = predPoly, X = seqX, type = "poly"))
+
+predSpline <- predict(lmSpline, newdata = data.frame(x = seqX))
+dt2 <- rbind(dt2, data.frame(Y = predSpline, X = seqX, type = "spline"))
+
+predGam <- predict(autoSpline, newdata = data.frame(X = seqX))
+dt2 <- rbind(dt2, data.frame(Y = predGam, X = seqX, type = "gam"))
+#+END_SRC
+
+
+* Display fit
+
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ggbase <- ggplot(dt2[dt2$type == "observed",], aes(x = X, y = Y)) + geom_point()
+ggbase <- ggbase + geom_line(data = dt2[dt2$type != "observed",],
+                             aes(x = X, y = Y, group = type, color = type),
+                             size = 2)
+ggbase <- ggbase + theme(text = element_text(size=30))
+#+END_SRC
+
+#+RESULTS:
+
+# ggsave(ggbase, filename = "figures/comparison.pdf", width = 10)
+
+#+ATTR_LATEX: :width 1\textwidth :options clip=true, trim=0cm 0cm 0cm 0cm
+file:./figures/comparison.pdf
+
+
+Splines give a better fit compared to a 3rd order polynomial when the knots are correctly placed
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=3cm, bottom=3cm, left=3cm, right=3cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+#+LATEX_HEADER: \newskip \skipamount    \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+** Notations
+

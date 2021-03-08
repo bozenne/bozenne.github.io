@@ -1,0 +1,946 @@
+#+TITLE: A simple example of multiple imputation using the mice package
+#+Author: Brice Ozenne
+
+
+This document gathers code from the documentation of the mice
+package. See https://stefvanbuuren.name/mice/.
+
+\bigskip
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+path <- "~/Documents/GitHub/bozenne.github.io/doc/2019-10-22-multipleImputation/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+Load packages
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+library(mice)
+library(data.table)
+library(ggplot2)
+#+END_SRC
+
+#+RESULTS:
+
+* Simulate data
+
+Just to have an example to work with. Generative model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm(Y~group+season+bmi+gender+age)
+categorical(mSim, labels = c("winter","summer")) <- ~season
+categorical(mSim, labels = c("SAD","HC")) <- ~group
+categorical(mSim, labels = c("Male","Female")) <- ~gender
+distribution(mSim,~bmi) <- lava::gaussian.lvm(mean = 22, sd = 3)
+distribution(mSim,~age) <- lava::uniform.lvm(20,80)
+#+END_SRC
+
+#+RESULTS:
+
+Sampling
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n <- 1e2
+set.seed(10)
+dt.data <- as.data.table(sim(mSim,n))
+#+END_SRC
+
+#+RESULTS:
+Add missing values
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.data[1:10, bmi:=NA]
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+* Working with mice
+
+** Step 1: Inspect the missing data pattern
+Check the number of missing values in the dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+colSums(is.na(dt.data))
+#+END_SRC
+
+#+RESULTS:
+:      Y  group season    bmi gender    age 
+:      0      0      0     10      0      0
+
+Missing data patterns:   
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+md.pattern(dt.data)
+#+END_SRC
+
+#+RESULTS:
+:    Y group season gender age bmi   
+: 90 1     1      1      1   1   1  0
+: 10 1     1      1      1   1   0  1
+:    0     0      0      0   0  10 10
+
+#+LaTeX: \vspace{-4cm}
+
+# #+BEGIN_SRC R :results graphics :file "./figures/missingDataPattern.pdf" :exports results :session *R* :cache no
+# md.pattern(dt.data)
+# #+END_SRC
+
+#+RESULTS:
+[[file:./figures/missingDataPattern.pdf]]
+
+#+LaTeX: \vspace{-4cm}
+
+Note: with more patterns it becomes clear that the left column counts
+the number of observations with a specific patern. The right column
+display the index of the pattern. The bottom row counts the number of
+missing value relative to each variable (and the total number of
+missing values).
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.data2 <- copy(dt.data)
+dt.data2[5:10,age:=NA]
+md.pattern(dt.data2)
+#+END_SRC
+
+#+RESULTS:
+:    Y group season gender age bmi   
+: 90 1     1      1      1   1   1  0
+: 4  1     1      1      1   1   0  1
+: 6  1     1      1      1   0   0  2
+:    0     0      0      0   6  10 16
+
+\clearpage
+
+** Step 2: Define imputation model
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+all.variables <- c("Y","group","season","bmi","gender","age")
+n.variables <- length(all.variables)
+Mlink <- matrix(0, n.variables, n.variables,
+                dimnames = list(all.variables,all.variables))
+Mlink["bmi",c("group","season","gender","age")] <- 1
+Mlink
+#+END_SRC
+
+#+RESULTS:
+:        Y group season bmi gender age
+: Y      0     0      0   0      0   0
+: group  0     0      0   0      0   0
+: season 0     0      0   0      0   0
+: bmi    0     1      1   0      1   1
+: gender 0     0      0   0      0   0
+: age    0     0      0   0      0   0
+
+A value of 1 means that the column variable is used as a predictor for
+ the target block (in the rows).
+
+\clearpage
+
+** Step 3: Generate imputed datasets
+Generate imputed values
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.imputed <- 3 ## number of imputed datasets
+dt.mice <- mice(dt.data,
+                m=n.imputed, 
+                maxit = 50, # number of iterations to obtain the imputed dataset
+                predictorMatrix = Mlink,
+                method = 'pmm', # Predictive mean matching, only ok for continuous variables, it is possible to set constrains for positive variables
+                seed = 500, printFlag = FALSE)
+summary(dt.mice)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Class: mids
+Number of multiple imputations:  3 
+Imputation methods:
+     Y  group season    bmi gender    age 
+    ""     ""     ""  "pmm"     ""     "" 
+PredictorMatrix:
+       Y group season bmi gender age
+Y      0     0      0   0      0   0
+group  0     0      0   0      0   0
+season 0     0      0   0      0   0
+bmi    0     1      1   0      1   1
+gender 0     0      0   0      0   0
+age    0     0      0   0      0   0
+#+end_example
+
+*** Interacting with the mice object
+
+Missingness indicator:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+table(cci(dt.mice))
+#+END_SRC
+
+#+RESULTS:
+: 
+: FALSE  TRUE 
+:    10    90
+
+
+Complete case dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+str(cc(dt.mice))
+#+END_SRC
+
+#+RESULTS:
+: 'data.frame':	90 obs. of  6 variables:
+:  $ Y     : num  102 82.9 94.9 61.4 82 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 1 2 2 2 2 2 2 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 1 1 2 1 2 1 1 1 ...
+:  $ bmi   : num  21.6 21.9 20.6 26.4 28.5 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 2 1 1 2 2 1 2 2 ...
+:  $ age   : num  77.3 57.2 73.6 34 50.7 ...
+
+Extract observations with missing values:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+str(ic(dt.mice))
+#+END_SRC
+
+#+RESULTS:
+: 'data.frame':	10 obs. of  6 variables:
+:  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1
+:  $ bmi   : num  NA NA NA NA NA NA NA NA NA NA
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1
+:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+
+Dataset after multiple imputation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+str(complete(dt.mice, action = 1)) ## first imputed dataset
+#+END_SRC
+
+#+RESULTS:
+: 'data.frame':	100 obs. of  6 variables:
+:  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+:  $ bmi   : num  25.9 21 16.7 20.2 25.9 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+str(complete(dt.mice, action = 2)) ## second imputed dataset
+#+END_SRC
+
+#+RESULTS:
+: 'data.frame':	100 obs. of  6 variables:
+:  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+:  $ bmi   : num  17.5 18.1 24.3 20.7 20.9 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+
+\clearpage
+
+** Step 4: Check the imputed datasets
+*** Convergence of the imputation algorithm
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+plot(dt.mice, layout = c(1,2))
+#+END_SRC   
+
+#+RESULTS:
+
+# #+BEGIN_SRC R :results graphics :file "./figures/traceCVimputed.pdf" :exports results :session *R* :cache no
+# plot(dt.mice, layout = c(1,2))
+# #+END_SRC
+
+
+
+
+#+ATTR_LaTeX: :width 0.70\textwidth :placement [!h]
+[[file:./figures/traceCVimputed.pdf]]
+
+
+*** Visualizing the imputed values
+Visualize imputed value values and check they are plausible (e.g. mice
+is not imputed a BMI of 75):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.mice$imp$bmi
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+          1        2        3
+1  25.86170 17.51962 26.03528
+2  20.97076 18.12224 21.60139
+3  16.68404 24.25679 17.86661
+4  20.15124 20.71567 26.03528
+5  25.86170 20.92015 25.24236
+6  24.80171 25.02219 20.62111
+7  21.42336 25.02219 25.02219
+8  21.00639 20.90548 20.15124
+9  24.76365 12.99571 24.80171
+10 15.52519 12.99571 21.42336
+#+end_example
+
+The rows correspond to the 3 different imputed datasets and the
+columns to 10 imputed values per dataset. One can also summarizes the
+imputed values computing their quantiles:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+apply(dt.mice$imp$bmi,2,quantile)
+#+END_SRC
+
+#+RESULTS:
+:             1        2        3
+: 0%   15.52519 12.99571 17.86661
+: 25%  20.35612 17.67028 20.82167
+: 50%  21.21487 20.81058 23.20155
+: 75%  24.79219 23.42263 25.18731
+: 100% 25.86170 25.02219 26.03528
+
+Boxplot of the imputed values:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+boxplot(dt.mice$imp$bmi)
+#+END_SRC
+
+#+RESULTS:
+
+# #+BEGIN_SRC R :results graphics :file "./figures/boxplotImputed.pdf" :exports results :session *R* :cache no
+# boxplot(dt.mice$imp$bmi)
+# #+END_SRC
+
+#+RESULTS:
+[[file:./figures/boxplotImputed.pdf]]
+
+\clearpage
+
+	Imputed values vs. observed values
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.bmi <- rbind(data.table(bmi = unlist(dt.mice$imp$bmi), imputed = TRUE),
+                data.table(bmi = na.omit(dt.data$bmi), imputed = FALSE))
+#+END_SRC
+
+#+RESULTS:
+
+Histogram
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg1.bmi <- ggplot(dt.bmi, aes(bmi, group = imputed, fill = imputed))
+gg1.bmi <- gg1.bmi + geom_histogram(aes(y=..count../sum(..count..)),position = "dodge")
+gg1.bmi
+#+END_SRC
+
+#+RESULTS:
+: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+# #+BEGIN_SRC R :results graphics :file "./figures/histImputed.pdf" :exports results :session *R* :cache no
+# gg1.bmi
+# #+END_SRC
+
+#+RESULTS:
+[[file:./figures/histImputed.pdf]]
+
+\clearpage
+
+One more plot:
+   
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
+#+END_SRC
+
+#+RESULTS:
+
+# #+BEGIN_SRC R :results graphics :file "./figures/striplotImputed.pdf" :exports results :session *R* :cache no
+# stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
+# #+END_SRC
+
+#+RESULTS:
+[[file:./figures/striplotImputed.pdf]]
+
+\clearpage
+
+** Step 3: Fit the statical model on each imputed dataset
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.mice <- with(data = dt.mice,
+               lm(Y~group+season+bmi+gender+age)
+               )
+e.mice
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+call :
+with.mids(data = dt.mice, expr = lm(Y ~ group + season + bmi + 
+    gender + age))
+
+call1 :
+mice(data = dt.data, m = n.imputed, method = "pmm", predictorMatrix = Mlink, 
+    maxit = 50, printFlag = FALSE, seed = 500)
+
+nmis :
+     Y  group season    bmi gender    age 
+     0      0      0     10      0      0 
+
+analyses :
+[[1]]
+
+Call:
+lm(formula = Y ~ group + season + bmi + gender + age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
+      2.8846        0.7238        1.2174        0.8602        0.5507        1.0058  
+
+
+[[2]]
+
+Call:
+lm(formula = Y ~ group + season + bmi + gender + age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
+      3.8365        0.6732        0.8917        0.7907        0.7422        1.0221  
+
+
+[[3]]
+
+Call:
+lm(formula = Y ~ group + season + bmi + gender + age)
+
+Coefficients:
+ (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
+      2.2639        0.5601        1.1779        0.8919        0.7209        1.0025
+#+end_example
+
+We can check that using =with= is equivalent to run the linear
+regression on the imputed dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dt.tempo <- copy(dt.data)
+dt.tempo[is.na(bmi), bmi := dt.mice$imp$bmi[,1]]
+lm(Y ~ group + season + bmi + gender + age, data  = dt.tempo)
+#+END_SRC
+
+#+RESULTS:
+: 
+: Call:
+: lm(formula = Y ~ group + season + bmi + gender + age, data = dt.tempo)
+: 
+: Coefficients:
+:  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
+:       2.8846        0.7238        1.2174        0.8602        0.5507        1.0058
+
+\clearpage
+
+** Step 4: Pool the results over the imputed datasets
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ePool.mice <- pool(e.mice)
+summary(ePool.mice)
+#+END_SRC
+
+#+RESULTS:
+:           term  estimate  std.error statistic        df      p.value
+: 1  (Intercept) 2.9949755 1.73919838  1.722044 18.777429 1.014936e-01
+: 2      groupHC 0.6523698 0.42434760  1.537348 78.067966 1.282516e-01
+: 3 seasonsummer 1.0956572 0.46036133  2.379994 30.027026 2.386256e-02
+: 4          bmi 0.8475895 0.08552179  9.910802  7.101823 2.060982e-05
+: 5 genderFemale 0.6712684 0.42707145  1.571794 66.444876 1.207484e-01
+: 6          age 1.0101585 0.01664369 60.693193  6.176972 8.221885e-10
+
+
+The (pooled) estimate is the average of the estimates relative to each
+imputed dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache n
+Q.coef <- colMeans(do.call(rbind,lapply(e.mice$analyses, coef)))
+Q.coef
+#+END_SRC
+
+#+RESULTS:
+:  (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
+:    2.9949755    0.6523698    1.0956572    0.8475895    0.6712684    1.0101585
+
+The variance is a bit more complex and involves:
+- the within-imputation variance (depends on the sample size)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+covW <- Reduce("+",lapply(e.mice$analyses, vcov))/n.imputed
+print(covW, digits = 5)
+#+END_SRC
+
+#+RESULTS:
+:              (Intercept)     groupHC seasonsummer         bmi genderFemale         age
+: (Intercept)    2.1882899 -0.13040004  -0.04842230 -7.9278e-02  -0.10952359 -5.2588e-03
+: groupHC       -0.1304000  0.17070925   0.01361091  3.0162e-03   0.00655971 -6.6906e-04
+: seasonsummer  -0.0484223  0.01361091   0.16981498 -2.3136e-03   0.01559623 -2.0107e-04
+: bmi           -0.0792775  0.00301620  -0.00231365  3.7376e-03  -0.00042973 -4.6547e-05
+: genderFemale  -0.1095236  0.00655971   0.01559623 -4.2973e-04   0.16771404  2.9411e-04
+: age           -0.0052588 -0.00066906  -0.00020107 -4.6547e-05   0.00029411  1.3100e-04
+
+- the between-imputation variance (depends on the amount of missing data)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ls.diffCoef <- lapply(e.mice$analyses, function(iI){coef(iI)-Q.coef})
+covB <- Reduce("+",lapply(ls.diffCoef,tcrossprod))/(n.imputed-1)
+print(covB, digits = 5)
+#+END_SRC
+
+#+RESULTS:
+:            [,1]        [,2]       [,3]        [,4]        [,5]        [,6]
+: [1,]  0.6273908  0.03854326 -0.1225940 -0.04085088  0.01833254  0.00804290
+: [2,]  0.0385433  0.00702122 -0.0015717 -0.00218666 -0.00585420  0.00032147
+: [3,] -0.1225940 -0.00157170  0.0315882  0.00839604 -0.01252242 -0.00179271
+: [4,] -0.0408509 -0.00218666  0.0083960  0.00268231 -0.00167818 -0.00053567
+: [5,]  0.0183325 -0.00585420 -0.0125224 -0.00167818  0.01100699  0.00049399
+: [6,]  0.0080429  0.00032147 -0.0017927 -0.00053567  0.00049399  0.00010951
+
+- the simulation error
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+covE <- covB/n.imputed
+print(covE, digits = 5)
+#+END_SRC
+
+#+RESULTS:
+:            [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
+: [1,]  0.2091303  0.01284775 -0.04086467 -0.01361696  0.00611085  2.6810e-03
+: [2,]  0.0128478  0.00234041 -0.00052390 -0.00072889 -0.00195140  1.0716e-04
+: [3,] -0.0408647 -0.00052390  0.01052939  0.00279868 -0.00417414 -5.9757e-04
+: [4,] -0.0136170 -0.00072889  0.00279868  0.00089410 -0.00055939 -1.7856e-04
+: [5,]  0.0061108 -0.00195140 -0.00417414 -0.00055939  0.00366900  1.6466e-04
+: [6,]  0.0026810  0.00010716 -0.00059757 -0.00017856  0.00016466  3.6504e-05
+
+The total variance is:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+covT <- covW + covB + covE
+#+END_SRC
+
+#+RESULTS:
+
+leading to the standard errors:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(diag(covT))
+#+END_SRC
+#+RESULTS:
+:  (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
+:   1.73919838   0.42434760   0.46036133   0.08552179   0.42707145   0.01664369
+
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+# summary(ePool.mice)$std.error
+# #+END_SRC
+
+# #+RESULTS:
+# : [1] 0.744297026 0.198790594 0.228668346 0.030690688 0.206315648 0.005623804
+
+
+\bigskip
+
+There is also a function to extract the R-squared:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pool.r.squared(e.mice)
+#+END_SRC
+
+#+RESULTS:
+:           est     lo 95     hi 95 fmi
+: R^2 0.9890535 0.9819615 0.9933666 NaN
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+vec.rsquared <- sapply(e.mice$analyses, function(iImp){
+    summary(iImp)$r.squared
+})
+tanh(mean(atanh(vec.rsquared)))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.9890535
+
+\clearpage
+
+* Special case: imputation using a specific law and no covariate
+Mice can be adapted in order, for instance, to sample from a uniform
+distribution or a truncated normal distribution. First define a
+function able to generate data like:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mice.impute.SI_unif <- function(y, ry, ...){ ## uniform law
+    n.NA <- sum(ry==FALSE)
+    sample <- runif(n.NA, min = 0, max = 1)
+    return(cbind(sample))
+}
+#+END_SRC
+
+or
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mice.impute.SI_tnorm <- function(y, ry, ...){ ## truncated normal law
+    require(truncnorm)
+    n.NA <- sum(ry==FALSE)
+    sample <- rtruncnorm(n.NA, a = 0, b = 1, mean = 1, sd = 0.1)
+    return(cbind(sample))
+}
+#+END_SRC
+#+RESULTS:
+
+Then prepare the matrix indicating which variable should be used
+during the imputation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+impute.var <- c("bmi","group")
+Mlink2 <- matrix(0, 
+                 nrow = length(impute.var), 
+                 ncol = length(impute.var), 
+                 dimnames = list(impute.var,impute.var))
+Mlink2["bmi","group"] <- 1
+Mlink2
+#+END_SRC
+
+#+RESULTS:
+:       bmi group
+: bmi     0     1
+: group   0     0
+
+\clearpage 
+
+Then run mice as usual except that the method should correspond to one of the previous functions:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.imputed <- 50 ## number of imputed datasets
+set.seed(1)
+dt.mice2 <- mice(dt.data,
+                 m=n.imputed, 
+                 maxit = 1, # not relevant
+                 predictorMatrix = Mlink2, # not relevant
+                 method = 'SI_tnorm', # function previous define (without "mice.impute.")
+                 seed = 500, printFlag = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Then as usual one should check that the imputed values are satisfying:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+quantile(unlist(dt.mice2$imp$bmi))
+#+END_SRC
+
+#+RESULTS:
+:        0%       25%       50%       75%      100% 
+: 0.7041556 0.8790477 0.9317021 0.9687630 0.9997288
+
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+hist(unlist(dt.mice2$imp$bmi))
+#+END_SRC
+
+#+RESULTS:
+
+# #+BEGIN_SRC R :results graphics :file "./figures/histImputed2.pdf" :exports results :session *R* :cache no
+# hist(unlist(dt.mice2$imp$bmi))
+# #+END_SRC
+
+
+#+ATTR_LaTeX: :width 0.8\textwidth :placement [!h]
+[[file:./figures/histImputed2.pdf]]
+
+\clearpage
+
+One more plot:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
+#+END_SRC
+
+#+RESULTS:
+
+# #+BEGIN_SRC R :results graphics :file "./figures/striplotImputed2.pdf" :exports results :session *R* :cache no
+# stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
+# #+END_SRC
+
+#+RESULTS:
+[[file:./figures/striplotImputed2.pdf]]
+
+Here for instance the imputed values does not overlap the observed one
+so something (i.e. the parameters of the distribution used for the
+imputation) is wrong.
+
+# \bigskip
+
+# Then as before one can fit the statistical model using =with=:
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+# e.mice2 <- with(data = dt.mice2,
+#                 lm(Y~group+season+bmi+gender+age)
+#                 )
+# ePool.mice2 <- pool(e.mice2)
+# summary(ePool.mice2)
+# #+END_SRC
+
+# #+RESULTS:
+# :                estimate  std.error statistic       df      p.value
+# : (Intercept)  16.3571621 1.44891707 11.289233 92.05265 0.000000e+00
+# : groupHC       0.3117620 0.64131399  0.486130 92.05265 6.280303e-01
+# : seasonsummer  1.6171573 0.63762913  2.536204 92.05265 1.289066e-02
+# : bmi           0.2207013 0.04502684  4.901550 92.05265 4.065644e-06
+# : genderFemale  0.9072630 0.63710993  1.424029 92.05265 1.578191e-01
+# : age           1.0209777 0.01772960 57.586060 92.05265 0.000000e+00
+
+\clearpage
+
+* Reporting guideline 
+From https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf:
+- Amount of missing data
+- Reasons for missingness
+- Differences between complete and incomplete data
+- Method used to account for missing data
+- Software
+- Number of imputed datasets
+- Imputation model
+- Derived variables
+- Diagnostics
+- Pooling
+- Listwise deletion
+- Sensitivity analysis
+
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+
+
+** Notations

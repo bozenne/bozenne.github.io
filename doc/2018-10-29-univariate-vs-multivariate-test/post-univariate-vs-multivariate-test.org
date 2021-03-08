@@ -1,0 +1,285 @@
+#+TITLE: Univariate test vs multivariate test
+#+Author: 
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+path <- "~/Documents/GitHub/bozenne.github.io/doc/2018-10-29-univariate-vs-multivariate-test/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(mvtnorm)
+library(data.table)
+library(ggplot2)
+library(ggforce) # install.packages("ggforce")
+#+END_SRC
+
+#+RESULTS:
+
+* One-dimensional test
+
+Create a 1D-grid of values corresponding to the possible values of the 1D statistic test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+grid1D <- seq(-3,3,0.025)
+#+END_SRC
+
+#+RESULTS:
+
+The rejection region at 5% is defined by the 0.025 and 0.975 quantiles of the normal distribution:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rejection1D <- c(qnorm(0.025), qnorm(0.975))
+rejection1D
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.959964  1.959964
+
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
+plot(grid1D, dnorm(grid1D), type = "o", xlab = "value of the statistic test", 
+     ylab = "density")
+abline(v = rejection1D, col = "red")
+legend("topright", col = "red", lty = 1, legend = "rejection zone", bty = "n")
+#+END_SRC
+
+#+RESULTS:
+
+We can then plot the values of the statistic tests and the rejection region:
+#+BEGIN_SRC R :exports none :results graphics :file "figures/1D-test.pdf" :exports results :session *R* :cache no
+plot(grid1D, dnorm(grid1D), type = "o", xlab = "value of the statistic test", 
+     ylab = "density")
+abline(v = rejection1D, col = "red")
+legend("topright", col = "red", lty = 1, legend = "rejection zone", bty = "n")
+#+END_SRC
+
+#+ATTR_LATEX: :width 0.7\textwidth
+#+RESULTS[<2018-10-29 09:35:01> 72e9e2e7d5685596714e910f74169928af6599de]:
+[[file:figures/1D-test.pdf]]
+
+
+
+
+* 2 dimensional test
+
+Create a 2D-grid of values corresponding to the possible values of the 2D statistic test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+grid2D <- as.data.table(expand.grid(beta1 = grid1D, beta2 = grid1D))
+grid2D[, density := dmvnorm(cbind(beta1, beta2))]
+range(grid2D$density)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.964128e-05 1.591549e-01
+
+If we would do two univariate tests (not accounting for multiple
+testing), the rejection region at 5% would be a square whose size is
+defined the 0.025 and 0.975 quantiles of the normal distribution:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rejection2D.2uni <- data.table(xmax = qnorm(0.975, mean = 0, sd = 1),
+                               ymax = qnorm(0.975, mean = 0, sd = 1),
+                               xmin = qnorm(0.025, mean = 0, sd = 1),
+                               ymin = qnorm(0.025, mean = 0, sd = 1))
+rejection2D.2uni
+#+END_SRC
+
+#+RESULTS:
+:        xmax     ymax      xmin      ymin
+: 1: 1.959964 1.959964 -1.959964 -1.959964
+
+When we account for multiple comparison we get:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+qq <- qmvnorm(0.95, mean = c(0,0), sigma = diag(1,2), tail = "both")
+
+rejection2D.2uniadj <- data.table(
+    xmax = qq$quantile, ymax = qq$quantile,
+    xmin = -qq$quantile,  ymin = -qq$quantile
+)
+rejection2D.2uniadj
+#+END_SRC
+
+#+RESULTS:
+:        xmax     ymax      xmin      ymin
+: 1: 2.236422 2.236422 -2.236422 -2.236422
+
+If we do a bivariate test, the rejection region at 5% would be a
+circle whose radius is the 0.95 quantile of a chi-squared distribution
+with 2 degrees of freedom:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rejection2D.chisq <- sqrt(qchisq(0.95, df = 2))
+rejection2D.chisq
+#+END_SRC
+
+#+RESULTS:
+: [1] 2.447747
+
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
+gg2D <- ggplot() + labs(x=expression(beta[1]), y=expression(beta[2]))
+gg2D <- gg2D + geom_raster(data = grid2D,aes(x=beta1, y=beta2, fill = density))
+gg2D <- gg2D + scale_fill_gradient(low="white", high="blue")
+gg2D <- gg2D + geom_rect(data = rejection2D.2uniadj, 
+                         aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
+                             colour = "2 univariate Wald tests (adjusted)"), 
+                         size = 2,
+                         fill  = NA) 
+gg2D <- gg2D + geom_circle(aes(x0=0, y0=0, r = rejection2D.chisq, 
+                               color = "1 Chi-2 test"),
+                           size = 2)
+gg2D <- gg2D + labs(color = "critical quantile")
+gg2D
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports none :results raw :session *R* :cache no
+ggsave(filename = "./figures/2D-test.pdf",
+       plot = gg2D  + theme(text = element_text(size=20)),
+       width = 12, height = 9)
+#+END_SRC
+
+#+RESULTS[<2017-11-24 10:22:16> 013087192e1e1f44952bd43ee539e67b4cbc07a5]:
+
+[[./figures/2D-test.pdf]]
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+** Notations

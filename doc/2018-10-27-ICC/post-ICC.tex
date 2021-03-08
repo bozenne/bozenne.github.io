@@ -1,0 +1,772 @@
+% Created 2021-03-08 man 11:08
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\geometry{top=1cm}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\definecolor{myorange}{rgb}{1,0.2,0}
+\definecolor{mypurple}{rgb}{0.7,0,8}
+\definecolor{mycyan}{rgb}{0,0.6,0.6}
+\newcommand{\lightblue}{blue!50!white}
+\newcommand{\darkblue}{blue!80!black}
+\newcommand{\darkgreen}{green!50!black}
+\newcommand{\darkred}{red!50!black}
+\definecolor{gray}{gray}{0.5}
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
+\newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+\newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+\RequirePackage{pifont}
+\RequirePackage{relsize}
+\newcommand{\Cross}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+\newcommand{\Valid}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+\newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+\newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+\usepackage{stackengine}
+\usepackage{scalerel}
+\newcommand\Warning[1][3ex]{%
+\renewcommand\stacktype{L}%
+\scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+\xspace
+}
+\newcommand\Rlogo{\textbf{\textsf{R}}\xspace} %
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\lstdefinestyle{code-tiny}{basicstyle=\ttfamily\footnotesize}
+\RequirePackage{enumitem} % better than enumerate
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{capt-of} %
+\RequirePackage{caption} % newlines in graphics
+\RequirePackage{tikz-cd} % graph
+\RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+\RequirePackage{amsmath}
+\RequirePackage{algorithm}
+\RequirePackage[noend]{algpseudocode}
+\RequirePackage{dsfont}
+\RequirePackage{amsmath,stmaryrd,graphicx}
+\RequirePackage{prodint} % product integral symbol (\PRODI)
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{xargs}
+\usepackage{xspace}
+\newcommand\defOperator[7]{%
+\ifthenelse{\isempty{#2}}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+}
+}
+\newcommand\defUOperator[5]{%
+\ifthenelse{\isempty{#1}}{
+#5\left#3 #2 \right#4
+}{
+\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+}
+}
+\newcommand{\defBoldVar}[2]{
+\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+}
+\newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+\newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+\newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+\newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+\newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+\newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+\newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+\newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+\newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+\newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+\newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+\newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+\newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+\newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+\newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+\newcommandx\Hypothesis[2][1=,2=]{
+\ifthenelse{\isempty{#1}}{
+\mathcal{H}
+}{
+\ifthenelse{\isempty{#2}}{
+\mathcal{H}_{#1}
+}{
+\mathcal{H}^{(#2)}_{#1}
+}
+}
+}
+\newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+\ifthenelse{\isempty{#3}}{
+\frac{#4 #1}{#4 #2}
+}{
+\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+}
+}
+\newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+\newcommandx\ddpartial[3][1=,2=,3=]{
+\ifthenelse{\isempty{#3}}{
+\frac{\partial^{2} #1}{\partial #2^2}
+}{
+\frac{\partial^2 #1}{\partial #2\partial #3}
+}
+}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Natural{\mathbb{N}}
+\newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+\newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+\newcommand\half{\frac{1}{2}}
+\newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+\newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+\newcommand\Veta{\boldsymbol{\eta}}
+\newcommand\VX{\mathbf{X}}
+\author{Brice Ozenne}
+\date{\today}
+\title{Different types of ICC in R}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={Brice Ozenne},
+ pdftitle={Different types of ICC in R},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.0.4)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+In this document, we will consider measurements done at several
+sessions over several individuals. We assume no missing data, i.e.,
+all individuals have measurements for all sessions. The question we
+would like to answer is what is the reliability of the measurements?
+
+\begingroup
+\renewcommand{\section}[2]{}
+\tableofcontents
+\endgroup
+
+\clearpage
+
+Recommanded references: 
+\begin{itemize}
+\item Kenneth O. McGraw and S. P. Wong \textbf{Forming Inferences About Some Intraclass Correlation Coefficients}, Psychological Methods, 1996, Vol. l,No. 1,30-46
+\item Lawrence Lin, A.S. Hedayat, Wenting Wu, \textbf{Statistical Tools for Measuring Agreement}, 2012, Springer.
+\end{itemize}
+
+\clearpage
+
+\section{Preparation}
+\label{sec:orgba9e85f}
+
+\lstset{style=code-tiny}
+
+\subsection{Load R packages}
+\label{sec:org1b70b00}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(data.table)
+library(lava)
+library(lme4)
+library(nlme)
+library(irr)
+library(psych)
+\end{lstlisting}
+
+
+
+\subsection{Data generation}
+\label{sec:org1494f2b}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.id <- 10
+n.scan <- 2
+n.rater <- 5
+
+set.seed(10)
+m <- lvm(c(Ytest,Yretest) ~ 2*eta)
+latent(m) <- ~eta
+distribution(m, ~Ytest) <- lava::gaussian.lvm(mean = 1, sd = 1)
+distribution(m, ~Yretest) <- lava::gaussian.lvm(mean = 1, sd = 1)
+
+dtW.icc1 <- as.data.table(lava::sim(m, n.id))
+dtW.icc1[, eta := NULL]
+dtW.icc1[, Id := as.character(1:.N)]
+dtL.icc1 <- melt(dtW.icc1, id.vars = "Id", value.name = "Y", variable.name = "session")
+
+dfW.icc1 <- as.data.frame(dtW.icc1)
+dfL.icc1 <- as.data.frame(dtL.icc1)
+
+mm <- lvm(c(Y1,Y2,Y3,Y4,Y5) ~ 2*eta)
+latent(mm) <- ~eta
+distribution(mm, ~Y1) <- lava::gaussian.lvm(mean = 1, sd = 1)
+distribution(mm, ~Y2) <- lava::gaussian.lvm(mean = 1, sd = 1)
+distribution(mm, ~Y3) <- lava::gaussian.lvm(mean = 1, sd = 1)
+distribution(mm, ~Y4) <- lava::gaussian.lvm(mean = 1, sd = 1)
+distribution(mm, ~Y5) <- lava::gaussian.lvm(mean = 1, sd = 1)
+
+dtW.icc2 <- as.data.table(lava::sim(mm, n.id))
+dtW.icc2[, eta := NULL]
+dtW.icc2[, Id := as.character(1:.N)]
+dtL.icc2 <- melt(dtW.icc2, id.vars = "Id", value.name = "Y", variable.name = "session")
+
+dfW.icc2 <- as.data.frame(dtW.icc2)
+dfL.icc2 <- as.data.frame(dtL.icc2)
+\end{lstlisting}
+
+
+\clearpage
+
+\section{ICC1: fixed number of sessions assuming no session effect}
+\label{sec:orgf598e5e}
+
+Using ICC1, we assess the absolute agreement among measurements
+repeated over one random factor (here patient identity) assuming no
+other effect. The number of sessions is fixed meaning that it is
+precisely those sessions that are interesting. 
+
+\bigskip
+
+\emph{Example:} we want to plan a study to assess treatment efficacy with
+two sessions: baseline and post-treatment. EEG is used to measure
+treatment efficacy. Prior to this study, another study is performed to
+assessed the stability of the EEG measurement between two sessions. We
+don't expect systematic difference in EEG signal between the sessions.
+
+\bigskip
+
+ICC1 is equivalent to the following mixed model:
+
+\begin{equation}
+ Y_{i,t} = \alpha + u_{i} + \varepsilon_{i,t} 
+\end{equation}
+
+\begin{tabular}{ll}
+where & \(u_{i} \sim \Gaus[0,\tau^2] \)  \\
+& \(\varepsilon_{i,t} \sim \Gaus[0,\sigma^2] \) \\
+\end{tabular}
+
+\begin{align}
+ ICC^{single}_{1,agreement} &= \frac{\tau^2}{\tau^2 + \sigma^2} \\
+ ICC^{average}_{1,agreement} &= \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n}}
+\end{align}
+
+\subsection{using mixed models}
+\label{sec:org2225593}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+lme_ICC1 <- lmer(Y ~ 1 + (1|Id), data = dtL.icc1)
+
+sigma_id <- attr(VarCorr(lme_ICC1)[[1]],"stddev")
+sigma_error <- attr(VarCorr(lme_ICC1),"sc")
+
+ICC1.lme <- c(
+    single = as.double(sigma_id^2/(sigma_error^2+sigma_id^2)),
+    average = as.double(sigma_id^2/(sigma_error^2/n.scan+sigma_id^2))
+)
+
+ICC1.lme
+\end{lstlisting}
+
+\begin{verbatim}
+   single   average 
+0.5191614 0.6834842
+\end{verbatim}
+
+\subsection{using generalized least squares}
+\label{sec:orgce679be}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gls_ICC1 <- gls(Y ~ 1, correlation = corCompSymm(form = ~ 1|Id), 
+		data = dtL.icc1)
+
+## correlation matrix
+unclass(cov2cor(getVarCov(gls_ICC1)))
+\end{lstlisting}
+
+\begin{verbatim}
+          [,1]      [,2]
+[1,] 1.0000000 0.5191607
+[2,] 0.5191607 1.0000000
+\end{verbatim}
+
+\subsection{using anova}
+\label{sec:org3a76f51}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+aov_ICC1 <- aov(Y ~ Error(Id), data = dtL.icc1) 
+
+MSB <- summary(aov_ICC1)[["Error: Id"]][[1]]["Mean Sq"]
+MSW <- summary(aov_ICC1)[["Error: Within"]][[1]]["Mean Sq"]
+
+ICC1.aov <-  c(
+    single = as.double((MSB - MSW)/(MSB + (n.scan-1)*MSW)),
+    average = as.double((MSB - MSW)/MSB)
+)
+ICC1.aov
+\end{lstlisting}
+
+\begin{verbatim}
+   single   average 
+0.5191614 0.6834842
+\end{verbatim}
+
+\subsection{using existing packages}
+\label{sec:orge0de3a2}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+tt.single <- c(irr = irr::icc(dfW.icc1[,c("Ytest", "Yretest")],
+			      model="oneway", type="consistency")$value,
+	       psych = psych::ICC(dfW.icc1[,c("Ytest", "Yretest")])[[1]]$ICC[1])
+
+tt.average <- c(irr = irr::icc(dfW.icc1[,c("Ytest", "Yretest")],
+			       model="oneway", type="consistency", unit = "average")$value,
+		psych = psych::ICC(dfW.icc1[,c("Ytest", "Yretest")])[[1]]$ICC[4])
+
+rbind(single = tt.single, average = tt.average)
+\end{lstlisting}
+
+\begin{verbatim}
+              irr     psych
+single  0.5191614 0.5191609
+average 0.6834842 0.6834838
+\end{verbatim}
+
+\clearpage
+
+\section{ICC3: fixed number of sessions accounting for a session effect}
+\label{sec:org836ea13}
+
+Using ICC3, we assess the absolute agreement among measurements
+repeated over one random factor (here patient identity) accounting for
+a possible session effect. The number of sessions is fixed meaning
+that it is precisely those sessions that are interesting.
+
+\bigskip
+
+\emph{Example:} we want to plan a study (called main study) to assess
+treatment efficacy with two sessions: baseline and post-treatment. EEG
+is used to measure treatment efficacy. Prior to this study, another
+study is performed to assessed the stability of the EEG measurement
+between two sessions. Unfortunately the two measurements were not
+performed using the same EEG machine so we suspect a systematic
+difference in EEG signal between the sessions. The investigator will
+make sure that this won't happen in the main study. Therefore the
+systematic difference is not inherant to the EEG technic (i.e. won't
+be observed in the main study).
+
+\bigskip
+
+\emph{Note:}  In test
+re-test analysis this should not be the case since we replicate a
+measurement under the same conditions.
+
+\bigskip
+\bigskip
+
+Using ICC3, we assess the absolute agreement among measurements
+repeated over one random factor account for a possible session
+effect. Compared to ICC1, this will lead to:
+\begin{itemize}
+\item a lower \(\sigma^2\) (some of the residual variance is explained)
+\item a higher \(\tau\) (individual measurements are better correlated since
+there is less arbitrary variation between them)
+\item a higher ICC
+\end{itemize}
+
+\bigskip
+
+ICC3 is equivalent to the following mixed model:
+
+\begin{equation}
+ Y_{i,t} = \alpha + \beta_t t + u_{i} + \varepsilon_{i,t} 
+\end{equation}
+
+\begin{tabular}{ll}
+where & \(u_{i} \sim \Gaus[0,\tau^2] \)  \\
+& \(t\) is treated as a categorical variable \\
+& \(\varepsilon_{i,t} \sim \Gaus[0,\sigma^2] \) \\
+\end{tabular}
+
+\begin{align}
+ ICC^{single}_{1,agreement} &= \frac{\tau^2}{\tau^2 + \sigma^2} \\
+ ICC^{average}_{1,agreement} &= \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n}}
+\end{align}
+
+\clearpage
+
+\subsection{using mixed models}
+\label{sec:org20de13e}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+lme_ICC2 <- lmer(Y ~ session + (1|Id), data = dtL.icc1)
+
+sigma_id <- attr(VarCorr(lme_ICC2)[[1]],"stddev")
+sigma_error <- attr(VarCorr(lme_ICC2),"sc")
+
+ICC2.lme <- c(
+    single = as.double(sigma_id^2/(sigma_error^2+sigma_id^2)),
+    average = as.double(sigma_id^2/(sigma_error^2/n.scan+sigma_id^2))
+)
+
+ICC2.lme
+\end{lstlisting}
+
+\begin{verbatim}
+   single   average 
+0.7495312 0.8568366
+\end{verbatim}
+
+
+\subsection{using generalized least squares}
+\label{sec:org18b2737}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gls_ICC2 <- gls(Y ~ session, correlation = corCompSymm(form = ~ 1|Id), data = dtL.icc1)
+
+# correlation matrix
+unclass(cov2cor(getVarCov(gls_ICC2)))
+\end{lstlisting}
+
+\begin{verbatim}
+          [,1]      [,2]
+[1,] 1.0000000 0.7495308
+[2,] 0.7495308 1.0000000
+\end{verbatim}
+
+
+\subsection{using anova}
+\label{sec:org7fc92bc}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+aov_ICC2 <- aov(Y ~ session + Error(Id), data = dtL.icc1) 
+
+MSB <- summary(aov_ICC2)[["Error: Id"]][[1]]["Mean Sq"]
+MSW <- summary(aov_ICC2)[["Error: Within"]][[1]]["Residuals","Mean Sq"]
+
+ICC2.aov <-  c(
+    single = as.double((MSB - MSW)/(MSB + (n.scan-1)*MSW)),
+    average = as.double((MSB - MSW)/MSB)
+)
+
+ICC2.aov
+\end{lstlisting}
+
+\begin{verbatim}
+   single   average 
+0.7495312 0.8568366
+\end{verbatim}
+
+
+\subsection{using existing packages}
+\label{sec:org3c1fbf4}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+# single
+cat("single \n")
+psych::ICC(dfW.icc1[,c("Ytest", "Yretest")])[[1]]$ICC[3]
+
+# average
+cat("average \n")
+psych::ICC(dfW.icc1[,c("Ytest", "Yretest")])[[1]]$ICC[6]
+\end{lstlisting}
+
+\begin{verbatim}
+single
+[1] 0.7495307
+average
+[1] 0.8568363
+\end{verbatim}
+
+\section{Heterogenous variance between sessions}
+\label{sec:orgac12914}
+
+The previous ICC are not corrected for a possible difference in
+variance between sessions:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gls_heteroV <- gls(Y ~ session, 
+		   weights = varIdent(form = ~ 1|session),
+		   correlation = corCompSymm(form = ~ 1|Id), 
+		   data = dtL.icc1)
+
+# correlation matrix
+unclass(cov2cor(getVarCov(gls_heteroV)))
+\end{lstlisting}
+
+\begin{verbatim}
+         [,1]     [,2]
+[1,] 1.000000 0.763223
+[2,] 0.763223 1.000000
+\end{verbatim}
+
+In test re-test analysis this should not be the case since we
+replicate a measurement under the same conditions.
+
+\clearpage
+
+
+\section{ICC2: random number of sessions}
+\label{sec:org1b8d2d6}
+
+Using ICC2, we assess the absolute agreement among measurements
+repeated over two random factors, e.g. patient identity and
+sessions. We don't account for a possible session effect. The number
+of sessions is random meaning that we are not precisely interested in
+those sessions. A more realistic example would be to consider raters
+instead of sessions.
+
+\bigskip
+
+\emph{Example:} we want to study the reliability of the grades given by
+teachers. We include 10 teachers that will grade 20 students. We are
+not interested in those specific teachers since further studies may be
+performed in other schools with other teachers.
+
+\bigskip
+
+ICC2 is equivalent to the following mixed model:
+\begin{equation}
+Y_{i,j,t} = \alpha + u_{i} + v_{j} + \varepsilon_{i,j,t}
+\end{equation}
+
+\begin{tabular}{ll}
+where & \(u_{i} \sim \Gaus[0,\tau^2] \) \\
+ &  \(v_{j} \sim \Gaus[0,\delta^2] \) \\
+ & \(\varepsilon_{i,t} \sim \Gaus[0,\sigma^2] \) \\
+\end{tabular}
+
+\begin{align}
+ ICC_{2,agreement} &= \frac{\tau^2}{\tau^2 + \sigma^2} \text{ or } ICC_{2,consistency} = \frac{\tau^2}{\tau^2 + \delta^2 + \sigma^2} \\
+ ICC^{average}_{2,agreement} &= \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n}} \text{ or } ICC^{average}_{2,consistency} = \frac{\tau^2}{\tau^2 + \frac{1}{n}(\delta^2 + \sigma^2)}
+\end{align}
+
+
+\subsection{using mixed models}
+\label{sec:org5be25e1}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+lme_ICC2r <- lmer(Y ~ 1 + (1|session)+ (1|Id), data = dtL.icc2)
+
+sigma_id <- attr(VarCorr(lme_ICC2r)[[1]],"stddev")
+sigma_scan <- attr(VarCorr(lme_ICC2r)[[2]],"stddev")
+sigma_error <- attr(VarCorr(lme_ICC2r),"sc")
+
+ICC2r.lme <- c(
+    consistency.single = as.double(sigma_id^2/(sigma_error^2+sigma_id^2)),
+    agreement.single = as.double(sigma_id^2/(sigma_error^2+sigma_scan^2+sigma_id^2)),
+    consistency.average = as.double(sigma_id^2/(sigma_error^2/n.rater+sigma_id^2)),
+    agreement.average = as.double(sigma_id^2/(sigma_error^2/n.rater+sigma_scan^2/n.rater+sigma_id^2))
+)
+ICC2r.lme
+\end{lstlisting}
+
+\begin{verbatim}
+consistency.single    agreement.single consistency.average   agreement.average 
+         0.8057243           0.8001868           0.9539947           0.9524339
+\end{verbatim}
+
+\clearpage
+
+\subsection{using generalized least squares}
+\label{sec:org18a1437}
+Don't know how to specify non-nested random effects
+
+\subsection{using anova}
+\label{sec:orgf330dea}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+aov_ICC2r <- aov(Y ~ Error(session + Id), data = dtL.icc2) 
+
+MSB <- summary(aov_ICC2r)[["Error: Id"]][[1]]["Mean Sq"]
+MSscan <- summary(aov_ICC2r)[["Error: session"]][[1]]["Residuals","Mean Sq"]
+MSW <- summary(aov_ICC2r)[["Error: Within"]][[1]]["Residuals","Mean Sq"]
+
+ICC2r.aov <-  c(
+    consistency.single = as.double((MSB - MSW)/(MSB + (n.rater-1)*MSW)),
+    agreement.single = as.double((MSB - MSW)/(MSB + (n.rater-1)*MSW + n.rater * (MSscan-MSW)/n.id)),
+    consistency.average = as.double((MSB - MSW)/MSB),
+    agreement.average = as.double((MSB - MSW)/(MSB + (MSscan-MSW)/n.id))
+)
+ICC2r.aov
+\end{lstlisting}
+
+\begin{verbatim}
+consistency.single    agreement.single consistency.average   agreement.average 
+         0.8057232           0.8001849           0.9539944           0.9524334
+\end{verbatim}
+
+\subsection{using existing packages}
+\label{sec:orgae24fdf}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+tt.single <- c(
+    iccC = irr::icc(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")],
+		    model="twoway", type="consistency")$value,
+    irrA = irr::icc(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")],
+		    model="twoway", type="agreement")$value,
+    psych = psych::ICC(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")])[[1]]$ICC[3:2]
+)
+
+tt.average <- c(
+    iccC = irr::icc(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")],
+		    model="twoway", type="consistency", unit = "average")$value,
+    iccA = irr::icc(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")],
+		    model="twoway", type="agreement", unit = "average")$value,
+    psych = psych::ICC(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")])[[1]]$ICC[6:5]
+)
+rbind(single = tt.single, average = tt.average)
+\end{lstlisting}
+
+\begin{verbatim}
+             iccC      irrA    psych1    psych2
+single  0.8057232 0.8001849 0.8057243 0.8001868
+average 0.9539944 0.9524334 0.9539947 0.9524339
+\end{verbatim}
+
+\clearpage
+
+\section{Different correlation between sessions}
+\label{sec:orgd8b384c}
+
+When considering more than 2 sessions, the previous ICC assume the
+same correlation between sessions (or raters). This can be relaxed
+using an unstructured covariance matrix:
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none,otherkeywords={}, deletekeywords={}}
+\begin{lstlisting}
+gls_heteroC <- gls(Y ~ session,
+		   correlation = corSymm(form = ~ 1|Id),
+		   data = dtL.icc2)
+
+# correlation matrix
+M.icc <- unclass(cov2cor(getVarCov(gls_heteroC)))
+print(M.icc)
+\end{lstlisting}
+
+\begin{verbatim}
+          [,1]      [,2]      [,3]      [,4]      [,5]
+[1,] 1.0000000 0.8257161 0.6932362 0.8742870 0.7906416
+[2,] 0.8257161 1.0000000 0.7640218 0.7507233 0.8421197
+[3,] 0.6932362 0.7640218 1.0000000 0.5166736 0.6906414
+[4,] 0.8742870 0.7507233 0.5166736 1.0000000 0.5647855
+[5,] 0.7906416 0.8421197 0.6906414 0.5647855 1.0000000
+\end{verbatim}
+
+Note that the mean ICC:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none,otherkeywords={}, deletekeywords={}}
+\begin{lstlisting}
+c(mean = mean(setdiff(unique(M.icc),1)), 
+  indiv = apply(M.icc, 1, function(x){mean(setdiff(x,1))}))
+\end{lstlisting}
+
+\begin{verbatim}
+     mean    indiv1    indiv2    indiv3    indiv4    indiv5 
+0.7312846 0.7959702 0.7956452 0.6661432 0.6766173 0.7220470
+\end{verbatim}
+
+does not match the "normal" ICC:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none,otherkeywords={}, deletekeywords={}}
+\begin{lstlisting}
+gls_homoC <- gls(Y ~ session,
+		 correlation = corCompSymm(form = ~ 1|Id),
+		 data = dtL.icc2)
+
+# correlation matrix
+unclass(cov2cor(getVarCov(gls_homoC)))
+\end{lstlisting}
+
+\begin{verbatim}
+          [,1]      [,2]      [,3]      [,4]      [,5]
+[1,] 1.0000000 0.8057232 0.8057232 0.8057232 0.8057232
+[2,] 0.8057232 1.0000000 0.8057232 0.8057232 0.8057232
+[3,] 0.8057232 0.8057232 1.0000000 0.8057232 0.8057232
+[4,] 0.8057232 0.8057232 0.8057232 1.0000000 0.8057232
+[5,] 0.8057232 0.8057232 0.8057232 0.8057232 1.0000000
+\end{verbatim}
+
+\clearpage
+
+\emph{Note:} small difference between the function \texttt{icc} and
+\texttt{gls}. Due to non optimal optimization in \texttt{gls}?
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+irr::icc(dfW.icc2[,c("Y1", "Y2", "Y3", "Y4", "Y5")],
+	 model="oneway", type="consistency")$value
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.7999099
+\end{verbatim}
+\end{document}

@@ -1,0 +1,880 @@
+% Created 2021-03-08 man 17:40
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\geometry{top=1cm}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\definecolor{myorange}{rgb}{1,0.2,0}
+\definecolor{mypurple}{rgb}{0.7,0,8}
+\definecolor{mycyan}{rgb}{0,0.6,0.6}
+\newcommand{\lightblue}{blue!50!white}
+\newcommand{\darkblue}{blue!80!black}
+\newcommand{\darkgreen}{green!50!black}
+\newcommand{\darkred}{red!50!black}
+\definecolor{gray}{gray}{0.5}
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
+\newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+\newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+\RequirePackage{pifont}
+\RequirePackage{relsize}
+\newcommand{\Cross}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+\newcommand{\Valid}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+\newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+\newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+\usepackage{stackengine}
+\usepackage{scalerel}
+\newcommand\Warning[1][3ex]{%
+\renewcommand\stacktype{L}%
+\scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+\xspace
+}
+\newcommand\Rlogo{\textbf{\textsf{R}}\xspace} %
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{enumitem} % better than enumerate
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{capt-of} %
+\RequirePackage{caption} % newlines in graphics
+\RequirePackage{tikz-cd} % graph
+\RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+\RequirePackage{amsmath}
+\RequirePackage{algorithm}
+\RequirePackage[noend]{algpseudocode}
+\RequirePackage{dsfont}
+\RequirePackage{amsmath,stmaryrd,graphicx}
+\RequirePackage{prodint} % product integral symbol (\PRODI)
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{xargs}
+\usepackage{xspace}
+\newcommand\defOperator[7]{%
+\ifthenelse{\isempty{#2}}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+}
+}
+\newcommand\defUOperator[5]{%
+\ifthenelse{\isempty{#1}}{
+#5\left#3 #2 \right#4
+}{
+\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+}
+}
+\newcommand{\defBoldVar}[2]{
+\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+}
+\newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+\newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+\newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+\newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+\newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+\newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+\newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+\newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+\newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+\newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+\newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+\newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+\newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+\newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+\newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+\newcommandx\Hypothesis[2][1=,2=]{
+\ifthenelse{\isempty{#1}}{
+\mathcal{H}
+}{
+\ifthenelse{\isempty{#2}}{
+\mathcal{H}_{#1}
+}{
+\mathcal{H}^{(#2)}_{#1}
+}
+}
+}
+\newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+\ifthenelse{\isempty{#3}}{
+\frac{#4 #1}{#4 #2}
+}{
+\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+}
+}
+\newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+\newcommandx\ddpartial[3][1=,2=,3=]{
+\ifthenelse{\isempty{#3}}{
+\frac{\partial^{2} #1}{\partial #2^2}
+}{
+\frac{\partial^2 #1}{\partial #2\partial #3}
+}
+}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Natural{\mathbb{N}}
+\newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+\newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+\newcommand\half{\frac{1}{2}}
+\newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+\newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+\newcommand\Veta{\boldsymbol{\eta}}
+\newcommand\VX{\mathbf{X}}
+\author{Brice Ozenne}
+\date{\today}
+\title{Estimating a relative change using a log-transformation of the outcome}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={Brice Ozenne},
+ pdftitle={Estimating a relative change using a log-transformation of the outcome},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.0.4)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+
+\section{Interpretation of the regression coefficient after log-transformation}
+\label{sec:orgd1d510c}
+Let's denote by \(Y\) the outcome and by \(G\) a binary group
+variable. We are interested in the relative change in \(Y\) between
+the groups. We decide to model the group effect on the log scale:
+\begin{align*}
+\log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \Esp[\varepsilon]=0 \text{ and } \Esp[\varepsilon]=\sigma^2
+\end{align*}
+We claim that:
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = e^{\beta} - 1
+\end{align*}
+
+\subsection{Proof: re-writting the model as a multiplicative model}
+\label{sec:org43e07b4}
+We can re-write the model as:
+\begin{align*}
+Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where }
+\end{align*}
+So for \(g\in\{1,2\}\):
+\begin{align*}
+\Esp[Y|G=g] = e^{\alpha + \beta g} \Esp[e^{\varepsilon}]
+\end{align*}
+Then:
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]}
+& = \frac{e^{\alpha + \beta} \Esp[e^{\varepsilon}]-e^{\alpha} \Esp[e^{\varepsilon}]}{e^{\alpha} \Esp[e^{\varepsilon}]} \\
+& = \frac{e^{\alpha + \beta} -e^{\alpha}}{e^{\alpha}}  = e^{\beta} - 1 \\
+\end{align*}
+
+\subsection{Proof: using a Taylor expansion}
+\label{sec:org3c41ff1}
+
+Using a second order Taylor expansion of \(\exp(Z)\) around
+\(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
+\(Z\) are finite and the remaining moments are neglectable regarding
+the factorial of the moment order (i.e. \(\forall i \geq 1\),
+\(\frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\) and \(\sum_{i=1}^{\infty} \frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\)), we get:
+\begin{align*}
+Y &= e^{Z} = e^{\mu} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \mu)^i \frac{\partial^i e^{\mu}}{(\partial \mu)^i} \\
+&= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \alpha - \beta G)^i e^{\alpha + \beta G} \\
+\Esp[Y|G=g] &= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[(Z - \alpha - \beta g)^i] e^{\alpha + \beta G} \\
+&= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^i] \right)
+\end{align*}
+where we used that the distribution of \(\varepsilon\) is independent
+of \(g\). We can now express our parameter of interest:
+\begin{align*}
+\Delta_G &= \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \frac{\Esp[Y|G=1]}{\Esp[Y|G=0]} - 1 \\
+&= \frac{e^{\alpha + \beta} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)}{e^{\alpha} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)} - 1 \\
+&= e^{\beta} - 1
+\end{align*}
+
+
+\clearpage
+
+\section{Power calculation: comparison between two groups}
+\label{sec:org6b8962e}
+
+Consider two groups \(G=0\) and \(G=1\) for which we want to compare
+the percentage difference in outcome \(Y\). We are willing to assume
+that on the log-scale \(Y\) is normally distributed. Our parameter of
+interest is:
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \gamma
+\end{align*}
+We further fix \(\alpha = \Esp[Y|G=0]\) and \(\sigma^2 = \Var[Y|G=0]\)
+and we assume that on the log-scale:
+\begin{align*}
+\Var[\log(Y)|G=1]  = \Var[\log(Y)|G=0] = s^2
+\end{align*}
+To evaluate the power for a given \((\alpha,\sigma^2,\gamma)\), we need to identify the joint distribution: 
+\begin{align*}
+\begin{bmatrix}
+Z_0 = \log(Y)|G=0 \\ Z_1  = \log(Y)|G=1
+\end{bmatrix}
+\sim \Gaus \left(
+\begin{bmatrix}
+m_0 \\ m_1
+\end{bmatrix}
+,
+\begin{bmatrix}
+s^2 & \rho s^2 \\ \rho s^2 & s^2
+\end{bmatrix}
+\right)
+\end{align*}
+The standardized effect size is then: \(\frac{m_1-m_0}{s\sqrt{2(1-\rho)}}\). 
+
+\bigskip
+
+Note: in the case of two independent samples \(\rho=0\)
+
+\subsection{Method 1: Taylor expansion}
+\label{sec:orgceae543}
+
+We will use the fact that \(Z_0,Z_1\) are jointly normally distributed
+to identify \(m_0,m_1,s^2,\rho\). First we start by identifying
+\(m_0\) and \(s^2\) based on \(\alpha\) and \(\sigma^2\) (reference
+group). A Taylor expansion gives (see appendix \ref{SM:exptrans}):
+\begin{align*}
+\alpha &\approx \exp(m_0)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+\sigma^2 &\approx \exp(2 m_0)\left(s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}\right)
+\end{align*}
+So:
+\begin{align*}
+\frac{\alpha^2}{\sigma^2} - \frac{\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)^2}{s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}} \approx 0
+\end{align*}
+We get \(s^2\) by solving this equation using that \(s^2 \in
+[0;\sigma^2]\) (upper bound follow from Jensen's inequality applied to
+\((X-\mu)^2\), \(\log\) being concave). We can then deduce \(m_0\):
+\begin{align*}
+m_0  &\approx \log\left(\frac{\alpha}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = \log(\alpha) - \log\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)
+\end{align*}
+Then we can identify \(m_1\) using once more a Taylor expansion:
+\begin{align*}
+\alpha(1+\gamma) &\approx \exp(m_1)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+m_1 &\approx \log\left(\frac{\alpha(1+\gamma)}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = m_0 + \log(1+\gamma)
+\end{align*}
+Now
+
+\subsection{Method 2: Log-normal distribution}
+\label{sec:org70137c0}
+We will use the fact that \(Z_0\) follows a log-normal distribution,
+meaning that:
+\begin{align*}
+\alpha &= \exp(m_0 + \frac{1}{2} s^2) \\
+\sigma^2 &= \exp(2*m_0 + s^2)*(\exp(s^2)-1) \\
+\end{align*}
+So
+\begin{align*}
+s^2 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+m_0 &= \log(\alpha)-\frac{s^2}{2}\\
+\end{align*}
+Then we can identify \(m_1\) using that \(Z_1\) follows a log-normal distribution, i.e.:
+\begin{align*}
+\alpha(1+\gamma) &= \exp(m_1 + \frac{1}{2} s^2) \\
+m_1 &= m_0+\log(1+\gamma)\\
+\end{align*}
+
+\clearpage
+
+\subsection{Illustration 1: two sample t-test}
+\label{sec:org68a502b}
+
+\textbf{Illustration:} We consider two groups having a 10\% difference
+in their baseline value (\(\alpha=1.15\)) and a variance of \(\sigma^2
+= 0.15\). What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+\end{lstlisting}
+
+\textbf{Taylor expansion:} we first identify \(s^2\), \(m_0\), and
+\(m_1\):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+s2.taylor <- uniroot(function(x){
+    alpha^2/sigma2 - (1+x/2+x^2/8+x^3/48)^2/(x+(3/2)*x^2+(7/6)*x^3+(11/24)*x^4+(21/320)*x^5)},
+    interval = c(1e-12,sigma2))$root
+m0.taylor <- log(alpha/(1+s2.taylor/2+s2.taylor^2/8+s2.taylor^3/48))
+m1.taylor <- m0.taylor + log(1+gamma)
+\end{lstlisting}
+
+\textbf{lognormal distribution:} we first identify \(s^2\), \(m_0\),
+and \(m_1\):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+s2.logdist <- log(1+sigma2/alpha^2)
+m0.logdist <- log(alpha) - s2.logdist/2
+m1.logdist <- m0.logdist + log(1+gamma)
+\end{lstlisting}
+
+We can compare the moments of am exp-transformed normal distribution
+based on these values to the input:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+x <- exp(rnorm(1e5, mean = m0.taylor, sd = sqrt(s2.taylor)))
+y <- exp(rnorm(1e5, mean = m1.taylor, sd = sqrt(s2.taylor)))
+yx.x <- mean(y)/mean(x)-1
+X <- exp(rnorm(1e5, mean = m0.logdist, sd = sqrt(s2.logdist)))
+Y <- exp(rnorm(1e5, mean = m1.logdist, sd = sqrt(s2.logdist)))
+YX.X <- mean(Y)/mean(X)-1
+
+rbind(data.frame(method = "taylor", 
+		 m0=m0.taylor, m1=m1.taylor, s2=s2.taylor), 
+      data.frame(method = "logdist", 
+		 m0=m0.logdist, m1=m1.logdist, s2=s2.logdist)
+      )
+rbind(data.frame(method = "true", 
+		 alpha=alpha, gamma=gamma, sigma2=sigma2), 
+      data.frame(method = "error.taylor", 
+		 alpha=mean(x)-alpha, gamma=yx.x-gamma, sigma2=var(x)-sigma2),
+      data.frame(method = "error.logdist", 
+		 alpha=mean(X)-alpha, gamma=YX.X-gamma, sigma2=var(X)-sigma2)
+      )
+\end{lstlisting}
+
+\begin{verbatim}
+   method         m0        m1        s2
+1  taylor 0.08603197 0.1813421 0.1074606
+2 logdist 0.08604307 0.1813532 0.1074378
+         method         alpha         gamma        sigma2
+1          true  1.1500000000  0.1000000000  0.1500000000
+2  error.taylor  0.0012850559 -0.0010820104 -0.0002242144
+3 error.logdist -0.0005174973 -0.0009134562 -0.0012306318
+\end{verbatim}
+Similar performance. Maybe a bit better for log-dist.
+
+\subsection{Illustration 2: paired t-test}
+\label{sec:orgeeca273}
+
+\textbf{Illustration:} We consider one group having a 10\% difference
+between its baseline value (\(\alpha=1.15\)) and its follow-up
+value. We assume a variance of \(\sigma^2 = 0.15\) for the baseline
+value and a correlation of \(\rho=0.5\) between the baseline and
+follow-up value. What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+rho <- 0.5
+\end{lstlisting}
+
+We previously obtained the values for\(s^2\). We can now search for
+the right correlation value on the log-scale
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rho.taylor <- uniroot(function(x){
+    rho - (x+1.5*x^2*s2.taylor+(1/12)*s2.taylor^2*(2*x^3+3*x))/(1+(3/2)*s2.taylor+(7/6)*s2.taylor^2+(11/24)*s2.taylor^3+(21/320)*s2.taylor^4)
+},interval = c(0,0.9999))$root
+\end{lstlisting}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(mvtnorm)
+Sigma <- diag(s2.taylor*(1 - rho.taylor),2,2)+s2.taylor*rho.taylor
+z <- exp(rmvnorm(1e5, mean = c(m0.taylor, m1.taylor), sigma = Sigma))
+c("true" = rho,
+  "error.taylor" = rho-cor(z[,1],z[,2]))
+\end{lstlisting}
+
+\begin{verbatim}
+      true error.taylor 
+0.50000000  -0.02621529
+\end{verbatim}
+
+\subsection{Application: two independent groups}
+\label{sec:orgf55b225}
+
+We consider two groups having a 10\% difference in their baseline value
+(\(\alpha=1.15\)) and a variance of \(\sigma^2 = 0.15\). What are the
+parameters of the corresponding normal distribution on the log-scale
+and the standardized effect size?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+\end{lstlisting}
+
+Solve the equations:
+\begin{verbatim}
+        a0         s0         a1         s1 
+0.08802784 0.10608948 0.19175319 0.08851048
+\end{verbatim}
+
+We can check that \texttt{uniroot} converged correctly:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+c(exp(a0)*(1+s0/2) - alpha, 
+  exp(2*a0)*(s0+s0^2*7/4) - sigma2, 
+  exp(a1)*(1+s1/2) - alpha*(1+gamma), 
+  exp(2*a1)*(s1+s1^2*7/4) - sigma2)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] -5.563198e-05  0.000000e+00 -1.895835e-05  0.000000e+00
+\end{verbatim}
+
+and the variables have the appropriate distribution:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Z0 <- exp(rnorm(1e4, mean=a0, sd = sqrt(s0)))
+Z1 <- exp(rnorm(1e4, mean=a1, sd = sqrt(s1)))
+c(alpha = mean(Z0), 
+  gamma = (mean(Z1)-mean(Z0))/mean(Z0), 
+  sigma2 = var(Z0), 
+  sigma2 = var(Z1))
+\end{lstlisting}
+
+\begin{verbatim}
+    alpha     gamma    sigma2    sigma2 
+1.1435272 0.1090391 0.1473705 0.1507638
+\end{verbatim}
+
+For a power calculation we would use:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
+## dvmisc::power_2t_unequal(n = 143, d = a1-a0, sigsq1 = s0, sigsq2 = s1, alpha = 0.05)
+\end{lstlisting}
+
+\begin{verbatim}
+     Two-sample t test power calculation 
+
+              n = 142.9312
+              d = 0.3325282
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+\end{verbatim}
+
+
+\clearpage
+\appendix
+% \titleformat{\section}
+% {\normalfont\Large\bfseries}{Appendix~\thesection}{1em}{}
+
+\section{Moments of the normal distribution}
+\label{SM:moments}
+Denote \(X\) and \(Y\) two normally distributed variables, with mean
+\(\mu_X\),\(\mu_Y\) and variance \(\sigma^2_X\),\(\sigma^2_Y\). Then:
+\begin{itemize}
+\item \(\Esp[X^2] = \sigma^2_X + \mu_X^2\)
+\item \(\Esp[X^3] = 3 \mu_X \sigma^2_X + \mu_X^3\)
+\item \(\Esp[X^4]=3\left(\sigma^2_X\right)^2 + 6 \sigma^2_X \mu_X^2 + \mu_X^4\)
+\item \(\Esp[X^5]=15 \left(\sigma^2_X\right)^2 \mu + 10 \sigma^2_X \mu^3 + \mu^5\)
+\item \(\Esp[(X-\mu_X)^6]= 15\left(\sigma_X^2\right)^3\)
+\item \(\Esp[(X-\mu_X)^8]= 105\left(\sigma_X^2\right)^4\)
+\end{itemize}
+\bigskip
+
+\begin{itemize}
+\item \(\Cov[X^2,X]=2 \mu_X \sigma^2_X\)
+\item \(\Cov[X^2,Y]=2 \mu_X \rho \sigma_X \sigma_Y\)
+\item \(\Esp[X^2*Y^2] = (\sigma^2_X+\mu_X^2)(\sigma^2_Y+\mu_Y^2) + 2 \rho^2 \sigma^2_X \sigma^2_Y + 4 \rho \sigma_Y \sigma_X \mu_X \mu_Y\)
+\item \(\Cov[\left(X-\mu_X\right)^2,\left(Y-\mu_Y\right)^2] = 2 \rho^2 \sigma^2_X \sigma^2_Y\)
+\item \(\Cov[\left(X-\mu_X\right),\left(Y-\mu_Y\right)^3] = 3 \rho \sigma_X \sigma^3_Y\)
+\item \(\Cov[\left(X-\mu_X\right)^3,\left(Y-\mu_Y\right)^3] = (6 \rho^3 + 9\rho) \sigma^3_X \sigma^3_Y\)
+\end{itemize}
+\clearpage
+
+\section{Moments after transformation}
+\label{sec:org4e2e621}
+\subsection{Recall: Taylor expansion for normally distributed variables}
+\label{sec:org0f6fc4c}
+
+Taylor expansion for a smooth function \(f\) around the mean value \(\mu_Y=\Esp[Y]\):
+\begin{align*}
+f(Y) = f(\mu_Y) + f'(\mu_Y) (Y-\mu_Y) + \frac{1}{2} f''(\mu_Y) (Y-\mu_Y)^2  + \frac{1}{6} f'''(\mu_Y) (Y-\mu_Y)^3 + R_4(Y-\mu_Y)
+\end{align*}
+where \(R_4\) is a residual term. Introducing \(\bar{Y}=Y-\mu_Y\),
+\(\sigma_Y^2 = \Var[Y]\) and using results for the moments of a normal
+distribution (appendix \ref{SM:moments}), we have:
+\begin{align*}
+\Esp[f(Y)] \approx& f(\mu_Y) + f(\mu_Y) \Esp[\bar{Y}]  + \frac{1}{2} f''(\mu_Y) \Esp[\bar{Y}^2] + \frac{1}{6} f'''(\mu_Y) \Esp[\bar{Y}^3] 
+= f(\mu_Y) + \frac{\sigma_Y^2}{2} f''(\mu_Y) \\
+\Var[f(Y)] \approx& \left(f'(\mu_Y)\right)^2 \Var\left[\bar{Y}\right] + \frac{\left(f''(\mu_Y)\right)^2}{4} \Var\left[\bar{Y}^2\right]  + \frac{\left(f'''(\mu_Y)\right)^2}{36} \Var\left[\bar{Y}^3\right] \\
+& +f'(\mu_Y) f''(\mu_Y)\Cov\left[\bar{Y},\bar{Y}^2\right] + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} \Cov\left[\bar{Y},\bar{Y}^3\right] +\frac{f''(\mu_Y) f'''(\mu_Y)}{6}\Cov\left[\bar{Y}^2,\bar{Y}^3\right]\\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \frac{\left(f''(\mu_Y)\right)^2}{4} \left(3 \sigma_Y^4 - \sigma_Y^4\right)  + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6
+ + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} 3 \sigma_Y^4 \\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f''(\mu_Y)\right)^2}{2} + f'(\mu_Y)f'''(\mu_Y)\right) \sigma_Y^4 + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6 
+\end{align*}
+and introducing \(X\) with mean \(\mu_X\), variance \(\sigma_X^2\), and correlation \(\rho\) with \(Y\):
+\begin{align*}
+\Cov[f(X),f(Y)] \approx& f'(\mu_X) f'(\mu_Y) \Cov[X-\mu_X,Y-\mu_Y] \\ &+ \frac{1}{4} f''(\mu_X) f''(\mu_Y) \Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]
+\end{align*}
+
+\Warning these approximations are precise when the higher order
+moments are small (i.e. mean and variance are small). More precise
+approximations can be obtained considering higher-order terms:
+\begin{align*}
+&\Esp[f(Y)] \approx f(\mu_Y) + \frac{\sigma_Y^2}{2} f^{(2)}(\mu_Y)  + \frac{\sigma_Y^4}{8} f^{(4)}(\mu_Y) + \frac{\sigma_Y^6}{48} f^{(6)}(\mu_Y) \\
+&\Var[f(Y)] \approx \left(f^{(1)}(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f^{(2)}(\mu_Y)\right)^2}{2} + f^{(1)}(\mu_Y)f^{(3)}(\mu_Y)\right) \sigma_Y^4 \\
+                  &+ \left(\frac{5\left(f^{(3)}(\mu_Y)\right)^2}{12} + \frac{f^{(2)}(\mu_Y)f^{(4)}(\mu_Y)}{2}  + \frac{f^{(1)}(\mu_Y)f^{(5)}(\mu_Y)}{4} \right) \sigma_Y^6  \\
+                  &+ \left(\frac{\left(f^{(4)}(\mu_Y)\right)^2}{6} + \frac{7 f^{(3)}(\mu_Y)f^{(5)}(\mu_Y)}{24} \right) \sigma_Y^8 + \frac{21\left(f^{(5)}(\mu_Y)\right)^2}{320} \sigma_Y^{10}
+\end{align*}
+
+\clearpage
+
+\subsection{Application:  exponential transformation (\(f = \exp\))}
+\label{SM:exptrans}
+Using that \(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\approx2 \rho^2 \sigma_X^2 \sigma_Y^2\):
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{15}{36} \sigma_Y^6 \right)\\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2\right) 
+\end{align*}
+
+Note: one can always go one order further to get a better approximation:
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}+\frac{\sigma_Y^4}{8}+\frac{\sigma_Y^6}{48}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{7}{6} \sigma_Y^6 + \frac{11}{24} \sigma_Y^8 + \frac{21}{320} \sigma_Y^{10}\right) \\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2 \right.\\
+& \left. + \frac{1}{2} \rho \left(\sigma_X \sigma_Y^3 + \sigma_Y \sigma_X^3 \right) + \frac{1}{12} \left(2 \rho^3 + 3 \rho\right) \sigma_X^3 \sigma_Y^3 \right)
+\end{align*}
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 1 and variance 0.5 (i.e standard deviation about 0.707). What is its expectation and variance
+after exp-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- 1; sigma2 <- 0.5
+
+## first order method
+mu.exp1 <- exp(mu)
+var.exp1 <- exp(2*mu)*sigma2
+
+## third order method
+mu.exp2 <- exp(mu)*(1+sigma2/2)
+var.exp2 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (15/36)*sigma2^3)
+
+## n order method
+mu.exp3 <- exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+var.exp3 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+
+## empirical value
+X.exp <- exp(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.expGS <- mean(X.exp)
+var.expGS <-  var(X.exp)
+\end{lstlisting}
+
+\clearpage
+
+Comparison mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = mu.exp1, 
+		second.order = mu.exp2, 
+		third.order = mu.exp3, 
+		truth = mu.expGS),
+      bias = c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS,
+      relative.bias = (c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS)/mu.expGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order  third.order    truth
+value           2.7182818   3.39785229  3.489877452 3.505691
+bias           -0.7874091  -0.10783859 -0.015813428 0.000000
+relative.bias  -0.2246088  -0.03076101 -0.004510788 0.000000
+\end{verbatim}
+
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = var.exp1, 
+		second.order = var.exp2, 
+		third.order = var.exp3, 
+		truth = var.expGS),
+      bias = c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS,
+      relative.bias = (c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS)/var.expGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order third.order    truth
+value           3.6945280    6.8502708  7.75513398 8.224438
+bias           -4.5299096   -1.3741669 -0.46930364 0.000000
+relative.bias  -0.5507865   -0.1670834 -0.05706209 0.000000
+\end{verbatim}
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\bigskip
+
+We now consider a bivariate normally distributed outcome with
+expectation 0.1, variance 0.1, and correlation 0.5. What is the
+correlation after exp-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- c(0.1,0.1); sigma2 <- c(0.1,0.1); rho <- 0.5
+Sigma <- matrix(c(sigma2[1], rho*sqrt(prod(sigma2)),
+		  rho*sqrt(prod(sigma2)), sigma2[2]), 2,2)
+XY <- mvtnorm::rmvnorm(n, mean = mu, sigma = Sigma)
+X <- XY[,1] ; Y <- XY[,2]
+
+cov(exp(X),exp(Y))
+exp(mean(X)+2*mean(Y)) * (cor(X,Y)*sd(Y)*sd(X) + 0.5*cor(X,Y)^2*var(Y)*var(X))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.06839007
+[1] 0.06846545
+\end{verbatim}
+
+
+\clearpage
+
+\subsection{Application:  log-transformation (\(f = \log\))}
+\label{sec:org02bbf8f}
+
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{5 \sigma^6_Y}{3\mu_Y^6} \\
+\Cov[\log(X),\log(Y)] &\approx \frac{\rho \sigma_X \sigma_Y}{\mu_X\mu_Y} + \frac{\rho^2 \sigma^2_X \sigma^2_Y}{2\mu_X^2\mu_Y^2}
+\end{align*}
+
+Note: one can always go one order further to get a better approximation:
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} - \frac{3\sigma_Y^4}{4\mu_Y^4}  - \frac{5\sigma_Y^6}{2\mu_Y^6}  \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{67 \sigma^6_Y}{6\mu_Y^6} + \frac{20\sigma^8_Y}{6\mu_Y^8} + \frac{189\sigma^{10}_Y}{5\mu_Y^{10}} \\
+\end{align*}
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+mu <- 7; sigma2 <- 2
+
+## first order method
+mu.log1 <- log(mu)
+var.log1 <- sigma2/mu^2
+
+## third order method
+mu.log2 <-  log(mu) - sigma2/(2*mu^2)
+var.log2 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 5*sigma2^3/(3*mu^6)
+
+## n order method
+mu.log3 <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+var.log3 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## empirical value
+X.log <- log(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
+\end{lstlisting}
+
+\clearpage
+
+Comparison mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = mu.log1, 
+		second.order = mu.log2, 
+		third.order = mu.log3, 
+		truth = mu.logGS),
+      bias = c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS)/mu.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+              first.order second.order  third.order    truth
+value          1.94591015 1.9255019858  1.922892529 1.924102
+bias           0.02180784 0.0013996795 -0.001209777 0.000000
+relative.bias  0.01133403 0.0007274455 -0.000628749 0.000000
+\end{verbatim}
+
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(first.order = var.log1, 
+		second.order = var.log2, 
+		third.order = var.log3, 
+		truth = var.logGS),
+      bias = c(var.log1,var.log2,var.log3,var.logGS)-var.logGS,
+      relative.bias = (c(var.log1,var.log2,var.log3,var.logGS)-var.logGS)/var.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+               first.order second.order   third.order      truth
+value          0.040816327  0.045094589  0.0457541123 0.04632675
+bias          -0.005510428 -0.001232166 -0.0005726425 0.00000000
+relative.bias -0.118946995 -0.026597277 -0.0123609457 0.00000000
+\end{verbatim}
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\clearpage
+
+\subsection{Log-normal distribution}
+\label{sec:org3993d6c}
+
+An alternative approach is to use a log-normal distribution. Random
+variables with log normal distribution have their logarithm equal to a
+specific value \(a\) and their standard deviation equal to a specific
+value \(s\). So we want to get:
+\begin{align*}
+\alpha &= \exp(a_0 + \frac{1}{2} s_0^2) \\
+\sigma^2 &= \exp(2*a_0 + s_0^2)*(\exp(s_0^2)-1) \\
+\alpha (1+\gamma) &= \exp(a_1 + \frac{1}{2} s_1^2) \\
+\sigma^2 &= \exp(2*a_1 + s_1^2)*(\exp(s_1^2)-1)
+\end{align*}
+So
+\begin{align*}
+s_0 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+a_0 &= \log(\alpha)-\frac{s_0^2}{2}\\
+s_1 &= \log\left(1+\frac{\sigma^2}{\alpha*(1+\gamma)^2}\right)\\
+a_1 &= \log(\alpha*(1+\gamma))-\frac{s_1^2}{2}
+\end{align*}
+
+\clearpage
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(10); n <- 1e4
+X <- rlnorm(1e4, mean=1, sd = 0.5)
+## X <- exp(rnorm(1e4, mean=1, sd = sqrt(0.5)))
+
+mu.exp <- mean(X)
+sigma2.exp <- var(X)
+
+## taylor expansion method
+## mu.exp = exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+## sigma2.exp = exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+getSigma2 <- function(sigma2){
+    mu.exp^2/sigma2.exp - (1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)^2/(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+}
+var.taylor <- uniroot(f = getSigma2, lower = 1e-5, upper = sigma2.exp)$root
+mu.taylor <- log(mu.exp/(1 + var.taylor/2 + var.taylor^2/8 + var.taylor^3/48))
+## mu.taylor <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+## var.taylor <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## log distribution method
+var.logdist <- log(1+sigma2/mu^2)
+mu.logdist <- log(mu) - var.logdist/2 
+
+## empirical value
+X.log <- log(X)
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
+\end{lstlisting}
+
+Comparison mean:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(taylor = mu.taylor, 
+		dist = mu.logdist, 
+		truth = mu.logGS),
+      bias = c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS)/mu.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+                    taylor         dist    truth
+value          0.999612153  0.998213975 1.000669
+bias          -0.001056824 -0.002455001 0.000000
+relative.bias -0.001056117 -0.002453360 0.000000
+\end{verbatim}
+
+Comparison variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(value = c(taylor = var.taylor, 
+		dist = var.logdist, 
+		truth = var.logGS),
+      bias = c(var.taylor,var.logdist,var.logGS)-var.logGS,
+      relative.bias = (c(var.taylor,var.logdist,var.logGS)-var.logGS)/var.logGS)
+\end{lstlisting}
+
+\begin{verbatim}
+                   taylor      dist     truth
+value         0.255318149 0.5123473 0.2528091
+bias          0.002509088 0.2595382 0.0000000
+relative.bias 0.009924835 1.0266175 0.0000000
+\end{verbatim}
+
+\clearpage
+\end{document}

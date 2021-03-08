@@ -1,0 +1,1469 @@
+#+TITLE: Estimating a relative change using a log-transformation of the outcome
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+path <-  "~/Documents/GitHub/bozenne.github.io/doc/2018-12-12-logTransform/"
+setwd(path)
+#+END_SRC
+
+* Interpretation of the regression coefficient after log-transformation
+Let's denote by \(Y\) the outcome and by \(G\) a binary group
+variable. We are interested in the relative change in \(Y\) between
+the groups. We decide to model the group effect on the log scale:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\log(Y) = Z = \alpha + \beta G + \varepsilon \text{ where } \Esp[\varepsilon]=0 \text{ and } \Esp[\varepsilon]=\sigma^2
+\end{align*}
+#+END_EXPORT
+We claim that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = e^{\beta} - 1
+\end{align*}
+#+END_EXPORT
+
+** Proof: re-writting the model as a multiplicative model
+We can re-write the model as:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y = e^{\alpha + \beta G}e^{\varepsilon} \text{ where }
+\end{align*}
+#+END_EXPORT
+So for \(g\in\{1,2\}\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[Y|G=g] = e^{\alpha + \beta g} \Esp[e^{\varepsilon}]
+\end{align*}
+#+END_EXPORT
+Then:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]}
+& = \frac{e^{\alpha + \beta} \Esp[e^{\varepsilon}]-e^{\alpha} \Esp[e^{\varepsilon}]}{e^{\alpha} \Esp[e^{\varepsilon}]} \\
+& = \frac{e^{\alpha + \beta} -e^{\alpha}}{e^{\alpha}}  = e^{\beta} - 1 \\
+\end{align*}
+#+END_EXPORT
+
+** Proof: using a Taylor expansion
+
+Using a second order Taylor expansion of \(\exp(Z)\) around
+\(\mu(G)=\alpha + \beta G\) and assuming that the first moments of
+\(Z\) are finite and the remaining moments are neglectable regarding
+the factorial of the moment order (i.e. \(\forall i \geq 1 \),
+\(\frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\) and \(\sum_{i=1}^{\infty} \frac{1}{i!}\Esp[\varepsilon^i ]< +\infty\)), we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y &= e^{Z} = e^{\mu} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \mu)^i \frac{\partial^i e^{\mu}}{(\partial \mu)^i} \\
+&= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} (Z - \alpha - \beta G)^i e^{\alpha + \beta G} \\
+\Esp[Y|G=g] &= e^{\alpha + \beta G} + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[(Z - \alpha - \beta g)^i] e^{\alpha + \beta G} \\
+&= e^{\alpha + \beta G} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^i] \right)
+\end{align*}
+#+END_EXPORT
+where we used that the distribution of \(\varepsilon\) is independent
+of \(g\). We can now express our parameter of interest:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Delta_G &= \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \frac{\Esp[Y|G=1]}{\Esp[Y|G=0]} - 1 \\
+&= \frac{e^{\alpha + \beta} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)}{e^{\alpha} \left(1 + \sum_{i=1}^{\infty} \frac{1}{i!} \Esp[\varepsilon^{i}] \right)} - 1 \\
+&= e^{\beta} - 1
+\end{align*}
+#+END_EXPORT
+
+
+# @@latex:any arbitrary LaTeX code@@
+\clearpage
+
+* Power calculation: comparison between two groups
+
+Consider two groups \(G=0\) and \(G=1\) for which we want to compare
+the percentage difference in outcome \(Y\). We are willing to assume
+that on the log-scale \(Y\) is normally distributed. Our parameter of
+interest is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]} = \gamma
+\end{align*}
+#+END_EXPORT
+We further fix \(\alpha = \Esp[Y|G=0]\) and \(\sigma^2 = \Var[Y|G=0]\)
+and we assume that on the log-scale:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[\log(Y)|G=1]  = \Var[\log(Y)|G=0] = s^2
+\end{align*}
+#+END_EXPORT
+To evaluate the power for a given \((\alpha,\sigma^2,\gamma)\), we need to identify the joint distribution: 
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+Z_0 = \log(Y)|G=0 \\ Z_1  = \log(Y)|G=1
+\end{bmatrix}
+\sim \Gaus \left(
+\begin{bmatrix}
+m_0 \\ m_1
+\end{bmatrix}
+,
+\begin{bmatrix}
+s^2 & \rho s^2 \\ \rho s^2 & s^2
+\end{bmatrix}
+\right)
+\end{align*}
+#+END_EXPORT
+The standardized effect size is then: \(\frac{m_1-m_0}{s\sqrt{2(1-\rho)}}\). 
+
+\bigskip
+
+Note: in the case of two independent samples \(\rho=0\)
+
+** Method 1: Taylor expansion 
+
+We will use the fact that \(Z_0,Z_1\) are jointly normally distributed
+to identify \(m_0,m_1,s^2,\rho\). First we start by identifying
+\(m_0\) and \(s^2\) based on \(\alpha\) and \(\sigma^2\) (reference
+group). A Taylor expansion gives (see appendix [[#SM:exptrans]]):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha &\approx \exp(m_0)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+\sigma^2 &\approx \exp(2 m_0)\left(s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}\right)
+\end{align*}
+#+END_EXPORT
+So:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{\alpha^2}{\sigma^2} - \frac{\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)^2}{s^2 + \frac{3}{2} s^4 + \frac{7}{6} s^6 + \frac{11}{24} s^8 + \frac{21}{320} s^{10}} \approx 0
+\end{align*}
+#+END_EXPORT
+We get \(s^2\) by solving this equation using that \(s^2 \in
+[0;\sigma^2]\) (upper bound follow from Jensen's inequality applied to
+\((X-\mu)^2\), \(\log\) being concave). We can then deduce \(m_0\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+m_0  &\approx \log\left(\frac{\alpha}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = \log(\alpha) - \log\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right)
+\end{align*}
+#+END_EXPORT
+Then we can identify \(m_1\) using once more a Taylor expansion:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha(1+\gamma) &\approx \exp(m_1)\left(1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}\right) \\
+m_1 &\approx \log\left(\frac{\alpha(1+\gamma)}{1 + \frac{s^2}{2}+\frac{s^4}{8}+\frac{s^6}{48}}\right) = m_0 + \log(1+\gamma)
+\end{align*}
+#+END_EXPORT
+Now
+
+** Method 2: Log-normal distribution 
+We will use the fact that \(Z_0\) follows a log-normal distribution,
+meaning that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha &= \exp(m_0 + \frac{1}{2} s^2) \\
+\sigma^2 &= \exp(2*m_0 + s^2)*(\exp(s^2)-1) \\
+\end{align*}
+#+END_EXPORT
+So
+#+BEGIN_EXPORT latex
+\begin{align*}
+s^2 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+m_0 &= \log(\alpha)-\frac{s^2}{2}\\
+\end{align*}
+#+END_EXPORT
+Then we can identify \(m_1\) using that \(Z_1\) follows a log-normal distribution, i.e.:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha(1+\gamma) &= \exp(m_1 + \frac{1}{2} s^2) \\
+m_1 &= m_0+\log(1+\gamma)\\
+\end{align*}
+#+END_EXPORT
+
+\clearpage
+
+** Illustration 1: two sample t-test
+
+\textbf{Illustration:} We consider two groups having a 10% difference
+in their baseline value (\(\alpha=1.15\)) and a variance of \(\sigma^2
+= 0.15\). What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+#+END_SRC
+
+#+RESULTS:
+
+\textbf{Taylor expansion:} we first identify \(s^2\), \(m_0\), and
+\(m_1\):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+s2.taylor <- uniroot(function(x){
+    alpha^2/sigma2 - (1+x/2+x^2/8+x^3/48)^2/(x+(3/2)*x^2+(7/6)*x^3+(11/24)*x^4+(21/320)*x^5)},
+    interval = c(1e-12,sigma2))$root
+m0.taylor <- log(alpha/(1+s2.taylor/2+s2.taylor^2/8+s2.taylor^3/48))
+m1.taylor <- m0.taylor + log(1+gamma)
+#+END_SRC
+
+#+RESULTS:
+
+\textbf{lognormal distribution:} we first identify \(s^2\), \(m_0\),
+and \(m_1\):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+s2.logdist <- log(1+sigma2/alpha^2)
+m0.logdist <- log(alpha) - s2.logdist/2
+m1.logdist <- m0.logdist + log(1+gamma)
+#+END_SRC
+
+#+RESULTS:
+
+We can compare the moments of am exp-transformed normal distribution
+based on these values to the input:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+x <- exp(rnorm(1e5, mean = m0.taylor, sd = sqrt(s2.taylor)))
+y <- exp(rnorm(1e5, mean = m1.taylor, sd = sqrt(s2.taylor)))
+yx.x <- mean(y)/mean(x)-1
+X <- exp(rnorm(1e5, mean = m0.logdist, sd = sqrt(s2.logdist)))
+Y <- exp(rnorm(1e5, mean = m1.logdist, sd = sqrt(s2.logdist)))
+YX.X <- mean(Y)/mean(X)-1
+
+rbind(data.frame(method = "taylor", 
+                 m0=m0.taylor, m1=m1.taylor, s2=s2.taylor), 
+      data.frame(method = "logdist", 
+                 m0=m0.logdist, m1=m1.logdist, s2=s2.logdist)
+      )
+rbind(data.frame(method = "true", 
+                 alpha=alpha, gamma=gamma, sigma2=sigma2), 
+      data.frame(method = "error.taylor", 
+                 alpha=mean(x)-alpha, gamma=yx.x-gamma, sigma2=var(x)-sigma2),
+      data.frame(method = "error.logdist", 
+                 alpha=mean(X)-alpha, gamma=YX.X-gamma, sigma2=var(X)-sigma2)
+      )
+#+END_SRC
+
+#+RESULTS:
+:    method         m0        m1        s2
+: 1  taylor 0.08603197 0.1813421 0.1074606
+: 2 logdist 0.08604307 0.1813532 0.1074378
+:          method         alpha         gamma        sigma2
+: 1          true  1.1500000000  0.1000000000  0.1500000000
+: 2  error.taylor  0.0012850559 -0.0010820104 -0.0002242144
+: 3 error.logdist -0.0005174973 -0.0009134562 -0.0012306318
+Similar performance. Maybe a bit better for log-dist.
+
+** Illustration 2: paired t-test
+
+\textbf{Illustration:} We consider one group having a 10% difference
+between its baseline value (\(\alpha=1.15\)) and its follow-up
+value. We assume a variance of \(\sigma^2 = 0.15\) for the baseline
+value and a correlation of \(\rho=0.5\) between the baseline and
+follow-up value. What are the parameters of the corresponding normal
+distribution on the log-scale and the standardized effect size?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+rho <- 0.5
+#+END_SRC
+
+#+RESULTS:
+
+We previously obtained the values for\(s^2\). We can now search for
+the right correlation value on the log-scale
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rho.taylor <- uniroot(function(x){
+    rho - (x+1.5*x^2*s2.taylor+(1/12)*s2.taylor^2*(2*x^3+3*x))/(1+(3/2)*s2.taylor+(7/6)*s2.taylor^2+(11/24)*s2.taylor^3+(21/320)*s2.taylor^4)
+},interval = c(0,0.9999))$root
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(mvtnorm)
+Sigma <- diag(s2.taylor*(1 - rho.taylor),2,2)+s2.taylor*rho.taylor
+z <- exp(rmvnorm(1e5, mean = c(m0.taylor, m1.taylor), sigma = Sigma))
+c("true" = rho,
+  "error.taylor" = rho-cor(z[,1],z[,2]))
+#+END_SRC
+
+#+RESULTS:
+:         true error.taylor 
+:   0.50000000  -0.02621529
+
+** Application: two independent groups
+
+We consider two groups having a 10% difference in their baseline value
+(\(\alpha=1.15\)) and a variance of \(\sigma^2 = 0.15\). What are the
+parameters of the corresponding normal distribution on the log-scale
+and the standardized effect size?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+alpha <- 1.15
+sigma2 <- 0.15
+gamma <- 0.1
+#+END_SRC
+
+#+RESULTS:
+
+Solve the equations:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+
+#+END_SRC
+
+#+RESULTS:
+:         a0         s0         a1         s1 
+: 0.08802784 0.10608948 0.19175319 0.08851048
+
+We can check that =uniroot= converged correctly:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(exp(a0)*(1+s0/2) - alpha, 
+  exp(2*a0)*(s0+s0^2*7/4) - sigma2, 
+  exp(a1)*(1+s1/2) - alpha*(1+gamma), 
+  exp(2*a1)*(s1+s1^2*7/4) - sigma2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -5.563198e-05  0.000000e+00 -1.895835e-05  0.000000e+00
+
+and the variables have the appropriate distribution:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Z0 <- exp(rnorm(1e4, mean=a0, sd = sqrt(s0)))
+Z1 <- exp(rnorm(1e4, mean=a1, sd = sqrt(s1)))
+c(alpha = mean(Z0), 
+  gamma = (mean(Z1)-mean(Z0))/mean(Z0), 
+  sigma2 = var(Z0), 
+  sigma2 = var(Z1))
+#+END_SRC
+
+#+RESULTS:
+:     alpha     gamma    sigma2    sigma2 
+: 1.1435272 0.1090391 0.1473705 0.1507638
+
+For a power calculation we would use:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pwr.t.test(d = (a1-a0)/sqrt(s0/2+s1/2), sig.level = 0.05, power = 0.8)
+## dvmisc::power_2t_unequal(n = 143, d = a1-a0, sigsq1 = s0, sigsq2 = s1, alpha = 0.05)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+     Two-sample t test power calculation 
+
+              n = 142.9312
+              d = 0.3325282
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+#+end_example
+
+# Check:
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+# out <- sapply(1:10000,function(x){t.test(rnorm(143, mean = alpha, sd = sqrt(sigma2)),rnorm(143, mean = alpha*(1+gamma), sd = sqrt(sigma2)))$p.value})
+# mean(out<=0.05)
+# #+END_SRC
+
+# #+RESULTS:
+# : [1] 0.7084
+
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+# out <- sapply(1:10000,function(x){t.test(rnorm(143, mean = a0, sd = sqrt(s0)),rnorm(143, mean = a1, sd = sqrt(s1)))$p.value})
+# mean(out<=0.05)
+# #+END_SRC
+
+# #+RESULTS:
+# : [1] 0.8003
+
+
+#+BEGIN_EXPORT latex
+\clearpage
+\appendix
+% \titleformat{\section}
+% {\normalfont\Large\bfseries}{Appendix~\thesection}{1em}{}
+#+END_EXPORT
+
+* Moments of the normal distribution
+:PROPERTIES:
+:CUSTOM_ID: SM:moments 
+:END:
+# https://math.stackexchange.com/questions/92648/calculation-of-the-n-th-central-moment-of-the-normal-distribution-mathcaln
+
+Denote \(X\) and \(Y\) two normally distributed variables, with mean
+\(\mu_X\),\(\mu_Y\) and variance \(\sigma^2_X\),\(\sigma^2_Y\). Then:
+- \(\Esp[X^2] = \sigma^2_X + \mu_X^2\)
+- \(\Esp[X^3] = 3 \mu_X \sigma^2_X + \mu_X^3\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+mean(X^3)
+mean((X-mean(X)+mean(X))^3)
+mean(((X-mean(X))^2+2*mean(X)*(X-mean(X))+mean(X)^2)*(X-mean(X)+mean(X)))
+mean((2*mean(X)*(X-mean(X)))*(X-mean(X))) + mean(((X-mean(X))^2+mean(X)^2)*(mean(X)))
+2*mean(X)*var(X) + var(X)*mean(X)+mean(X)^3
+3*mean(X)*var(X) + mean(X)^3
+#+END_SRC
+
+#+RESULTS:
+: [1] 1164.078
+: [1] 1164.078
+: [1] 1164.078
+: [1] 1164.051
+: [1] 1164.051
+: [1] 1164.051
+
+- \(\Esp[X^4]=3\left(\sigma^2_X\right)^2 + 6 \sigma^2_X \mu_X^2 + \mu_X^4\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+mean(X^4)
+mean((X-mean(X)+mean(X))^4)
+mean(((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2)^2)
+mean((X-mean(X))^2 * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) + 2*(X-mean(X))*mean(X) * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) + mean(X)^2 * ((X-mean(X))^2+2*(X-mean(X))*mean(X)+mean(X)^2) )
+cat("\n")
+mean((X-mean(X))^4  + (X-mean(X))^2* mean(X)^2                       + 2*(X-mean(X))*mean(X) * 2*(X-mean(X))*mean(X) + mean(X)^2 * ((X-mean(X))^2+mean(X)^2) )
+mean((X-mean(X))^4) + mean((X-mean(X))^2* mean(X)^2) + mean(2*(X-mean(X))*mean(X) * 2*(X-mean(X))*mean(X)) + mean(mean(X)^2 * (X-mean(X))^2) + mean(X)^4
+mean((X-mean(X))^4) + var(X)* mean(X)^2              + 4*var(X)*mean(X)^2                                  + var(X)*mean(X)^2              + mean(X)^4
+mean((X-mean(X))^4) + 6*var(X)*mean(X)^2 + mean(X)^4
+3*var(X)^2 + 6*var(X)*mean(X)^2 + mean(X)^4
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 13154.17
+[1] 13154.17
+[1] 13154.17
+[1] 13154.17
+
+[1] 13153.69
+[1] 13153.69
+[1] 13153.7
+[1] 13153.7
+[1] 13153.58
+#+end_example
+
+- \(\Esp[X^5]=15 \left(\sigma^2_X\right)^2 \mu + 10 \sigma^2_X \mu^3 + \mu^5\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+mean(X^5)
+15*var(X)^2*mean(X) + 10*var(X)*mean(X)^3 + mean(X)^5
+#+END_SRC
+
+#+RESULTS:
+: [1] 153594.3
+: [1] 153590.5
+
+- \(\Esp[(X-\mu_X)^6]= 15\left(\sigma_X^2\right)^3\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 0, sd = 2.1)
+mean(X^6)
+15*var(X)^3
+
+gamma(3+1/2)*2^3/sqrt(pi)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1290.966
+: [1] 1288.196
+: [1] 15
+
+- \(\Esp[(X-\mu_X)^8]= 105\left(\sigma_X^2\right)^4\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 0, sd = 2.1)
+mean(X^8)
+105*var(X)^4
+gamma(4+1/2)*2^4/sqrt(pi)
+#+END_SRC
+
+#+RESULTS:
+: [1] 38863.4
+: [1] 39336.67
+: [1] 105
+
+\bigskip
+
+- \(\Cov[X^2,X]=2 \mu_X \sigma^2_X\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- rnorm(1e6, mean = 10.1, sd = 2.1)
+cov(X^2,X)
+mean((X^2-mean(X^2))*(X-mean(X)))
+mean(X^3-X*mean(X^2)-X^2*mean(X)+mean(X^2)*mean(X))
+mean(X^3)-mean(X)*mean(X^2)-mean(X^2)*mean(X)+mean(X^2)*mean(X)
+mean(X^3) - mean(X)*mean(X^2) - mean(X^2)*mean(X) + mean(X^2)*mean(X)
+mean(X^3) - mean(X)*(var(X)+mean(X)^2)
+3*mean(X)*var(X) + mean(X)^3 - mean(X) * (var(X)+mean(X)^2)
+2*mean(X)*var(X)
+#+END_SRC
+
+#+RESULTS:
+: [1] 89.04187
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04178
+: [1] 89.04173
+: [1] 89.08142
+: [1] 89.08142
+
+- \(\Cov[X^2,Y]=2 \mu_X \rho \sigma_X \sigma_Y \)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 10
+m2 <- 10.2
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov(X^2,Y)
+mean((X^2-mean(X^2))*(Y-mean(Y)))
+mean(X^2*Y)-mean(Y)*mean(X^2)-mean(X^2)*mean(Y)+mean(Y)*mean(X^2)
+mean(X^2*Y)-mean(Y)*(var(X)+mean(X)^2)
+mean(X^2*(mean(Y)+(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)))-mean(Y)*(var(X)+mean(X)^2)
+mean((X^2*mean(Y)+X^2*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)))-mean(Y)*(var(X)+mean(X)^2)
+(mean(X^3)-mean(X^2)*mean(X))*cor(X,Y)*sd(Y)/sd(X)
+(3*mean(X)*var(X) + mean(X)^3-mean(X^2)*mean(X))*cor(X,Y)*sd(Y)/sd(X)
+(3*mean(X)*var(X) + mean(X)^3-var(X)*mean(X)-mean(X)^3)*cor(X,Y)*sd(Y)/sd(X)
+2*mean(X)*sd(X)*cor(X,Y)*sd(Y)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 105.1012
+[1] 105.0907
+[1] 105.0907
+[1] 105.0802
+[1] 104.8445
+[1] 104.8445
+[1] 104.855
+[1] 104.7566
+[1] 104.7513
+[1] 104.7513
+#+end_example
+
+- \(\Esp[X^2*Y^2] = (\sigma^2_X+\mu_X^2)(\sigma^2_Y+\mu_Y^2) + 2 \rho^2 \sigma^2_X \sigma^2_Y + 4 \rho \sigma_Y \sigma_X \mu_X \mu_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 0
+m2 <- 0
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+fit <- mean(Y)+(X-mean(X))*cor(X,Y)*sd(Y)/sd(X) 
+epsilon <- Y-fit
+mean(X^2*Y^2)
+mean(X^2*(fit+epsilon)^2)
+mean(X^2*fit^2) + mean(X^2*epsilon^2) + 2 * mean(X^2*epsilon*fit)
+mean(X^2*fit^2) + mean(X^2)*mean(epsilon^2) + 2 * mean(X^2*fit)*mean(epsilon)
+mean(X^2*fit^2) + mean(X^2)*mean(epsilon^2)
+mean(X^2*fit^2) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(X^2*(mean(Y)^2+(X-mean(X))^2*cor(X,Y)^2*var(Y)/var(X)+2*mean(Y)*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)) ) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*mean(X^2) + mean(X^2*(X-mean(X))^2*cor(X,Y)^2*var(Y)/var(X)) + mean(X^2*2*mean(Y)*(X-mean(X))*cor(X,Y)*sd(Y)/sd(X)) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*mean(X^2) + (mean(X^4)-2*mean(X^3)*mean(X)+mean(X^2)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*mean(X^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*mean(X^2) + mean(X^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*(var(X)+mean(X)^2) + (3*var(X)^2 + 6*var(X)*mean(X)^2 + mean(X)^4-2*(3*mean(X)*var(X) + mean(X)^3)*mean(X)+(var(X)+mean(X)^2)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*(3*mean(X)*var(X) + mean(X)^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*(var(X)+mean(X)^2) + (var(X)+mean(X)^2)*(1-cor(X,Y)^2)*var(Y)
+mean(Y)^2*(var(X)+mean(X)^2) + (3*var(X)^2 + var(X)*mean(X)^2)*cor(X,Y)^2*var(Y)/var(X) + 2*mean(Y)*cor(X,Y)*sd(Y)/sd(X)*(3*mean(X)*var(X) + mean(X)^3) - 2*mean(Y)*mean(X)*cor(X,Y)*sd(Y)/sd(X)*(var(X)+mean(X)^2) + (var(X)+mean(X)^2)*(1-cor(X,Y)^2)*var(Y)
+(var(X)+mean(X)^2)*(var(Y)+mean(Y)^2) + 2*cor(X,Y)^2*var(Y)*var(X) + 4*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X) 
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 163.934
+[1] 163.934
+[1] 163.934
+[1] 165.3792
+[1] 165.3792
+[1] 165.3876
+[1] 165.3876
+[1] 165.3876
+[1] 165.3876
+[1] 167.0229
+[1] 167.0229
+[1] 167.0229
+#+end_example
+
+- \(\Cov[\left(X-\mu_X\right)^2,\left(Y-\mu_Y\right)^2] = 2 \rho^2 \sigma^2_X \sigma^2_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 0
+m2 <- 0
+s1 <- 10.5
+s2 <- 10.5
+rho <- 0.5
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e4, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov((X-mean(X))^2,(Y-mean(Y))^2)
+cov(X^2-2*X*mean(X),Y^2-2*Y*mean(Y))
+cov(X^2,Y^2) + cov(X^2,-2*Y*mean(Y)) + cov(-2*X*mean(X),Y^2) + cov(2*X*mean(X),2*Y*mean(Y))
+mean(X^2*Y^2) - mean(X^2)*mean(Y^2) - 2*mean(Y)*cov(X^2,Y) - 2*mean(X)*cov(X,Y^2) + 4*mean(X)*mean(Y)*cov(X,Y)
+cat("\n")
+(var(X)+mean(X)^2)*(var(Y)+mean(Y)^2) + 2*cor(X,Y)^2*var(Y)*var(X) + 4*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X)  -mean(X^2)*mean(Y^2) - 2*mean(Y)*cov(X^2,Y) - 2*mean(X)*cov(X,Y^2) + 4*mean(X)*mean(Y)*cov(X,Y)
+2*cor(X,Y)^2*var(Y)*var(X) + 8*cor(X,Y)*sd(Y)*sd(X)*mean(Y)*mean(X) - 2*mean(Y)*2*mean(X)*sd(X)*cor(X,Y)*sd(Y) - 2*mean(X)*2*mean(Y)*sd(Y)*cor(X,Y)*sd(X)
+2*cor(X,Y)^2*var(Y)*var(X)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.895759
+: [1] 1.895759
+: [1] 1.895759
+: [1] 1.895753
+: 
+: [1] 1.8893
+: [1] 1.880605
+: [1] 1.880605
+
+- \(\Cov[\left(X-\mu_X\right),\left(Y-\mu_Y\right)^3] = 3 \rho \sigma_X \sigma^3_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 0
+m2 <- 0
+s1 <- 1.3
+s2 <- 2.25
+rho <- 0.3
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e5, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov((X-mean(X)),(Y-mean(Y))^3)
+cov(rho*Y,Y^3)
+cov(rho*Y,Y^3)
+3*rho*sqrt(s2)*sqrt(s1)^3
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.980273
+: [1] 1.533612
+: [1] 1.533612
+: [1] 2.001008
+
+- \(\Cov[\left(X-\mu_X\right)^3,\left(Y-\mu_Y\right)^3] = (6 \rho^3 + 9\rho) \sigma^3_X \sigma^3_Y\)
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+m1 <- 2
+m2 <- 1
+s1 <- 3
+s2 <- 1.5
+rho <- 0.3
+Sigma <- matrix(c(s1,rho*sqrt(s1)*sqrt(s2),rho*sqrt(s1)*sqrt(s2),s2),2,2)
+
+set.seed(10)
+XY <- mvtnorm::rmvnorm(1e5, mean=c(m1,m1), sigma =  Sigma)
+X <- XY[,2]
+Y <- XY[,1]
+
+cov((X-mean(X))^3,(Y-mean(Y))^3)
+cov(X^3,Y^3)
+cov(X^3,(rho*X+Y-rho*X)^3)
+cov(X^3,(rho*X)^3+3*(rho*X)*(Y-rho*X)^2+3*(rho*X)^2*(Y-rho*X)+(Y-rho*X)^3)
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*(Y-rho*X)^2)
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*Y^2-2*rho*X^2*Y+rho^2*X^3)
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*Y^2)-6*rho^2*cov(X^3,X^2*Y)+3*rho^3*cov(X^3,X^3)
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*Y^2)-3*rho^3*var(X^3)
+
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*(rho*X+Y-rho*X)^2)-3*rho^3*var(X^3)
+cov(X^3,(rho*X)^3)+3*rho*cov(X^3,X*(Y-rho*X)^2)
+rho^3*var(X^3)+3*rho*cov(X^3,X*Y^2)-6*rho*cov(X^3,X*rho*X*Y)+3*rho*cov(X^3,X*(rho*X)^2)
+3*rho*cov(X^3,X*Y^2)-2*rho^3*var(X^3)
+3*rho*cov(X^3,X*(rho^2*X^2+2*rho*X*(Y-rho*X)+(Y-rho*X)^2))-2*rho^3*var(X^3)
+3*rho^3*var(X^3)+3*rho*cov(X^3,X*(Y-rho*X)^2)-2*rho^3*var(X^3)
+rho^3*var(X^3)+3*rho*mean(X^4)*mean((Y-rho*X)^2)
+15*rho^3*var(X)^6+9*rho*(1-rho^2)*var(X)^3
+
+(15*rho^3+9*rho*(1-rho^2))*sqrt(s1)^3*sqrt(s2)^3
+(6*rho^3+9*rho)*sqrt(s1)^3*sqrt(s2)^3
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 27.61135
+[1] 248.9006
+[1] 248.9006
+[1] 248.9006
+[1] 145.7541
+[1] 145.7541
+[1] 145.7541
+[1] 262.517
+[1] 262.517
+[1] 145.7541
+[1] 145.7541
+[1] 262.517
+[1] 262.517
+[1] 145.7541
+[1] 261.7799
+[1] 12.64041
+[1] 27.32048
+[1] 27.32048
+#+end_example
+
+\clearpage
+
+* Moments after transformation
+** Recall: Taylor expansion for normally distributed variables
+
+Taylor expansion for a smooth function \(f\) around the mean value \(\mu_Y=\Esp[Y]\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+f(Y) = f(\mu_Y) + f'(\mu_Y) (Y-\mu_Y) + \frac{1}{2} f''(\mu_Y) (Y-\mu_Y)^2  + \frac{1}{6} f'''(\mu_Y) (Y-\mu_Y)^3 + R_4(Y-\mu_Y)
+\end{align*}
+#+END_EXPORT
+where \(R_4\) is a residual term. Introducing \(\bar{Y}=Y-\mu_Y\),
+\(\sigma_Y^2 = \Var[Y]\) and using results for the moments of a normal
+distribution (appendix [[#SM:moments]]), we have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[f(Y)] \approx& f(\mu_Y) + f(\mu_Y) \Esp[\bar{Y}]  + \frac{1}{2} f''(\mu_Y) \Esp[\bar{Y}^2] + \frac{1}{6} f'''(\mu_Y) \Esp[\bar{Y}^3] 
+= f(\mu_Y) + \frac{\sigma_Y^2}{2} f''(\mu_Y) \\
+\Var[f(Y)] \approx& \left(f'(\mu_Y)\right)^2 \Var\left[\bar{Y}\right] + \frac{\left(f''(\mu_Y)\right)^2}{4} \Var\left[\bar{Y}^2\right]  + \frac{\left(f'''(\mu_Y)\right)^2}{36} \Var\left[\bar{Y}^3\right] \\
+& +f'(\mu_Y) f''(\mu_Y)\Cov\left[\bar{Y},\bar{Y}^2\right] + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} \Cov\left[\bar{Y},\bar{Y}^3\right] +\frac{f''(\mu_Y) f'''(\mu_Y)}{6}\Cov\left[\bar{Y}^2,\bar{Y}^3\right]\\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \frac{\left(f''(\mu_Y)\right)^2}{4} \left(3 \sigma_Y^4 - \sigma_Y^4\right)  + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6
+ + \frac{f'(\mu_Y) f'''(\mu_Y)}{3} 3 \sigma_Y^4 \\
+\approx& \left(f'(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f''(\mu_Y)\right)^2}{2} + f'(\mu_Y)f'''(\mu_Y)\right) \sigma_Y^4 + \frac{\left(f'''(\mu_Y)\right)^2}{36}  15 \sigma_Y^6 
+\end{align*}
+#+END_EXPORT
+and introducing \(X\) with mean \(\mu_X\), variance \(\sigma_X^2\), and correlation \(\rho\) with \(Y\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Cov[f(X),f(Y)] \approx& f'(\mu_X) f'(\mu_Y) \Cov[X-\mu_X,Y-\mu_Y] \\ &+ \frac{1}{4} f''(\mu_X) f''(\mu_Y) \Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]
+\end{align*}
+#+END_EXPORT
+
+\Warning these approximations are precise when the higher order
+moments are small (i.e. mean and variance are small). More precise
+approximations can be obtained considering higher-order terms:
+#+BEGIN_EXPORT latex
+\begin{align*}
+&\Esp[f(Y)] \approx f(\mu_Y) + \frac{\sigma_Y^2}{2} f^{(2)}(\mu_Y)  + \frac{\sigma_Y^4}{8} f^{(4)}(\mu_Y) + \frac{\sigma_Y^6}{48} f^{(6)}(\mu_Y) \\
+&\Var[f(Y)] \approx \left(f^{(1)}(\mu_Y)\right)^2 \sigma_Y^2 + \left(\frac{\left(f^{(2)}(\mu_Y)\right)^2}{2} + f^{(1)}(\mu_Y)f^{(3)}(\mu_Y)\right) \sigma_Y^4 \\
+                  &+ \left(\frac{5\left(f^{(3)}(\mu_Y)\right)^2}{12} + \frac{f^{(2)}(\mu_Y)f^{(4)}(\mu_Y)}{2}  + \frac{f^{(1)}(\mu_Y)f^{(5)}(\mu_Y)}{4} \right) \sigma_Y^6  \\
+                  &+ \left(\frac{\left(f^{(4)}(\mu_Y)\right)^2}{6} + \frac{7 f^{(3)}(\mu_Y)f^{(5)}(\mu_Y)}{24} \right) \sigma_Y^8 + \frac{21\left(f^{(5)}(\mu_Y)\right)^2}{320} \sigma_Y^{10}
+\end{align*}
+#+END_EXPORT
+
+\clearpage
+
+** Application:  exponential transformation (\(f = \exp\))
+:PROPERTIES:
+:CUSTOM_ID: SM:exptrans 
+:END:
+
+Using that \(\Cov[(X-\mu_X)^2,(Y-\mu_Y)^2]\approx2 \rho^2 \sigma_X^2 \sigma_Y^2\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{15}{36} \sigma_Y^6 \right)\\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2\right) 
+\end{align*}
+#+END_EXPORT
+
+Note: one can always go one order further to get a better approximation:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[\exp(Y)] &\approx \exp(\mu_Y)\left(1 + \frac{\sigma_Y^2}{2}+\frac{\sigma_Y^4}{8}+\frac{\sigma_Y^6}{48}\right) \\
+\Var[\exp(Y)] &\approx \exp(2\mu_Y)\left(\sigma_Y^2 + \frac{3}{2} \sigma_Y^4 + \frac{7}{6} \sigma_Y^6 + \frac{11}{24} \sigma_Y^8 + \frac{21}{320} \sigma_Y^{10}\right) \\
+\Cov[\exp(X),\exp(Y)] &\approx \exp(\mu_X+\mu_Y)\left(\rho \sigma_X \sigma_Y + \frac{1}{2} \rho^2 \sigma_X^2 \sigma_Y^2 \right.\\
+& \left. + \frac{1}{2} \rho \left(\sigma_X \sigma_Y^3 + \sigma_Y \sigma_X^3 \right) + \frac{1}{12} \left(2 \rho^3 + 3 \rho\right) \sigma_X^3 \sigma_Y^3 \right)
+\end{align*}
+#+END_EXPORT
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 1 and variance 0.5 (i.e standard deviation about 0.707). What is its expectation and variance
+after exp-transformation?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e4
+mu <- 1; sigma2 <- 0.5
+
+## first order method
+mu.exp1 <- exp(mu)
+var.exp1 <- exp(2*mu)*sigma2
+
+## third order method
+mu.exp2 <- exp(mu)*(1+sigma2/2)
+var.exp2 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (15/36)*sigma2^3)
+
+## n order method
+mu.exp3 <- exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+var.exp3 <- exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+
+## empirical value
+X.exp <- exp(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.expGS <- mean(X.exp)
+var.expGS <-  var(X.exp)
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+Comparison mean:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(first.order = mu.exp1, 
+                second.order = mu.exp2, 
+                third.order = mu.exp3, 
+                truth = mu.expGS),
+      bias = c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS,
+      relative.bias = (c(mu.exp1,mu.exp2,mu.exp3,mu.expGS)-mu.expGS)/mu.expGS)
+#+END_SRC
+
+#+RESULTS:
+:               first.order second.order  third.order    truth
+: value           2.7182818   3.39785229  3.489877452 3.505691
+: bias           -0.7874091  -0.10783859 -0.015813428 0.000000
+: relative.bias  -0.2246088  -0.03076101 -0.004510788 0.000000
+
+Comparison variance:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(first.order = var.exp1, 
+                second.order = var.exp2, 
+                third.order = var.exp3, 
+                truth = var.expGS),
+      bias = c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS,
+      relative.bias = (c(var.exp1,var.exp2,var.exp3,var.expGS)-var.expGS)/var.expGS)
+#+END_SRC
+
+#+RESULTS:
+:               first.order second.order third.order    truth
+: value           3.6945280    6.8502708  7.75513398 8.224438
+: bias           -4.5299096   -1.3741669 -0.46930364 0.000000
+: relative.bias  -0.5507865   -0.1670834 -0.05706209 0.000000
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\bigskip
+
+We now consider a bivariate normally distributed outcome with
+expectation 0.1, variance 0.1, and correlation 0.5. What is the
+correlation after exp-transformation?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e4
+mu <- c(0.1,0.1); sigma2 <- c(0.1,0.1); rho <- 0.5
+Sigma <- matrix(c(sigma2[1], rho*sqrt(prod(sigma2)),
+                  rho*sqrt(prod(sigma2)), sigma2[2]), 2,2)
+XY <- mvtnorm::rmvnorm(n, mean = mu, sigma = Sigma)
+X <- XY[,1] ; Y <- XY[,2]
+
+cov(exp(X),exp(Y))
+exp(mean(X)+2*mean(Y)) * (cor(X,Y)*sd(Y)*sd(X) + 0.5*cor(X,Y)^2*var(Y)*var(X))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.06839007
+: [1] 0.06846545
+
+
+\clearpage
+
+** Application:  log-transformation (\(f = \log\))
+
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{5 \sigma^6_Y}{3\mu_Y^6} \\
+\Cov[\log(X),\log(Y)] &\approx \frac{\rho \sigma_X \sigma_Y}{\mu_X\mu_Y} + \frac{\rho^2 \sigma^2_X \sigma^2_Y}{2\mu_X^2\mu_Y^2}
+\end{align*}
+#+END_EXPORT
+
+Note: one can always go one order further to get a better approximation:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Esp[\log(Y)] &\approx \log(\mu_Y) - \frac{\sigma_Y^2}{2\mu_Y^2} - \frac{3\sigma_Y^4}{4\mu_Y^4}  - \frac{5\sigma_Y^6}{2\mu_Y^6}  \\
+\Var[\log(Y)] &\approx \frac{\sigma^2_Y}{\mu_Y^2} + \frac{5 \sigma^4_Y}{2\mu_Y^4} + \frac{67 \sigma^6_Y}{6\mu_Y^6} + \frac{20\sigma^8_Y}{6\mu_Y^8} + \frac{189\sigma^{10}_Y}{5\mu_Y^{10}} \\
+\end{align*}
+#+END_EXPORT
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e4
+mu <- 7; sigma2 <- 2
+
+## first order method
+mu.log1 <- log(mu)
+var.log1 <- sigma2/mu^2
+
+## third order method
+mu.log2 <-  log(mu) - sigma2/(2*mu^2)
+var.log2 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 5*sigma2^3/(3*mu^6)
+
+## n order method
+mu.log3 <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+var.log3 <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## empirical value
+X.log <- log(rnorm(n, mean = mu, sd = sqrt(sigma2)))
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+Comparison mean:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(first.order = mu.log1, 
+                second.order = mu.log2, 
+                third.order = mu.log3, 
+                truth = mu.logGS),
+      bias = c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.log1,mu.log2,mu.log3,mu.logGS)-mu.logGS)/mu.logGS)
+#+END_SRC
+
+#+RESULTS:
+:               first.order second.order  third.order    truth
+: value          1.94591015 1.9255019858  1.922892529 1.924102
+: bias           0.02180784 0.0013996795 -0.001209777 0.000000
+: relative.bias  0.01133403 0.0007274455 -0.000628749 0.000000
+
+Comparison variance:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(first.order = var.log1, 
+                second.order = var.log2, 
+                third.order = var.log3, 
+                truth = var.logGS),
+      bias = c(var.log1,var.log2,var.log3,var.logGS)-var.logGS,
+      relative.bias = (c(var.log1,var.log2,var.log3,var.logGS)-var.logGS)/var.logGS)
+#+END_SRC
+
+#+RESULTS:
+:                first.order second.order   third.order      truth
+: value          0.040816327  0.045094589  0.0457541123 0.04632675
+: bias          -0.005510428 -0.001232166 -0.0005726425 0.00000000
+: relative.bias -0.118946995 -0.026597277 -0.0123609457 0.00000000
+
+The second order estimate is much more accurate, especially for the
+variance.
+
+\clearpage
+
+** Log-normal distribution
+
+An alternative approach is to use a log-normal distribution. Random
+variables with log normal distribution have their logarithm equal to a
+specific value \(a\) and their standard deviation equal to a specific
+value \(s\). So we want to get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\alpha &= \exp(a_0 + \frac{1}{2} s_0^2) \\
+\sigma^2 &= \exp(2*a_0 + s_0^2)*(\exp(s_0^2)-1) \\
+\alpha (1+\gamma) &= \exp(a_1 + \frac{1}{2} s_1^2) \\
+\sigma^2 &= \exp(2*a_1 + s_1^2)*(\exp(s_1^2)-1)
+\end{align*}
+#+END_EXPORT
+So
+#+BEGIN_EXPORT latex
+\begin{align*}
+s_0 &= \log\left(1+\frac{\sigma^2}{\alpha^2}\right)\\
+a_0 &= \log(\alpha)-\frac{s_0^2}{2}\\
+s_1 &= \log\left(1+\frac{\sigma^2}{\alpha*(1+\gamma)^2}\right)\\
+a_1 &= \log(\alpha*(1+\gamma))-\frac{s_1^2}{2}
+\end{align*}
+#+END_EXPORT
+
+\clearpage
+
+\textbf{Illustration}: We consider a normally distributed outcome with
+expectation 7 and variance 2 (i.e standard deviation about
+1.414). What is its expectation and variance after log-transformation?
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e4
+X <- rlnorm(1e4, mean=1, sd = 0.5)
+## X <- exp(rnorm(1e4, mean=1, sd = sqrt(0.5)))
+
+mu.exp <- mean(X)
+sigma2.exp <- var(X)
+
+## taylor expansion method
+## mu.exp = exp(mu)*(1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)
+## sigma2.exp = exp(2*mu)*(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+getSigma2 <- function(sigma2){
+    mu.exp^2/sigma2.exp - (1 + sigma2/2 + sigma2^2/8 + sigma2^3/48)^2/(sigma2 + (3/2)*sigma2^2 + (7/6)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^10)
+}
+var.taylor <- uniroot(f = getSigma2, lower = 1e-5, upper = sigma2.exp)$root
+mu.taylor <- log(mu.exp/(1 + var.taylor/2 + var.taylor^2/8 + var.taylor^3/48))
+## mu.taylor <-  log(mu) - sigma2/(2*mu^2) - 3*sigma2^2/(4*mu^4) - 5*sigma2^6/(2*mu^6)
+## var.taylor <- sigma2/mu^2 + 5*sigma2^2/(2*mu^4) + 67*sigma2^3/(6*mu^6) + 20*sigma2^4/(6*mu^8) + 189*sigma2^5/(5*mu^10)
+
+## log distribution method
+var.logdist <- log(1+sigma2/mu^2)
+mu.logdist <- log(mu) - var.logdist/2 
+
+## empirical value
+X.log <- log(X)
+mu.logGS <- mean(X.log)
+var.logGS <-  var(X.log)
+#+END_SRC
+
+#+RESULTS:
+
+Comparison mean:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(taylor = mu.taylor, 
+                dist = mu.logdist, 
+                truth = mu.logGS),
+      bias = c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS,
+      relative.bias = (c(mu.taylor,mu.logdist,mu.logGS)-mu.logGS)/mu.logGS)
+#+END_SRC
+
+#+RESULTS:
+:                     taylor         dist    truth
+: value          0.999612153  0.998213975 1.000669
+: bias          -0.001056824 -0.002455001 0.000000
+: relative.bias -0.001056117 -0.002453360 0.000000
+
+Comparison variance:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+rbind(value = c(taylor = var.taylor, 
+                dist = var.logdist, 
+                truth = var.logGS),
+      bias = c(var.taylor,var.logdist,var.logGS)-var.logGS,
+      relative.bias = (c(var.taylor,var.logdist,var.logGS)-var.logGS)/var.logGS)
+#+END_SRC
+
+#+RESULTS:
+:                    taylor      dist     truth
+: value         0.255318149 0.5123473 0.2528091
+: bias          0.002509088 0.2595382 0.0000000
+: relative.bias 0.009924835 1.0266175 0.0000000
+
+\clearpage
+** R-calculation                                                  :noexport: 
+
+Simulate data
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); n <- 1e5
+mu <- 0.9; sigma2 <- 1.25
+
+## empirical value
+X <- rnorm(n, mean = mu, sd = sqrt(sigma2))
+X.exp <- exp(X)
+mu.expGS <- mean(X.exp)
+var.expGS <-  var(X.exp)
+
+Xapprox3.exp <- exp(mu)*(1+(X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3)
+Xapprox4.exp <- Xapprox3.exp+exp(mu)*((1/24)*(X-mu)^4)
+Xapprox5.exp <- Xapprox4.exp+exp(mu)*((1/120)*(X-mu)^5)
+Xapprox6.exp <- Xapprox5.exp+exp(mu)*((1/720)*(X-mu)^6)
+#+END_SRC
+
+#+RESULTS:
+
+Mean
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mean(X.exp)
+cat("\n")
+mean(Xapprox4.exp)
+exp(mu)*(1+(1/2)*mean((X-mu)^2)+(1/24)*mean((X-mu)^4))
+exp(mu)*(1+(1/2)*sigma2+(1/8)*sigma2^2)
+cat("\n")
+mean(Xapprox6.exp)
+exp(mu)*(1+(1/2)*sigma2+(1/8)*sigma2^2+(1/720)*mean((X-mu)^6))
+exp(mu)*(1+(1/2)*sigma2+(1/8)*sigma2^2+(1/48)*sigma2^3)
+#+END_SRC
+
+#+RESULTS:
+: [1] 4.596109
+: 
+: [1] 4.473124
+: [1] 4.499429
+: [1] 4.477246
+: 
+: [1] 4.576468
+: [1] 4.581885
+: [1] 4.577328
+
+Variance (3rd order)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+var(X.exp)
+cat("\n")
+var(Xapprox3.exp)
+exp(2*mu)*var((1+(X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3))
+cat("\n")
+
+A <- var(X-mu) + (1/4)*var((X-mu)^2) + (1/36)*var((X-mu)^3)
+B <- 2*cov((X-mu),(X-mu)^2)/2 + 2*cov((X-mu),(X-mu)^3)/6
+C <- 2*cov((X-mu)^2,(X-mu)^3)/(2*6)
+
+A2 <- var(X-mu) + (1/4)*var((X-mu)^2) + (1/36)*var((X-mu)^3)
+B2 <- 2*cov((X-mu),(X-mu)^3)/6
+
+A3 <- sigma2 + (1/4)*(3*sigma2^2-sigma2^2) + (1/36)*(15*sigma2^3)
+B3 <- sigma2^2
+
+c(GS=var((1+(X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3)),
+  GS.all_terms=A+B+C,
+  GS.main_terms=A2+B2,
+  estimate=A3+B3,
+  estimate2=sigma2 + (3/2) * sigma2^2 + (15/36) * sigma2^3)
+
+cat("\n")
+
+exp(2*mu)*(sigma2 + (3/2) * sigma2^2 + (15/36) * sigma2^3)
+#+END_SRC
+
+#+RESULTS:
+: [1] 55.24344
+: 
+: [1] 27.15234
+: [1] 27.15234
+: 
+:            GS  GS.all_terms GS.main_terms      estimate     estimate2 
+:      4.488252      4.488252      4.509509      4.407552      4.407552
+: 
+: [1] 26.66414
+
+Variance (4th order)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+var(X.exp)
+cat("\n")
+var(Xapprox4.exp)
+var(Xapprox3.exp + exp(mu)*(1/24)*(X-mu)^4)
+var(Xapprox3.exp) + var(exp(mu)*(1/24)*(X-mu)^4) + 2*cov(Xapprox3.exp,exp(mu)*(1/24)*(X-mu)^4)
+var(Xapprox3.exp) + exp(2*mu)*(1/24^2)*var((X-mu)^4) + 2*exp(2*mu)*(1/24)*cov((X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3,(X-mu)^4)
+cat("\n")
+exp(2*mu)*(1/24^2)*var((X-mu)^4)
+exp(2*mu)*(1/24^2)*(105*sigma2^4 - (3*sigma2^2)^2)
+exp(2*mu)*(1/6)*sigma2^4
+cat("\n")
+2*exp(2*mu)*(1/24)*cov((X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3,(X-mu)^4)
+exp(2*mu)*(1/24)*cov((X-mu)^2,(X-mu)^4)
+exp(2*mu)*(1/24)*(15*sigma2^3 - 3*sigma2^3)
+exp(2*mu)*(1/24)*(12*sigma2^3)
+cat("\n")
+exp(2*mu) * (sigma2 + (3/2)*sigma2^2 + (15/36)*sigma2^3 + (12/24)*sigma2^3 + 1/6*sigma2^4)
+exp(2*mu) * (sigma2 + (3/2)*sigma2^2 + (33/36)*sigma2^3 + 1/6*sigma2^4)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 55.24344
+
+[1] 36.04421
+[1] 36.04421
+[1] 36.04421
+[1] 36.04421
+
+[1] 2.629591
+[1] 2.461608
+[1] 2.461608
+
+[1] 6.262274
+[1] 6.199758
+[1] 5.907859
+[1] 5.907859
+
+[1] 35.0336
+[1] 35.0336
+#+end_example
+
+Variance (5th order)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+var(X.exp)
+cat("\n")
+var(Xapprox5.exp)
+var(Xapprox4.exp + exp(mu)*(1/120)*(X-mu)^5)
+var(Xapprox4.exp) + var(exp(mu)*(1/120)*(X-mu)^5) + 2*cov(Xapprox4.exp,exp(mu)*(1/120)*(X-mu)^5)
+var(Xapprox4.exp) + exp(2*mu)*(1/120^2)*var((X-mu)^5) + 2*exp(2*mu)*(1/120)*cov((X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3+(1/24)*(X-mu)^4,(X-mu)^5)
+cat("\n")
+exp(2*mu)*(1/120^2)*var((X-mu)^5)
+exp(2*mu)*(1/120^2)*(945*sigma2^5)
+exp(2*mu)*(21/320)*sigma2^5
+cat("\n")
+2*exp(2*mu)*(1/120)*cov((X-mu)+(1/2)*(X-mu)^2+(1/6)*(X-mu)^3+(1/24)*(X-mu)^4,(X-mu)^5)
+exp(2*mu)*(1/60)*cov((X-mu)+(1/6)*(X-mu)^3,(X-mu)^5)
+exp(2*mu)*(1/60)*(15*sigma2^3 + 105*sigma2^4/6)
+exp(2*mu)*(1/24)*(6*sigma2^3 + 7*sigma2^4)
+cat("\n")
+exp(2*mu) * (sigma2 + (3/2)*sigma2^2 + (33/36)*sigma2^3 + 1/6*sigma2^4 + (21/320)*sigma2^5 + (1/24)*(6*sigma2^3 + 7*sigma2^4))
+exp(2*mu) * (sigma2 + (3/2)*sigma2^2 + ((6/24)+(33/36))*sigma2^3 + ((7/24)+(1/6))*sigma2^4 + (21/320)*sigma2^5)
+exp(2*mu) * (sigma2 + (3/2)*sigma2^2 + (42/36)*sigma2^3 + (11/24)*sigma2^4 + (21/320)*sigma2^5)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] 55.24344
+
+[1] 45.19091
+[1] 45.19091
+[1] 45.19091
+[1] 45.19091
+
+[1] 1.29652
+[1] 1.211573
+[1] 1.211573
+
+[1] 7.850186
+[1] 7.681784
+[1] 7.261743
+[1] 7.261743
+
+[1] 43.50692
+[1] 43.50692
+[1] 43.50692
+#+end_example
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+
+
+** Notations
