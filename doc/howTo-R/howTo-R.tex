@@ -1,35 +1,36 @@
-% Created 2021-02-23 tir 17:01
+% Created 2021-03-16 tir 16:29
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
 
 %%%% settings when exporting code %%%% 
 
 \usepackage{listings}
-\lstset{
-backgroundcolor=\color{white},
-basewidth={0.5em,0.4em},
-basicstyle=\ttfamily\small,
-breakatwhitespace=false,
-breaklines=true,
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
 columns=fullflexible,
-commentstyle=\color[rgb]{0.5,0,0.5},
-frame=single,
-keepspaces=true,
-keywordstyle=\color{black},
-literate={~}{$\sim$}{1},
-numbers=left,
-numbersep=10pt,
-numberstyle=\ttfamily\tiny\color{gray},
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
 showspaces=false,
 showstringspaces=false,
-stepnumber=1,
-stringstyle=\color[rgb]{0,.5,0},
-tabsize=4,
-xleftmargin=.23in,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
 emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
-emphstyle=\color{blue}
-}
-
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
 %%%% packages %%%%%
 
 \usepackage[utf8]{inputenc}
@@ -180,7 +181,7 @@ This document present ways to perform basic operations in \Rlogo:
 \clearpage
 
 \section{Packages}
-\label{sec:orga718c1d}
+\label{sec:orgaae379a}
 The following packages are necessary to run the code suggested in the document:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -223,9 +224,9 @@ library(lava)
 \clearpage
 
 \section{Import/export data}
-\label{sec:orgbbcd270}
+\label{sec:org546a489}
 \subsection{Set the working directory}
-\label{sec:org90719e7}
+\label{sec:org72cc9e8}
 
 The working directory is where \Rlogo \(\;\) will, by default, look for files
 to import and export data or pictures. The current working directory
@@ -258,7 +259,7 @@ getwd()
 \end{verbatim}
 
 \subsection{See which files are present in the current directory}
-\label{sec:orgf5cdd14}
+\label{sec:orge07aff5}
 
 List all files in the current directory:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -288,7 +289,7 @@ There is only one file with a \texttt{.txt} extension, it is called
 \texttt{mydata.txt}.
 
 \subsection{Check that the file we want to import exists:}
-\label{sec:orgec80b25}
+\label{sec:orgbae0dec}
 
 Test whether the file exists:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -301,7 +302,7 @@ file.exists("./mydata.txt")
 \end{verbatim}
 
 \subsection{Display a file before importing it}
-\label{sec:orgaa8d5eb}
+\label{sec:org5250357}
 
 
 Display the first three lines of the file we want to import
@@ -328,7 +329,7 @@ readLines("./mydata.csv")[1:3]
 \end{verbatim}
 
 \subsection{Import a data from a file (.txt, .csv)}
-\label{sec:org503524e}
+\label{sec:org3f08842}
 
 Import a file and store the dataset into a \texttt{data.frame} object:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -360,7 +361,7 @@ of these functions.
 \end{center}
 
 \subsection{Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)}
-\label{sec:org3ab1a09}
+\label{sec:org5ce98ab}
 
 There are many packages that can be used to read excel files, e.g.:
 \begin{itemize}
@@ -384,7 +385,7 @@ The \textbf{foreign} package enable to read a variety for files, e.g.:
 To load .rds files use \texttt{readRDS} and to load .rdata files use \texttt{load}.
 
 \subsection{Import data from a Github repository}
-\label{sec:orge5fae52}
+\label{sec:org066a2c1}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 urlfile="https://raw.githubusercontent.com/bozenne/repeated/master/data/calciumL.rda"
@@ -403,7 +404,7 @@ head(calciumL)
 \end{verbatim}
 
 \subsection{Export data}
-\label{sec:org8092227}
+\label{sec:orgf776423}
 
 To export a data.frame to a file one can use:
 \begin{itemize}
@@ -423,7 +424,7 @@ To export several R object use \texttt{save}.
 To export the current workspace use \texttt{save.image}.
 
 \subsection{Export table}
-\label{sec:orgcdf12cb}
+\label{sec:org332b4b0}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -445,7 +446,7 @@ print(myTable1.doc, target = "./Table1.docx")
 \end{verbatim}
 
 \subsection{Export graphs}
-\label{sec:orge3bd8de}
+\label{sec:org834fb04}
 
 The functions \texttt{pdf}, \texttt{png}, \texttt{postscript}, \texttt{svg}, \texttt{tiff} enables a graph to
 export to .pdf, .png, .eps, .svg, or .tiff file:
@@ -473,9 +474,9 @@ file.exists("myplot.png")
 For exporting graph generated by \textbf{ggplot2}, use \texttt{ggsave}.
 
 \section{Data management}
-\label{sec:org1b7fdc5}
+\label{sec:orgad9fe40}
 \subsection{Categorize age into groups}
-\label{sec:orgc77a18f}
+\label{sec:orgea6ca7f}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 vec <- dfW.data$weight_t3
@@ -509,7 +510,7 @@ cut(vec, breaks = seq(0,100,5))
 \end{verbatim}
 
 \subsection{Convert list to array}
-\label{sec:orgc771b7d}
+\label{sec:org1422779}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -540,7 +541,7 @@ do.call(abind, c(ll, list(along = 3)))
 \end{verbatim}
 
 \subsection{Apply function for each element of a list}
-\label{sec:org231876d}
+\label{sec:orgb06b2d3}
 
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -558,9 +559,9 @@ apply(do.call(abind, c(ll, list(along = 3))), 1:2, median)
 \end{verbatim}
 
 \section{Data management using the \emph{data.table} package}
-\label{sec:org033edb2}
+\label{sec:orgfdde080}
 \subsection{Introduction}
-\label{sec:orgdbe0601}
+\label{sec:org4a9434f}
 In \Rlogo, data are usually stored in \texttt{data.frame} object since compared
 to matrices, it enables to store in a same object different types of
 variables (e.g. numeric, categorical, \ldots{}). Data management can be
@@ -636,7 +637,7 @@ head(dtL.data)
 \end{verbatim}
 
 \subsection{Display a dataset}
-\label{sec:org855653c}
+\label{sec:orgb71ecdd}
 
 Using the \texttt{print} method:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -683,10 +684,10 @@ print(dtW.data, topn = 6)
 \end{verbatim}
 
 \subsection{Extract row(s), i.e. all the variables relative to one or several observations}
-\label{sec:org2acac30}
+\label{sec:org4b4ef8c}
 
 \subsubsection{Extract row(s) using row numbers}
-\label{sec:org1778bb6}
+\label{sec:org797016e}
 Extract the third line:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -726,7 +727,7 @@ dtW.data[c(1,3,5)]
 \end{verbatim}
 
 \subsubsection{Extract row(s) according to conditions}
-\label{sec:orgf2722f5}
+\label{sec:org55ebbfd}
 
 Extract lines corresponding to the observations with \texttt{Id} equals to \texttt{1}:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -787,10 +788,10 @@ dtW.data[Age <= 37 | Age >= 43]
 \end{verbatim}
 
 \subsection{Extract column(s), i.e. all the observations relative to one or several variables}
-\label{sec:org2d726d7}
+\label{sec:orgac5f158}
 
 \subsubsection{Extract column(s) using column numbers}
-\label{sec:org0002fdf}
+\label{sec:org7247ef3}
 
 Extract the third column:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -855,7 +856,7 @@ dtW.data[, c(1,3,5), with = FALSE]
 \end{verbatim}
 
 \subsubsection{Extract column(s) using column names}
-\label{sec:orgb6f05fb}
+\label{sec:orga2dabba}
 
 Extract one column, e.g. \texttt{Id}:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -895,9 +896,9 @@ dtW.data[, .(Id,Age)]
 \end{verbatim}
 
 \subsection{Work with categorical variables}
-\label{sec:org82eca63}
+\label{sec:orgbf1d17b}
 \subsubsection{Convert a numeric/character into a factor}
-\label{sec:orge3bf6f8}
+\label{sec:org04b89b5}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -938,7 +939,7 @@ class(dtW.data[,Id])
 \end{verbatim}
 
 \subsubsection{Divide a continuous variable into categories}
-\label{sec:org57fb433}
+\label{sec:org9f9747c}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -989,7 +990,7 @@ the argument \texttt{vec}). But it is often easier to modify \texttt{vec} such t
 equals the breaks, e.g. using \texttt{c(0,38,40,42,100)-1e12}.
 
 \subsubsection{Redefine the levels of a factor variable}
-\label{sec:orge19faf1}
+\label{sec:orgf8cbffa}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1015,9 +1016,9 @@ dtW.data[,.(Age,AgeCategory0,AgeCategory)]
 \end{verbatim}
 
 \subsection{Extract simple features of a dataset}
-\label{sec:org52218b2}
+\label{sec:orgb171a77}
 \subsubsection{Number of rows and columns}
-\label{sec:org483663c}
+\label{sec:orgbfa06bd}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 dim(dtW.data)
@@ -1030,7 +1031,7 @@ dim(dtW.data)
 The dataset has 102 rows and 7 columns.
 
 \subsubsection{Name of the columns}
-\label{sec:org40dc11d}
+\label{sec:orga512ca3}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 names(dtW.data)
@@ -1042,7 +1043,7 @@ names(dtW.data)
 \end{verbatim}
 
 \subsubsection{Type of the columns}
-\label{sec:org003eb91}
+\label{sec:orgb2737a3}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 str(dtW.data)
@@ -1073,7 +1074,7 @@ The column \texttt{Id} contains integers while the columns \texttt{weight\_t3}
 contains numeric numbers.
 
 \subsubsection{Summary statistics by column}
-\label{sec:org5d1b5b9}
+\label{sec:org1f398f9}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 summary(dtW.data)
@@ -1101,7 +1102,7 @@ The column \texttt{Gender} contains 48 \texttt{Male} and 54 \texttt{Female}. The
 value of \texttt{Age} is 40.
 
 \subsubsection{Number of missing values}
-\label{sec:org675b75e}
+\label{sec:org6c2260f}
 
 Total number
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1139,7 +1140,7 @@ rowSums(is.na(dtW.data))
 \end{verbatim}
 
 \subsubsection{Mean value of a column}
-\label{sec:orgc163982}
+\label{sec:org00c4eca}
 
 First extract the values from a column:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1168,7 +1169,7 @@ dtW.data[,mean(Age)]
 \end{verbatim}
 
 \subsubsection{Correlation between values of several columns}
-\label{sec:orgbe08a96}
+\label{sec:orgcb14b22}
 
 First extract the columns:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1203,9 +1204,9 @@ weight_t3 0.3179175 0.2374259 1.0000000
 \end{verbatim}
 
 \subsection{Performing operations on a group of rows}
-\label{sec:org92848e7}
+\label{sec:orgac1b6d1}
 \subsubsection{Computing the number of observations per subgroup}
-\label{sec:org75b2cb7}
+\label{sec:org92360ce}
 Compute the number of observation per gender:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1231,7 +1232,7 @@ dtW.data[, NROW(.SD), by = "Gender"]
 \end{verbatim}
 
 \subsubsection{Computing the mean by subgroup}
-\label{sec:orgb0c37aa}
+\label{sec:orgff30cb1}
 
 Compute the mean weight at time 1 by gender:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1290,7 +1291,7 @@ dtW.data[, .(mean_t1 = mean(weight_t1),
 \end{verbatim}
 
 \subsubsection{Computing the correlation matrix by subgroup}
-\label{sec:org17c871a}
+\label{sec:orgbc8d19d}
 
 We create a matrix containing the variables of interest, compute the
 correlation matrix and print it.
@@ -1354,7 +1355,7 @@ weight_t3 0.31485784 0.15511561 1.0000000
 \end{verbatim}
 
 \subsection{Sort a dataset according to one or several variables}
-\label{sec:org411874f}
+\label{sec:orge012ab1}
 
 Sort the dataset according to \texttt{Age}:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1425,7 +1426,7 @@ dtW.data
 \end{verbatim}
 
 \subsection{Change the names of the column in a dataset}
-\label{sec:orgd34f252}
+\label{sec:org1c369e9}
 
 Use a small dataset
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1479,9 +1480,9 @@ head(dt.simple)
 \end{verbatim}
 
 \subsection{Converting a dataset from the wide format to the long format}
-\label{sec:org92d4ad8}
+\label{sec:org623f366}
 \subsubsection{Univariate melt}
-\label{sec:org48fe6f7}
+\label{sec:org24c48e3}
 Data in the wide format:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1575,7 +1576,7 @@ head(dtL.data)
 \clearpage
 
 \subsubsection{Multivariate melt}
-\label{sec:org42d17a4}
+\label{sec:org0d8b5a4}
 
 Use a list of vectors each containing a vector with the columns to be
 melted:
@@ -1618,10 +1619,10 @@ dtL.data
 \end{verbatim}
 
 \subsection{Converting a dataset from the long format to the wide format}
-\label{sec:org78278cb}
+\label{sec:org4940761}
 
 \subsubsection{Univariate}
-\label{sec:orgef820f4}
+\label{sec:org61e2d9b}
 Data in the long format:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1675,7 +1676,7 @@ dtW.data
 \clearpage
 
 \subsubsection{Multivariate}
-\label{sec:org4f1375b}
+\label{sec:orgf450ca3}
 
 
 Same as before but with several elements in the argument
@@ -1709,9 +1710,9 @@ dtW.data
 \end{verbatim}
 
 \section{Graphical display}
-\label{sec:org0189d25}
+\label{sec:org1c02aba}
 \subsection{Descriptive plots}
-\label{sec:orgf482679}
+\label{sec:org81b0906}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1729,11 +1730,11 @@ head(dtL.data)
 \end{verbatim}
 
 \subsubsection{Spaguetti plot}
-\label{sec:org652dd97}
+\label{sec:org407c813}
 
 \begin{enumerate}
 \item color by individual (first ten individuals)
-\label{sec:org81afadd}
+\label{sec:org6fa50fb}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1751,7 +1752,7 @@ gg.spaguetti1
 \clearpage
 
 \item color by treatment group (first ten individuals)
-\label{sec:orgf852afa}
+\label{sec:org06271f9}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1769,7 +1770,7 @@ gg.spaguetti2
 \clearpage 
 
 \item pannel for each treatment group (first ten individuals)
-\label{sec:org1d0d384}
+\label{sec:org139f252}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1788,7 +1789,7 @@ gg.spaguetti3
 \clearpage
 
 \item individual spaguetti plot (first ten individuals)
-\label{sec:org2de8266}
+\label{sec:org5896f17}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1807,7 +1808,7 @@ gg.spaguetti4
 \end{enumerate}
 
 \subsubsection{Display the mean over time}
-\label{sec:org4db5df5}
+\label{sec:org4ea2adb}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1825,7 +1826,7 @@ gg.mean <- gg.mean + stat_summary(aes(group = Treatment, color = Treatment),
 \clearpage
 
 \subsubsection{Boxplot + points (non-overlapping)}
-\label{sec:orge5bba81}
+\label{sec:orgdefc2f3}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1845,7 +1846,7 @@ gg.hist
 \end{center}
 
 \subsection{Diagnostic plots}
-\label{sec:org19f3304}
+\label{sec:org1db451a}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1855,7 +1856,7 @@ e.lm <- lm(weight ~ Age + Treatment + size,
 \end{lstlisting}
 
 \subsubsection{Histogram of the residuals}
-\label{sec:orgfe1a999}
+\label{sec:org2bcea9e}
 
 Extract the residuals:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1869,10 +1870,10 @@ Display the histogram
 \end{center}
 
 \subsection{Customize graphic}
-\label{sec:org1019bf1}
+\label{sec:org55b1e0f}
 
 \subsubsection{Modify the legend of a discrete scale (with greek letters)}
-\label{sec:org56a0c48}
+\label{sec:orgb79f25e}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1895,14 +1896,14 @@ See also:
 
 \clearpage
 \subsubsection{Change the name of the legend}
-\label{sec:org68047ca}
+\label{sec:org625dbb3}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 gg.mean3 <- gg.mean2 + labs(colour="xyz")
 \end{lstlisting}
 
 \subsubsection{Increase the font size}
-\label{sec:org2761ee4}
+\label{sec:org75cc50c}
 
 All text:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -1928,7 +1929,7 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 
 \clearpage
 \subsubsection{Increase size of the legend labels}
-\label{sec:orgcc731f9}
+\label{sec:org6435011}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 gg.mean + theme(axis.title = element_text(size=10), 
@@ -1938,7 +1939,7 @@ gg.mean + theme(axis.title = element_text(size=10),
 \end{lstlisting}
 
 \subsubsection{Put the legend at the bottom}
-\label{sec:orgad6df75}
+\label{sec:org227678a}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 gg.mean4 <- gg.mean + theme(legend.position="bottom",
@@ -1950,14 +1951,14 @@ gg.mean4 <- gg.mean + theme(legend.position="bottom",
 \end{center}
 \clearpage
 \subsubsection{Number of lines in the legend}
-\label{sec:org7405c78}
+\label{sec:orged99b82}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 gg.mean + guides(color = guide_legend(nrow = 2, byrow = TRUE))
 \end{lstlisting}
 
 \subsubsection{Default ggplot color palette}
-\label{sec:orge0ee00f}
+\label{sec:orga0cda33}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -1968,7 +1969,7 @@ gg_color_hue <- function(n) {
 \end{lstlisting}
 
 \subsubsection{Color blind palette}
-\label{sec:org52acf6c}
+\label{sec:orgce9f107}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 ggthemes::colorblind_pal()(8) ## also consider scale_color_colorblind
@@ -1979,7 +1980,7 @@ ggthemes::colorblind_pal()(8) ## also consider scale_color_colorblind
 \end{verbatim}
 
 \subsubsection{Rotate x-axis labels}
-\label{sec:orgd8f642a}
+\label{sec:org0dbbb72}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -2006,7 +2007,7 @@ List of 1
 \end{verbatim}
 
 \subsubsection{Change tick mark labels}
-\label{sec:orgca6d0a8}
+\label{sec:orge8dcb03}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2021,7 +2022,7 @@ gg.mean5 <- gg.mean + scale_x_discrete(breaks=c("1","2","3"),
 \clearpage
 
 \subsubsection{Combine ggplots}
-\label{sec:org66ecebd}
+\label{sec:org381bee7}
 (from \url{https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots})
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2042,11 +2043,11 @@ out <- ggarrange(p1, p2, p3, p4, ncol=2, nrow=2, common.legend = TRUE, legend="b
 \end{center}
 
 \subsubsection{Symbols in facet names}
-\label{sec:org60663e0}
+\label{sec:org12295e3}
 \clearpage
 
 \subsection{Path diagram}
-\label{sec:orge1046bf}
+\label{sec:org598f2ee}
 Using lava:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2065,9 +2066,9 @@ plot(m, plot.engine="visnetwork")
 \end{lstlisting}
 
 \section{Modeling}
-\label{sec:orgdb6e4c6}
+\label{sec:orge68f260}
 \subsection{Test proportions}
-\label{sec:org65bdf83}
+\label{sec:org0fa2b8d}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 binom.exact(c(15,4), p = 0.5) ## 15 success, 4 failures
@@ -2087,7 +2088,7 @@ probability of success
 \end{verbatim}
 
 \subsection{Compare proportions between groups}
-\label{sec:org2fe310b}
+\label{sec:org62d2bbc}
 
 Data:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2245,7 +2246,7 @@ odds ratio
 \end{verbatim}
 
 \subsection{Estimate Mann Whitney parameter}
-\label{sec:org5e4df08}
+\label{sec:orgf773baa}
 
 Remove ties:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2304,7 +2305,7 @@ Y_1e-12
 \end{verbatim}
 
 \subsection{Permutation t-test: 2 group comparison}
-\label{sec:orgfaac734}
+\label{sec:org51cb8c7}
 
 Data:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2372,7 +2373,7 @@ mean X - mean Y
 \end{verbatim}
 
 \subsection{Permutation t-test: multiple group comparison}
-\label{sec:orge707689}
+\label{sec:org378a07f}
 Data:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2402,7 +2403,7 @@ groupZ        -3.095     0.8139  -3.803           7.440e-04             0.0005  
 \end{verbatim}
 
 \subsection{Testing median}
-\label{sec:orga0979fd}
+\label{sec:orgf1317c9}
 
 Data:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2489,7 +2490,7 @@ Coefficients:
 \end{verbatim}
 
 \subsection{Testing linear hypotheses}
-\label{sec:org9347fc6}
+\label{sec:orgb39e606}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2529,7 +2530,7 @@ All                   0   1            1    1
 \end{verbatim}
 
 \subsubsection{Separate Wald tests of linear hypotheses}
-\label{sec:org36bd0bf}
+\label{sec:orgf639100}
 
 No adjustment for multiple comparison:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2614,7 +2615,7 @@ Age + TreatmentYes + size == 0   0.1099     0.3513   0.313    0.948
 \end{verbatim}
 
 \subsubsection{Confidence intervals associated with linear hypotheses}
-\label{sec:org9169081}
+\label{sec:orgddbce74}
 
 With no adjustment for multiplicity:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2661,7 +2662,7 @@ All == 0          0.1099  -0.7031  0.9229
 \end{verbatim}
 
 \subsubsection{Joint test of linear hypotheses}
-\label{sec:orge4fe63b}
+\label{sec:org433deca}
 
 One can use the \texttt{Ftest()} or \texttt{Chisqtest()} to obtain a joint test:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -2712,7 +2713,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
 
 \subsection{Testing linearity assumptions in a linear model}
-\label{sec:orgbc7733d}
+\label{sec:orgbab1058}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.lm <- lm(weight ~ Age + Treatment + size,
@@ -2735,7 +2736,7 @@ Based on 1000 realizations. Cumulated residuals ordered by size-variable.
 ---
 \end{verbatim}
 \subsection{Displaying partial residuals in a linear model}
-\label{sec:org741a98d}
+\label{sec:orgd324a72}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.lm <- lm(weight ~ Age + Treatment + size,
@@ -2744,10 +2745,14 @@ autoplot(butils::partialResiduals(e.lm, var = "Age"))
 \end{lstlisting}
 
 \subsection{Twin study}
-\label{sec:org6e930b9}
+\label{sec:orgb1f2107}
 \subsubsection{Data}
-\label{sec:orge51583f}
+\label{sec:orge7580d0}
 
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+head(mydf)
+\end{lstlisting}
 \begin{verbatim}
   grp pair nr    y
 1   1    1  1 17.2
@@ -2778,7 +2783,7 @@ head(mydfW)
 \end{verbatim}
 
 \subsubsection{REML solution}
-\label{sec:org88f537c}
+\label{sec:org0b3551f}
 Estimation using a different residual correlation and variable for each group:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2903,7 +2908,7 @@ t3* -0.3669071  0.10041795  0.11675326
 \clearpage
 
 \subsubsection{ML solution}
-\label{sec:org563107f}
+\label{sec:org1c7086c}
 Estimation using a different residual correlation and variable for each group:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2937,7 +2942,7 @@ rbind(c(variance = coef(e.lvm)["y1~~y1@1"], covariance = coef(e.lvm)["y1~~y2@1"]
 Inference using delta-method:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-estimate(e.lvm, f = function(x){
+estimate(e.lvm, robust = FALSE, f = function(x){
     c("mu1" = as.double(x["y1@1"]),
       "mu2" = as.double(x["y1@2"]),
       "mu2-mu1" = as.double(x["y1@2"]-x["y1@1"]),
@@ -2953,21 +2958,55 @@ estimate(e.lvm, f = function(x){
 
 \begin{verbatim}
           Estimate Std.Err     2.5%    97.5%   P-value
-mu1        20.0600 0.20886 19.65064 20.46936 0.000e+00
-mu2        20.9650 0.14639 20.67807 21.25193 0.000e+00
-mu2-mu1     0.9050 0.25506  0.40509  1.40491 3.879e-04
-sd1         0.9235 0.09376  0.73970  1.10724 6.917e-23
-sd2         1.0714 0.09776  0.87980  1.26300 5.948e-28
-sd2/sd1     1.1602 0.15837  0.84979  1.47059 2.376e-13
-rho1        0.6730 0.06985  0.53606  0.80986 5.716e-22
-rho2        0.3024 0.12989  0.04782  0.55696 1.991e-02
-rho2-rho1  -0.3706 0.14748 -0.65961 -0.08152 1.198e-02
+mu1        20.0600 0.20886 19.65063 20.46937 0.000e+00
+mu2        20.9650 0.14639 20.67808 21.25192 0.000e+00
+mu2-mu1     0.9050 0.25506  0.40510  1.40490 3.879e-04
+sd1         0.9235 0.09235  0.74247  1.10447 1.524e-23
+sd2         1.0714 0.10714  0.86141  1.28139 1.524e-23
+sd2/sd1     1.1602 0.16408  0.83861  1.48177 1.537e-12
+rho1        0.6730 0.07738  0.52130  0.82461 3.401e-18
+rho2        0.3024 0.12849  0.05055  0.55423 1.860e-02
+rho2-rho1  -0.3706 0.14999 -0.66454 -0.07659 1.349e-02
 \end{verbatim}
 
+By hand:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(numDeriv)
+fn <- function(x){ c("mu1" = as.double(x["y1@1"]),
+		     "mu2" = as.double(x["y1@2"]),
+		     "mu2-mu1" = as.double(x["y1@2"]-x["y1@1"]),
+		     "var1" = as.double(x["y1~~y1@1"]),
+		     "sd1" = as.double(sqrt(x["y1~~y1@1"]-x["y1~~y2@1"])),
+		     "sd2" = as.double(sqrt(x["y1~~y1@2"]-x["y1~~y2@2"])),
+		     "sd2/sd1" = as.double(sqrt((x["y1~~y1@2"]-x["y1~~y2@2"])/(x["y1~~y1@1"]-x["y1~~y2@1"]))),
+		     "rho1" = as.double(x["y1~~y2@1"]/x["y1~~y1@1"]),
+		     "rho2" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]),
+		     "rho2-rho1" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]-x["y1~~y2@1"]/x["y1~~y1@1"])
+		     ) }
+dfn <- jacobian(fn, coef(e.lvm), method="Richardson")
+cbind(fn(coef(e.lvm)),sqrt(diag(dfn %*% vcov(e.lvm) %*% t(dfn))))
+\end{lstlisting}
+
+\begin{verbatim}
+                [,1]       [,2]
+mu1       20.0600000 0.20886359
+mu2       20.9650000 0.14639160
+mu2-mu1    0.9050000 0.25505784
+var1       2.6076000 0.44449749
+sd1        0.9234717 0.09234717
+sd2        1.0714010 0.10714010
+sd2/sd1    1.1601882 0.16407538
+rho1       0.6729560 0.07737590
+rho2       0.3023899 0.12848984
+rho2-rho1 -0.3705661 0.14998890
+\end{verbatim}
+
+
 \section{Loops and parallel computations}
-\label{sec:org4fbc98b}
+\label{sec:org2ae491d}
 \subsection{Apply with progress bar}
-\label{sec:orgad436b3}
+\label{sec:org9cd8ba3}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2979,9 +3018,9 @@ ls.res <- pbapply::pblapply(1:5, FUN = rnorm)
 \end{verbatim}
 
 \subsection{Parallel computation}
-\label{sec:orgc438b42}
+\label{sec:org80576b2}
 \subsubsection{Detect the number of cores}
-\label{sec:orgc7ab4eb}
+\label{sec:orgb99b4dd}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -2994,7 +3033,7 @@ cores
 \end{verbatim}
 
 \subsubsection{Start a cluster}
-\label{sec:org2746b49}
+\label{sec:org65dd524}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 cpus <- 2
@@ -3004,7 +3043,7 @@ doSNOW::registerDoSNOW(cl)
 \end{lstlisting}
 
 \subsubsection{Get the name of each core}
-\label{sec:orge5600d4}
+\label{sec:orgd1351a1}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3020,7 +3059,7 @@ cpus.name
 \end{verbatim}
 
 \subsubsection{Export element to cluster}
-\label{sec:org9fbfc53}
+\label{sec:org9316418}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 parallel::clusterExport(cl, varlist = "cpus.name")
@@ -3040,7 +3079,7 @@ parallel::clusterCall(cl = cl, function(x){
 \end{verbatim}
 
 \subsubsection{Show progress bar (in console)}
-\label{sec:orgc287787}
+\label{sec:org6a08044}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3056,7 +3095,7 @@ ls.res <- foreach::`%dopar%`(
 \end{lstlisting}
 
 \subsubsection{Show progress bar (external)}
-\label{sec:orgdfbe39a}
+\label{sec:orge1760bd}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3078,7 +3117,7 @@ ls.res <- foreach::`%dopar%`(
 \end{lstlisting}
 
 \subsubsection{Stop a cluster}
-\label{sec:org998af19}
+\label{sec:org25dace7}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3086,9 +3125,9 @@ parallel::stopCluster(cl)
 \end{lstlisting}
 
 \section{\emph{lava} package}
-\label{sec:orgd625d9c}
+\label{sec:orgf398244}
 \subsection{Generate repeated measurements}
-\label{sec:org010d0b5}
+\label{sec:orga41281f}
 Model:
 Simulation:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -3146,7 +3185,7 @@ fwrite(dtW.data, file = "./mydata.txt", sep = " ", dec = ".")
 \end{lstlisting}
 
 \subsection{Generate data with heteroschadasticity}
-\label{sec:org3c2f3e4}
+\label{sec:org122408a}
 
 Model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -3170,7 +3209,7 @@ Display:
 \end{center}
 
 \subsection{Generate survival time under non proportional hazard (non-PH)}
-\label{sec:org6e659ac}
+\label{sec:org3817b08}
 
 Model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -3198,7 +3237,7 @@ Display:
 \end{center}
 
 \subsection{Generate survival time with delayed treatment effect}
-\label{sec:org3269009}
+\label{sec:org9e7a79a}
 
 Generative model with non-PH group effect but no Age effect:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -3251,7 +3290,7 @@ Display survival curves by group:
 \end{center}
 
 \subsection{Tune optimization parameters}
-\label{sec:orgebffd14}
+\label{sec:org73a1bdb}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3276,7 +3315,7 @@ Warning messages:
 \end{verbatim}
 
 \subsection{Standardized coefficients}
-\label{sec:org9c74ae2}
+\label{sec:org54cc0a2}
 
 "The standardized coefficients in the last column are interpreted as
 the change in standard deviation of the outcome when increasing the
@@ -3385,9 +3424,9 @@ Y1~X 0.5858683 0.02003958 29.23556 6.852072e-188 0.5047583
 is though.
 
 \section{Miscellaneous}
-\label{sec:orgaba6cce}
+\label{sec:org30ad9b6}
 \subsection{Profile code}
-\label{sec:org0b85728}
+\label{sec:org64ae5a4}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3421,7 +3460,7 @@ max(summaryRprof(tf, memory = "both")$by.total$mem.total)
 \end{verbatim}
 
 \subsection{Debug}
-\label{sec:orgea24057}
+\label{sec:orgf471fe0}
 To not show to many line before debug:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3435,7 +3474,7 @@ options(error = function()revTraceback(max.lines = 5))
 \end{lstlisting}
 
 \subsection{Find all function names from a package}
-\label{sec:org1f10aef}
+\label{sec:orgc613fc4}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 r <- unclass(lsf.str(envir = asNamespace("lava"), all = T))
@@ -3451,11 +3490,11 @@ r[grep("coef", r)]
 \end{verbatim}
 
 \subsection{Install development version of R}
-\label{sec:orgf5783ea}
+\label{sec:orgd02b327}
 \url{https://cran.r-project.org/bin/windows/base/rdevel.html}
 
 \subsection{Install suggested packages}
-\label{sec:orgbc0f97f}
+\label{sec:org61f8145}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3465,7 +3504,7 @@ install.packages(vec.package)
 \end{lstlisting}
 
 \subsection{R version}
-\label{sec:org9c40e5b}
+\label{sec:org5f159b7}
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
@@ -3508,13 +3547,13 @@ loaded via a namespace (and not attached):
 \end{verbatim}
 
 \subsection{Install a package from a zip file (windows)}
-\label{sec:org5949bb6}
+\label{sec:org2236e58}
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 install.packages("package_version.zip", repos = NULL, type = "win.binary")
 \end{lstlisting}
 \subsection{Install and load two version of the same package}
-\label{sec:orgbba8e4d}
+\label{sec:orgd6ca8d5}
 
 Install
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -3534,7 +3573,7 @@ detach("package:BuyseTest", unload = TRUE)
 \end{lstlisting}
 
 \subsection{CRAN check rocker}
-\label{sec:orgb0caf6d}
+\label{sec:org839fbd9}
 \url{https://www.brodieg.com/2018/04/06/adventures-in-r-and-compiled-code/}
 
 docker run --rm -ti -v \$(pwd):/mydir wch1/r-debug

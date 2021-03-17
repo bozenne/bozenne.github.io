@@ -85,30 +85,30 @@
 \contentsline {subsubsection}{\numberline {6.10.1}Data}{72}{subsubsection.6.10.1}
 \contentsline {subsubsection}{\numberline {6.10.2}REML solution}{72}{subsubsection.6.10.2}
 \contentsline {subsubsection}{\numberline {6.10.3}ML solution}{75}{subsubsection.6.10.3}
-\contentsline {section}{\numberline {7}Loops and parallel computations}{76}{section.7}
-\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{76}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}Parallel computation}{77}{subsection.7.2}
-\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{77}{subsubsection.7.2.1}
-\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{77}{subsubsection.7.2.2}
-\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{77}{subsubsection.7.2.3}
-\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{77}{subsubsection.7.2.4}
-\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{78}{subsubsection.7.2.5}
-\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{78}{subsubsection.7.2.6}
-\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{78}{subsubsection.7.2.7}
-\contentsline {section}{\numberline {8}\emph {lava} package}{79}{section.8}
-\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{79}{subsection.8.1}
-\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{80}{subsection.8.2}
-\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{81}{subsection.8.3}
-\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{83}{subsection.8.4}
-\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{85}{subsection.8.5}
-\contentsline {subsection}{\numberline {8.6}Standardized coefficients}{86}{subsection.8.6}
-\contentsline {section}{\numberline {9}Miscellaneous}{88}{section.9}
-\contentsline {subsection}{\numberline {9.1}Profile code}{88}{subsection.9.1}
-\contentsline {subsection}{\numberline {9.2}Debug}{89}{subsection.9.2}
-\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{90}{subsection.9.3}
-\contentsline {subsection}{\numberline {9.4}Install development version of R}{91}{subsection.9.4}
-\contentsline {subsection}{\numberline {9.5}Install suggested packages}{92}{subsection.9.5}
-\contentsline {subsection}{\numberline {9.6}R version}{93}{subsection.9.6}
-\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{94}{subsection.9.7}
-\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{95}{subsection.9.8}
-\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{96}{subsection.9.9}
+\contentsline {section}{\numberline {7}Loops and parallel computations}{77}{section.7}
+\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{77}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Parallel computation}{78}{subsection.7.2}
+\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{78}{subsubsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{78}{subsubsection.7.2.2}
+\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{78}{subsubsection.7.2.3}
+\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{78}{subsubsection.7.2.4}
+\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{79}{subsubsection.7.2.5}
+\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{79}{subsubsection.7.2.6}
+\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{79}{subsubsection.7.2.7}
+\contentsline {section}{\numberline {8}\emph {lava} package}{80}{section.8}
+\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{80}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{81}{subsection.8.2}
+\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{82}{subsection.8.3}
+\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{84}{subsection.8.4}
+\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{86}{subsection.8.5}
+\contentsline {subsection}{\numberline {8.6}Standardized coefficients}{87}{subsection.8.6}
+\contentsline {section}{\numberline {9}Miscellaneous}{89}{section.9}
+\contentsline {subsection}{\numberline {9.1}Profile code}{89}{subsection.9.1}
+\contentsline {subsection}{\numberline {9.2}Debug}{90}{subsection.9.2}
+\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{91}{subsection.9.3}
+\contentsline {subsection}{\numberline {9.4}Install development version of R}{92}{subsection.9.4}
+\contentsline {subsection}{\numberline {9.5}Install suggested packages}{93}{subsection.9.5}
+\contentsline {subsection}{\numberline {9.6}R version}{94}{subsection.9.6}
+\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{95}{subsection.9.7}
+\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{96}{subsection.9.8}
+\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{97}{subsection.9.9}

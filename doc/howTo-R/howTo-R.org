@@ -2639,7 +2639,7 @@ rbind(c(variance = coef(e.lvm)["y1~~y1@1"], covariance = coef(e.lvm)["y1~~y2@1"]
 
 Inference using delta-method:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-estimate(e.lvm, f = function(x){
+estimate(e.lvm, robust = FALSE, f = function(x){
     c("mu1" = as.double(x["y1@1"]),
       "mu2" = as.double(x["y1@2"]),
       "mu2-mu1" = as.double(x["y1@2"]-x["y1@1"]),
@@ -2656,29 +2656,50 @@ estimate(e.lvm, f = function(x){
 #+RESULTS:
 #+begin_example
           Estimate Std.Err     2.5%    97.5%   P-value
-mu1        20.0600 0.20886 19.65064 20.46936 0.000e+00
-mu2        20.9650 0.14639 20.67807 21.25193 0.000e+00
-mu2-mu1     0.9050 0.25506  0.40509  1.40491 3.879e-04
-sd1         0.9235 0.09376  0.73970  1.10724 6.917e-23
-sd2         1.0714 0.09776  0.87980  1.26300 5.948e-28
-sd2/sd1     1.1602 0.15837  0.84979  1.47059 2.376e-13
-rho1        0.6730 0.06985  0.53606  0.80986 5.716e-22
-rho2        0.3024 0.12989  0.04782  0.55696 1.991e-02
-rho2-rho1  -0.3706 0.14748 -0.65961 -0.08152 1.198e-02
+mu1        20.0600 0.20886 19.65063 20.46937 0.000e+00
+mu2        20.9650 0.14639 20.67808 21.25192 0.000e+00
+mu2-mu1     0.9050 0.25506  0.40510  1.40490 3.879e-04
+sd1         0.9235 0.09235  0.74247  1.10447 1.524e-23
+sd2         1.0714 0.10714  0.86141  1.28139 1.524e-23
+sd2/sd1     1.1602 0.16408  0.83861  1.48177 1.537e-12
+rho1        0.6730 0.07738  0.52130  0.82461 3.401e-18
+rho2        0.3024 0.12849  0.05055  0.55423 1.860e-02
+rho2-rho1  -0.3706 0.14999 -0.66454 -0.07659 1.349e-02
 #+end_example
 
+By hand:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-head(mydf)
+library(numDeriv)
+fn <- function(x){ c("mu1" = as.double(x["y1@1"]),
+                     "mu2" = as.double(x["y1@2"]),
+                     "mu2-mu1" = as.double(x["y1@2"]-x["y1@1"]),
+                     "var1" = as.double(x["y1~~y1@1"]),
+                     "sd1" = as.double(sqrt(x["y1~~y1@1"]-x["y1~~y2@1"])),
+                     "sd2" = as.double(sqrt(x["y1~~y1@2"]-x["y1~~y2@2"])),
+                     "sd2/sd1" = as.double(sqrt((x["y1~~y1@2"]-x["y1~~y2@2"])/(x["y1~~y1@1"]-x["y1~~y2@1"]))),
+                     "rho1" = as.double(x["y1~~y2@1"]/x["y1~~y1@1"]),
+                     "rho2" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]),
+                     "rho2-rho1" = as.double(x["y1~~y2@2"]/x["y1~~y1@2"]-x["y1~~y2@1"]/x["y1~~y1@1"])
+                     ) }
+dfn <- jacobian(fn, coef(e.lvm), method="Richardson")
+cbind(fn(coef(e.lvm)),sqrt(diag(dfn %*% vcov(e.lvm) %*% t(dfn))))
 #+END_SRC
 
 #+RESULTS:
-:   grp pair nr    y
-: 1   1    1  1 17.2
-: 2   1    1  2 16.5
-: 3   1    2  1 18.7
-: 4   1    2  2 18.2
-: 5   1    3  1 17.5
-: 6   1    3  2 16.5
+#+begin_example
+                [,1]       [,2]
+mu1       20.0600000 0.20886359
+mu2       20.9650000 0.14639160
+mu2-mu1    0.9050000 0.25505784
+var1       2.6076000 0.44449749
+sd1        0.9234717 0.09234717
+sd2        1.0714010 0.10714010
+sd2/sd1    1.1601882 0.16407538
+rho1       0.6729560 0.07737590
+rho2       0.3023899 0.12848984
+rho2-rho1 -0.3705661 0.14998890
+#+end_example
+
 
 * Loops and parallel computations  
 ** Apply with progress bar
