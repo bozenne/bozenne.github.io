@@ -68,47 +68,50 @@
 \contentsline {subsubsection}{\numberline {5.3.11}Combine ggplots}{54}{subsubsection.5.3.11}
 \contentsline {subsubsection}{\numberline {5.3.12}Symbols in facet names}{55}{subsubsection.5.3.12}
 \contentsline {subsection}{\numberline {5.4}Path diagram}{56}{subsection.5.4}
-\contentsline {section}{\numberline {6}Modeling}{57}{section.6}
-\contentsline {subsection}{\numberline {6.1}Test proportions}{57}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{58}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{61}{subsection.6.3}
-\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{62}{subsection.6.4}
-\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{63}{subsection.6.5}
-\contentsline {subsection}{\numberline {6.6}Testing median}{64}{subsection.6.6}
-\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{66}{subsection.6.7}
-\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{66}{subsubsection.6.7.1}
-\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{68}{subsubsection.6.7.2}
-\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{68}{subsubsection.6.7.3}
-\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{70}{subsection.6.8}
-\contentsline {subsection}{\numberline {6.9}Displaying partial residuals in a linear model}{71}{subsection.6.9}
-\contentsline {subsection}{\numberline {6.10}Twin study}{72}{subsection.6.10}
-\contentsline {subsubsection}{\numberline {6.10.1}Data}{72}{subsubsection.6.10.1}
-\contentsline {subsubsection}{\numberline {6.10.2}REML solution}{72}{subsubsection.6.10.2}
-\contentsline {subsubsection}{\numberline {6.10.3}ML solution}{75}{subsubsection.6.10.3}
-\contentsline {section}{\numberline {7}Loops and parallel computations}{77}{section.7}
-\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{77}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}Parallel computation}{78}{subsection.7.2}
-\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{78}{subsubsection.7.2.1}
-\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{78}{subsubsection.7.2.2}
-\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{78}{subsubsection.7.2.3}
-\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{78}{subsubsection.7.2.4}
-\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{79}{subsubsection.7.2.5}
-\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{79}{subsubsection.7.2.6}
-\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{79}{subsubsection.7.2.7}
-\contentsline {section}{\numberline {8}\emph {lava} package}{80}{section.8}
-\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{80}{subsection.8.1}
-\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{81}{subsection.8.2}
-\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{82}{subsection.8.3}
-\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{84}{subsection.8.4}
-\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{86}{subsection.8.5}
-\contentsline {subsection}{\numberline {8.6}Standardized coefficients}{87}{subsection.8.6}
-\contentsline {section}{\numberline {9}Miscellaneous}{89}{section.9}
-\contentsline {subsection}{\numberline {9.1}Profile code}{89}{subsection.9.1}
-\contentsline {subsection}{\numberline {9.2}Debug}{90}{subsection.9.2}
-\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{91}{subsection.9.3}
-\contentsline {subsection}{\numberline {9.4}Install development version of R}{92}{subsection.9.4}
-\contentsline {subsection}{\numberline {9.5}Install suggested packages}{93}{subsection.9.5}
-\contentsline {subsection}{\numberline {9.6}R version}{94}{subsection.9.6}
-\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{95}{subsection.9.7}
-\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{96}{subsection.9.8}
-\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{97}{subsection.9.9}
+\contentsline {subsection}{\numberline {5.5}Lexis diagram}{57}{subsection.5.5}
+\contentsline {section}{\numberline {6}Modeling}{59}{section.6}
+\contentsline {subsection}{\numberline {6.1}Test proportions}{59}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{60}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{63}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{64}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{65}{subsection.6.5}
+\contentsline {subsection}{\numberline {6.6}Testing median}{66}{subsection.6.6}
+\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{68}{subsection.6.7}
+\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{68}{subsubsection.6.7.1}
+\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{70}{subsubsection.6.7.2}
+\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{70}{subsubsection.6.7.3}
+\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{72}{subsection.6.8}
+\contentsline {subsection}{\numberline {6.9}Displaying partial residuals in a linear model}{73}{subsection.6.9}
+\contentsline {subsection}{\numberline {6.10}Twin study}{74}{subsection.6.10}
+\contentsline {subsubsection}{\numberline {6.10.1}Data}{74}{subsubsection.6.10.1}
+\contentsline {subsubsection}{\numberline {6.10.2}REML solution}{74}{subsubsection.6.10.2}
+\contentsline {subsubsection}{\numberline {6.10.3}ML solution}{77}{subsubsection.6.10.3}
+\contentsline {section}{\numberline {7}Loops and parallel computations}{79}{section.7}
+\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{79}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Parallel computation}{80}{subsection.7.2}
+\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{80}{subsubsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{80}{subsubsection.7.2.2}
+\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{80}{subsubsection.7.2.3}
+\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{80}{subsubsection.7.2.4}
+\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{81}{subsubsection.7.2.5}
+\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{81}{subsubsection.7.2.6}
+\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{81}{subsubsection.7.2.7}
+\contentsline {section}{\numberline {8}\emph {lava} package}{82}{section.8}
+\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{82}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{83}{subsection.8.2}
+\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{84}{subsection.8.3}
+\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{86}{subsection.8.4}
+\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{88}{subsection.8.5}
+\contentsline {subsection}{\numberline {8.6}Output correlation between two latent variables}{89}{subsection.8.6}
+\contentsline {subsection}{\numberline {8.7}LVM as a weighted mean}{90}{subsection.8.7}
+\contentsline {subsection}{\numberline {8.8}Standardized coefficients}{92}{subsection.8.8}
+\contentsline {section}{\numberline {9}Miscellaneous}{94}{section.9}
+\contentsline {subsection}{\numberline {9.1}Profile code}{94}{subsection.9.1}
+\contentsline {subsection}{\numberline {9.2}Debug}{95}{subsection.9.2}
+\contentsline {subsection}{\numberline {9.3}Find all function names from a package}{96}{subsection.9.3}
+\contentsline {subsection}{\numberline {9.4}Install development version of R}{97}{subsection.9.4}
+\contentsline {subsection}{\numberline {9.5}Install suggested packages}{98}{subsection.9.5}
+\contentsline {subsection}{\numberline {9.6}R version}{99}{subsection.9.6}
+\contentsline {subsection}{\numberline {9.7}Install a package from a zip file (windows)}{100}{subsection.9.7}
+\contentsline {subsection}{\numberline {9.8}Install and load two version of the same package}{101}{subsection.9.8}
+\contentsline {subsection}{\numberline {9.9}CRAN check rocker}{102}{subsection.9.9}

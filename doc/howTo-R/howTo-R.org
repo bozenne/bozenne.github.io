@@ -1785,6 +1785,55 @@ plot(m, plot.engine="visnetwork")
 #+END_SRC
 
 #+RESULTS:
+** Lexis diagram
+
+Simulate data
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(riskRegression)
+library(ggplot2)
+library(data.table)
+
+set.seed(10)
+d <- sampleData(1000)
+d[, id := as.character(1:.N)]
+#+END_SRC
+
+#+RESULTS:
+
+
+Reshape data
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+d$Age <- d$X6
+d$age.start <- d$Age
+d$age.stop <- d$Age + d$time
+d$start <- 0
+d$stop <- d$time
+dL <- rbind(d[,.(id = id, time = start, age = age.start, status = -1)],
+            d[,.(id = id, time = stop, age = age.stop, status = event)])
+dL[, event := factor(status, (-1):2, c("inclusion","censored","disease","death"))]
+#+END_SRC
+#+RESULTS:
+
+Display
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg <- ggplot(dL, aes(x = time, y = age, group = id))
+gg <- gg + geom_point(aes(color=event,shape=event)) 
+gg <- gg + geom_line(alpha = 0.1) 
+gg
+#+END_SRC
+
+#+ATTR_LaTeX: :width 1\textwidth :placement [!h]
+[[./figures/fig-gg-lexis.pdf]]
+
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+ggsave(gg, filename = "./figures/fig-gg-lexis.pdf")
+#+END_SRC
+
+#+RESULTS:
+: Saving 7 x 7 in image
 
 * Modeling
 ** Test proportions
@@ -2700,7 +2749,6 @@ rho2       0.3023899 0.12848984
 rho2-rho1 -0.3705661 0.14998890
 #+end_example
 
-
 * Loops and parallel computations  
 ** Apply with progress bar
 
@@ -3034,6 +3082,147 @@ Warning messages:
   Lack of convergence. Increase number of iteration or change starting values.
 2: In sqrt(diag(asVar)) : NaNs produced
 #+end_example
+
+** Output correlation between two latent variables
+
+Simulate some data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+mSim <-lvm(c(PEQ_poslife,PEQ_posself,PEQ_posmood,PEQ_possoc,PEQ_posbehav)~lv.peq,
+           c(MEQ_mystical,MEQ_mood) ~ 1*lv.meq,
+           c(MEQ_timespace,MEQ_ineffability) ~ lv.meq,
+           lv.meq[0:2]~1,
+           lv.peq[0:0.25]~1)
+covariance(mSim) <- lv.peq ~ lv.meq
+covariance(mSim) <- MEQ_timespace~MEQ_ineffability
+latent(mSim) <- ~lv.peq+lv.meq
+d <- sim(mSim, n = 40, latent = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Fit the lvm:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m1 <-lvm(c(PEQ_poslife,PEQ_posself,PEQ_posmood,PEQ_possoc,PEQ_posbehav)~lv.peq,
+         c(MEQ_mystical,MEQ_mood) ~ 1*lv.meq,
+         c(MEQ_timespace,MEQ_ineffability) ~ lv.meq)
+covariance(m1) <- lv.peq ~ lv.meq
+covariance(m1) <- MEQ_timespace~MEQ_ineffability
+latent(m1) <- ~lv.peq
+latent(m1) <- ~lv.meq
+e <- estimate(m1, d)
+#+END_SRC
+
+#+RESULTS:
+
+Delta method via /lava/:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(e, function(x){
+    c(var.meq = x["lv.meq~~lv.meq"],
+      var.peq = x["lv.peq~~lv.peq"],
+      cov = x["lv.peq~~lv.meq"],
+      cor = x["lv.peq~~lv.meq"]/sqrt(x["lv.peq~~lv.peq"]*x["lv.meq~~lv.meq"]))
+})
+#+END_SRC
+
+#+RESULTS:
+:                        Estimate Std.Err     2.5%  97.5%   P-value
+: var.meq.lv.meq~~lv.meq   2.2620  0.6864  0.91659 3.6073 0.0009832
+: var.peq.lv.peq~~lv.peq   0.3082  0.2135 -0.11033 0.7267 0.1489383
+: cov.lv.peq~~lv.meq       0.4509  0.2669 -0.07225 0.9741 0.0911607
+: cor.lv.peq~~lv.meq       0.5401  0.2335  0.08250 0.9977 0.0207034
+
+Delta method via /numDeriv/:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+lvmCov2Cor(e, var1 = "lv.meq", var2 = "lv.peq")
+#+END_SRC
+
+#+RESULTS:
+: Loading required package: numDeriv
+:                 estimate        se       lower     upper null    p.value
+: lv.meq~~lv.meq 2.2619571 0.6864231  0.91659256 3.6073217   NA         NA
+: lv.peq~~lv.peq 0.3081865 0.2135303 -0.11032513 0.7266982   NA         NA
+: lv.peq~~lv.meq 0.4509280 0.2669308 -0.07224677 0.9741027   NA         NA
+: cor            0.5400801 0.2334623  0.08250241 0.9976578    0 0.02070338
+
+** LVM as a weighted mean
+Simulate some data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+
+mSim <- lvm(coldPain ~ 0.1*age + 1*etaPain,
+            heatPain ~ 0.1*age + 2*etaPain,
+            musclePain ~ 0.1*age + 0.5*etaPain,
+            tolerancePain ~ 0.1*age + 2*etaPain,
+            etaPain ~ status)
+latent(mSim) <- ~etaPain
+distribution(mSim, ~status) <- binomial.lvm()
+## distribution(mSim, ~coldPain+heatPain+musclePain+tolerantcePain) <- Gamma.lvm(rate = 2, shape = 10)
+distribution(mSim, ~age) <- gaussian.lvm(mean = 30, sd = 5)
+
+set.seed(10)
+d <- sim(mSim, 1e3, latent = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Estimate LVM with constraints on the latent variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m <- lvm(coldPain ~ age + etaPain,
+         heatPain ~ age + etaPain,
+         musclePain ~ age + etaPain,
+         tolerancePain ~ age + etaPain,
+         etaPain ~ status)
+latent(m) <- ~etaPain
+e <- estimate(m, data = d)
+#+END_SRC
+
+#+RESULTS:
+Extract fitted latent variable values:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+LV.predict <- predict(e, x = manifest(e), y = latent(e))
+c(tapply(LV.predict,d$status,mean), coef(e)["etaPain~status"])
+#+END_SRC
+
+#+RESULTS:
+:              0              1 etaPain~status 
+:     0.01286411     0.92152131     0.90865707
+
+\clearpage
+
+Manually compute weights: 
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## residuals
+epsilon <- residuals(e) 
+## all coef
+e.allCoef <- summary(e)$coef[,"Estimate"]
+## variance-covariance matrices matrices
+lambda <- e.allCoef[paste0(endogenous(e),"~",latent(e))]
+mu <- e.allCoef[endogenous(e)]
+tau <- e.allCoef[paste0(latent(e),"~~",latent(e))]
+sigma <- e.allCoef[paste0(endogenous(e),"~~",endogenous(e))]
+
+Sigma22 <- tcrossprod(lambda)*tau + diag(sigma)
+Sigma12 <- rbind(lambda*tau)
+weight <- Sigma12 %*% solve(Sigma22)
+weight
+#+END_SRC
+
+#+RESULTS:
+:           [,1]      [,2]       [,3]      [,4]
+: [1,] 0.1108541 0.2186568 0.04547272 0.1854233
+
+and values of the latent variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+nu <- e.allCoef[latent(e)]
+Gamma <- as.double(e.allCoef[paste0(latent(e),"~status")] %*% d$status)
+
+LV.manual <- nu + Gamma + as.double(weight %*% t(epsilon))
+range(LV.manual - LV.predict)
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.332268e-15  6.217249e-15
 
 ** Standardized coefficients
 
