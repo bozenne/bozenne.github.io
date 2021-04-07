@@ -1575,6 +1575,14 @@ hist(epsilon, main = "histogram of the residuals")
 #+name: fig:1
 #+ATTR_LATEX: :width 0.7\textwidth
 #+CAPTION:
+*** Forest plot
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## gg.forest <- ggplot(data=df.bcg, aes(x=label, y=Estimate, ymin=lower, ymax=upper))
+## gg.forest <- gg.forest + geom_pointrange()
+## gg.forest <- gg.forest + geom_hline(yintercept=1, lty=2) + coord_flip()
+## gg.forest <- gg.forest + xlab("Label") + ylab("Mean (95% CI)") 
+#+END_SRC
+
 
 ** Customize graphic 
 
