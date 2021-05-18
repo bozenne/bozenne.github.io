@@ -198,11 +198,11 @@ Does that mean we should not worry about normality? No:
 3. our estimator may not be efficient. This is usually not a problem,
   except when we loose so much efficiency that the estimate becomes
   very variable. This typically happen in presence of outliers.
-4. no assuming normality complicates the understanding the group
+4. not assuming normality complicates the understanding the group
   effect, as the normal distribution is one of the few distribution
   that can be summarized by two, easily interpretable, independent,
   parameters (mean and variance).
-5. no assuming normality complicates other diagnostic tests, e.g.
+5. not assuming normality complicates other diagnostic tests, e.g.
   correlation is not independence and mean
 In the following we will focus on issue 1-3.
   
