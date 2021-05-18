@@ -104,12 +104,20 @@ Bla src_R{{{1+1}}} {{{results(=2=)}}}.
 # #  \setlength{\parsep}{0pt}
 # # }{\end{enumerate}}
 
-** label scheme
+** change color
+# #+latex_header:  \newenvironment{conenv}{\only{\setbeamercolor{local structure}{fg=gray}}}{}
+# #+begin_export latex
+# \begin{itemize}
+# \item<con@1-> \textcolor{gray}{any dementia (including Alzheimer's) }
+# \end{itemize}
+# #+end_export
 
+** label scheme
 - level 1: \textbullet
 - level 2: \textendash
 - level 3: \textasteriskcentered
 - level 4: \textperiodcentered
+  
 * Table
 
 ** Nice latex table

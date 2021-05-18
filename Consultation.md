@@ -80,10 +80,9 @@ study that you would like to replicate_.
   subject line) explaining your problem and I will try to answer
   within a week.
 
-## When can you get help ? Consultation hours
-I take consultations *Monday afternoon* (13h30-17h30) and *Tuesday
-afternoon* (13h30-17h30). <br>
-
+## When can you get help? Consultation hours
+I take consultations *Tuesday afternoon* (13h30-17h30). <br>
+ 
 If this is completely incompatible with your schedule, for instance
 because you're running weekly experiments those days, just ask me and
 we will figure out a solution.

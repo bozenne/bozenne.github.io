@@ -1,0 +1,684 @@
+#+TITLE: Handling deviation from normality
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+library(lava)
+library(ggplot2)
+library(data.table)
+library(truncnorm)
+path <- "~/Documents/GitHub/bozenne.github.io/doc/2021_05_04-nonnormal/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+
+\noindent A question that often arise in consultations is: \newline
+"My data is not normally distributed. What should I do?" \newline In
+my views, this is a very vague question. It is a bit like going to the
+doctor and asking him: \newline "My body temperature is outside of the
+36-37\textdegree C normal range. What should I do?" In many cases
+statistical methods are robust (i.e. ensure approximate type 1 error
+control and give nearly efficient estimators) to "small" deviations
+from normality. So while it is a good idea to check for normality, it
+is not a good idea to change statistical tool just because you get a
+significant p-value out of a Shapiro test. If I follow the analogy,
+medicine can be harmful and one should not take medicine every time
+ones body temperature is outside the normal range. It is however a
+good idea to check what is going on when your temperature is high to
+make sure it does not hide something bad.
+
+\bigskip
+
+To ease the discussion, we will consider a simple example where we
+want to compare the outcome distribution between two groups. We assume
+to have no missing data and no measurement error, and that no external
+covariate is relevant. In that case, we can visualize the distribution
+of the outcome per group and perform the comparison "visually". We
+will consider four examples (autoref:fig:examples):
+- Normally distributed outcomes: no problem here.
+- Student distributed outcomes: symetric and unimodal distribution but with outliers.
+- Gamma distributed outcomes: asymetric distribution.
+- Normally distributed outcomes with ceilling effect: many observations have exactly the same value.
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+set.seed(10)
+
+n <- 1e5
+dt <- rbind(data.table(Y = rnorm(n, mean = 0, sd = 1), group = "C", example = "1. Gaussian"),
+            data.table(Y = rnorm(n, mean = 1, sd = 1), group = "T", example = "1. Gaussian"),
+            data.table(Y = rt(n, df = 4), group = "C", example = "2. Student"),
+            data.table(Y = rt(n, df = 4) + 1, group = "T", example = "2. Student"),
+            data.table(Y = rgamma(n, shape = 2, rate = 1/2), group = "C", example = "3. Gamma"),
+            data.table(Y = 2*rgamma(n, shape = 2, rate = 1/2), group = "T", example = "3. Gamma"),
+            data.table(Y = pmin(rnorm(n, mean = 0, sd = 1),2.5), group = "C", example = "4. Ceilling effect"),
+            data.table(Y = pmin(rnorm(n, mean = 1, sd = 1),2.5), group = "T", example = "4. Ceilling effect"))
+ggDens <- ggplot(dt, aes(x=Y,fill=group))
+ggDens <- ggDens + geom_histogram(breaks = seq(-3,10, by = 0.1), position = "dodge") + facet_wrap(~example)
+ggDens <- ggDens + coord_cartesian(xlim = c(-3,7)) + ylab("Number of observations")
+ggDens <- ggDens + theme(text = element_text(size=20), 
+                          axis.line = element_line(size = 1.25),
+                          axis.ticks = element_line(size = 2),
+                          axis.ticks.length=unit(.25, "cm"))
+ggsave(ggDens, filename = file.path("figures","examples-hist.pdf"))
+#+END_SRC
+
+#+RESULTS:
+: Saving 7 x 7 in image
+
+\clearpage
+
+\vfill
+
+#+name: fig:examples
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Example datasets.
+[[./figures/examples-hist.pdf]]
+
+\Warning if any, distributional assumptions are usually made on the resiudal terms, e.g:
+#+begin_export latex
+\begin{align*}
+Y = X \beta + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+\end{align*}
+#+end_export
+
+
+and not on the outcome \(Y\). Concretely, we don't assume that the
+outcome is normally distributed but that within groups (or once we
+remove the group effect) it is normally distributed. In example 1, the
+outcome is clearly not normally distributed (it is bimodal) but within
+groups it is normally distributed.
+
+\vfill
+
+\clearpage
+
+* Statistical properites
+
+When we use a statistical procedure to estimate a parameter of
+interest (say \(\theta\)), we generally want to report an estimate of
+this parameter based on the data we have (denoted
+\(\widehat{\theta}\)). We generally also want to report the
+uncertainty around this estimate via a confidence intervals (denoted
+\(IC_{\widehat{\theta}} = [L_{\widehat{\theta}} ;
+U_{\widehat{\theta}}]\)) or report a p-value that reflects whether a
+value (say \(\theta_0\)) is compatible with the data at hand. We will
+therefore distinguish three properties for a statistical procedure:
+- *validity of the estimate*: the estimate should tend to the true
+  value as we increase the sample size (consistency) or the average
+  estimate should tend to the true value as repeat the
+  experiment (unbiasedness).
+- *validity of the uncertainty*: the confidence interval should have
+  proper coverage, typically they should contain the true value with
+  probablity 95%. The p-value should have a uniform distribution under
+  the null meaning that the type 1 error is controlled at its nominal
+  level, typically 5%.
+- *efficiency*: the procedure is optimal in the sense that it makes
+  the best use of the data at hand. \newline For instance we expect
+  the estimates to be as precise as possible, i.e. to have the
+  narrowest possible confidence intervals. We also expect that the
+  type 2 error should be the smallest possible (i.e. highest
+  power). In other terms, whenever the null hypothesis is false, the
+  test should rejected it as often as possible.
+
+\bigskip
+
+  In the following we will assume that these properties are of
+  decreasing interest: having unbiased estimates is the most important
+  as quantifying uncertainty and efficiency can be fixed by
+  replicating studies and performing a meta-analysis. A non-efficient
+  estimator can still give useful and valid results - it will "just"
+  waste ressources but not be misleading (if used and interpreted
+  correctly).
+
+\clearpage
+
+* Should we worry about normality? 
+
+Most statistical procedures do not require any normality assumption to
+provide consistent estimates with asymptotically valid confidence
+intervals and p-values. For instance t-tests and linear regressions
+can be shown to provide consistent and asymptotically normally
+distributed estimates in large iid [fn::independent and identically
+distributed] samples, regardless to whether they are normally
+distributed as soon as their first two moments are finite. Here it is
+important to distringuish between the distribution of the outcome (say
+\(Y\)) and the distribution of the parameter of interest, often the
+mean of \(Y\). Averaging "normalizes" the distribution, which is
+formalized in the central limit theorem, and illustrated on
+autoref:fig:distAverage:
+
+#+begin_src R :exports none :results output :session *R* :cache no
+set.seed(10)
+
+
+dtAverage <- rbind(
+  data.table(Y = sapply(1:n, function(x){mean(rgamma(1, shape = 2, rate = 1/2))}), group = "C", n = "sample size = 1"),
+  data.table(Y = sapply(1:n, function(x){mean(2*rgamma(1, shape = 2, rate = 1/2))}), group = "T", n = "sample size = 1"),
+  data.table(Y = sapply(1:n, function(x){mean(rgamma(10, shape = 2, rate = 1/2))}), group = "C", n = "sample size = 10"),
+  data.table(Y = sapply(1:n, function(x){mean(2*rgamma(10, shape = 2, rate = 1/2))}), group = "T", n = "sample size = 10"),
+  data.table(Y = sapply(1:n, function(x){mean(rgamma(100, shape = 2, rate = 1/2))}), group = "C", n = "sample size = 100"),
+  data.table(Y = sapply(1:n, function(x){mean(2*rgamma(100, shape = 2, rate = 1/2))}), group = "T", n = "sample size = 100")
+)
+ggAv <- ggplot(dtAverage, aes(x=Y,fill=group)) + ylab("Number of averages")
+ggAv <- ggAv + geom_histogram(breaks = seq(0,20,length.out=100), position = "dodge") + facet_wrap(~n, scales = "free")
+ggAv <- ggAv + theme(text = element_text(size=10),
+                     legend.position = "bottom",
+                     axis.line = element_line(size = 1.25),
+                     axis.ticks = element_line(size = 2),
+                     axis.ticks.length=unit(.25, "cm"))
+ggsave(ggAv, filename = file.path("figures","examples-histAverage.pdf"), height = 4, width = 7)
+#+end_src
+
+#+RESULTS:
+
+#+name: fig:distAverage
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Distribution of the estimated mean along the sample size.
+[[./figures/examples-histAverage.pdf]]
+
+This means that (almost) regardless to the input data, we will be able
+to estimate parameters which follows a normal distribution, i.e. for
+which we can quantify the uncertainty. Results from the M-estimation
+theory or the maximum likelihood theory can be used to show that
+finding parameters that minimize an error that is the lack of fit
+relative to individual observations lead to consistent
+estimates. Concretely, this means that the coverage/type 1 error
+control of many standard procedures such as the t-test and the linear
+regression will be at their nominal level in large samples, even
+though the normality assumption is not fullfilled
+(autoref:fig:coverage) \ldots for large enough sample sizes.
+
+\clearpage
+
+Does that mean we should not worry about normality? No:
+1. we may have a valid test / consistent estimate of a meaningless
+   parameter.
+2. we may only have a small sample.
+3. our estimator may not be efficient. This is usually not a problem,
+  except when we loose so much efficiency that the estimate becomes
+  very variable. This typically happen in presence of outliers.
+4. no assuming normality complicates the understanding the group
+  effect, as the normal distribution is one of the few distribution
+  that can be summarized by two, easily interpretable, independent,
+  parameters (mean and variance).
+5. no assuming normality complicates other diagnostic tests, e.g.
+  correlation is not independence and mean
+In the following we will focus on issue 1-3.
+  
+#+begin_src R :exports none :results output :session *R* :cache no
+set.seed(10)
+
+seqN <- c(5,10,15,25,50,75,100)
+n.sim <- 50000
+out <- NULL
+
+for(iIndex in 1:length(seqN)){
+  iN <- seqN[iIndex]
+
+  M.p <- do.call(rbind,pbapply::pblapply(1:n.sim,function(i){
+    c(t.test(rnorm(iN, mean = 0, sd = 1),
+             rnorm(iN, mean = 0, sd = 1))$p.value,
+      t.test(rt(iN, df = 4),
+             rt(iN, df = 4))$p.value,
+      t.test(rgamma(iN, shape = 2, rate = 1/2),
+             rgamma(iN, shape = 2, rate = 1/2))$p.value,
+      t.test(pmin(rnorm(iN, mean = 1, sd = 1),2.5),
+             pmin(rnorm(iN, mean = 1, sd = 1),2.5))$p.value)
+  }, cl = 10))
+  out <- rbind(out,
+               data.table(n = iN, sim = 1:n.sim, p.value = M.p[,1], example = "1. Gaussian"),
+               data.table(n = iN, sim = 1:n.sim, p.value = M.p[,2], example = "2. Student"),
+               data.table(n = iN, sim = 1:n.sim, p.value = M.p[,3], example = "3. Gamma"),
+               data.table(n = iN, sim = 1:n.sim, p.value = M.p[,4], example = "4. Ceilling effect")
+               )
+}
+#+end_src
+
+#+RESULTS:
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~11s            |+                                                 | 2 % ~11s            |++                                                | 3 % ~11s            |++                                                | 4 % ~10s            |+++                                               | 5 % ~10s            |+++                                               | 6 % ~10s            |++++                                              | 7 % ~10s            |++++                                              | 8 % ~10s            |+++++                                             | 9 % ~10s            |+++++                                             | 10% ~10s            |++++++                                            | 11% ~10s            |++++++                                            | 12% ~10s            |+++++++                                           | 13% ~10s            |+++++++                                           | 14% ~10s            |++++++++                                          | 15% ~09s            |++++++++                                          | 16% ~09s            |+++++++++                                         | 17% ~09s            |+++++++++                                         | 18% ~09s            |++++++++++                                        | 19% ~09s            |++++++++++                                        | 20% ~09s            |+++++++++++                                       | 21% ~09s            |+++++++++++                                       | 22% ~09s            |++++++++++++                                      | 23% ~09s            |++++++++++++                                      | 24% ~09s            |+++++++++++++                                     | 25% ~08s            |+++++++++++++                                     | 26% ~08s            |++++++++++++++                                    | 27% ~08s            |++++++++++++++                                    | 28% ~08s            |+++++++++++++++                                   | 29% ~08s            |+++++++++++++++                                   | 30% ~08s            |++++++++++++++++                                  | 31% ~08s            |++++++++++++++++                                  | 32% ~08s            |+++++++++++++++++                                 | 33% ~08s            |+++++++++++++++++                                 | 34% ~08s            |++++++++++++++++++                                | 35% ~07s            |++++++++++++++++++                                | 36% ~07s            |+++++++++++++++++++                               | 37% ~07s            |+++++++++++++++++++                               | 38% ~07s            |++++++++++++++++++++                              | 39% ~07s            |++++++++++++++++++++                              | 40% ~07s            |+++++++++++++++++++++                             | 41% ~07s            |+++++++++++++++++++++                             | 42% ~07s            |++++++++++++++++++++++                            | 43% ~06s            |++++++++++++++++++++++                            | 44% ~06s            |+++++++++++++++++++++++                           | 45% ~06s            |+++++++++++++++++++++++                           | 46% ~06s            |++++++++++++++++++++++++                          | 47% ~06s            |++++++++++++++++++++++++                          | 48% ~06s            |+++++++++++++++++++++++++                         | 49% ~06s            |+++++++++++++++++++++++++                         | 50% ~06s            |++++++++++++++++++++++++++                        | 51% ~06s            |++++++++++++++++++++++++++                        | 52% ~06s            |+++++++++++++++++++++++++++                       | 53% ~05s            |+++++++++++++++++++++++++++                       | 54% ~05s            |++++++++++++++++++++++++++++                      | 55% ~05s            |++++++++++++++++++++++++++++                      | 56% ~05s            |+++++++++++++++++++++++++++++                     | 57% ~05s            |+++++++++++++++++++++++++++++                     | 58% ~05s            |++++++++++++++++++++++++++++++                    | 59% ~05s            |++++++++++++++++++++++++++++++                    | 60% ~05s            |+++++++++++++++++++++++++++++++                   | 61% ~05s            |+++++++++++++++++++++++++++++++                   | 62% ~04s            |++++++++++++++++++++++++++++++++                  | 63% ~04s            |++++++++++++++++++++++++++++++++                  | 64% ~04s            |+++++++++++++++++++++++++++++++++                 | 65% ~04s            |+++++++++++++++++++++++++++++++++                 | 66% ~04s            |++++++++++++++++++++++++++++++++++                | 67% ~04s            |++++++++++++++++++++++++++++++++++                | 68% ~04s            |+++++++++++++++++++++++++++++++++++               | 69% ~04s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~03s            |+++++++++++++++++++++++++++++++++++++             | 73% ~03s            |+++++++++++++++++++++++++++++++++++++             | 74% ~03s            |++++++++++++++++++++++++++++++++++++++            | 75% ~03s            |++++++++++++++++++++++++++++++++++++++            | 76% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~02s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=13s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~11s            |+                                                 | 2 % ~12s            |++                                                | 3 % ~12s            |++                                                | 4 % ~12s            |+++                                               | 5 % ~11s            |+++                                               | 6 % ~11s            |++++                                              | 7 % ~11s            |++++                                              | 8 % ~11s            |+++++                                             | 9 % ~11s            |+++++                                             | 10% ~11s            |++++++                                            | 11% ~10s            |++++++                                            | 12% ~10s            |+++++++                                           | 13% ~10s            |+++++++                                           | 14% ~10s            |++++++++                                          | 15% ~10s            |++++++++                                          | 16% ~10s            |+++++++++                                         | 17% ~10s            |+++++++++                                         | 18% ~09s            |++++++++++                                        | 19% ~09s            |++++++++++                                        | 20% ~09s            |+++++++++++                                       | 21% ~09s            |+++++++++++                                       | 22% ~09s            |++++++++++++                                      | 23% ~09s            |++++++++++++                                      | 24% ~09s            |+++++++++++++                                     | 25% ~09s            |+++++++++++++                                     | 26% ~08s            |++++++++++++++                                    | 27% ~08s            |++++++++++++++                                    | 28% ~08s            |+++++++++++++++                                   | 29% ~08s            |+++++++++++++++                                   | 30% ~08s            |++++++++++++++++                                  | 31% ~08s            |++++++++++++++++                                  | 32% ~08s            |+++++++++++++++++                                 | 33% ~08s            |+++++++++++++++++                                 | 34% ~08s            |++++++++++++++++++                                | 35% ~08s            |++++++++++++++++++                                | 36% ~08s            |+++++++++++++++++++                               | 37% ~08s            |+++++++++++++++++++                               | 38% ~07s            |++++++++++++++++++++                              | 39% ~07s            |++++++++++++++++++++                              | 40% ~07s            |+++++++++++++++++++++                             | 41% ~07s            |+++++++++++++++++++++                             | 42% ~07s            |++++++++++++++++++++++                            | 43% ~07s            |++++++++++++++++++++++                            | 44% ~07s            |+++++++++++++++++++++++                           | 45% ~07s            |+++++++++++++++++++++++                           | 46% ~07s            |++++++++++++++++++++++++                          | 47% ~06s            |++++++++++++++++++++++++                          | 48% ~06s            |+++++++++++++++++++++++++                         | 49% ~06s            |+++++++++++++++++++++++++                         | 50% ~06s            |++++++++++++++++++++++++++                        | 51% ~06s            |++++++++++++++++++++++++++                        | 52% ~06s            |+++++++++++++++++++++++++++                       | 53% ~06s            |+++++++++++++++++++++++++++                       | 54% ~06s            |++++++++++++++++++++++++++++                      | 55% ~06s            |++++++++++++++++++++++++++++                      | 56% ~05s            |+++++++++++++++++++++++++++++                     | 57% ~05s            |+++++++++++++++++++++++++++++                     | 58% ~05s            |++++++++++++++++++++++++++++++                    | 59% ~05s            |++++++++++++++++++++++++++++++                    | 60% ~05s            |+++++++++++++++++++++++++++++++                   | 61% ~05s            |+++++++++++++++++++++++++++++++                   | 62% ~05s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |++++++++++++++++++++++++++++++++                  | 64% ~04s            |+++++++++++++++++++++++++++++++++                 | 65% ~04s            |+++++++++++++++++++++++++++++++++                 | 66% ~04s            |++++++++++++++++++++++++++++++++++                | 67% ~04s            |++++++++++++++++++++++++++++++++++                | 68% ~04s            |+++++++++++++++++++++++++++++++++++               | 69% ~04s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~03s            |+++++++++++++++++++++++++++++++++++++             | 74% ~03s            |++++++++++++++++++++++++++++++++++++++            | 75% ~03s            |++++++++++++++++++++++++++++++++++++++            | 76% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~12s            |+                                                 | 2 % ~12s            |++                                                | 3 % ~12s            |++                                                | 4 % ~12s            |+++                                               | 5 % ~12s            |+++                                               | 6 % ~12s            |++++                                              | 7 % ~12s            |++++                                              | 8 % ~11s            |+++++                                             | 9 % ~11s            |+++++                                             | 10% ~11s            |++++++                                            | 11% ~11s            |++++++                                            | 12% ~11s            |+++++++                                           | 13% ~11s            |+++++++                                           | 14% ~11s            |++++++++                                          | 15% ~11s            |++++++++                                          | 16% ~10s            |+++++++++                                         | 17% ~10s            |+++++++++                                         | 18% ~10s            |++++++++++                                        | 19% ~10s            |++++++++++                                        | 20% ~10s            |+++++++++++                                       | 21% ~10s            |+++++++++++                                       | 22% ~10s            |++++++++++++                                      | 23% ~10s            |++++++++++++                                      | 24% ~10s            |+++++++++++++                                     | 25% ~09s            |+++++++++++++                                     | 26% ~09s            |++++++++++++++                                    | 27% ~09s            |++++++++++++++                                    | 28% ~09s            |+++++++++++++++                                   | 29% ~09s            |+++++++++++++++                                   | 30% ~09s            |++++++++++++++++                                  | 31% ~09s            |++++++++++++++++                                  | 32% ~08s            |+++++++++++++++++                                 | 33% ~08s            |+++++++++++++++++                                 | 34% ~08s            |++++++++++++++++++                                | 35% ~08s            |++++++++++++++++++                                | 36% ~08s            |+++++++++++++++++++                               | 37% ~08s            |+++++++++++++++++++                               | 38% ~08s            |++++++++++++++++++++                              | 39% ~08s            |++++++++++++++++++++                              | 40% ~08s            |+++++++++++++++++++++                             | 41% ~07s            |+++++++++++++++++++++                             | 42% ~07s            |++++++++++++++++++++++                            | 43% ~07s            |++++++++++++++++++++++                            | 44% ~07s            |+++++++++++++++++++++++                           | 45% ~07s            |+++++++++++++++++++++++                           | 46% ~07s            |++++++++++++++++++++++++                          | 47% ~07s            |++++++++++++++++++++++++                          | 48% ~07s            |+++++++++++++++++++++++++                         | 49% ~06s            |+++++++++++++++++++++++++                         | 50% ~06s            |++++++++++++++++++++++++++                        | 51% ~06s            |++++++++++++++++++++++++++                        | 52% ~06s            |+++++++++++++++++++++++++++                       | 53% ~06s            |+++++++++++++++++++++++++++                       | 54% ~06s            |++++++++++++++++++++++++++++                      | 55% ~06s            |++++++++++++++++++++++++++++                      | 56% ~06s            |+++++++++++++++++++++++++++++                     | 57% ~05s            |+++++++++++++++++++++++++++++                     | 58% ~05s            |++++++++++++++++++++++++++++++                    | 59% ~05s            |++++++++++++++++++++++++++++++                    | 60% ~05s            |+++++++++++++++++++++++++++++++                   | 61% ~05s            |+++++++++++++++++++++++++++++++                   | 62% ~05s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |++++++++++++++++++++++++++++++++                  | 64% ~05s            |+++++++++++++++++++++++++++++++++                 | 65% ~04s            |+++++++++++++++++++++++++++++++++                 | 66% ~04s            |++++++++++++++++++++++++++++++++++                | 67% ~04s            |++++++++++++++++++++++++++++++++++                | 68% ~04s            |+++++++++++++++++++++++++++++++++++               | 69% ~04s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~03s            |+++++++++++++++++++++++++++++++++++++             | 74% ~03s            |++++++++++++++++++++++++++++++++++++++            | 75% ~03s            |++++++++++++++++++++++++++++++++++++++            | 76% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~12s            |+                                                 | 2 % ~13s            |++                                                | 3 % ~12s            |++                                                | 4 % ~13s            |+++                                               | 5 % ~13s            |+++                                               | 6 % ~12s            |++++                                              | 7 % ~12s            |++++                                              | 8 % ~12s            |+++++                                             | 9 % ~12s            |+++++                                             | 10% ~11s            |++++++                                            | 11% ~11s            |++++++                                            | 12% ~11s            |+++++++                                           | 13% ~11s            |+++++++                                           | 14% ~11s            |++++++++                                          | 15% ~11s            |++++++++                                          | 16% ~11s            |+++++++++                                         | 17% ~11s            |+++++++++                                         | 18% ~10s            |++++++++++                                        | 19% ~10s            |++++++++++                                        | 20% ~10s            |+++++++++++                                       | 21% ~10s            |+++++++++++                                       | 22% ~10s            |++++++++++++                                      | 23% ~10s            |++++++++++++                                      | 24% ~10s            |+++++++++++++                                     | 25% ~09s            |+++++++++++++                                     | 26% ~09s            |++++++++++++++                                    | 27% ~09s            |++++++++++++++                                    | 28% ~09s            |+++++++++++++++                                   | 29% ~09s            |+++++++++++++++                                   | 30% ~09s            |++++++++++++++++                                  | 31% ~09s            |++++++++++++++++                                  | 32% ~08s            |+++++++++++++++++                                 | 33% ~08s            |+++++++++++++++++                                 | 34% ~08s            |++++++++++++++++++                                | 35% ~08s            |++++++++++++++++++                                | 36% ~08s            |+++++++++++++++++++                               | 37% ~08s            |+++++++++++++++++++                               | 38% ~08s            |++++++++++++++++++++                              | 39% ~08s            |++++++++++++++++++++                              | 40% ~07s            |+++++++++++++++++++++                             | 41% ~07s            |+++++++++++++++++++++                             | 42% ~07s            |++++++++++++++++++++++                            | 43% ~07s            |++++++++++++++++++++++                            | 44% ~07s            |+++++++++++++++++++++++                           | 45% ~07s            |+++++++++++++++++++++++                           | 46% ~07s            |++++++++++++++++++++++++                          | 47% ~07s            |++++++++++++++++++++++++                          | 48% ~06s            |+++++++++++++++++++++++++                         | 49% ~06s            |+++++++++++++++++++++++++                         | 50% ~06s            |++++++++++++++++++++++++++                        | 51% ~06s            |++++++++++++++++++++++++++                        | 52% ~06s            |+++++++++++++++++++++++++++                       | 53% ~06s            |+++++++++++++++++++++++++++                       | 54% ~06s            |++++++++++++++++++++++++++++                      | 55% ~06s            |++++++++++++++++++++++++++++                      | 56% ~05s            |+++++++++++++++++++++++++++++                     | 57% ~05s            |+++++++++++++++++++++++++++++                     | 58% ~05s            |++++++++++++++++++++++++++++++                    | 59% ~05s            |++++++++++++++++++++++++++++++                    | 60% ~05s            |+++++++++++++++++++++++++++++++                   | 61% ~05s            |+++++++++++++++++++++++++++++++                   | 62% ~05s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |++++++++++++++++++++++++++++++++                  | 64% ~05s            |+++++++++++++++++++++++++++++++++                 | 65% ~04s            |+++++++++++++++++++++++++++++++++                 | 66% ~04s            |++++++++++++++++++++++++++++++++++                | 67% ~04s            |++++++++++++++++++++++++++++++++++                | 68% ~04s            |+++++++++++++++++++++++++++++++++++               | 69% ~04s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~04s            |+++++++++++++++++++++++++++++++++++++             | 74% ~03s            |++++++++++++++++++++++++++++++++++++++            | 75% ~03s            |++++++++++++++++++++++++++++++++++++++            | 76% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~12s            |+                                                 | 2 % ~12s            |++                                                | 3 % ~12s            |++                                                | 4 % ~12s            |+++                                               | 5 % ~12s            |+++                                               | 6 % ~12s            |++++                                              | 7 % ~12s            |++++                                              | 8 % ~12s            |+++++                                             | 9 % ~18s            |+++++                                             | 10% ~23s            |++++++                                            | 11% ~27s            |++++++                                            | 12% ~30s            |+++++++                                           | 13% ~32s            |+++++++                                           | 14% ~34s            |++++++++                                          | 15% ~36s            |++++++++                                          | 16% ~37s            |+++++++++                                         | 17% ~38s            |+++++++++                                         | 18% ~39s            |++++++++++                                        | 19% ~40s            |++++++++++                                        | 20% ~40s            |+++++++++++                                       | 21% ~41s            |+++++++++++                                       | 22% ~41s            |++++++++++++                                      | 23% ~41s            |++++++++++++                                      | 24% ~42s            |+++++++++++++                                     | 25% ~42s            |+++++++++++++                                     | 26% ~41s            |++++++++++++++                                    | 27% ~41s            |++++++++++++++                                    | 28% ~41s            |+++++++++++++++                                   | 29% ~41s            |+++++++++++++++                                   | 30% ~41s            |++++++++++++++++                                  | 31% ~41s            |++++++++++++++++                                  | 32% ~41s            |+++++++++++++++++                                 | 33% ~41s            |+++++++++++++++++                                 | 34% ~41s            |++++++++++++++++++                                | 35% ~40s            |++++++++++++++++++                                | 36% ~40s            |+++++++++++++++++++                               | 37% ~39s            |+++++++++++++++++++                               | 38% ~37s            |++++++++++++++++++++                              | 39% ~36s            |++++++++++++++++++++                              | 40% ~35s            |+++++++++++++++++++++                             | 41% ~33s            |+++++++++++++++++++++                             | 42% ~32s            |++++++++++++++++++++++                            | 43% ~31s            |++++++++++++++++++++++                            | 44% ~30s            |+++++++++++++++++++++++                           | 45% ~29s            |+++++++++++++++++++++++                           | 46% ~28s            |++++++++++++++++++++++++                          | 47% ~27s            |++++++++++++++++++++++++                          | 48% ~26s            |+++++++++++++++++++++++++                         | 49% ~25s            |+++++++++++++++++++++++++                         | 50% ~24s            |++++++++++++++++++++++++++                        | 51% ~23s            |++++++++++++++++++++++++++                        | 52% ~23s            |+++++++++++++++++++++++++++                       | 53% ~22s            |+++++++++++++++++++++++++++                       | 54% ~21s            |++++++++++++++++++++++++++++                      | 55% ~20s            |++++++++++++++++++++++++++++                      | 56% ~20s            |+++++++++++++++++++++++++++++                     | 57% ~19s            |+++++++++++++++++++++++++++++                     | 58% ~18s            |++++++++++++++++++++++++++++++                    | 59% ~18s            |++++++++++++++++++++++++++++++                    | 60% ~17s            |+++++++++++++++++++++++++++++++                   | 61% ~16s            |+++++++++++++++++++++++++++++++                   | 62% ~16s            |++++++++++++++++++++++++++++++++                  | 63% ~15s            |++++++++++++++++++++++++++++++++                  | 64% ~15s            |+++++++++++++++++++++++++++++++++                 | 65% ~14s            |+++++++++++++++++++++++++++++++++                 | 66% ~14s            |++++++++++++++++++++++++++++++++++                | 67% ~13s            |++++++++++++++++++++++++++++++++++                | 68% ~12s            |+++++++++++++++++++++++++++++++++++               | 69% ~12s            |+++++++++++++++++++++++++++++++++++               | 70% ~11s            |++++++++++++++++++++++++++++++++++++              | 71% ~11s            |++++++++++++++++++++++++++++++++++++              | 72% ~11s            |+++++++++++++++++++++++++++++++++++++             | 73% ~10s            |+++++++++++++++++++++++++++++++++++++             | 74% ~10s            |++++++++++++++++++++++++++++++++++++++            | 75% ~09s            |++++++++++++++++++++++++++++++++++++++            | 76% ~09s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~08s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~08s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~07s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~07s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~07s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~06s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~06s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~05s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~05s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~05s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~04s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~04s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~04s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~03s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~03s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~03s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~02s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~02s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=31s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~12s            |+                                                 | 2 % ~12s            |++                                                | 3 % ~13s            |++                                                | 4 % ~12s            |+++                                               | 5 % ~12s            |+++                                               | 6 % ~12s            |++++                                              | 7 % ~12s            |++++                                              | 8 % ~12s            |+++++                                             | 9 % ~12s            |+++++                                             | 10% ~12s            |++++++                                            | 11% ~11s            |++++++                                            | 12% ~11s            |+++++++                                           | 13% ~11s            |+++++++                                           | 14% ~11s            |++++++++                                          | 15% ~11s            |++++++++                                          | 16% ~11s            |+++++++++                                         | 17% ~11s            |+++++++++                                         | 18% ~10s            |++++++++++                                        | 19% ~10s            |++++++++++                                        | 20% ~10s            |+++++++++++                                       | 21% ~10s            |+++++++++++                                       | 22% ~10s            |++++++++++++                                      | 23% ~10s            |++++++++++++                                      | 24% ~10s            |+++++++++++++                                     | 25% ~10s            |+++++++++++++                                     | 26% ~10s            |++++++++++++++                                    | 27% ~10s            |++++++++++++++                                    | 28% ~10s            |+++++++++++++++                                   | 29% ~10s            |+++++++++++++++                                   | 30% ~10s            |++++++++++++++++                                  | 31% ~10s            |++++++++++++++++                                  | 32% ~10s            |+++++++++++++++++                                 | 33% ~09s            |+++++++++++++++++                                 | 34% ~09s            |++++++++++++++++++                                | 35% ~09s            |++++++++++++++++++                                | 36% ~09s            |+++++++++++++++++++                               | 37% ~09s            |+++++++++++++++++++                               | 38% ~09s            |++++++++++++++++++++                              | 39% ~09s            |++++++++++++++++++++                              | 40% ~09s            |+++++++++++++++++++++                             | 41% ~09s            |+++++++++++++++++++++                             | 42% ~08s            |++++++++++++++++++++++                            | 43% ~08s            |++++++++++++++++++++++                            | 44% ~08s            |+++++++++++++++++++++++                           | 45% ~08s            |+++++++++++++++++++++++                           | 46% ~08s            |++++++++++++++++++++++++                          | 47% ~08s            |++++++++++++++++++++++++                          | 48% ~08s            |+++++++++++++++++++++++++                         | 49% ~07s            |+++++++++++++++++++++++++                         | 50% ~07s            |++++++++++++++++++++++++++                        | 51% ~07s            |++++++++++++++++++++++++++                        | 52% ~07s            |+++++++++++++++++++++++++++                       | 53% ~07s            |+++++++++++++++++++++++++++                       | 54% ~07s            |++++++++++++++++++++++++++++                      | 55% ~07s            |++++++++++++++++++++++++++++                      | 56% ~07s            |+++++++++++++++++++++++++++++                     | 57% ~06s            |+++++++++++++++++++++++++++++                     | 58% ~06s            |++++++++++++++++++++++++++++++                    | 59% ~06s            |++++++++++++++++++++++++++++++                    | 60% ~06s            |+++++++++++++++++++++++++++++++                   | 61% ~06s            |+++++++++++++++++++++++++++++++                   | 62% ~06s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |++++++++++++++++++++++++++++++++                  | 64% ~05s            |+++++++++++++++++++++++++++++++++                 | 65% ~05s            |+++++++++++++++++++++++++++++++++                 | 66% ~05s            |++++++++++++++++++++++++++++++++++                | 67% ~05s            |++++++++++++++++++++++++++++++++++                | 68% ~05s            |+++++++++++++++++++++++++++++++++++               | 69% ~04s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~04s            |+++++++++++++++++++++++++++++++++++++             | 74% ~04s            |++++++++++++++++++++++++++++++++++++++            | 75% ~04s            |++++++++++++++++++++++++++++++++++++++            | 76% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~03s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
+:   |                                                  | 0 % ~calculating    |+                                                 | 1 % ~12s            |+                                                 | 2 % ~12s            |++                                                | 3 % ~12s            |++                                                | 4 % ~12s            |+++                                               | 5 % ~12s            |+++                                               | 6 % ~12s            |++++                                              | 7 % ~12s            |++++                                              | 8 % ~12s            |+++++                                             | 9 % ~11s            |+++++                                             | 10% ~11s            |++++++                                            | 11% ~11s            |++++++                                            | 12% ~11s            |+++++++                                           | 13% ~11s            |+++++++                                           | 14% ~11s            |++++++++                                          | 15% ~11s            |++++++++                                          | 16% ~11s            |+++++++++                                         | 17% ~11s            |+++++++++                                         | 18% ~10s            |++++++++++                                        | 19% ~10s            |++++++++++                                        | 20% ~10s            |+++++++++++                                       | 21% ~10s            |+++++++++++                                       | 22% ~10s            |++++++++++++                                      | 23% ~10s            |++++++++++++                                      | 24% ~10s            |+++++++++++++                                     | 25% ~10s            |+++++++++++++                                     | 26% ~09s            |++++++++++++++                                    | 27% ~09s            |++++++++++++++                                    | 28% ~09s            |+++++++++++++++                                   | 29% ~09s            |+++++++++++++++                                   | 30% ~09s            |++++++++++++++++                                  | 31% ~09s            |++++++++++++++++                                  | 32% ~09s            |+++++++++++++++++                                 | 33% ~09s            |+++++++++++++++++                                 | 34% ~09s            |++++++++++++++++++                                | 35% ~09s            |++++++++++++++++++                                | 36% ~09s            |+++++++++++++++++++                               | 37% ~08s            |+++++++++++++++++++                               | 38% ~08s            |++++++++++++++++++++                              | 39% ~08s            |++++++++++++++++++++                              | 40% ~08s            |+++++++++++++++++++++                             | 41% ~08s            |+++++++++++++++++++++                             | 42% ~08s            |++++++++++++++++++++++                            | 43% ~08s            |++++++++++++++++++++++                            | 44% ~08s            |+++++++++++++++++++++++                           | 45% ~08s            |+++++++++++++++++++++++                           | 46% ~08s            |++++++++++++++++++++++++                          | 47% ~07s            |++++++++++++++++++++++++                          | 48% ~07s            |+++++++++++++++++++++++++                         | 49% ~07s            |+++++++++++++++++++++++++                         | 50% ~07s            |++++++++++++++++++++++++++                        | 51% ~07s            |++++++++++++++++++++++++++                        | 52% ~07s            |+++++++++++++++++++++++++++                       | 53% ~07s            |+++++++++++++++++++++++++++                       | 54% ~07s            |++++++++++++++++++++++++++++                      | 55% ~07s            |++++++++++++++++++++++++++++                      | 56% ~06s            |+++++++++++++++++++++++++++++                     | 57% ~06s            |+++++++++++++++++++++++++++++                     | 58% ~06s            |++++++++++++++++++++++++++++++                    | 59% ~06s            |++++++++++++++++++++++++++++++                    | 60% ~06s            |+++++++++++++++++++++++++++++++                   | 61% ~06s            |+++++++++++++++++++++++++++++++                   | 62% ~06s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |++++++++++++++++++++++++++++++++                  | 64% ~05s            |+++++++++++++++++++++++++++++++++                 | 65% ~05s            |+++++++++++++++++++++++++++++++++                 | 66% ~05s            |++++++++++++++++++++++++++++++++++                | 67% ~05s            |++++++++++++++++++++++++++++++++++                | 68% ~05s            |+++++++++++++++++++++++++++++++++++               | 69% ~05s            |+++++++++++++++++++++++++++++++++++               | 70% ~04s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |++++++++++++++++++++++++++++++++++++              | 72% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~04s            |+++++++++++++++++++++++++++++++++++++             | 74% ~04s            |++++++++++++++++++++++++++++++++++++++            | 75% ~04s            |++++++++++++++++++++++++++++++++++++++            | 76% ~04s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~03s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~03s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=15s
+
+#+begin_src R :exports none :results output :session *R* :cache no
+dt.gg <- out[,.(rep = .N, type1=mean(p.value<=0.05)),by=c("n","example")]
+ggCov <- ggplot(dt.gg, aes(x=n,y=type1,group=example,color=example))
+ggCov <- ggCov + geom_abline(slope = 0, intercept =p 0.05, color="black") 
+ggCov <- ggCov + geom_line() + geom_point() + coord_cartesian(ylim = c(0.03,0.055))
+ggCov <- ggCov + ylab("type 1 error") + xlab("sample size")
+ggCov <- ggCov + theme(text = element_text(size=10), 
+                       axis.line = element_line(size = 1.25),
+                       axis.ticks = element_line(size = 2),
+                       axis.ticks.length=unit(.25, "cm"))
+ggsave(ggCov, filename = "figures/examples-coverage.pdf", height = 5)
+#+end_src
+
+#+RESULTS:
+: Saving 7 x 5 in image
+
+#+name: fig:coverage
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Coverage of the t-test.
+[[./figures/examples-coverage.pdf]]
+
+
+
+\clearpage
+
+* Issue 1: parameter of interest with non-normal data
+
+By default, we generally use the mean to define our parameter of
+interest. In our example the difference in mean between the two groups
+meaning that we summarize the distribution of the outcome for each
+group by its mean (or expected value) and then take the difference
+between groups. This is somehow arbitrary, we could have used another
+summary statistic like the standard deviation, the median (or any
+other quantile), the mode, \ldots. However it is not completely arbitrary:
+- it is *convenient* to model and compute: many estimators and softwares
+  have been developped for modeling the mean. Also this can be done
+  in a numerically stable and efficient way.
+- it is a *natural* choice if the outcome is normally distributed as
+  the mean and the variance fully characterize the distribution so no
+  need to model other summary statistics. In particular, for normal
+  distributions the mean is equal to the median and the mode of the
+  distribution.
+- it is *easy to interpret* if the outcome is normally distributed as
+  it is the average but also most likely value.
+
+When the distribution is not normal, the last two arguments might not
+be true. While they approximately hold if the distribution is unimodal
+and symmetric, they are not valid for asymetric or bimodal
+distribution. For instance, the mean of a binary variable will
+correspond to a value that is never observed! If we look at
+autoref:fig:mmm, we can see that the mean is far from being the most
+likely value (i.e. the mode). The median is slightly closer to the
+mode but does not really provide a satisfactory improvement. 
+
+#+begin_src R :exports none :results output :session *R* :cache no
+set.seed(10)
+
+n <- 1e5
+dt2 <- rbind(data.table(Y = rgamma(n, shape = 2, rate = 1/2), group = "C", example = "3. Gamma"),
+             data.table(Y = 2*rgamma(n, shape = 2, rate = 1/2) + 1, group = "T", example = "3. Gamma"))
+dt2S <- dt2[,.(mean = mean(Y), median =  median(Y), mode = as.numeric(names(which.max(table(round(Y,1)))))), by = c("group","example")]
+ggMean <- ggplot(dt2, aes(x=Y,fill=group))
+ggMean <- ggMean + geom_histogram(breaks = seq(0,20,by=0.1), alpha = 0.25, position = "dodge") + facet_wrap(~example)
+ggMean <- ggMean + geom_vline(data = dt2S, aes(xintercept = mean, linetype = "mean", color = group), size = 2)
+ggMean <- ggMean + geom_vline(data = dt2S, aes(xintercept = median, linetype = "median", color = group), size = 2)
+ggMean <- ggMean + geom_vline(data = dt2S, aes(xintercept = mode, linetype = "mode", color = group), size = 2)
+ggMean <- ggMean + facet_wrap(~group)
+ggMean <- ggMean + coord_cartesian(xlim = c(0,15)) + ylab("Number of observations") + labs(linetype = "summary statistic")
+ggMean <- ggMean + scale_linetype_manual(values = c("solid","longdash","dotted"))
+ggMean <- ggMean + theme(text = element_text(size=12), 
+                         axis.line = element_line(size = 1.25),
+                         axis.ticks = element_line(size = 2),
+                         axis.ticks.length=unit(0.25, "cm"),
+                         legend.key.size=unit(1, "cm"),
+                         legend.key.height=unit(1, "cm"),
+                         legend.position = "bottom")
+ggsave(ggMean, filename = "figures/meanMedianMode.pdf", height = 5)
+#+end_src
+
+#+RESULTS:
+: Saving 7 x 5 in image
+
+\clearpage
+
+#+name: fig:mmm
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Mean, median, and mode two asymetric distributions.
+[[./figures/meanMedianMode.pdf]]
+
+
+ In such a case, it can be a good idea to define a new parameter of
+interest. One could for instance apply a transformation that
+normalizes the distribution (e.g. log-transformation, see autoref:fig:logmean), estimate the
+mean of the transformed data (here 1.1 vs 1.8), and compare them
+across groups (here 0.7). In the case of a log-transformation, the
+back-transformed difference and get a nice interpretation has a nice
+interpration: it is a multiplicative effect (exp(0.7)=2, i.e. the mean
+in the treatment is twice larger than in the control group). So,
+instead of studying an additive group effect (on the mean), the parameter of
+interest is a multiplicative group effect (on the mean).
+
+
+#+begin_src R :exports none :results output :session *R* :cache no
+  set.seed(10)
+
+  n <- 1e5
+  dt2 <- rbind(data.table(Y = rgamma(n, shape = 2, rate = 1/2), group = "C", example = "3. Gamma"),
+               data.table(Y = 2*rgamma(n, shape = 2, rate = 1/2), group = "T", example = "3. Gamma"))
+  dt2 <- rbind(dt2,
+               dt2[,.(Y=log(Y),group=group,example="3. log(Gamma)")])
+
+  dt2S <- dt2[example=="3. log(Gamma)",.(mean = mean(Y), median =  median(Y), mode = as.numeric(names(which.max(table(round(Y,1)))))), by = c("group","example")]
+#  dt2S <- rbind(dt2S,
+#                dt2S[,.(mean=exp(mean),median=exp(median),mode=exp(mode), example = "3. Gamma"),by=c("group")])
+  ggLMean <- ggplot(dt2, aes(x=Y,fill=group))
+  ggLMean <- ggLMean + geom_histogram(breaks = seq(-10,10,by=0.1), alpha = 0.25, position = "dodge") + facet_wrap(~example)
+  ggLMean <- ggLMean + geom_vline(data = dt2S, aes(xintercept = mean, linetype = "mean", color = group), size = 2)
+  ggLMean <- ggLMean + geom_vline(data = dt2S, aes(xintercept = median, linetype = "median", color = group), size = 2)
+  ggLMean <- ggLMean + geom_vline(data = dt2S, aes(xintercept = mode, linetype = "mode", color = group), size = 2)
+  ggLMean <- ggLMean + facet_wrap(~example)
+  ggLMean <- ggLMean + coord_cartesian(xlim = c(-3,7)) + ylab("Number of observations") + labs(linetype = "summary statistic")
+  ggLMean <- ggLMean + scale_linetype_manual(values = c("solid","longdash","dotted"))
+  ggLMean <- ggLMean + theme(text = element_text(size=12), 
+                             axis.line = element_line(size = 1.25),
+                             axis.ticks = element_line(size = 2),
+                             axis.ticks.length=unit(0.25, "cm"),
+                             legend.key.size=unit(1, "cm"),
+                             legend.key.height=unit(1, "cm"),
+                             legend.position = "bottom")
+ggsave(ggLMean, filename = "figures/logmean.pdf", height = 5)
+#+end_src
+
+#+RESULTS:
+: Saving 7 x 5 in image
+
+\clearpage
+
+#+name: fig:logmean
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Mean, median, and mode on the log-transformed data
+[[./figures/logmean.pdf]]
+
+
+TODO: Mann-Whitney parameter (e.g. if one cannot find a good transformation), Zero inflated model (example 4)
+
+\clearpage
+
+* Issue 2: handling small samples with non-normal data
+
+
+TODO: Bias correction
+
+TODO: Permutation tests
+
+TODO: Robust standard error
+
+
+
+
+\clearpage
+
+* Issue 3: handling outliers
+
+No good solution here.
+Check the influence of each observation. Median more robust than mean.
+
+
+
+* References
+#+LaTeX: \begingroup
+#+LaTeX: \renewcommand{\section}[2]{}
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]]
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+#+LaTeX: \endgroup
+
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{note}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+#+LATEX_HEADER: \newcommand\sample{\chi}
+#+LATEX_HEADER: \newcommand\Hspace{\mathcal{H}}
+#+LATEX_HEADER: \newcommand\Tspace{\mathcal{T}}
+
+
+** Notations
