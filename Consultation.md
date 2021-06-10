@@ -93,10 +93,8 @@ we will figure out a solution.
   qualifies me for co-authorship. I expect it to be automatic. If
   you/your superviser disagree we should discuss it at the first
   meeting. My affiliations are:
-  + Neurobiology Research Unit, Rigshospitalet and University of
-    Copenhagen, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark
-  + Department of Public Health, Section of Biostatistics, University
-  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark <br> <br>
+  + Department of Public Health, Section of Biostatistics, University of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark
+  + Neurobiology Research Unit and BrainDrugs, Copenhagen University Hospital, Rigshospitalet, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark  <br> <br>
 		  
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also
