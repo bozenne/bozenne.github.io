@@ -52,3 +52,4 @@ I am/have been also been reading about:
 - **Dynamic Treatment Regimes** with *Dynamic Treatment Regimes:
   Statistical Methods for Precision Medicine* (Anastasios A. Tsiatis,
   Marie Davidian, Shannon T. Holloway, Eric B. Laber, 2019)
+- **Causality** with *Causal Inference: What If* (Hernan MA, Robins JM, 2020)
