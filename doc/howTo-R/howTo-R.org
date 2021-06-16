@@ -3091,6 +3091,89 @@ Warning messages:
 2: In sqrt(diag(asVar)) : NaNs produced
 #+end_example
 
+** Output correlation between two endogenous variables
+Simulate some data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+mSim <-lvm(c(gene1,gene2,gene3,gene4,gene5)~expression,
+           expression~score)
+covariance(mSim) <- gene2 ~ gene3
+latent(mSim) <- ~expression
+
+set.seed(10)
+d <- lava::sim(mSim, n = 400, latent = FALSE)
+#+END_SRC
+
+#+RESULTS:
+
+Fit the lvm:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m <- mSim
+e <- lava::estimate(m, data = d)
+#+END_SRC
+#+RESULTS:
+
+Estimate correlation via /lava/:
+#+begin_src R :exports both :results output :session *R* :cache no
+cov2cor(attr(predict(e),"cond.var"))
+#+end_src
+
+#+RESULTS:
+:           gene1     gene2     gene3     gene4     gene5
+: gene1 1.0000000 0.5236249 0.5204666 0.4945280 0.5354561
+: gene2 0.5236249 1.0000000 0.7623392 0.4711268 0.5101182
+: gene3 0.5204666 0.7623392 1.0000000 0.4682851 0.5070414
+: gene4 0.4945280 0.4711268 0.4682851 1.0000000 0.4817718
+: gene5 0.5354561 0.5101182 0.5070414 0.4817718 1.0000000
+
+Estimate correlation via =lvmCov2Cor= (only correlation through the latent variable):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+lvmCov2Cor(e, var1 = "gene1", var2 = "gene2")
+#+END_SRC
+
+#+RESULTS:
+:                         variable  estimate         se     lower     upper null p.value
+: variance 1                 gene1 2.0942854 0.13667200 1.8264133 2.3621576   NA      NA
+: variance 2                 gene2 2.2976185 0.14862591 2.0063171 2.5889200   NA      NA
+: direct covariance  (gene1,gene2) 0.0000000 0.00000000 0.0000000 0.0000000    0     NaN
+: total covariance   (gene1,gene2) 1.1486221 0.10851604 0.9359345 1.3613096    0       0
+: direct correlation (gene1,gene2) 0.0000000 0.00000000 0.0000000 0.0000000    0     NaN
+: total correlation  (gene1,gene2) 0.5236249 0.03010923 0.4646119 0.5826379    0       0
+
+Estimate correlation via =lvmCov2Cor= (direct and indirect correlation):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+lvmCov2Cor(e, var1 = "gene2", var2 = "gene3")
+#+END_SRC
+
+#+RESULTS:
+:                         variable  estimate         se     lower     upper null      p.value
+: variance 1                 gene2 2.2976185 0.14862591 2.0063171 2.5889200   NA           NA
+: variance 2                 gene3 1.9920357 0.12875100 1.7396884 2.2443830   NA           NA
+: direct covariance  (gene2,gene3) 0.5701469 0.08197808 0.4094728 0.7308210    0 3.528955e-12
+: total covariance   (gene2,gene3) 1.6309317 0.12469211 1.3865396 1.8753237    0 0.000000e+00
+: direct correlation (gene2,gene3) 0.2665012 0.03458231 0.1987212 0.3342813    0 1.287859e-14
+: total correlation  (gene2,gene3) 0.7623392 0.02017803 0.7227910 0.8018874    0 0.000000e+00
+
+Estimate the correlation via /lava/ (manual version):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(e, function(x){
+  var.gene1 <- x["gene1~~gene1"] + x["expression~~expression"]
+  var.gene2 <- x["gene2~~gene2"] + x["gene2~expression"]^2 * x["expression~~expression"]
+  cov.gene12 <- x["gene2~expression"] * x["expression~~expression"]
+  c(var.gene1 = var.gene1,
+    var.gene2 = var.gene2,
+    cov = cov.gene12,
+    cor = cov.gene12/sqrt(var.gene1 * var.gene2))
+})
+#+END_SRC
+
+#+RESULTS:
+:                        Estimate Std.Err   2.5%  97.5%   P-value
+: var.gene1.gene1~~gene1   2.0943 0.13327 1.8331 2.3555 1.191e-55
+: var.gene2.gene2~~gene2   2.2976 0.14104 2.0212 2.5741 1.163e-59
+: cov.gene2~expression     1.1486 0.10913 0.9347 1.3625 6.600e-26
+: cor.gene2~expression     0.5236 0.03115 0.4626 0.5847 2.024e-63
+
 ** Output correlation between two latent variables
 
 Simulate some data:
@@ -3104,6 +3187,8 @@ mSim <-lvm(c(PEQ_poslife,PEQ_posself,PEQ_posmood,PEQ_possoc,PEQ_posbehav)~lv.peq
 covariance(mSim) <- lv.peq ~ lv.meq
 covariance(mSim) <- MEQ_timespace~MEQ_ineffability
 latent(mSim) <- ~lv.peq+lv.meq
+
+set.seed(10)
 d <- sim(mSim, n = 40, latent = FALSE)
 #+END_SRC
 
@@ -3123,7 +3208,7 @@ e <- estimate(m1, d)
 
 #+RESULTS:
 
-Delta method via /lava/:
+Estimate the correlation via /lava/:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 estimate(e, function(x){
     c(var.meq = x["lv.meq~~lv.meq"],
@@ -3135,23 +3220,35 @@ estimate(e, function(x){
 
 #+RESULTS:
 :                        Estimate Std.Err     2.5%  97.5%   P-value
-: var.meq.lv.meq~~lv.meq   2.2620  0.6864  0.91659 3.6073 0.0009832
-: var.peq.lv.peq~~lv.peq   0.3082  0.2135 -0.11033 0.7267 0.1489383
-: cov.lv.peq~~lv.meq       0.4509  0.2669 -0.07225 0.9741 0.0911607
-: cor.lv.peq~~lv.meq       0.5401  0.2335  0.08250 0.9977 0.0207034
+: var.meq.lv.meq~~lv.meq   2.4150  0.6270  1.18606 3.6439 0.0001174
+: var.peq.lv.peq~~lv.peq   0.1808  0.1133 -0.04126 0.4030 0.1105233
+: cov.lv.peq~~lv.meq       0.4022  0.1885  0.03268 0.7717 0.0329009
+: cor.lv.peq~~lv.meq       0.6086  0.1638  0.28748 0.9296 0.0002034
 
-Delta method via /numDeriv/:
+Estimate the correlation via =lvmCov2Cor=:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-lvmCov2Cor(e, var1 = "lv.meq", var2 = "lv.peq")
+lvmCov2Cor(e, var1 = "lv.meq", var2 = "lv.peq", robust = TRUE)
 #+END_SRC
 
 #+RESULTS:
-: Loading required package: numDeriv
-:                 estimate        se       lower     upper null    p.value
-: lv.meq~~lv.meq 2.2619571 0.6864231  0.91659256 3.6073217   NA         NA
-: lv.peq~~lv.peq 0.3081865 0.2135303 -0.11032513 0.7266982   NA         NA
-: lv.peq~~lv.meq 0.4509280 0.2669308 -0.07224677 0.9741027   NA         NA
-: cor            0.5400801 0.2334623  0.08250241 0.9976578    0 0.02070338
+#+begin_example
+                          variable  estimate        se       lower     upper
+variance 1                  lv.meq 2.4149694 0.6270062  1.18605985 3.6438789
+variance 2                  lv.peq 0.1808441 0.1133218 -0.04126259 0.4029509
+direct covariance  (lv.meq,lv.peq) 0.4021716 0.1885216  0.03267591 0.7716672
+total covariance   (lv.meq,lv.peq) 0.4021716 0.1885216  0.03267591 0.7716672
+direct correlation (lv.meq,lv.peq) 0.6085599 0.1638215  0.28747555 0.9296442
+total correlation  (lv.meq,lv.peq) 0.6085599 0.1638215  0.28747555 0.9296442
+                   null     p.value
+variance 1           NA          NA
+variance 2           NA          NA
+direct covariance     0 0.032900854
+total covariance      0 0.032900854
+direct correlation    0 0.000203386
+total correlation     0 0.000203386
+#+end_example
+
+
 
 ** LVM as a weighted mean
 Simulate some data:
