@@ -80,10 +80,9 @@ study that you would like to replicate_.
   subject line) explaining your problem and I will try to answer
   within a week.
 
-## When can you get help ? Consultation hours
-I take consultations *Monday afternoon* (13h30-17h30) and *Tuesday
-afternoon* (13h30-17h30). <br>
-
+## When can you get help? Consultation hours
+I take consultations *Tuesday afternoon* (13h30-17h30). <br>
+ 
 If this is completely incompatible with your schedule, for instance
 because you're running weekly experiments those days, just ask me and
 we will figure out a solution.
@@ -94,10 +93,8 @@ we will figure out a solution.
   qualifies me for co-authorship. I expect it to be automatic. If
   you/your superviser disagree we should discuss it at the first
   meeting. My affiliations are:
-  + Neurobiology Research Unit, Rigshospitalet and University of
-    Copenhagen, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark
-  + Department of Public Health, Section of Biostatistics, University
-  of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark <br> <br>
+  + Department of Public Health, Section of Biostatistics, University of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark
+  + Neurobiology Research Unit and BrainDrugs, Copenhagen University Hospital, Rigshospitalet, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark  <br> <br>
 		  
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also

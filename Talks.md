@@ -4,10 +4,6 @@ title: Talks
 permalink: /Talks/
 ---
 
-Conferences I plan to attend this year:
-- [ISCB 2020](https://iscb2020.info/), Krakow, 23-27 August 2020.
-- [CMStatistics 2020](http://www.cmstatistics.org/conferences.php), London, 19-21 December 2020.
-
 Here is a (non-exhaustive) list of talks I have given:
 - [Lesion Segmentation using a Spatially Regularized Mixture
   Model](https://bozenne.github.io/doc/Talks/2014-Applied_statistics-Lesion_Segmentation.pdf). Applied Statistics, 21-24 September 2014, Ribno, Slovenia.
