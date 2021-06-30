@@ -154,16 +154,30 @@ equipped with the covariance inner product.
 
 ** Identification of the efficient influence function 
 
-The efficient influence function, \(\IF^{eff}_{\hat{\psi}}\), is
-orthogonal to the nuisance tangence space (here orthogonal to
-\(\Tspace\)). So we just need to remove the composant of the naive
-influence function that lies in the nuisance tangent space:
+From theorem 3.5 (section 3, page 46) of
+cite:tsiatis2007semiparametric, we have that the efficient influence
+function, \(\IF^{eff}_{\hat{\psi}}\) lies in the tangence space
+(i.e. is orthogonal to \(\Tspace^{\perp}\), see autoref:fig:geometry for an illustration of the geometry).
+
+#+name: fig:geometry
+#+ATTR_LaTeX: :width 0.8\textwidth :placement [!h]
+#+CAPTION: Geometrical view of the influence function (\(\IF\)), the score (\(\Score\)),
+#+CAPTION: the efficient influence function (\(\IF_{eff}\)), the efficient score (\(\Score_{eff}\))
+#+CAPTION: with respect to the tangent space for the parameter of interest \(\Tspace_{\psi}\) and the tangent space for the nuisance parameters \(\Tspace_{\eta}\).
+[[file:./Figures/geometry.pdf]]
+
+
+So we just need to remove the composant of the naive influence
+function that lies in the orthogonal of the tangent space:
 #+BEGIN_EXPORT latex
 \begin{align*}
 \IF^{eff}_{\hat{\psi}} &= IF_{\hat{\psi}} - \Pi(IF_{\hat{\psi}}|\Tspace^{\perp}) \\
 &= IF_{\hat{\psi}} - \Pi(IF_{\hat{\psi}}|\Tspace_2) 
 \end{align*}
 #+END_EXPORT
+
+
+
 where \(\Pi(.|x)\) denotes the projection of \(.\) onto \(x\). We
 first note that any element \(h\) of
 the Hilbert space can be decomposed as:
@@ -350,7 +364,7 @@ bibliographystyle:apalike
 
 ** Font
 # https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
-#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{note}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
 #+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
 
 ** Symbols

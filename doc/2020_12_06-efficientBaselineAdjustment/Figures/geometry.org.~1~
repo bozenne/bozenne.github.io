@@ -1,0 +1,91 @@
+#+TITLE:
+#+Author: Brice Ozenne
+
+# From https://www.latex4technics.com/?note=v89zlk
+
+#+BEGIN_EXPORT latex
+\begin{preview}
+  \begin{tikzpicture}[scale=1.6,tdplot_rotated_coords,
+                    cube/.style={very thick,black},
+                    grid/.style={very thin,gray},
+                    axis/.style={->,ultra thick},
+                    rotated axis/.style={->,purple,ultra thick}]
+
+     %draw the tangent space
+     \draw [\darkblue,fill=blue!20] (0,0,0) -- (3,0,0) -- (3,3,0) -- (0,3,0) -- cycle;
+     \node[\darkblue] at (2.6,2.75,0) (Label) {\(\mathcal{T}\)}; 
+
+     %draw the set of influence functions
+     \draw [\darkgreen,fill=green!20] (0,0,0) -- (3,0,0) -- (3,0,3) -- (0,0,3) -- cycle;
+     \node[\darkgreen] at (2.5,0,2.6) (Label) {\(\mathcal{T}_{\eta}^{\perp}\)}; 
+
+     %draw the main coordinate frame axes
+     \draw[axis,tdplot_main_coords,\darkblue] (0,0,0) -- (4,0,0) node[anchor=north east]{$\mathcal{T}_{\beta}$};
+     \draw[axis,tdplot_main_coords,\darkblue] (0,0,0) -- (0,4,0) node[anchor=north west]{$\mathcal{T}_{\eta}$};
+     \draw[axis,tdplot_main_coords,\darkgreen] (0,0,0) -- (0,0,3) node[anchor=west]{$\mathcal{T}^{\perp}$};
+
+     % draw score function
+     \draw[dashed,very thick] (2,0,0)--(2,1,0);
+     \draw[->,ultra thick] (0,0,0)--(2,1,0) node[anchor=west]{$\mathcal{S}_{\beta}$};
+     \draw[->,ultra thick] (0,0,0)--(2,0,0) node[anchor=north]{$\mathcal{S}_{eff}$};
+
+     % draw influence function
+     \draw[dashed,very thick] (1.5,0,0)--(1.5,0,2);
+     \draw[->,ultra thick] (0,0,0)--(1.5,0,2) node[anchor=east]{$\varphi$};
+     \draw[->,ultra thick,purple!80] (0,0,0)--(1.5,0,0) node[anchor=south east]{$\varphi_{eff}=\Pi\left(\varphi|\mathcal{T}\right)$};
+
+     % origin
+     \shade[ball color = black] (0,0,0) circle (0.06cm) node[anchor=south west]{O};
+
+
+ \end{tikzpicture}
+
+\end{preview}
+#+END_EXPORT
+
+ 
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+OPTIONS:   title:t author:t toc:nil todo:t 
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Latex packages
+#+LaTeX_HEADER: %
+#+LaTeX_HEADER: %%%% additional packages %%%%
+#+LaTeX_HEADER: %
+#+LaTeX_HEADER:\usepackage{authblk}
+#+LaTeX_HEADER:\usepackage[pdftex,active,tightpage]{preview} % to get standalone diagram
+
+** Code
+#+PROPERTY: header-args :session *R*
+#+PROPERTY: header-args :tange yes % extract source code: http://orgmode.org/manual/Extracting-source-code.html
+#+PROPERTY: header-args :eval yes :cache no
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+
+** Notations
+#+LATEX_HEADER: \RequirePackage{bm}
+#+LaTeX_HEADER:\newcommand{\Model}{\mathcal{M}}
+#+LaTeX_HEADER:\newcommand{\VModel}{\bm{\mathcal{M}}}  % require bm package
+** Latex command
+#+LaTeX_HEADER: %
+#+LaTeX_HEADER: %%%% additional latex commands %%%%
+#+LaTeX_HEADER: %
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+** Tikz 
+#+LATEX_HEADER: \RequirePackage{tikz}
+#+LATEX_HEADER: \RequirePackage{tikz-3dplot}
+#+LATEX_HEADER: \tikzset{font=\LARGE}
+#+LaTeX_HEADER: \tdplotsetmaincoords{60}{125}
+#+LaTeX_HEADER: \tdplotsetrotatedcoords{0}{0}{0} %<- rotate

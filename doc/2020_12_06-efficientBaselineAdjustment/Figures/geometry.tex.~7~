@@ -1,0 +1,135 @@
+% Created 2021-06-30 on 14:37
+% Intended LaTeX compiler: pdflatex
+\documentclass{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+%
+%%%% additional packages %%%%
+%
+\usepackage{authblk}
+\usepackage[pdftex,active,tightpage]{preview} % to get standalone diagram
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{bm}
+\newcommand{\Model}{\mathcal{M}}
+\newcommand{\VModel}{\bm{\mathcal{M}}}  % require bm package
+%
+%%%% additional latex commands %%%%
+%
+\newcommand{\lightblue}{blue!50!white}
+\newcommand{\darkblue}{blue!80!black}
+\newcommand{\darkgreen}{green!50!black}
+\newcommand{\darkred}{red!50!black}
+\definecolor{gray}{gray}{0.5}
+\RequirePackage{tikz}
+\RequirePackage{tikz-3dplot}
+\tikzset{font=\LARGE}
+\tdplotsetmaincoords{60}{125}
+\tdplotsetrotatedcoords{0}{0}{0} %<- rotate
+\author{Brice Ozenne}
+\date{\today}
+\title{}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={Brice Ozenne},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.1 (Org mode 9.4.5)},
+ pdflang={English}
+ }
+\begin{document}
+
+\begin{preview}
+  \begin{tikzpicture}[scale=1.6,tdplot_rotated_coords,
+                    cube/.style={very thick,black},
+                    grid/.style={very thin,gray},
+                    axis/.style={->,ultra thick},
+                    rotated axis/.style={->,purple,ultra thick}]
+
+     %draw the tangent space
+     \draw [\darkblue,fill=blue!20] (0,0,0) -- (3,0,0) -- (3,3,0) -- (0,3,0) -- cycle;
+     \node[\darkblue] at (2.6,2.75,0) (Label) {\(\mathcal{T}\)}; 
+
+     %draw the set of influence functions
+     \draw [\darkgreen,fill=green!20] (0,0,0) -- (3,0,0) -- (3,0,3) -- (0,0,3) -- cycle;
+     \node[\darkgreen] at (2.5,0,2.6) (Label) {\(\mathcal{T}_{\eta}^{\perp}\)}; 
+
+     %draw the main coordinate frame axes
+     \draw[axis,tdplot_main_coords,\darkblue] (0,0,0) -- (4,0,0) node[anchor=north east]{$\mathcal{T}_{\psi}$};
+     \draw[axis,tdplot_main_coords,\darkblue] (0,0,0) -- (0,4,0) node[anchor=north west]{$\mathcal{T}_{\eta}$};
+     \draw[axis,tdplot_main_coords,\darkgreen] (0,0,0) -- (0,0,3) node[anchor=west]{$\mathcal{T}^{\perp}$};
+
+     % draw score function
+     \draw[dashed,very thick] (2,0,0)--(2,1,0);
+     \draw[->,ultra thick] (0,0,0)--(2,1,0) node[anchor=west]{$\mathcal{S}_{\psi}$};
+     \draw[->,ultra thick] (0,0,0)--(2,0,0) node[anchor=north east]{$\mathcal{S}_{eff}$};
+
+     % draw influence function
+     \draw[dashed,very thick] (1.5,0,0)--(1.5,0,2);
+     \draw[->,ultra thick] (0,0,0)--(1.5,0,2) node[anchor=south west]{$\mathcal{IF}$};
+     \draw[->,ultra thick,purple!80] (0,0,0)--(1.5,0,0) node[anchor=south east]{$\mathcal{IF}_{eff}=\Pi\left(\mathcal{IF}|\mathcal{T}\right)$};
+
+     % origin
+     \shade[ball color = black] (0,0,0) circle (0.06cm) node[anchor=south west]{O};
+
+
+ \end{tikzpicture}
+
+\end{preview}
+\end{document}

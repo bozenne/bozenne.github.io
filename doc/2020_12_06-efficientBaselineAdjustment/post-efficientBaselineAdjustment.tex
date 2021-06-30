@@ -1,4 +1,4 @@
-% Created 2021-03-08 man 18:05
+% Created 2021-06-30 on 14:38
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -62,6 +62,7 @@ lineskip = 0pt} % specifies additional space between lines in listings
 \geometry{top=1cm}
 \usepackage{titlesec}
 \usepackage{etoolbox}
+
 \makeatletter
 \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
 \patchcmd{\ttlh@hang}{\noindent}{}{}{}
@@ -80,7 +81,7 @@ citecolor=[rgb]{0,0.5,0},
 urlcolor=[rgb]{0,0,0.5},
 linkcolor=[rgb]{0,0,0.5},
 }
-\newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+\newenvironment{note}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
 \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
 \RequirePackage{pifont}
 \RequirePackage{relsize}
@@ -202,7 +203,7 @@ linkcolor=[rgb]{0,0,0.5},
  pdftitle={Efficient baseline adjustment in a randomized trial},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 27.0.50 (Org mode 9.0.4)},
+ pdfcreator={Emacs 27.1 (Org mode 9.4.5)},
  pdflang={English}
  }
 \begin{document}
@@ -213,7 +214,7 @@ Disclaimer: this note is a compilation of section 5.4 of
 Torben Martinussen.
 
 \section{Motivation, objective, and notations}
-\label{sec:org4a44577}
+\label{sec:orgcdf2321}
 
 We consider a randomized trial with a single binary or continuous
 outcome (\(Y\)), two treatment arms: placebo (\(A=0\)) and active
@@ -234,7 +235,7 @@ use of the baseline variables. We denote \(\pi=\Prob[A=1]\) which is
 known.
 
 \section{Naive estimator}
-\label{sec:org305145a}
+\label{sec:orgd815e35}
 
 A possible estimator for \(\psi\) is:
 \begin{align*}
@@ -254,10 +255,10 @@ where \(\IF_x\) denotes the influence function associated with the
 estimator \(x\).
 
 \section{Derivation of the semi-parametric efficient estimator}
-\label{sec:orgcb80b82}
+\label{sec:org91b19ae}
 
 \subsection{Geometry of the set of all influence function}
-\label{sec:orgbada587}
+\label{sec:orgbd9b5f5}
 The log-likelihood can be decomposed as:
 \begin{align*}
 \log(f(Y,A,Z)) = \log(f(Y|A,Z)) + \log(f(A|Z)) + \log(f(Z))
@@ -333,16 +334,29 @@ function is spanned by the orthogonal to the tangent space:
 where \(g\) is an arbitrary function.
 
 \subsection{Identification of the efficient influence function}
-\label{sec:orgb3bc48a}
+\label{sec:org9d92ec5}
 
-The efficient influence function, \(\IF^{eff}_{\hat{\psi}}\), is
-orthogonal to the nuisance tangence space (here orthogonal to
-\(\Tspace\)). So we just need to remove the composant of the naive
-influence function that lies in the nuisance tangent space:
+From theorem 3.5 (section 3, page 46) of
+\cite{tsiatis2007semiparametric}, we have that the efficient influence
+function, \(\IF^{eff}_{\hat{\psi}}\) lies in the tangence space
+(i.e. is orthogonal to \(\Tspace^{\perp}\), see \autoref{fig:geometry} for an illustration of the geometry).
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.8\textwidth]{./Figures/geometry.pdf}
+\caption{\label{fig:geometry}Geometrical view of the influence function (\(\IF\)), the score (\(\Score\)), the efficient influence function (\(\IF_{eff}\)), the efficient score (\(\Score_{eff}\)) with respect to the tangent space for the parameter of interest \(\Tspace_{\psi}\) and the tangent space for the nuisance parameters \(\Tspace_{\eta}\).}
+\end{figure}
+
+
+So we just need to remove the composant of the naive influence
+function that lies in the orthogonal of the tangent space:
 \begin{align*}
 \IF^{eff}_{\hat{\psi}} &= IF_{\hat{\psi}} - \Pi(IF_{\hat{\psi}}|\Tspace^{\perp}) \\
 &= IF_{\hat{\psi}} - \Pi(IF_{\hat{\psi}}|\Tspace_2) 
 \end{align*}
+
+
+
 where \(\Pi(.|x)\) denotes the projection of \(.\) onto \(x\). We
 first note that any element \(h\) of
 the Hilbert space can be decomposed as:
@@ -386,7 +400,7 @@ and:
 \end{align*}
 
 \section{Relationship to the G-formula computation}
-\label{sec:orgedb8cbd}
+\label{sec:orga2231ff}
 
 When performing a logistic regression including an intercept, A, and Z
 the score equation is:
@@ -423,7 +437,7 @@ Because
 \end{align*}
 
 \section{References}
-\label{sec:orgf3010e4}
+\label{sec:org22dbe02}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
