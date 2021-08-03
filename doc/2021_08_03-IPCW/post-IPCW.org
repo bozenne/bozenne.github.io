@@ -2,41 +2,42 @@
 #+Author: Brice Ozenne
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-path <- "~/Documents/GitHub/bozenne.github.io/doc/2021_08_03-IPCW/"
+path <- "c:/Users/hpl802/Documents/Github/bozenne.github.io/doc/2021_08_03-IPCW/"
 setwd(path)
 #+END_SRC
 
 #+RESULTS:
-: Fejl i setwd(path) : cannot change working directory
 
 
 * Principle
 
 Inverse probability of censoring weighting (IPCW) is a method able to
 handle informative drop-out. Intuitively, in presence of informative
-drop-out a complete case analysis is a biased approach as the
-individual with complete data are not representative of the
-population. However with an appropriate re-weighting of the individual
-with complete data, we can "re-balance" our sample and make it
-representative of the population. To do so, we divide the population
-into sub-populations and attribute weights to individuals who did not
-drop-out inversely proportional to the frequency of the drop-out in
-the sub-population. Thanks to the weights, individuals who did not
-drop-out "represent" the individuals who drop-out, thus overall are
-representative of the population.
+drop-out a complete case analysis is a biased approach as individuals
+with complete data are not representative of the population. However
+with an appropriate re-weighting of the individuals with complete
+data, we can "re-balance" our sample and make it representative of the
+population. To do so, we divide the population into sub-populations
+and attribute weights to individuals who did not drop-out inversely
+proportional to the frequency of the drop-out in the
+sub-population. Thanks to the weights, individuals who did not
+drop-out "represent" the individuals who dropped-out. Thus, overall,
+the weighted sample is representative of the population.
+
+
 
 * Illustrative example
 
-Consider a study were we follow depressed
-individual over time. They have a baseline measurement, then are given
-a treatment, and then have a follow-up measurement. We would like to
-assess the treatment effect in term of depression score [fn:::To
-simplfy, there is no control group - we assume that without treatment
-the depression score would be constant.]. The population of interest
-contain people several depressed and moderately depressed; the
-treatment may work differently in each sub-population. Unfortunately,
-some study participants drop-out and it seems that they are more
-likely to drop-out when they are severaly depressed.
+Consider a study were we follow depressed individual over time. They
+have a baseline measurement, then are given a treatment, and then have
+a follow-up measurement. We would like to assess the treatment effect
+in term of depression score [fn:::To simplfy, there is no control
+group - we assume that without treatment the depression score would be
+constant.]. The population of interest contain severely and moderately
+depressed individuals; the treatment may work differently in each
+sub-population. Unfortunately, some study participants dropped-out and
+it seems that they are more likely to drop-out when they are severaey
+depressed.
 
 \clearpage
 
@@ -89,11 +90,11 @@ effect is twice bigger for the severely depressed population but
 individuals from this population are also much more likely to
 drop-out. Overall the expected treatment effect is:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-(0.25+0.5)/2
+(-25-50)/2
 #+END_SRC
 
 #+RESULTS:
-: [1] 0.375
+: [1] -37.5
 
 \bigskip
 
@@ -268,14 +269,6 @@ ls.res <- lapply(1:n.sim, function(iSim){
 #+ATTR_LaTeX: :width \textwidth :placement [!h]
 #+CAPTION: Results of the simulation study for a sample size of 1000 using 100 datasets.
 [[./figures/simStudy-bias.pdf]]
-
-
-* References :noexport:
-#+LaTeX: \begingroup
-#+LaTeX: \renewcommand{\section}[2]{}
-bibliographystyle:apalike [[bibliography:bibliography.bib]]
-# help: https://gking.harvard.edu/files/natnotes2.pdf
-#+LaTeX: \endgroup
 
 
 * Reference :noexport:
