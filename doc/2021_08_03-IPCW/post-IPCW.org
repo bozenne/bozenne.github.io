@@ -1,0 +1,541 @@
+#+TITLE: Inverse probability of censoring weighting (IPCW) for linear regression
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+path <- "~/Documents/GitHub/bozenne.github.io/doc/2021_08_03-IPCW/"
+setwd(path)
+#+END_SRC
+
+#+RESULTS:
+: Fejl i setwd(path) : cannot change working directory
+
+
+* Principle
+
+Inverse probability of censoring weighting (IPCW) is a method able to
+handle informative drop-out. Intuitively, in presence of informative
+drop-out a complete case analysis is a biased approach as the
+individual with complete data are not representative of the
+population. However with an appropriate re-weighting of the individual
+with complete data, we can "re-balance" our sample and make it
+representative of the population. To do so, we divide the population
+into sub-populations and attribute weights to individuals who did not
+drop-out inversely proportional to the frequency of the drop-out in
+the sub-population. Thanks to the weights, individuals who did not
+drop-out "represent" the individuals who drop-out, thus overall are
+representative of the population.
+
+* Illustrative example
+
+Consider a study were we follow depressed
+individual over time. They have a baseline measurement, then are given
+a treatment, and then have a follow-up measurement. We would like to
+assess the treatment effect in term of depression score [fn:::To
+simplfy, there is no control group - we assume that without treatment
+the depression score would be constant.]. The population of interest
+contain people several depressed and moderately depressed; the
+treatment may work differently in each sub-population. Unfortunately,
+some study participants drop-out and it seems that they are more
+likely to drop-out when they are severaly depressed.
+
+\clearpage
+
+We can simulate such a dataset using the following function:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+simTrial <- function(n, rho, dmu, pC){
+  ## simulate data
+  Sigma <- 10^2*matrix(c(1,rho,rho,1),2,2)
+  ## gather into dataset
+  M.Ym <- rmvnorm(n, mean = c(50, 50-dmu[1]), sigma = Sigma)
+  M.Ys <- rmvnorm(n, mean = c(75, 75-dmu[2]), sigma = Sigma)
+  dtL <- rbind(
+    data.table(id = 1:n, mdd = "moderate", time = "T1", Y = M.Ym[,1]),
+    data.table(id = 1:n, mdd = "moderate", time = "T2", Y = M.Ym[,2]),
+    data.table(id = n+(1:n), mdd = "severe", time = "T1", Y = M.Ys[,1]),
+    data.table(id = n+(1:n), mdd = "severe", time = "T2", Y = M.Ys[,2])
+  )
+  dtL$probaDO <- 0
+  dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",pC[1],pC[2])]
+  dtL[,dropout := rbinom(.N,prob=probaDO,size=1)]
+  dtL[,Yobs:=Y]
+  dtL[dropout==1,Yobs:=NA]
+  dtL$probaDO <- NULL
+  return(dtL)
+}
+set.seed(11)
+dtL <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7))
+print(dtL)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+        id      mdd time        Y dropout     Yobs
+   1:    1 moderate   T1 44.83259       0 44.83259
+   2:    2 moderate   T1 30.34157       0 30.34157
+   3:    3 moderate   T1 56.36308       0 56.36308
+   4:    4 moderate   T1 64.63341       0 64.63341
+   5:    5 moderate   T1 45.10048       0 45.10048
+  ---                                             
+3996: 1996   severe   T2 30.59793       1       NA
+3997: 1997   severe   T2 18.97725       1       NA
+3998: 1998   severe   T2 29.80266       1       NA
+3999: 1999   severe   T2 30.26518       0 30.26518
+4000: 2000   severe   T2 39.15797       0 39.15797
+#+end_example
+
+Here we have simulated a two sub-populations of 1000, with a
+correlation of 0.5 between baseline and follow-up . The treatment
+effect is twice bigger for the severely depressed population but
+individuals from this population are also much more likely to
+drop-out. Overall the expected treatment effect is:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+(0.25+0.5)/2
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.375
+
+\bigskip
+
+Without drop-out, we could use a simple linear model to carry-out the analysis:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
+e.oracle <- lm(diff~1, data = dtW.oracle)
+summary(e.oracle)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -37.35098  0.3141814 -118.8835        0
+leading to an estimate quite close to the true value.
+
+\bigskip
+
+With drop-out, a complete case analysis would lead to a biased
+estimator. In this example, we can "see" that the estimated value is
+far away from the true one (even when accouting for the uncertainty):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+dtW$diff <- dtW$T2-dtW$T1
+dtW.CC <- dtW[!is.na(diff)]
+e.CC <- lm(diff~1, data = dtW.CC)
+summary(e.CC)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -31.42356  0.3909029 -80.38713        0
+
+An alternative approach would be to use a linear mixed model
+(i.e. full information):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.FI <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
+summary(e.FI)$tTable
+#+END_SRC
+
+#+RESULTS:
+:                 Value Std.Error   DF   t-value p-value
+: (Intercept)  62.59128 0.3239587 1999 193.20760       0
+: timeT2      -33.76472 0.3855964 1068 -87.56494       0
+which is better than the complete case analysis still biased when the
+drop-out mechanism depends on variables other than the baseline value.
+
+\clearpage
+
+ A better approach is to use IPCW. First we model the probability of
+not dropping out at follow-up:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL$observed <- 1-dtL$dropout
+dtL.T2 <- dtL[time == "T2"]
+e.glmW.oracle <- glm(observed ~ mdd, data = dtL.T2,
+                     family = binomial(link = "logit"))
+#+END_SRC
+
+#+RESULTS:
+and then compute the weights for observations with full data:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL.T2[dropout == 0],
+                      type = "response")
+sum(w.oracle)
+#+END_SRC
+
+#+RESULTS:
+: [1] 2000
+
+Note that the weights sum to the total sample size. We then add these
+weights in our dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.CC$weights.oracle <- w.oracle
+e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weights.oracle)
+summary(e.IPCWoracle)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error  t value Pr(>|t|)
+: (Intercept) -36.89889  0.4251421 -86.7919        0
+
+which gives a result much closer to the true value.
+
+* Simulation study
+
+The quality of the previous estimators is compared using a simulation
+study. The results are summarized by autoref:fig:simulation.
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+warper <- function(n, rho, dmu, pC){
+
+    dtL <- simTrial(n = n, rho = rho, dmu = dmu, pC = pC)
+    
+    ## *** oracle
+    dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+    dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
+    e.lmOracle <- lm(diff~1, data = dtW.oracle)
+
+    ## *** naive and biased analysis
+    dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+    dtW$diff <- dtW$T2-dtW$T1
+    e.lmNaive <- lm(diff~1, data = dtW)
+
+    ## *** mixed model
+    e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
+    
+
+    ## *** IPCW with oracle weights
+    dtL$observed <- 1-dtL$dropout
+    e.glmW.oracle <- glm(observed ~ mdd, data = dtL[time == "T2"], family = binomial(link = "logit"))
+    w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL[time == "T2" & dropout == 0], type = "response")
+
+    dtW$weights.oracle <- as.numeric(NA)
+    dtW[!is.na(diff), weights.oracle := w.oracle]
+    dtWR <- dtW[!is.na(diff)]
+    e.lmIPCW <- lm(diff~1, data = dtWR, weights = dtWR$weights.oracle)
+
+    ## *** export
+    res.oracle <- setNames(summary(e.lmOracle)$coef[1,], c("estimate","se","statistic","p.value"))
+    res.naive <- setNames(summary(e.lmNaive)$coef[1,], c("estimate","se","statistic","p.value"))
+    res.lme <- setNames(summary(e.lme)$tTable[2,c(1:2,4:5)], c("estimate","se","statistic","p.value"))
+    res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
+
+    out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
+                 cbind(model = "naive", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
+                 cbind(model = "FI", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
+                 cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW))))
+    return(out)
+}
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+n.sim <- 100
+ls.res <- lapply(1:n.sim, function(iSim){
+  rbind(warper(n = 1000, rho = 0, dmu = c(25,50), pC = c(0.2,0.7)),
+        warper(n = 1000, rho = 0.5, dmu = c(25,50), pC = c(0.2,0.7)),
+        warper(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7)))
+})
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+  library(ggplot2)
+  library(data.table)
+  dt.res <- as.data.table(do.call(rbind,ls.res))
+  dt.res[, model := factor(model, c("naive","FI","IPCW","oracle"))]
+  dt.res[, correlation := paste0("correlation = ", rho)]
+
+  gg <- ggplot(dt.res, aes(y = estimate))
+  gg <- gg + geom_boxplot(aes(fill=model))
+  gg <- gg + facet_wrap(~correlation)
+  gg <- gg + theme(axis.title.x=element_blank(),
+                   axis.text.x=element_blank(),
+                   axis.ticks.x=element_blank())
+  gg <- gg + theme(text = element_text(size=15),
+                   axis.line = element_line(size = 1.25),
+                   axis.ticks = element_line(size = 2),
+                   axis.ticks.length=unit(.25, "cm"),
+                   legend.position="bottom",
+                   legend.direction = "horizontal")
+  ggsave(gg, filename = "./figures/simStudy-bias.pdf")
+#+END_SRC
+
+#+RESULTS:
+: Saving 11.4 x 7.83 in image
+
+#+name: fig:simulation
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Results of the simulation study for a sample size of 1000 using 100 datasets.
+[[./figures/simStudy-bias.pdf]]
+
+
+* References :noexport:
+#+LaTeX: \begingroup
+#+LaTeX: \renewcommand{\section}[2]{}
+bibliographystyle:apalike [[bibliography:bibliography.bib]]
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+#+LaTeX: \endgroup
+
+
+* Reference :noexport:
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{note}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+#+LATEX_HEADER: \newcommand\sample{\chi}
+#+LATEX_HEADER: \newcommand\Hspace{\mathcal{H}}
+#+LATEX_HEADER: \newcommand\Tspace{\mathcal{T}}
+
+
+** Notations

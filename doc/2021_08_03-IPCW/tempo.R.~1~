@@ -1,0 +1,105 @@
+### tempo.R --- 
+##----------------------------------------------------------------------
+## Author: Brice Ozenne
+## Created: aug  3 2021 (17:46) 
+## Version: 
+## Last-Updated: aug  3 2021 (18:28) 
+##           By: Brice Ozenne
+##     Update #: 1
+##----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+##----------------------------------------------------------------------
+## 
+### Code:
+
+library(mvtnorm)
+library(data.table)
+library(nlme)
+
+## *** simulate data
+n <- 1000
+rho  <- 0.2
+
+set.seed(11)
+M.Ygood <- rmvnorm(n, mean = c(50, 25), sigma = 10^2*matrix(c(1,rho,rho,1),2,2))
+M.Ybad <- rmvnorm(n, mean = c(75, 25), sigma = 10^2*matrix(c(1,rho,rho,1),2,2))
+dtL <- rbind(data.table(id = 1:n, latent = "good", time = "T1", Y = M.Ygood[,1]),
+             data.table(id = 1:n, latent = "good", time = "T2", Y = M.Ygood[,2]),
+             data.table(id = n+(1:n), latent = "bad", time = "T1", Y = M.Ybad[,1]),
+             data.table(id = n+(1:n), latent = "bad", time = "T2", Y = M.Ybad[,2]))
+dtL$pC <- 0
+dtL[time=="T2",pC := ifelse(.SD$latent=="good",0.2,0.7)]
+dtL[,dropout := rbinom(.N,prob=pC,size=1)]
+dtL[,Yobs:=Y]
+dtL[dropout==1,Yobs:=NA]
+
+## *** oracle
+dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
+summary(lm(diff~1, data = dtW.oracle))$coef
+
+## *** naive and biased analysis
+dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+dtW$diff <- dtW$T2-dtW$T1
+summary(lm(diff~1, data = dtW))$coef
+
+## *** mixed model 
+summary(lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit))$tTable
+
+## *** IPCW with oracle weights
+dtL$observed <- 1-dtL$dropout
+e.glmW.oracle <- glm(observed ~ latent, data = dtL[time == "T2"], family = binomial(link = "logit"))
+w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL[time == "T2" & dropout == 0], type = "response")
+
+dtW$weights.oracle <- as.numeric(NA)
+dtW[!is.na(diff), weights.oracle := w.oracle]
+dtW$weightsS.oracle <- as.numeric(NA)
+dtW[!is.na(diff), weightsS.oracle := wS.oracle]
+
+dtWR <- dtW[!is.na(diff)]
+summary(lm(diff~1, data = dtWR, weights = dtWR$weights.oracle))
+summary(lm(diff~1, data = dtWR, weights = dtWR$weightsS.oracle))
+
+## *** simulation study
+warper <- function(n, rho, dmu, pC){
+
+    simTrial(n = n, rho = rho, dmu = dmu, pC = pC)
+    
+    ## *** oracle
+    dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+    dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
+    e.lmOracle <- lm(diff~1, data = dtW.oracle)
+
+    ## *** naive and biased analysis
+    dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+    dtW$diff <- dtW$T2-dtW$T1
+    e.lmNaive <- lm(diff~1, data = dtW)
+
+    ## *** mixed model
+    e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
+    
+
+    ## *** IPCW with oracle weights
+    dtL$observed <- 1-dtL$dropout
+    e.glmW.oracle <- glm(observed ~ latent, data = dtL[time == "T2"], family = binomial(link = "logit"))
+    w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL[time == "T2" & dropout == 0], type = "response")
+
+    dtW$weights.oracle <- as.numeric(NA)
+    dtW[!is.na(diff), weights.oracle := w.oracle]
+    dtWR <- dtW[!is.na(diff)]
+    e.lmIPCW <- lm(diff~1, data = dtWR, weights = dtWR$weights.oracle)
+
+    browser()
+    ## *** export
+    summary(e.lmOracle)$coef
+    summary(e.lmNaive)$coef
+    summary(e.lme)$tTable
+    summary(e.lmIPCW)$coef
+}
+warper(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7))
+
+##----------------------------------------------------------------------
+### tempo.R ends here
