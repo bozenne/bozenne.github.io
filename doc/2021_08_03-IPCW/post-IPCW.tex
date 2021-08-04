@@ -1,4 +1,4 @@
-% Created 2021-08-03 ti 19:18
+% Created 2021-08-04 on 12:08
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -211,7 +211,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Principle}
-\label{sec:org55b3c86}
+\label{sec:org6b5d322}
 
 Inverse probability of censoring weighting (IPCW) is a method able to
 handle informative drop-out. Intuitively, in presence of informative
@@ -229,7 +229,7 @@ the weighted sample is representative of the population.
 
 
 \section{Illustrative example}
-\label{sec:orgbd582b8}
+\label{sec:org88ba9e6}
 
 Consider a study were we follow depressed individual over time. They
 have a baseline measurement, then are given a treatment, and then have
@@ -248,6 +248,8 @@ We can simulate such a dataset using the following function:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 simTrial <- function(n, rho, dmu, pC){
+  require(mvtnorm)
+  require(data.table)
   ## simulate data
   Sigma <- 10^2*matrix(c(1,rho,rho,1),2,2)
   ## gather into dataset
@@ -327,7 +329,7 @@ estimator. In this example, we can "see" that the estimated value is
 far away from the true one (even when accouting for the uncertainty):
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
 dtW$diff <- dtW$T2-dtW$T1
 dtW.CC <- dtW[!is.na(diff)]
 e.CC <- lm(diff~1, data = dtW.CC)
@@ -344,6 +346,7 @@ An alternative approach would be to use a linear mixed model
 (i.e. full information):
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
+require(nlme)
 e.FI <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
 summary(e.FI)$tTable
 \end{lstlisting}
@@ -363,19 +366,16 @@ drop-out mechanism depends on variables other than the baseline value.
 not dropping out at follow-up:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-dtL$observed <- 1-dtL$dropout
-dtL.T2 <- dtL[time == "T2"]
-e.glmW.oracle <- glm(observed ~ mdd, data = dtL.T2,
+dtW$observed <- !is.na(dtW$T2)
+e.glmW.oracle <- glm(observed ~ mdd, data = dtW,
 		     family = binomial(link = "logit"))
 \end{lstlisting}
 
 and then compute the weights for observations with full data:
-
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL.T2[dropout == 0],
-		      type = "response")
-sum(w.oracle)
+dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW,type = "response")
+dtW[observed == TRUE, sum(weight.oracle)]
 \end{lstlisting}
 
 \begin{verbatim}
@@ -383,12 +383,12 @@ sum(w.oracle)
 \end{verbatim}
 
 
-Note that the weights sum to the total sample size. We then add these
-weights in our dataset:
+Note that the weights sum to the total sample size. We then perform
+the complete case analysis with these weights:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-dtW.CC$weights.oracle <- w.oracle
-e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weights.oracle)
+dtW.CC <- dtW[!is.na(diff)]
+e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight.oracle)
 summary(e.IPCWoracle)$coef
 \end{lstlisting}
 
@@ -398,10 +398,39 @@ summary(e.IPCWoracle)$coef
 \end{verbatim}
 
 
-which gives a result much closer to the true value.
+which gives a result much closer to the true value. A more feasible
+IPCW would use the baseline score to define the weights:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.glmW <- glm(observed ~ T1, data = dtW,
+	      family = binomial(link = "logit"))
+dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
+dtW[observed == TRUE, sum(weight)]
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 2015.739
+\end{verbatim}
+
+
+We then perform the complete case analysis with these new weights:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dtW.CC <- dtW[!is.na(diff)]
+e.IPCW <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight)
+summary(e.IPCW)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+             Estimate Std. Error   t value Pr(>|t|)
+(Intercept) -35.47206   0.423423 -83.77453        0
+\end{verbatim}
+
+
+\clearpage
 
 \section{Simulation study}
-\label{sec:org7c5604a}
+\label{sec:orgac4b2ea}
 
 The quality of the previous estimators is compared using a simulation
 study. The results are summarized by \autoref{fig:simulation}.

@@ -44,6 +44,8 @@ depressed.
 We can simulate such a dataset using the following function:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 simTrial <- function(n, rho, dmu, pC){
+  require(mvtnorm)
+  require(data.table)
   ## simulate data
   Sigma <- 10^2*matrix(c(1,rho,rho,1),2,2)
   ## gather into dataset
@@ -117,7 +119,7 @@ With drop-out, a complete case analysis would lead to a biased
 estimator. In this example, we can "see" that the estimated value is
 far away from the true one (even when accouting for the uncertainty):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
+dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
 dtW$diff <- dtW$T2-dtW$T1
 dtW.CC <- dtW[!is.na(diff)]
 e.CC <- lm(diff~1, data = dtW.CC)
@@ -131,6 +133,7 @@ summary(e.CC)$coef
 An alternative approach would be to use a linear mixed model
 (i.e. full information):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+require(nlme)
 e.FI <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
 summary(e.FI)$tTable
 #+END_SRC
@@ -147,29 +150,26 @@ drop-out mechanism depends on variables other than the baseline value.
  A better approach is to use IPCW. First we model the probability of
 not dropping out at follow-up:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtL$observed <- 1-dtL$dropout
-dtL.T2 <- dtL[time == "T2"]
-e.glmW.oracle <- glm(observed ~ mdd, data = dtL.T2,
+dtW$observed <- !is.na(dtW$T2)
+e.glmW.oracle <- glm(observed ~ mdd, data = dtW,
                      family = binomial(link = "logit"))
 #+END_SRC
 
 #+RESULTS:
 and then compute the weights for observations with full data:
-
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL.T2[dropout == 0],
-                      type = "response")
-sum(w.oracle)
+dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW,type = "response")
+dtW[observed == TRUE, sum(weight.oracle)]
 #+END_SRC
 
 #+RESULTS:
 : [1] 2000
 
-Note that the weights sum to the total sample size. We then add these
-weights in our dataset:
+Note that the weights sum to the total sample size. We then perform
+the complete case analysis with these weights:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW.CC$weights.oracle <- w.oracle
-e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weights.oracle)
+dtW.CC <- dtW[!is.na(diff)]
+e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight.oracle)
 summary(e.IPCWoracle)$coef
 #+END_SRC
 
@@ -177,7 +177,30 @@ summary(e.IPCWoracle)$coef
 :              Estimate Std. Error  t value Pr(>|t|)
 : (Intercept) -36.89889  0.4251421 -86.7919        0
 
-which gives a result much closer to the true value.
+which gives a result much closer to the true value. A more feasible
+IPCW would use the baseline score to define the weights:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.glmW <- glm(observed ~ T1, data = dtW,
+              family = binomial(link = "logit"))
+dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
+dtW[observed == TRUE, sum(weight)]
+#+END_SRC
+
+#+RESULTS:
+: [1] 2015.739
+
+We then perform the complete case analysis with these new weights:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.CC <- dtW[!is.na(diff)]
+e.IPCW <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight)
+summary(e.IPCW)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -35.47206   0.423423 -83.77453        0
+
+\clearpage
 
 * Simulation study
 
@@ -187,47 +210,68 @@ study. The results are summarized by autoref:fig:simulation.
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 warper <- function(n, rho, dmu, pC){
 
-    dtL <- simTrial(n = n, rho = rho, dmu = dmu, pC = pC)
-    
-    ## *** oracle
-    dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
-    dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
-    e.lmOracle <- lm(diff~1, data = dtW.oracle)
+  ## *** simulate data
+  dtL <- simTrial(n = n, rho = rho, dmu = dmu, pC = pC)
+  
+  ## *** rehape data
+  dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
+  dtW$diff <- dtW$T2-dtW$T1
+  dtW$observed <- 1-is.na(dtW$T2)
 
-    ## *** naive and biased analysis
-    dtW <- dcast(dtL, formula = id ~ time, value.var = "Yobs")
-    dtW$diff <- dtW$T2-dtW$T1
-    e.lmNaive <- lm(diff~1, data = dtW)
+  dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+  dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
 
-    ## *** mixed model
-    e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
-    
+  ## *** oracle
+  e.lmOracle <- lm(diff~1, data = dtW.oracle)
 
-    ## *** IPCW with oracle weights
-    dtL$observed <- 1-dtL$dropout
-    e.glmW.oracle <- glm(observed ~ mdd, data = dtL[time == "T2"], family = binomial(link = "logit"))
-    w.oracle <- 1/predict(e.glmW.oracle, newdata = dtL[time == "T2" & dropout == 0], type = "response")
+  ## *** naive and biased analysis
+  e.lmNaive <- lm(diff~1, data = dtW)
 
-    dtW$weights.oracle <- as.numeric(NA)
-    dtW[!is.na(diff), weights.oracle := w.oracle]
-    dtWR <- dtW[!is.na(diff)]
-    e.lmIPCW <- lm(diff~1, data = dtWR, weights = dtWR$weights.oracle)
+  ## *** mixed model
+  e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
 
-    ## *** export
-    res.oracle <- setNames(summary(e.lmOracle)$coef[1,], c("estimate","se","statistic","p.value"))
-    res.naive <- setNames(summary(e.lmNaive)$coef[1,], c("estimate","se","statistic","p.value"))
-    res.lme <- setNames(summary(e.lme)$tTable[2,c(1:2,4:5)], c("estimate","se","statistic","p.value"))
-    res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
+  ## *** IPCW with oracle weights
+  e.glmW.oracle <- glm(observed ~ mdd, data = dtW, family = binomial(link = "logit"))
+  dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+  e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
 
-    out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
-                 cbind(model = "naive", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
-                 cbind(model = "FI", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
-                 cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW))))
-    return(out)
+  ## *** IPCW with feasible weights
+  e.glmW <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
+  dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
+  e.lmIPCW <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight])
+
+  ## *** export
+  res.oracle <- setNames(summary(e.lmOracle)$coef[1,], c("estimate","se","statistic","p.value"))
+  res.naive <- setNames(summary(e.lmNaive)$coef[1,], c("estimate","se","statistic","p.value"))
+  res.lme <- setNames(summary(e.lme)$tTable[2,c(1:2,4:5)], c("estimate","se","statistic","p.value"))
+  res.IPCW.oracle <- setNames(summary(e.lmIPCW.oracle)$coef[1,], c("estimate","se","statistic","p.value"))
+  res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
+
+  out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
+               cbind(model = "complete case", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
+               cbind(model = "full information", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
+               cbind(model = "IPCW.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW.oracle))),
+               cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW))))
+  return(out)
 }
 #+END_SRC
 
 #+RESULTS:
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+# Sanity check
+set.seed(11)
+warper(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7))
+#+END_SRC
+
+#+RESULTS:
+:              model rho    n dmu  estimate        se  statistic p.value
+: 1           oracle 0.8 1000  25 -37.35098 0.3141814 -118.88350       0
+: 2    complete case 0.8 1000  25 -31.42356 0.3909029  -80.38713       0
+: 3 full information 0.8 1000  25 -33.76472 0.3855964  -87.56494       0
+: 4      IPCW.oracle 0.8 1000  25 -36.89889 0.4251421  -86.79190       0
+: 5             IPCW 0.8 1000  25 -35.47206 0.4234230  -83.77453       0
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 n.sim <- 100
@@ -244,11 +288,11 @@ ls.res <- lapply(1:n.sim, function(iSim){
   library(ggplot2)
   library(data.table)
   dt.res <- as.data.table(do.call(rbind,ls.res))
-  dt.res[, model := factor(model, c("naive","FI","IPCW","oracle"))]
+  dt.res[, estimator := factor(model, c("complete case","full information","IPCW","IPCW.oracle","oracle"))]
   dt.res[, correlation := paste0("correlation = ", rho)]
 
   gg <- ggplot(dt.res, aes(y = estimate))
-  gg <- gg + geom_boxplot(aes(fill=model))
+  gg <- gg + geom_boxplot(aes(fill=estimator))
   gg <- gg + facet_wrap(~correlation)
   gg <- gg + theme(axis.title.x=element_blank(),
                    axis.text.x=element_blank(),
@@ -259,11 +303,11 @@ ls.res <- lapply(1:n.sim, function(iSim){
                    axis.ticks.length=unit(.25, "cm"),
                    legend.position="bottom",
                    legend.direction = "horizontal")
-  ggsave(gg, filename = "./figures/simStudy-bias.pdf")
+  ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 10)
 #+END_SRC
 
 #+RESULTS:
-: Saving 11.4 x 7.83 in image
+: Saving 10 x 7 in image
 
 #+name: fig:simulation
 #+ATTR_LaTeX: :width \textwidth :placement [!h]
