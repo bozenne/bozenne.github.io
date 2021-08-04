@@ -1,4 +1,4 @@
-% Created 2021-08-04 on 12:08
+% Created 2021-08-04 on 19:29
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -211,7 +211,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Principle}
-\label{sec:org6b5d322}
+\label{sec:org117588c}
 
 Inverse probability of censoring weighting (IPCW) is a method able to
 handle informative drop-out. Intuitively, in presence of informative
@@ -226,10 +226,11 @@ sub-population. Thanks to the weights, individuals who did not
 drop-out "represent" the individuals who dropped-out. Thus, overall,
 the weighted sample is representative of the population.
 
+\section{Continuous outcome}
+\label{sec:orgf72405c}
 
-
-\section{Illustrative example}
-\label{sec:org88ba9e6}
+\subsection{Illustrative example}
+\label{sec:org4e847c8}
 
 Consider a study were we follow depressed individual over time. They
 have a baseline measurement, then are given a treatment, and then have
@@ -429,15 +430,248 @@ summary(e.IPCW)$coef
 
 \clearpage
 
-\section{Simulation study}
-\label{sec:orgac4b2ea}
+\subsection{Simulation study}
+\label{sec:org942174d}
 
 The quality of the previous estimators is compared using a simulation
-study. The results are summarized by \autoref{fig:simulation}.
+study. The results are summarized by \autoref{fig:simulationGaussian}.
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=\textwidth]{./figures/simStudy-bias.pdf}
-\caption{\label{fig:simulation}Results of the simulation study for a sample size of 1000 using 100 datasets.}
+\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (Gaussian case) for a sample size of 1000 using 100 datasets.}
+\end{figure}
+
+\bigskip
+
+\section{Binary outcome}
+\label{sec:orgda01e26}
+
+\subsection{Illustrative example}
+\label{sec:org5b6bb88}
+A somehow similar approach can be used for binary endpoints. Consider
+now a study comparing the survival probability at 1 year of patients
+treated with a new drug vs. standard care. The population is composed
+of two types of patients, say some with hypertension and some
+without. Survival as well as the treatment effect may differ depending
+of the hypertension status. Hypertension may also affect the drop-out
+probability.
+
+\clearpage
+
+We can simulate such a dataset using the following function:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+simTrial <- function(n, dmu, dpC){
+  require(BuyseTest)
+  require(data.table)
+  ## simulate data
+  dt1  <- simBuyseTest(n.T = n, n.C = n, 
+		       argsBin = NULL, argsCont = NULL, 
+		       argsTTE = list(scale.T = 1+dmu[1],
+				      scale.C = 1,
+				      scale.Censoring.T = 1+dpC[1],
+				      scale.Censoring.C = 1),
+		       latent = TRUE)
+  dt2  <- simBuyseTest(n.T = n, n.C = n, 
+		       argsBin = NULL, argsCont = NULL, 
+		       argsTTE = list(scale.T = 2+dmu[2],
+				      scale.C = 2,
+				      scale.Censoring.T = 2+dpC[2],
+				      scale.Censoring.C = 2),
+		       latent = TRUE)
+  ## gather into dataset
+  dt <- rbind(
+    cbind(id = 1:NROW(dt1), group = "G1", dt1),
+    cbind(id = NROW(dt1) + 1:NROW(dt2), group = "G2", dt2)
+  )
+  return(dt)
+}
+set.seed(11)
+tau <- 1
+
+dt <- simTrial(n = 10000, dmu = c(0,1), dpC = c(0,1))
+dt$responseUncensored <- dt$eventtimeUncensored<=tau
+dt$response <- ifelse((dt$status==1)+(dt$eventtime>tau),dt$eventtime<=tau,NA)
+dt$observed <- ifelse((dt$status==1)+(dt$eventtime>tau),1,0)
+print(dt)
+\end{lstlisting}
+
+\begin{verbatim}
+          id group treatment eventtimeUncensored eventtimeCensoring
+    1:     1    G1         C          1.63238841         1.74283865
+    2:     2    G1         C          0.08938341         1.10407172
+    3:     3    G1         C          1.54194414         1.11212966
+    4:     4    G1         C          1.04592013         1.00584279
+    5:     5    G1         C          0.55276522         0.04955419
+   ---                                                             
+39996: 39996    G2         T          4.08919433         1.23091105
+39997: 39997    G2         T          3.59736307         8.14939225
+39998: 39998    G2         T          7.21110232         3.04114191
+39999: 39999    G2         T          0.06096057         0.42120185
+40000: 40000    G2         T          6.89615584         2.22637070
+        eventtime status responseUncensored response observed
+    1: 1.63238841      1              FALSE    FALSE        1
+    2: 0.08938341      1               TRUE     TRUE        1
+    3: 1.11212966      0              FALSE    FALSE        1
+    4: 1.00584279      0              FALSE    FALSE        1
+    5: 0.04955419      0               TRUE       NA        0
+   ---                                                       
+39996: 1.23091105      0              FALSE    FALSE        1
+39997: 3.59736307      1              FALSE    FALSE        1
+39998: 3.04114191      0              FALSE    FALSE        1
+39999: 0.06096057      1               TRUE     TRUE        1
+40000: 2.22637070      0              FALSE    FALSE        1
+\end{verbatim}
+
+In absence of drop-out, we can compare the survival
+probabilities at 1 year using a logistic regression:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.oracle <- glm(responseUncensored ~ treatment,
+		data = dt, family = binomial(link="logit"))
+summary(e.oracle)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+               Estimate Std. Error   z value     Pr(>|z|)
+(Intercept)  0.07022885 0.01415085   4.96287 6.945906e-07
+treatmentT  -0.23721580 0.02004104 -11.83650 2.527721e-32
+\end{verbatim}
+
+
+In presence of (differential) drop-out, a complete case analysis
+(i.e. restricting the analysis to the patients where the survival
+status at 1 year is known) would be biased:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.cc <- dt[dt$observed==1]
+e.cc <- glm(response ~ treatment,
+	    data = dt.cc, family = binomial(link="logit"))
+summary(e.cc)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+              Estimate Std. Error   z value      Pr(>|z|)
+(Intercept)  0.4023018 0.01814959  22.16589 7.330653e-109
+treatmentT  -0.3656280 0.02510139 -14.56605  4.618541e-48
+\end{verbatim}
+
+
+A first idea would be to re-use the IPCW approach, first fitting a
+logistic model for the probability of being observed at 1-year and
+then computing the weights:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.IPCmodel <- glm(observed ~ group*treatment, data = dt, family = binomial(link="logit"))
+dt$IPCweights <- 1/predict(e.IPCmodel, newdata = dt, type = "response")
+sum(dt$IPCweights)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 62570.28
+\end{verbatim}
+
+
+The subsequent estimator will not be correct: 
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.cc <- dt[dt$observed==1]
+e.IPCWcc <- glm(response ~ treatment, data = dt.cc,
+		family = binomial(link="logit"), weights = dt.cc$IPCweights)
+summary(e.IPCWcc)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+Advarselsbesked:
+I eval(family$initialize) : non-integer #successes in a binomial glm!
+              Estimate Std. Error   z value      Pr(>|z|)
+(Intercept)  0.4593548 0.01451679  31.64300 9.465106e-220
+treatmentT  -0.2997806 0.02029810 -14.76889  2.324953e-49
+\end{verbatim}
+
+
+as we disregarded the duration of observation among the censored
+individuals. Intuitively, individuals censored early are more at risk
+of dying and therefore should "transfer" more weight than those
+censored late, e.g. just before 1 year, who don't really need to
+transfer weights. This can be perform using a survival model (here a
+Cox model) and using as weights the inverse of the probability of not
+being censored at the earliest between when the event occured and 1
+year:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(survival)
+library(riskRegression)
+e.IPCmodel2 <- coxph(Surv(eventtime,status==0) ~ group*treatment,
+		     data = dt, x = TRUE, y = TRUE)
+iPred <- predictCox(e.IPCmodel2, newdata = dt,
+		    time = pmin(dt$eventtime,tau)-(1e-12), diag = TRUE)$survival
+dt$IPCweights2 <- dt$observed/iPred
+sum(dt$IPCweights2)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 40028.88
+\end{verbatim}
+
+
+Note that now the sum of the weights is nearly equal to the full
+sample. We can then use the weights in a logistic model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.cc <- dt[dt$observed==1]
+e.IPCWcc <- glm(response ~ treatment, data = dt.cc, family = binomial(link="logit"), weights = dt.cc$IPCweights2)
+summary(e.IPCWcc)$coef
+\end{lstlisting}
+
+\begin{verbatim}
+Advarselsbesked:
+I eval(family$initialize) : non-integer #successes in a binomial glm!
+               Estimate Std. Error    z value     Pr(>|z|)
+(Intercept)  0.06439848 0.01414818   4.551716 5.321009e-06
+treatmentT  -0.23858152 0.02003591 -11.907693 1.079216e-32
+\end{verbatim}
+
+
+which is very close to the true value. Note that this estimator is
+implemented in the riskRegression package:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.wglm <- wglm(regressor.event = ~treatment,
+	       formula.censor = Surv(eventtime,status==0)~group*treatment,
+	       times = 1,
+	       data = dt[,.(eventtime,status,group,treatment)])
+summary(e.wglm)
+\end{lstlisting}
+
+\begin{verbatim}
+     IPCW logistic regression : 
+----------------------------------------------------------------------------------
+  - time: 1
+glm(XX_status.1_XX ~ treatment, family = binomial(link = "logit"), 
+    weights = "XX_IPCW.1_XX")
+
+               Estimate Std. Error   z value     Pr(>|z|)
+(Intercept)  0.06439847 0.01931759  3.333670 0.0008570818
+treatmentT  -0.23858152 0.02652596 -8.994264 0.0000000000
+----------------------------------------------------------------------------------
+\end{verbatim}
+
+\subsection{Simulation study}
+\label{sec:orgf3f4729}
+
+The quality of the previous estimators is compared using a simulation
+study. The results are summarized by \autoref{fig:simulationBinary} and \autoref{fig:simulationBinarySD} 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{./figures/simStudy-bin-bias.pdf}
+\caption{\label{fig:simulationBinary}Comparison between the empirical distributions of the estimators (binary case) across sample size. Based on 1000 replicates.}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{./figures/simStudy-bin-sd.pdf}
+\caption{\label{fig:simulationBinarySD}Comparison between the modeled standard errors of the estimates (boxplot) and the empirical ones (triangles linked by a line) across sample size. Based on 1000 replicates.}
 \end{figure}
 \end{document}
