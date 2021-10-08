@@ -4,6 +4,17 @@
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 path <- "c:/Users/hpl802/Documents/Github/bozenne.github.io/doc/2021_08_03-IPCW/"
 setwd(path)
+library(nlme)
+library(data.table)
+library(multcomp)
+library(ggplot2)
+library(LMMstar)
+library(ggpubr)
+library(mvtnorm)
+library(BuyseTest)
+library(survival)
+library(riskRegression)
+library(mets)
 #+END_SRC
 
 #+RESULTS:
@@ -24,30 +35,72 @@ sub-population. Thanks to the weights, individuals who did not
 drop-out "represent" the individuals who dropped-out. Thus, overall,
 the weighted sample is representative of the population.
 
-* Continuous outcome
+\bigskip
 
-** Illustrative example
-
-Consider a study were we follow depressed individual over time. They
-have a baseline measurement, then are given a treatment, and then have
-a follow-up measurement. We would like to assess the treatment effect
-in term of depression score [fn:::To simplfy, there is no control
-group - we assume that without treatment the depression score would be
-constant.]. The population of interest contain severely and moderately
-depressed individuals; the treatment may work differently in each
-sub-population. Unfortunately, some study participants dropped-out and
-it seems that they are more likely to drop-out when they are severaey
-depressed.
+In this document, we will illustrate the use of IPCW:
+- with a continuous outcome and compare it with a full information
+  approach (via a mixed model).
+- with a binary outcome.
 
 \clearpage
 
-We can simulate such a dataset using the following function:
+* Continuous outcome
+
+** Generative model
+
+To illustrate the use of IPCW in the continuous outcome case, we will
+consider a longitudinal study with 2 groups (\(G=0\) and \(G=1\)) and
+2 timepoints (\(t_1\) and \(t_2\)) and no other covariate. The outcome
+\(Y\) is normally distributed, denoted \(Y_1\) at \(t_1\) and \(Y_2\)
+at \(t_2\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+Y_1 | G=0 \\ Y_2 |G=0
+\end{bmatrix} &= \Gaus\left(
+\begin{bmatrix}
+50 \\ 50-d\mu_1
+\end{bmatrix},100 \begin{bmatrix}
+1 & \rho \\ \rho & 1
+\end{bmatrix}
+\right) \\
+\begin{bmatrix}
+Y_1 | G=1 \\ Y_2 |G=1
+\end{bmatrix} &= \Gaus\left(
+\begin{bmatrix}
+75 \\ 75-d\mu_2
+\end{bmatrix},100 \begin{bmatrix}
+1 & \rho \\ \rho & 1
+\end{bmatrix}
+\right)
+\end{align*}
+#+END_EXPORT
+
+At time \(t_2\) we may not observed \(Y\) due to drop-out. The
+probability of drop-out depends either:
+- on the (latent) group: \(\pi_{C_1}\) in \(G=0\) and \(\pi_{C_2}\) in \(G=1\) 
+- on the baseline value: \(\frac{1}{1+\exp(-\pi_{C_1}(Y_1-62.5)/10}\) in \(G=0\) \newline \hphantom{on the basleine value:} \(\frac{1}{1+\exp(-\pi_{C_2}(Y_1-62.5)/10)}\) in \(G=1\) 
+
+\bigskip
+
+The corresponding R function is given in the next page. It uses the following arguments:
+- =n=: [positive integer] number of patient per group
+- =rho=: [numeric between -1 and 1] correlation over time
+- =dmu=: [numeric vector of length 2] change in mean in each group
+- =causeC=: [character] variable defining the censoring probability \newline (either =latent= or =baseline=)
+- =piC=: [numeric vector of length 2, between 0 and 1] probability of drop-out in each group (=latent=) or regression parameter for this probability (=baseline=)
+
+\clearpage
+
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-simTrial <- function(n, rho, dmu, pC){
+simTrial <- function(n, rho, dmu, causeC, piC){
+  ## load packages and check user input
   require(mvtnorm)
   require(data.table)
+  causeC <- match.arg(causeC, c("baseline","latent"))
   ## simulate data
-  Sigma <- 10^2*matrix(c(1,rho,rho,1),2,2)
+  sigma <- 10
+  Sigma <- sigma^2*matrix(c(1,rho,rho,1),2,2)
   ## gather into dataset
   M.Ym <- rmvnorm(n, mean = c(50, 50-dmu[1]), sigma = Sigma)
   M.Ys <- rmvnorm(n, mean = c(75, 75-dmu[2]), sigma = Sigma)
@@ -57,40 +110,90 @@ simTrial <- function(n, rho, dmu, pC){
     data.table(id = n+(1:n), mdd = "severe", time = "T1", Y = M.Ys[,1]),
     data.table(id = n+(1:n), mdd = "severe", time = "T2", Y = M.Ys[,2])
   )
+  ## define probability of dropout
   dtL$probaDO <- 0
-  dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",pC[1],pC[2])]
+  if(causeC == "latent"){
+    dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",piC[1],piC[2])]
+  }else if(causeC == "baseline"){
+    dtL$res <- 0.1 ## no used - just  to initialize
+    dtL[mdd=="moderate", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
+    dtL[mdd=="severe", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
+    dtL[mdd=="moderate", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
+    dtL[mdd=="severe", probaDO := c(0,plogis(piC[2]*res[1])), by = "id"]
+    dtL$res <- NULL
+  }
+  ## simulate dropout
   dtL[,dropout := rbinom(.N,prob=probaDO,size=1)]
   dtL[,Yobs:=Y]
   dtL[dropout==1,Yobs:=NA]
+  ## export
   dtL$probaDO <- NULL
+  setkeyv(dtL,"id")
   return(dtL)
 }
-set.seed(11)
-dtL <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7))
-print(dtL)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-        id      mdd time        Y dropout     Yobs
-   1:    1 moderate   T1 44.83259       0 44.83259
-   2:    2 moderate   T1 30.34157       0 30.34157
-   3:    3 moderate   T1 56.36308       0 56.36308
-   4:    4 moderate   T1 64.63341       0 64.63341
-   5:    5 moderate   T1 45.10048       0 45.10048
-  ---                                             
-3996: 1996   severe   T2 30.59793       1       NA
-3997: 1997   severe   T2 18.97725       1       NA
-3998: 1998   severe   T2 29.80266       1       NA
-3999: 1999   severe   T2 30.26518       0 30.26518
-4000: 2000   severe   T2 39.15797       0 39.15797
-#+end_example
+
+\clearpage
+
+** Illustrative example 1
+
+Consider a study were we follow depressed individual over time. They
+have a baseline measurement, then are given a treatment, and then have
+a follow-up measurement. We would like to assess the treatment effect
+in term of depression score [fn:::To simplify, there is no control
+group - we assume that without treatment the depression score would be
+constant.]. The population of interest contain severely and moderately
+depressed individuals; the treatment may work differently in each
+sub-population. Unfortunately, some study participants dropped-out and
+it seems that they are more likely to drop-out when their baseline
+score is high.
+
+\bigskip
+
+We can simulate such a dataset using the following function:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+dtL.B <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50),
+                  causeC = "baseline", piC = c(1,1))
+head(dtL.B)
+#+END_SRC
+
+#+RESULTS:
+:    id      mdd time        Y dropout     Yobs
+: 1:  1 moderate   T1 49.34367       0 49.34367
+: 2:  1 moderate   T2 23.43583       0 23.43583
+: 3:  2 moderate   T1 35.05489       0 35.05489
+: 4:  2 moderate   T2 13.50810       0 13.50810
+: 5:  3 moderate   T1 54.37770       0 54.37770
+: 6:  3 moderate   T2 29.80367       1       NA
 
 Here we have simulated a two sub-populations of 1000, with a
-correlation of 0.5 between baseline and follow-up . The treatment
+correlation of 0.8 between baseline and follow-up. The treatment
 effect is twice bigger for the severely depressed population but
-individuals from this population are also much more likely to
-drop-out. Overall the expected treatment effect is:
+individuals from this population are also much more likely to drop-out
+as they tend to have higher baseline score. So we expect complete case
+estimators to be downward biased.
+
+\bigskip
+
+Without drop-out, we could use a simple linear model to carry-out the
+analysis:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.Boracle <- dcast(dtL.B, formula = id ~ time, value.var = "Y")
+dtW.Boracle$diff <- dtW.Boracle$T2-dtW.Boracle$T1
+e.Boracle <- lm(diff~1, data = dtW.Boracle)
+summary(e.Boracle)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -37.34478  0.3131657 -119.2492        0
+
+\clearpage
+
+leading to an estimate quite close to the true value:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 (-25-50)/2
 #+END_SRC
@@ -98,68 +201,231 @@ drop-out. Overall the expected treatment effect is:
 #+RESULTS:
 : [1] -37.5
 
-\bigskip
-
-Without drop-out, we could use a simple linear model to carry-out the analysis:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
-dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
-e.oracle <- lm(diff~1, data = dtW.oracle)
-summary(e.oracle)$coef
-#+END_SRC
-
-#+RESULTS:
-:              Estimate Std. Error   t value Pr(>|t|)
-: (Intercept) -37.35098  0.3141814 -118.8835        0
-leading to an estimate quite close to the true value.
-
-\bigskip
 
 With drop-out, a complete case analysis would lead to a biased
 estimator. In this example, we can "see" that the estimated value is
 far away from the true one (even when accouting for the uncertainty):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
-dtW$diff <- dtW$T2-dtW$T1
-dtW.CC <- dtW[!is.na(diff)]
-e.CC <- lm(diff~1, data = dtW.CC)
-summary(e.CC)$coef
+dtW.B <- dcast(dtL.B, formula = id + mdd ~ time, value.var = "Yobs")
+dtW.B$diff <- dtW.B$T2-dtW.B$T1
+dtW.BCC <- dtW.B[!is.na(diff)]
+e.BCC <- lm(diff~1, data = dtW.BCC)
+summary(e.BCC)$coef
 #+END_SRC
 
 #+RESULTS:
 :              Estimate Std. Error   t value Pr(>|t|)
-: (Intercept) -31.42356  0.3909029 -80.38713        0
+: (Intercept) -30.98307  0.3889309 -79.66214        0
 
 An alternative approach would be to use a linear mixed model
 (i.e. full information):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 require(nlme)
-e.FI <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
-summary(e.FI)$tTable
+e.BFI <- lme(Yobs~time, random = ~1|id, data = dtL.B,
+             na.action = na.omit)
+summary(e.BFI)$tTable
 #+END_SRC
 
 #+RESULTS:
 :                 Value Std.Error   DF   t-value p-value
-: (Intercept)  62.59128 0.3239587 1999 193.20760       0
-: timeT2      -33.76472 0.3855964 1068 -87.56494       0
-which is better than the complete case analysis still biased when the
-drop-out mechanism depends on variables other than the baseline value.
+: (Intercept)  62.39901 0.3268707 1999 190.89814       0
+: timeT2      -34.72137 0.3922177 1030 -88.52576       0
+which appears better than the complete case analysis but still
+downward biased. This can be a bit surprising at first, but can be
+explained when seeing the mixed model as a way to "impute" missing
+values at follow-up. The current mixed model is misspecified (missing
+interaction between time and group) and it therefore use the wrong
+imputation model. This is illustrated in autoref:fig:imputationModel
+(see appendix [[#SM:imputation]] for the R code).
 
 \clearpage
 
- A better approach is to use IPCW. First we model the probability of
-not dropping out at follow-up:
+#+name: fig:imputationModel
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Distribution of the observed and imputed value when using the mixed model.
+[[./figures/gg-imputationModel.pdf]]
+
+With a correct model for the outcome (i.e. adding the interaction),
+the mixed would be able to inpute the observations in an unbiased way:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW$observed <- !is.na(dtW$T2)
-e.glmW.oracle <- glm(observed ~ mdd, data = dtW,
+e.BFIoracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL.B,
+                   na.action = na.omit)
+summary(e.BFIoracle)$tTable
+#+END_SRC
+
+#+RESULTS:
+:                      Value Std.Error   DF    t-value       p-value
+: (Intercept)       50.14399 0.3201715 1998  156.61602  0.000000e+00
+: timeT2           -24.97957 0.2351254 1029 -106.23938  0.000000e+00
+: mddsevere         24.51004 0.4527909 1998   54.13102  0.000000e+00
+: timeT2:mddsevere -24.90905 0.4443197 1029  -56.06111 4.849765e-315
+
+which would lead to a much better estimator:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(multcomp)
+glht(e.BFIoracle, linfct = "timeT2+0.5*timeT2:mddsevere=0")
+#+END_SRC
+
+#+RESULTS:
+: 
+: 	 General Linear Hypotheses
+: 
+: Linear Hypotheses:
+:                                      Estimate
+: timeT2 + 0.5 * timeT2:mddsevere == 0   -37.43
+
+
+\bigskip
+
+An alternative approach that does not require to specify an outcome
+model is to use IPCW. It instead requires to correctly specify a model
+for the probability of not dropping out at follow-up:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.B$observed <- !is.na(dtW.B$T2)
+e.glmW.B <- glm(observed ~ T1, data = dtW.B,
+                family = binomial(link = "logit"))
+coef(e.glmW.B)
+#+END_SRC
+
+#+RESULTS:
+: (Intercept)          T1 
+:   6.6357425  -0.1047988
+
+and then compute the weights for observations with full data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.B$weight.oracle <- 1/predict(e.glmW.B, newdata = dtW.B,
+                                 type = "response")
+dtW.B[observed == TRUE, sum(weight.oracle)]
+#+END_SRC
+
+#+RESULTS:
+: [1] 2045.06
+
+Note that the weights almost sum to the total sample size. We then
+perform the complete case analysis with these weights:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.BCC <- dtW.B[!is.na(diff)]
+e.BIPCW <- lm(diff~1, data = dtW.BCC, weights = dtW.BCC$weight.oracle)
+summary(e.BIPCW)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -37.84241  0.4369635 -86.60314        0
+
+which gives a result very close to the true value. Here the IPCW works
+very well because we have specified the correct censoring model.
+
+** Illustrative example 2
+
+Consider a similar study with a different cause of drop-out. This time
+drop-out is not due to baseline value but due to the severity of the
+disease (i.e. group): two patients severely depressed but with
+different baseline score will have exactly the same probability of
+drop-out while two patients, one severely depressed and the other
+moderately depressed, with same baseline score will have different
+probability of drop-out.
+
+\clearpage
+
+We can simulate such a dataset using the following function:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+dtL.L <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50),
+                  causeC = "latent", piC = c(0.2,0.7))
+print(dtL.L)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+        id      mdd time        Y dropout     Yobs
+   1:    1 moderate   T1 49.34367       0 49.34367
+   2:    1 moderate   T2 23.43583       0 23.43583
+   3:    2 moderate   T1 35.05489       0 35.05489
+   4:    2 moderate   T2 13.50810       0 13.50810
+   5:    3 moderate   T1 54.37770       0 54.37770
+  ---                                             
+3996: 1998   severe   T2 26.26605       1       NA
+3997: 1999   severe   T1 70.81751       0 70.81751
+3998: 1999   severe   T2 15.46369       1       NA
+3999: 2000   severe   T1 73.53750       0 73.53750
+4000: 2000   severe   T2 23.75026       1       NA
+#+end_example
+
+Overall the expected treatment effect is the same as before and,
+without drop-out, the linear model gives the same estimates:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.Loracle <- dcast(dtL.L, formula = id ~ time, value.var = "Y")
+dtW.Loracle$diff <- dtW.Loracle$T2-dtW.Loracle$T1
+e.Loracle <- lm(diff~1, data = dtW.Loracle)
+summary(e.Loracle)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -37.34478  0.3131657 -119.2492        0
+
+\bigskip
+
+With drop-out, a complete case analysis would still lead to a downward
+biased estimator:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.L <- dcast(dtL.L, formula = id + mdd ~ time, value.var = "Yobs")
+dtW.L$diff <- dtW.L$T2-dtW.L$T1
+dtW.LCC <- dtW.L[!is.na(diff)]
+e.LCC <- lm(diff~1, data = dtW.LCC)
+summary(e.LCC)$coef
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -31.47144  0.3853402 -81.67182        0
+
+for a reason similar as before, as patients from the severely
+depressed group will drop more often and they benefit more from the
+treatmet. We can use a linear mixed model (i.e. full information):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+require(nlme)
+e.LFI <- lme(Yobs~time, random = ~1|id, data = dtL.L, na.action = na.omit)
+summary(e.LFI)$tTable
+#+END_SRC
+
+#+RESULTS:
+:                 Value Std.Error   DF   t-value p-value
+: (Intercept)  62.39901 0.3216035 1999 194.02463       0
+: timeT2      -33.90248 0.3789931 1090 -89.45409       0
+which is better than the complete case analysis still biased because
+once more the outcome model is misspecified. With a correctly
+specified outcome model, we would get a much better estimate:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.LFIoracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL.L, na.action = na.omit)
+glht(e.LFIoracle, linfct = "timeT2+0.5*timeT2:mddsevere=0")
+
+#+END_SRC
+
+#+RESULTS:
+: 
+: 	 General Linear Hypotheses
+: 
+: Linear Hypotheses:
+:                                      Estimate
+: timeT2 + 0.5 * timeT2:mddsevere == 0    -37.3
+
+\bigskip
+
+ When using IPCW, we should model the probability of not dropping out
+at follow-up as a function of the latent group:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtW.L$observed <- !is.na(dtW.L$T2)
+e.glmW.Loracle <- glm(observed ~ mdd, data = dtW.L,
                      family = binomial(link = "logit"))
 #+END_SRC
 
 #+RESULTS:
 and then compute the weights for observations with full data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW,type = "response")
-dtW[observed == TRUE, sum(weight.oracle)]
+dtW.L$weight.oracle <- 1/predict(e.glmW.Loracle, newdata = dtW.L,type = "response")
+dtW.L[observed == TRUE, sum(weight.oracle)]
 #+END_SRC
 
 #+RESULTS:
@@ -168,37 +434,37 @@ dtW[observed == TRUE, sum(weight.oracle)]
 Note that the weights sum to the total sample size. We then perform
 the complete case analysis with these weights:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW.CC <- dtW[!is.na(diff)]
-e.IPCWoracle <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight.oracle)
-summary(e.IPCWoracle)$coef
+dtW.LCC <- dtW.L[!is.na(diff)]
+e.LIPCWoracle <- lm(diff~1, data = dtW.LCC, weights = dtW.LCC$weight.oracle)
+summary(e.LIPCWoracle)$coef
 #+END_SRC
 
 #+RESULTS:
 :              Estimate Std. Error  t value Pr(>|t|)
-: (Intercept) -36.89889  0.4251421 -86.7919        0
+: (Intercept) -37.35191  0.4242621 -88.0397        0
 
-which gives a result much closer to the true value. A more feasible
+which gives a result very close to the true value. A more feasible
 IPCW would use the baseline score to define the weights:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e.glmW <- glm(observed ~ T1, data = dtW,
+e.glmW.L <- glm(observed ~ T1, data = dtW.L,
               family = binomial(link = "logit"))
-dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
-dtW[observed == TRUE, sum(weight)]
+dtW.L$weight <- 1/predict(e.glmW.L, newdata = dtW.L, type = "response")
+dtW.L[observed == TRUE, sum(weight)]
 #+END_SRC
 
 #+RESULTS:
-: [1] 2015.739
+: [1] 2038.825
 
 We then perform the complete case analysis with these new weights:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dtW.CC <- dtW[!is.na(diff)]
-e.IPCW <- lm(diff~1, data = dtW.CC, weights = dtW.CC$weight)
-summary(e.IPCW)$coef
+dtW.LCC <- dtW.L[!is.na(diff)]
+e.LIPCW <- lm(diff~1, data = dtW.LCC, weights = dtW.LCC$weight)
+summary(e.LIPCW)$coef
 #+END_SRC
 
 #+RESULTS:
-:              Estimate Std. Error   t value Pr(>|t|)
-: (Intercept) -35.47206   0.423423 -83.77453        0
+:             Estimate Std. Error   t value Pr(>|t|)
+: (Intercept) -36.0517  0.4258783 -84.65258        0
 
 \clearpage
 
@@ -208,11 +474,12 @@ The quality of the previous estimators is compared using a simulation
 study. The results are summarized by autoref:fig:simulationGaussian.
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-warper <- function(n, rho, dmu, pC){
+warper <- function(n, rho, dmu, causeC, piC){
+  require(multcomp)
 
   ## *** simulate data
-  dtL <- simTrial(n = n, rho = rho, dmu = dmu, pC = pC)
-  
+  dtL <- simTrial(n = n, rho = rho, dmu = dmu, causeC = causeC, piC = piC)
+
   ## *** rehape data
   dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
   dtW$diff <- dtW$T2-dtW$T1
@@ -227,91 +494,152 @@ warper <- function(n, rho, dmu, pC){
   ## *** naive and biased analysis
   e.lmNaive <- lm(diff~1, data = dtW)
 
+  ## *** oracle mixed model
+  e.lme.oracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL, na.action = na.omit)
+
   ## *** mixed model
   e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
 
   ## *** IPCW with oracle weights
-  e.glmW.oracle <- glm(observed ~ mdd, data = dtW, family = binomial(link = "logit"))
-  dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
-  e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+  if(causeC=="latent"){
+    e.glmW.oracle <- glm(observed ~ mdd, data = dtW, family = binomial(link = "logit"))
+    dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+    e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+  }else if(causeC=="baseline"){
+    e.glmW.oracle <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
+    dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+    e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+  }
 
   ## *** IPCW with feasible weights
-  e.glmW <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
-  dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
-  e.lmIPCW <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight])
+  if(causeC=="latent"){
+    e.glmW <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
+    dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
+    e.lmIPCW <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight])
+  }
 
   ## *** export
-  res.oracle <- setNames(summary(e.lmOracle)$coef[1,], c("estimate","se","statistic","p.value"))
-  res.naive <- setNames(summary(e.lmNaive)$coef[1,], c("estimate","se","statistic","p.value"))
-  res.lme <- setNames(summary(e.lme)$tTable[2,c(1:2,4:5)], c("estimate","se","statistic","p.value"))
-  res.IPCW.oracle <- setNames(summary(e.lmIPCW.oracle)$coef[1,], c("estimate","se","statistic","p.value"))
-  res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
-
+  res.oracle <- setNames(summary(e.lmOracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
+  res.naive <- setNames(summary(e.lmNaive)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
+  res.lme.oracle <- setNames(as.double(summary(glht(e.lme.oracle, linfct = "timeT2+0.5*timeT2:mddsevere=0"))$test[c("coefficients","sigma","tstat","pvalues")]),
+                             c("estimate","se","statistic","p.value"))
+  res.lme <- setNames(summary(e.lme)$tTable["timeT2",c(1:2,4:5)], c("estimate","se","statistic","p.value"))
+  res.IPCW.oracle <- setNames(summary(e.lmIPCW.oracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
   out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
                cbind(model = "complete case", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
-               cbind(model = "full information", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
-               cbind(model = "IPCW.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW.oracle))),
-               cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW))))
-  return(out)
+               cbind(model = "FI.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme.oracle))),
+               cbind(model = "FI", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
+               cbind(model = "IPCW.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW.oracle)))
+               )
+  if(causeC=="latent"){
+    res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
+    out <- rbind(out,
+                 cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW)))
+                 )
+  }
+  return(cbind(out,causeC=causeC))
 }
 #+END_SRC
 
 #+RESULTS:
 
-
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-# Sanity check
-set.seed(11)
-warper(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7))
+## Sanity check
+set.seed(10)
+warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "baseline", piC = c(1,1))
+set.seed(10)
+warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "latent", piC = c(0.2,0.7))
 #+END_SRC
 
 #+RESULTS:
-:              model rho    n dmu  estimate        se  statistic p.value
-: 1           oracle 0.8 1000  25 -37.35098 0.3141814 -118.88350       0
-: 2    complete case 0.8 1000  25 -31.42356 0.3909029  -80.38713       0
-: 3 full information 0.8 1000  25 -33.76472 0.3855964  -87.56494       0
-: 4      IPCW.oracle 0.8 1000  25 -36.89889 0.4251421  -86.79190       0
-: 5             IPCW 0.8 1000  25 -35.47206 0.4234230  -83.77453       0
+#+begin_example
+          model rho    n dmu  estimate        se  statistic p.value   causeC
+1        oracle 0.8 1000  25 -37.34478 0.3131657 -119.24924       0 baseline
+2 complete case 0.8 1000  25 -30.98307 0.3889309  -79.66214       0 baseline
+3     FI.oracle 0.8 1000  25 -37.43410 0.2221598 -168.50074       0 baseline
+4            FI 0.8 1000  25 -34.72137 0.3922177  -88.52576       0 baseline
+5   IPCW.oracle 0.8 1000  25 -37.84241 0.4369635  -86.60314       0 baseline
+          model rho    n dmu  estimate        se  statistic p.value causeC
+1        oracle 0.8 1000  25 -37.34478 0.3131657 -119.24924       0 latent
+2 complete case 0.8 1000  25 -31.47144 0.3853402  -81.67182       0 latent
+3     FI.oracle 0.8 1000  25 -37.30128 0.2145794 -173.83442       0 latent
+4            FI 0.8 1000  25 -33.90248 0.3789931  -89.45409       0 latent
+5   IPCW.oracle 0.8 1000  25 -37.35191 0.4242621  -88.03970       0 latent
+6          IPCW 0.8 1000  25 -36.05170 0.4258783  -84.65258       0 latent
+#+end_example
+
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 n.sim <- 100
 ls.res <- lapply(1:n.sim, function(iSim){
-  rbind(warper(n = 1000, rho = 0, dmu = c(25,50), pC = c(0.2,0.7)),
-        warper(n = 1000, rho = 0.5, dmu = c(25,50), pC = c(0.2,0.7)),
-        warper(n = 1000, rho = 0.8, dmu = c(25,50), pC = c(0.2,0.7)))
+  out <- try(rbind(warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
+                   warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
+                   warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
+                   warper(n = 1000, rho = 0.8, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
+                   warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
+                   warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
+                   warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
+                   warper(n = 1000, rho = 0.8, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7))))
+  if(inherits(out,"try-error")){
+    return(NULL)
+  }else{
+    return(out)
+  }
 })
 #+END_SRC
 
 #+RESULTS:
+#+begin_example
+Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+#+end_example
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-  library(ggplot2)
-  library(data.table)
-  dt.res <- as.data.table(do.call(rbind,ls.res))
-  dt.res[, estimator := factor(model, c("complete case","full information","IPCW","IPCW.oracle","oracle"))]
-  dt.res[, correlation := paste0("correlation = ", rho)]
+library(ggplot2)
+library(data.table)
+dt.res <- as.data.table(do.call(rbind,ls.res))
+dt.res[, estimator := factor(model, c("complete case","FI","FI.oracle","IPCW","IPCW.oracle","oracle"))]
+dt.res[, correlation := paste0("correlation = ", rho)]
+dt.res[, cause := factor(causeC, levels = c("baseline","latent"), labels = c("cause of dropout: baseline score","cause of dropout: latent group"))]
 
-  gg <- ggplot(dt.res, aes(y = estimate))
-  gg <- gg + geom_boxplot(aes(fill=estimator))
-  gg <- gg + facet_wrap(~correlation)
-  gg <- gg + theme(axis.title.x=element_blank(),
-                   axis.text.x=element_blank(),
-                   axis.ticks.x=element_blank())
-  gg <- gg + theme(text = element_text(size=15),
-                   axis.line = element_line(size = 1.25),
-                   axis.ticks = element_line(size = 2),
-                   axis.ticks.length=unit(.25, "cm"),
-                   legend.position="bottom",
-                   legend.direction = "horizontal")
-  ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 10)
+gg <- ggplot(dt.res, aes(y = estimate))
+gg <- gg + geom_boxplot(aes(fill=estimator))
+gg <- gg + facet_grid(cause~correlation)
+gg <- gg + theme(axis.title.x=element_blank(),
+                 axis.text.x=element_blank(),
+                 axis.ticks.x=element_blank())
+gg <- gg + theme(text = element_text(size=15),
+                 axis.line = element_line(size = 1.25),
+                 axis.ticks = element_line(size = 2),
+                 axis.ticks.length=unit(.25, "cm"),
+                 legend.position="bottom",
+                 legend.direction = "horizontal")
+ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 10)
 #+END_SRC
 
 #+RESULTS:
-: Saving 10 x 7 in image
+: Saving 10 x 10.4 in image
 
 #+name: fig:simulationGaussian
 #+ATTR_LaTeX: :width \textwidth :placement [!h]
 #+CAPTION: Comparison between the empirical distributions of the estimators (Gaussian case) for a sample size of 1000 using 100 datasets.
+#+CAPTION: FI: full information (random intercept model), IPCW: inverse probability of censoring weights.
 [[./figures/simStudy-bias.pdf]]
 
 \bigskip
@@ -359,7 +687,7 @@ simTrial <- function(n, dmu, dpC){
 set.seed(11)
 tau <- 1
 
-dt <- simTrial(n = 10000, dmu = c(0,1), dpC = c(0,1))
+dt <- simTrial(n = 1000, dmu = c(0,1), dpC = c(0,1))
 dt$responseUncensored <- dt$eventtimeUncensored<=tau
 dt$response <- ifelse((dt$status==1)+(dt$eventtime>tau),dt$eventtime<=tau,NA)
 dt$observed <- ifelse((dt$status==1)+(dt$eventtime>tau),1,0)
@@ -368,30 +696,30 @@ print(dt)
 
 #+RESULTS:
 #+begin_example
-          id group treatment eventtimeUncensored eventtimeCensoring  eventtime
-    1:     1    G1         C          1.63238841         1.74283865 1.63238841
-    2:     2    G1         C          0.08938341         1.10407172 0.08938341
-    3:     3    G1         C          1.54194414         1.11212966 1.11212966
-    4:     4    G1         C          1.04592013         1.00584279 1.00584279
-    5:     5    G1         C          0.55276522         0.04955419 0.04955419
-   ---                                                                        
-39996: 39996    G2         T          4.08919433         1.23091105 1.23091105
-39997: 39997    G2         T          3.59736307         8.14939225 3.59736307
-39998: 39998    G2         T          7.21110232         3.04114191 3.04114191
-39999: 39999    G2         T          0.06096057         0.42120185 0.06096057
-40000: 40000    G2         T          6.89615584         2.22637070 2.22637070
-       status responseUncensored response observed
-    1:      1              FALSE    FALSE        1
-    2:      1               TRUE     TRUE        1
-    3:      0              FALSE    FALSE        1
-    4:      0              FALSE    FALSE        1
-    5:      0               TRUE       NA        0
-   ---                                            
-39996:      0              FALSE    FALSE        1
-39997:      1              FALSE    FALSE        1
-39998:      0              FALSE    FALSE        1
-39999:      1               TRUE     TRUE        1
-40000:      0              FALSE    FALSE        1
+        id group treatment eventtimeUncensored eventtimeCensoring  eventtime
+   1:    1    G1         C          0.07747187          0.4441963 0.07747187
+   2:    2    G1         C          0.18271259          0.3567996 0.18271259
+   3:    3    G1         C          0.14864417          0.2298933 0.14864417
+   4:    4    G1         C          0.26922419          0.6492349 0.26922419
+   5:    5    G1         C          0.52950600          0.2238334 0.22383343
+  ---                                                                       
+3996: 3996    G2         T          1.09150744          5.6892558 1.09150744
+3997: 3997    G2         T          5.83550031          1.7693238 1.76932381
+3998: 3998    G2         T          0.88964585          0.2485173 0.24851729
+3999: 3999    G2         T          0.44492756          4.8949421 0.44492756
+4000: 4000    G2         T         18.10666952          2.5876528 2.58765282
+      status responseUncensored response observed
+   1:      1               TRUE     TRUE        1
+   2:      1               TRUE     TRUE        1
+   3:      1               TRUE     TRUE        1
+   4:      1               TRUE     TRUE        1
+   5:      0               TRUE       NA        0
+  ---                                            
+3996:      1              FALSE    FALSE        1
+3997:      0              FALSE    FALSE        1
+3998:      0               TRUE       NA        0
+3999:      1               TRUE     TRUE        1
+4000:      0              FALSE    FALSE        1
 #+end_example
 
 In absence of drop-out, we can compare the survival
@@ -404,8 +732,8 @@ summary(e.oracle)$coef
 
 #+RESULTS:
 :                Estimate Std. Error   z value     Pr(>|z|)
-: (Intercept)  0.07022885 0.01415085   4.96287 6.945906e-07
-: treatmentT  -0.23721580 0.02004104 -11.83650 2.527721e-32
+: (Intercept)  0.08204599 0.04475899  1.833062 6.679338e-02
+: treatmentT  -0.27060267 0.06341278 -4.267321 1.978345e-05
 
 In presence of (differential) drop-out, a complete case analysis
 (i.e. restricting the analysis to the patients where the survival
@@ -418,9 +746,9 @@ summary(e.cc)$coef
 #+END_SRC
 
 #+RESULTS:
-:               Estimate Std. Error   z value      Pr(>|z|)
-: (Intercept)  0.4023018 0.01814959  22.16589 7.330653e-109
-: treatmentT  -0.3656280 0.02510139 -14.56605  4.618541e-48
+:               Estimate Std. Error   z value     Pr(>|z|)
+: (Intercept)  0.4008704 0.05727500  6.999047 2.577101e-12
+: treatmentT  -0.4222127 0.07955849 -5.306947 1.114767e-07
 
 A first idea would be to re-use the IPCW approach, first fitting a
 logistic model for the probability of being observed at 1-year and
@@ -432,7 +760,7 @@ sum(dt$IPCweights)
 #+END_SRC
 
 #+RESULTS:
-: [1] 62570.28
+: [1] 6305.334
 
 The subsequent estimator will not be correct: 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -445,9 +773,9 @@ summary(e.IPCWcc)$coef
 #+RESULTS:
 : Advarselsbesked:
 : I eval(family$initialize) : non-integer #successes in a binomial glm!
-:               Estimate Std. Error   z value      Pr(>|z|)
-: (Intercept)  0.4593548 0.01451679  31.64300 9.465106e-220
-: treatmentT  -0.2997806 0.02029810 -14.76889  2.324953e-49
+:               Estimate Std. Error   z value     Pr(>|z|)
+: (Intercept)  0.4515849 0.04586621  9.845700 7.153939e-23
+: treatmentT  -0.3341242 0.06411408 -5.211402 1.874189e-07
 
 as we disregarded the duration of observation among the censored
 individuals. Intuitively, individuals censored early are more at risk
@@ -469,28 +797,27 @@ sum(dt$IPCweights2)
 #+END_SRC
 
 #+RESULTS:
-: [1] 40028.88
+: [1] 3997.757
 
 We can then use the weights in a logistic model:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 dt.cc <- dt[dt$observed==1]
-e.IPCWcc <- glm(response ~ treatment, data = dt.cc, family = binomial(link="logit"), weights = dt.cc$IPCweights2)
+e.IPCWcc <- glm(response ~ treatment, data = dt.cc,
+                family = quasibinomial(link="logit"), weights = dt.cc$IPCweights2)
 summary(e.IPCWcc)$coef
 #+END_SRC
 
 #+RESULTS:
-: Advarselsbesked:
-: I eval(family$initialize) : non-integer #successes in a binomial glm!
-:                Estimate Std. Error    z value     Pr(>|z|)
-: (Intercept)  0.06439848 0.01414818   4.551716 5.321009e-06
-: treatmentT  -0.23858152 0.02003591 -11.907693 1.079216e-32
+:                Estimate Std. Error    t value     Pr(>|t|)
+: (Intercept)  0.04110777 0.05561028  0.7392117 0.4598457572
+: treatmentT  -0.26472454 0.07902160 -3.3500276 0.0008196644
 
 which is very close to the true value. Note that this estimator is
 implemented in the riskRegression package:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.wglm <- wglm(regressor.event = ~treatment,
                formula.censor = Surv(eventtime,status==0)~group*treatment,
-               times = 1,
+               times = 1, 
                data = dt[,.(eventtime,status,group,treatment)])
 summary(e.wglm)
 #+END_SRC
@@ -503,37 +830,39 @@ summary(e.wglm)
 glm(XX_status.1_XX ~ treatment, family = binomial(link = "logit"), 
     weights = "XX_IPCW.1_XX")
 
-               Estimate Std. Error   z value     Pr(>|z|)
-(Intercept)  0.06439847 0.01931759  3.333670 0.0008570818
-treatmentT  -0.23858152 0.02652596 -8.994264 0.0000000000
+               Estimate Std. Error   t value    Pr(>|t|)
+(Intercept)  0.04110777 0.06102480  0.673624 0.500550414
+treatmentT  -0.26472454 0.08416678 -3.145238 0.001659519
 ----------------------------------------------------------------------------------
 #+end_example
 
-Another, similar, weighted estimator is implemented in the mets package:
+This estimator is also implemented in the =mets= package[fn::the standard errors are slightly different though]:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e.mets <- binreg(formula = Event(eventtime,status) ~ treatment,
-                 cens.model = ~group*treatment,
-                 time = 1, data = dt, cens.code = 0, cause = 1)
+library(mets)
+e.mets <- logitIPCW(formula = Event(eventtime,status) ~ treatment,
+                    cens.model = ~group*treatment,
+                    time = 1, data = dt, cens.code = 0, cause = 1)
 e.mets
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
 
-     n events
- 40000  14351
+    n events
+ 4000   1409
 
- 40000 clusters
-log-coeffients:
+ 4000 clusters
+coeffients:
              Estimate   Std.Err      2.5%     97.5% P-value
-(Intercept)  0.064776  0.019716  0.026134  0.103418   0.001
-treatmentT  -0.236638  0.027400 -0.290341 -0.182936   0.000
+(Intercept)  0.041108  0.056878 -0.070371  0.152587  0.4698
+treatmentT  -0.264725  0.082562 -0.426543 -0.102906  0.0013
 
 exp(coeffients):
-              Estimate  Std.Err     2.5%    97.5% P-value
-[(Intercept)] 1.066920 0.021035 1.025692 1.108148  0.0015
-[treatmentT]  0.789277 0.021626 0.746890 0.831663  0.0000
+            Estimate    2.5%  97.5%
+(Intercept)  1.04196 0.93205 1.1648
+treatmentT   0.76742 0.65276 0.9022
 #+end_example
+
 
 
 ** Simulation study
@@ -552,18 +881,19 @@ study. The results are summarized by autoref:fig:simulationBinary and autoref:fi
 #+CAPTION: across sample size. Based on 1000 replicates.
 [[./figures/simStudy-bin-sd.pdf]]
 
-* Reference :noexport:
-# help: https://gking.harvard.edu/files/natnotes2.pdf
 
-#+BEGIN_EXPORT latex
-\begingroup
-\renewcommand{\section}[2]{}
-#+END_EXPORT
-bibliographystyle:apalike
-[[bibliography:bibliography.bib]] 
-#+BEGIN_EXPORT latex
-\endgroup
-#+END_EXPORT
+# * Reference
+# # help: https://gking.harvard.edu/files/natnotes2.pdf
+
+# #+BEGIN_EXPORT latex
+# \begingroup
+# \renewcommand{\section}[2]{}
+# #+END_EXPORT
+# bibliographystyle:apalike
+# [[bibliography:bibliography.bib]] 
+# #+BEGIN_EXPORT latex
+# \endgroup
+# #+END_EXPORT
 
 #+BEGIN_EXPORT LaTeX
 \appendix
@@ -577,9 +907,109 @@ bibliographystyle:apalike
 \setcounter{figure}{0}    
 \setcounter{table}{0}    
 \setcounter{equation}{0}    
-
-\setcounter{page}{1}
 #+END_EXPORT
+
+\clearpage
+
+* Graphical display of the imputation (autoref:fig:imputationModel)
+:PROPERTIES:
+:CUSTOM_ID: SM:imputation
+:END:
+
+Alternative R code to fit a random intercept model
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(LMMstar)
+e.lmm <- lmm(Yobs~time, repetition = ~time|id, structure = "CS",
+             data = dtL.B)
+eOracle.lmm <- lmm(Yobs~mdd*time, repetition = ~time|id, structure = "CS",
+                   data = dtL.B)
+#+END_SRC
+
+#+RESULTS:
+
+Identify patient with missing data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL.BNA <- dtL.B[id %in% id.NA==TRUE]
+dtL.BNA$group2 <- paste0(dtL.BNA$mdd," (partially observed)")
+dtL.BNNA <- dtL.B[id %in% id.NA==FALSE]
+dtL.BNNA$group2 <- paste0(dtL.BNNA$mdd," (fully observed)")
+#+END_SRC
+
+#+RESULTS:
+
+Identify patient with missing data and get the imputed value
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pred.B <- predict(e.lmm, newdata = dtL.BNA, type = "dynamic",
+                  keep.newdata = TRUE)
+pred.B$mdd <- paste(pred.B$mdd," (imputed)")
+predOracle.B <- predict(eOracle.lmm, newdata = dtL.BNA, type = "dynamic",
+                        keep.newdata = TRUE)
+predOracle.B$mdd <- paste(predOracle.B$mdd," (imputed)")
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.imp <- ggplot(mapping = aes(x=time, color = group2))
+gg.imp <- gg.imp + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Yobs))
+gg.imp <- gg.imp + geom_boxplot(data = dtL.BNA, mapping = aes(y = Yobs))
+gg.imp <- gg.imp + geom_boxplot(data = pred.B, mapping = aes(y = estimate))
+gg.imp <- gg.imp + scale_color_manual("MDD group",
+                                      values = c("limegreen","darkgreen","orange","red"))
+gg.imp <- gg.imp + theme(text = element_text(size=15),
+                         axis.line = element_line(size = 1.25),
+                         axis.ticks = element_line(size = 2),
+                         axis.ticks.length=unit(.25, "cm"),
+                         legend.position="bottom",
+                         legend.direction = "horizontal")
+gg.imp
+#+END_SRC
+
+#+RESULTS:
+: Advarselsbeskeder:
+: 1: Removed 969 rows containing non-finite values (stat_boxplot). 
+: 2: Removed 969 rows containing non-finite values (stat_boxplot).
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.impOracle <- ggplot(mapping = aes(x=time, color = group2))
+gg.impOracle <- gg.impOracle + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Yobs))
+gg.impOracle <- gg.impOracle + geom_boxplot(data = dtL.BNA, mapping = aes(y = Yobs))
+gg.impOracle <- gg.impOracle + geom_boxplot(data = predOracle.B, mapping = aes(y = estimate))
+gg.impOracle <- gg.impOracle + scale_color_manual("MDD group",
+                                      values = c("limegreen","darkgreen","orange","red"))
+gg.impOracle <- gg.impOracle + theme(text = element_text(size=15),
+                         axis.line = element_line(size = 1.25),
+                         axis.ticks = element_line(size = 2),
+                         axis.ticks.length=unit(.25, "cm"),
+                         legend.position="bottom",
+                         legend.direction = "horizontal")
+gg.impOracle
+#+END_SRC
+
+#+RESULTS:
+: Advarselsbeskeder:
+: 1: Removed 969 rows containing non-finite values (stat_boxplot). 
+: 2: Removed 969 rows containing non-finite values (stat_boxplot).
+
+#+ATTR_LATEX: :options otherkeywords={}, deletekeywords={}
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+library(ggpubr)
+ggsave(ggpubr::ggarrange(gg.imp + ggtitle("Misspecified outcome model (~time)"), gg.impOracle + ggtitle("valid outcome model (~time*mdd)"),
+                         common.legend = TRUE, legend = "bottom"),
+       filename = "figures/gg-imputationModel.pdf", width = 12)
+#+END_SRC
+
+#+RESULTS:
+:results:
+Saving 12 x 6.38 in image
+Advarselsbeskeder:
+1: Removed 969 rows containing non-finite values (stat_boxplot). 
+2: Removed 969 rows containing non-finite values (stat_boxplot). 
+3: Removed 969 rows containing non-finite values (stat_boxplot). 
+4: Removed 969 rows containing non-finite values (stat_boxplot). 
+5: Removed 969 rows containing non-finite values (stat_boxplot). 
+6: Removed 969 rows containing non-finite values (stat_boxplot).
+:end:
 
 * CONFIG :noexport:
 #+LANGUAGE:  en
