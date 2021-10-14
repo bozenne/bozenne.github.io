@@ -77,9 +77,10 @@ Y_1 | G=1 \\ Y_2 |G=1
 #+END_EXPORT
 
 At time \(t_2\) we may not observed \(Y\) due to drop-out. The
-probability of drop-out depends either:
-- on the (latent) group: \(\pi_{C_1}\) in \(G=0\) and \(\pi_{C_2}\) in \(G=1\) 
-- on the baseline value: \(\frac{1}{1+\exp(-\pi_{C_1}(Y_1-62.5)/10}\) in \(G=0\) \newline \hphantom{on the basleine value:} \(\frac{1}{1+\exp(-\pi_{C_2}(Y_1-62.5)/10)}\) in \(G=1\) 
+probability of drop-out is either:
+- at random with probability \(\pi_C\)
+- dependent on a (latent) group: \(\pi_{C_1}\) in \(G=0\) and \(\pi_{C_2}\) in \(G=1\) 
+- dependent on the baseline value: \(\frac{1}{1+\exp(-\pi_{C}(Y_1-62.5)/10}\) in \(G=0\) \newline \hphantom{on the basleine value:} \(\frac{1}{1+\exp(-\pi_{C}(Y_1-62.5)/10)}\) in \(G=1\) 
 
 \bigskip
 
@@ -88,7 +89,7 @@ The corresponding R function is given in the next page. It uses the following ar
 - =rho=: [numeric between -1 and 1] correlation over time
 - =dmu=: [numeric vector of length 2] change in mean in each group
 - =causeC=: [character] variable defining the censoring probability \newline (either =latent= or =baseline=)
-- =piC=: [numeric vector of length 2, between 0 and 1] probability of drop-out in each group (=latent=) or regression parameter for this probability (=baseline=)
+- =piC=: [numeric vector of length 1 or 2, between 0 and 1] parameter(s) for the probability of drop-out.
 
 \clearpage
 
@@ -97,7 +98,7 @@ simTrial <- function(n, rho, dmu, causeC, piC){
   ## load packages and check user input
   require(mvtnorm)
   require(data.table)
-  causeC <- match.arg(causeC, c("baseline","latent"))
+  causeC <- match.arg(causeC, c("random","baseline","latent"))
   ## simulate data
   sigma <- 10
   Sigma <- sigma^2*matrix(c(1,rho,rho,1),2,2)
@@ -112,14 +113,16 @@ simTrial <- function(n, rho, dmu, causeC, piC){
   )
   ## define probability of dropout
   dtL$probaDO <- 0
-  if(causeC == "latent"){
+  if(causeC == "random"){
+    dtL[time=="T2", probaDO := piC[1]]
+  }else if(causeC == "latent"){
     dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",piC[1],piC[2])]
   }else if(causeC == "baseline"){
     dtL$res <- 0.1 ## no used - just  to initialize
     dtL[mdd=="moderate", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
     dtL[mdd=="severe", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
     dtL[mdd=="moderate", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
-    dtL[mdd=="severe", probaDO := c(0,plogis(piC[2]*res[1])), by = "id"]
+    dtL[mdd=="severe", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
     dtL$res <- NULL
   }
   ## simulate dropout
@@ -246,7 +249,7 @@ imputation model. This is illustrated in autoref:fig:imputationModel
 [[./figures/gg-imputationModel.pdf]]
 
 With a correct model for the outcome (i.e. adding the interaction),
-the mixed would be able to inpute the observations in an unbiased way:
+the mixed would be able to impute the observations in an unbiased way:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.BFIoracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL.B,
                    na.action = na.omit)
@@ -316,6 +319,8 @@ summary(e.BIPCW)$coef
 which gives a result very close to the true value. Here the IPCW works
 very well because we have specified the correct censoring model.
 
+\clearpage
+
 ** Illustrative example 2
 
 Consider a similar study with a different cause of drop-out. This time
@@ -326,7 +331,7 @@ drop-out while two patients, one severely depressed and the other
 moderately depressed, with same baseline score will have different
 probability of drop-out.
 
-\clearpage
+\bigskip
 
 We can simulate such a dataset using the following function:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -365,7 +370,7 @@ summary(e.Loracle)$coef
 :              Estimate Std. Error   t value Pr(>|t|)
 : (Intercept) -37.34478  0.3131657 -119.2492        0
 
-\bigskip
+\clearpage
 
 With drop-out, a complete case analysis would still lead to a downward
 biased estimator:
@@ -474,71 +479,75 @@ The quality of the previous estimators is compared using a simulation
 study. The results are summarized by autoref:fig:simulationGaussian.
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-warper <- function(n, rho, dmu, causeC, piC){
-  require(multcomp)
+  warper <- function(n, rho, dmu, causeC, piC){
+    require(multcomp)
 
-  ## *** simulate data
-  dtL <- simTrial(n = n, rho = rho, dmu = dmu, causeC = causeC, piC = piC)
+    ## *** simulate data
+    dtL <- simTrial(n = n, rho = rho, dmu = dmu, causeC = causeC, piC = piC)
 
-  ## *** rehape data
-  dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
-  dtW$diff <- dtW$T2-dtW$T1
-  dtW$observed <- 1-is.na(dtW$T2)
+    ## *** rehape data
+    dtW <- dcast(dtL, formula = id + mdd ~ time, value.var = "Yobs")
+    dtW$diff <- dtW$T2-dtW$T1
+    dtW$observed <- 1-is.na(dtW$T2)
 
-  dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
-  dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
+    dtW.oracle <- dcast(dtL, formula = id ~ time, value.var = "Y")
+    dtW.oracle$diff <- dtW.oracle$T2-dtW.oracle$T1
 
-  ## *** oracle
-  e.lmOracle <- lm(diff~1, data = dtW.oracle)
+    ## *** oracle
+    e.lmOracle <- lm(diff~1, data = dtW.oracle)
 
-  ## *** naive and biased analysis
-  e.lmNaive <- lm(diff~1, data = dtW)
+    ## *** naive and biased analysis
+    e.lmNaive <- lm(diff~1, data = dtW)
 
-  ## *** oracle mixed model
-  e.lme.oracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL, na.action = na.omit)
+    ## *** oracle mixed model
+    e.lme.oracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL, na.action = na.omit)
 
-  ## *** mixed model
-  e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
+    ## *** mixed model
+    e.lme <- lme(Yobs~time, random = ~1|id, data = dtL, na.action = na.omit)
 
-  ## *** IPCW with oracle weights
-  if(causeC=="latent"){
-    e.glmW.oracle <- glm(observed ~ mdd, data = dtW, family = binomial(link = "logit"))
-    dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
-    e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
-  }else if(causeC=="baseline"){
-    e.glmW.oracle <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
-    dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
-    e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
-  }
+    ## *** IPCW with oracle weights
+    if(causeC=="random"){
+      e.glmW.oracle <- glm(observed ~ 1, data = dtW, family = binomial(link = "logit"))
+      dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+      e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+    }else if(causeC=="latent"){
+      e.glmW.oracle <- glm(observed ~ mdd, data = dtW, family = binomial(link = "logit"))
+      dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+      e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+    }else if(causeC=="baseline"){
+      e.glmW.oracle <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
+      dtW$weight.oracle <- 1/predict(e.glmW.oracle, newdata = dtW, type = "response")
+      e.lmIPCW.oracle <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight.oracle])
+    }
 
-  ## *** IPCW with feasible weights
-  if(causeC=="latent"){
-    e.glmW <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
-    dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
-    e.lmIPCW <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight])
-  }
+    ## *** IPCW with feasible weights
+    if(causeC=="latent"){
+      e.glmW <- glm(observed ~ T1, data = dtW, family = binomial(link = "logit"))
+      dtW$weight <- 1/predict(e.glmW, newdata = dtW, type = "response")
+      e.lmIPCW <- lm(diff~1, data = dtW[observed == 1], weights = dtW[observed == 1,weight])
+    }
 
-  ## *** export
-  res.oracle <- setNames(summary(e.lmOracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
-  res.naive <- setNames(summary(e.lmNaive)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
-  res.lme.oracle <- setNames(as.double(summary(glht(e.lme.oracle, linfct = "timeT2+0.5*timeT2:mddsevere=0"))$test[c("coefficients","sigma","tstat","pvalues")]),
-                             c("estimate","se","statistic","p.value"))
-  res.lme <- setNames(summary(e.lme)$tTable["timeT2",c(1:2,4:5)], c("estimate","se","statistic","p.value"))
-  res.IPCW.oracle <- setNames(summary(e.lmIPCW.oracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
-  out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
-               cbind(model = "complete case", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
-               cbind(model = "FI.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme.oracle))),
-               cbind(model = "FI", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
-               cbind(model = "IPCW.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW.oracle)))
-               )
-  if(causeC=="latent"){
-    res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
-    out <- rbind(out,
-                 cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW)))
+    ## *** export
+    res.oracle <- setNames(summary(e.lmOracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
+    res.naive <- setNames(summary(e.lmNaive)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
+    res.lme.oracle <- setNames(as.double(summary(glht(e.lme.oracle, linfct = "timeT2+0.5*timeT2:mddsevere=0"))$test[c("coefficients","sigma","tstat","pvalues")]),
+                               c("estimate","se","statistic","p.value"))
+    res.lme <- setNames(summary(e.lme)$tTable["timeT2",c(1:2,4:5)], c("estimate","se","statistic","p.value"))
+    res.IPCW.oracle <- setNames(summary(e.lmIPCW.oracle)$coef["(Intercept)",], c("estimate","se","statistic","p.value"))
+    out <- rbind(cbind(model = "oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.oracle))),
+                 cbind(model = "complete case", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.naive))),
+                 cbind(model = "FI.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme.oracle))),
+                 cbind(model = "FI", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.lme))),
+                 cbind(model = "IPCW.oracle", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW.oracle)))
                  )
+    if(causeC=="latent"){
+      res.IPCW <- setNames(summary(e.lmIPCW)$coef[1,], c("estimate","se","statistic","p.value"))
+      out <- rbind(out,
+                   cbind(model = "IPCW", rho = rho, n = n, dmu = diff(dmu), as.data.frame(as.list(res.IPCW)))
+                   )
+    }
+    return(cbind(out,causeC=causeC))
   }
-  return(cbind(out,causeC=causeC))
-}
 #+END_SRC
 
 #+RESULTS:
@@ -546,13 +555,21 @@ warper <- function(n, rho, dmu, causeC, piC){
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 ## Sanity check
 set.seed(10)
-warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "baseline", piC = c(1,1))
+warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "random", piC = 0.5)
+set.seed(10)
+warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "baseline", piC = 1)
 set.seed(10)
 warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "latent", piC = c(0.2,0.7))
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
+          model rho    n dmu  estimate        se  statistic p.value causeC
+1        oracle 0.8 1000  25 -37.34478 0.3131657 -119.24924       0 random
+2 complete case 0.8 1000  25 -37.60385 0.4396445  -85.53240       0 random
+3     FI.oracle 0.8 1000  25 -37.47880 0.1997909 -187.59011       0 random
+4            FI 0.8 1000  25 -37.65209 0.4239748  -88.80738       0 random
+5   IPCW.oracle 0.8 1000  25 -37.60385 0.4396445  -85.53240       0 random
           model rho    n dmu  estimate        se  statistic p.value   causeC
 1        oracle 0.8 1000  25 -37.34478 0.3131657 -119.24924       0 baseline
 2 complete case 0.8 1000  25 -30.98307 0.3889309  -79.66214       0 baseline
@@ -572,10 +589,14 @@ warper(n = 1000, rho = 0.8, dmu = c(25,50), causeC = "latent", piC = c(0.2,0.7))
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 n.sim <- 100
 ls.res <- lapply(1:n.sim, function(iSim){
-  out <- try(rbind(warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
-                   warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
-                   warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
-                   warper(n = 1000, rho = 0.8, dmu = c(25,40), causeC = "baseline", piC = c(1,1)),
+  out <- try(rbind(warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "random", piC = 0.5),
+                   warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "random", piC = 0.5),
+                   warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "random", piC = 0.5),
+                   warper(n = 1000, rho = 0.8, dmu = c(25,40), causeC = "random", piC = 0.5),
+                   warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "baseline", piC = 1),
+                   warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "baseline", piC = 1),
+                   warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "baseline", piC = 1),
+                   warper(n = 1000, rho = 0.8, dmu = c(25,40), causeC = "baseline", piC = 1),
                    warper(n = 1000, rho = 0, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
                    warper(n = 1000, rho = 0.25, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
                    warper(n = 1000, rho = 0.5, dmu = c(25,40), causeC = "latent", piC = c(0.2,0.7)),
@@ -596,7 +617,16 @@ Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  :
 Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
   nlminb problem, convergence error code = 1
   message = false convergence (8)
-Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
   nlminb problem, convergence error code = 1
   message = false convergence (8)
 Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
@@ -605,7 +635,25 @@ Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.o
 Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
   nlminb problem, convergence error code = 1
   message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
 Error in lme.formula(Yobs ~ time * mdd, random = ~1 | id, data = dtL,  : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
+  nlminb problem, convergence error code = 1
+  message = false convergence (8)
+Error in lme.formula(Yobs ~ time, random = ~1 | id, data = dtL, na.action = na.omit) : 
   nlminb problem, convergence error code = 1
   message = false convergence (8)
 #+end_example
@@ -616,7 +664,9 @@ library(data.table)
 dt.res <- as.data.table(do.call(rbind,ls.res))
 dt.res[, estimator := factor(model, c("complete case","FI","FI.oracle","IPCW","IPCW.oracle","oracle"))]
 dt.res[, correlation := paste0("correlation = ", rho)]
-dt.res[, cause := factor(causeC, levels = c("baseline","latent"), labels = c("cause of dropout: baseline score","cause of dropout: latent group"))]
+dt.res[, cause := factor(causeC,
+                         levels = c("random","baseline","latent"),
+                         labels = c("cause of dropout: random", "cause of dropout: baseline score","cause of dropout: latent group"))]
 
 gg <- ggplot(dt.res, aes(y = estimate))
 gg <- gg + geom_boxplot(aes(fill=estimator))
@@ -630,11 +680,11 @@ gg <- gg + theme(text = element_text(size=15),
                  axis.ticks.length=unit(.25, "cm"),
                  legend.position="bottom",
                  legend.direction = "horizontal")
-ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 10)
+ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 8.5)
 #+END_SRC
 
 #+RESULTS:
-: Saving 10 x 10.4 in image
+: Saving 8.5 x 10.4 in image
 
 #+name: fig:simulationGaussian
 #+ATTR_LaTeX: :width \textwidth :placement [!h]
@@ -642,7 +692,7 @@ ggsave(gg, filename = "./figures/simStudy-bias.pdf", width = 10)
 #+CAPTION: FI: full information (random intercept model), IPCW: inverse probability of censoring weights.
 [[./figures/simStudy-bias.pdf]]
 
-\bigskip
+\clearpage
 
 * Binary outcome
 
@@ -655,7 +705,7 @@ without. Survival as well as the treatment effect may differ depending
 of the hypertension status. Hypertension may also affect the drop-out
 probability.
 
-\clearpage
+\bigskip
 
 We can simulate such a dataset using the following function:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -684,6 +734,13 @@ simTrial <- function(n, dmu, dpC){
   )
   return(dt)
 }
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
 set.seed(11)
 tau <- 1
 
@@ -721,6 +778,8 @@ print(dt)
 3999:      1               TRUE     TRUE        1
 4000:      0              FALSE    FALSE        1
 #+end_example
+
+\clearpage
 
 In absence of drop-out, we can compare the survival
 probabilities at 1 year using a logistic regression:
@@ -812,8 +871,11 @@ summary(e.IPCWcc)$coef
 : (Intercept)  0.04110777 0.05561028  0.7392117 0.4598457572
 : treatmentT  -0.26472454 0.07902160 -3.3500276 0.0008196644
 
-which is very close to the true value. Note that this estimator is
-implemented in the riskRegression package:
+which is very close to the true value.
+
+\clearpage
+
+Note that this estimator is implemented in the riskRegression package:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.wglm <- wglm(regressor.event = ~treatment,
                formula.censor = Surv(eventtime,status==0)~group*treatment,
@@ -830,9 +892,9 @@ summary(e.wglm)
 glm(XX_status.1_XX ~ treatment, family = binomial(link = "logit"), 
     weights = "XX_IPCW.1_XX")
 
-               Estimate Std. Error   t value    Pr(>|t|)
-(Intercept)  0.04110777 0.06102480  0.673624 0.500550414
-treatmentT  -0.26472454 0.08416678 -3.145238 0.001659519
+               Estimate Std. Error    z value    Pr(>|z|)
+(Intercept)  0.04110777 0.05672432  0.7246939 0.468639833
+treatmentT  -0.26472454 0.08136191 -3.2536668 0.001139258
 ----------------------------------------------------------------------------------
 #+end_example
 
@@ -863,24 +925,189 @@ exp(coeffients):
 treatmentT   0.76742 0.65276 0.9022
 #+end_example
 
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+ls.sim <- lapply(1:1000,function(i){
+  dt <- simTrial(n = 1000, dmu = c(0,1), dpC = c(0,1))
+  e.wglm <- wglm(regressor.event = ~treatment,
+                 formula.censor = Surv(eventtime,status==0)~group*treatment,
+                 times = 1, 
+                 data = dt[,.(eventtime,status,group,treatment)])
+  coef(e.wglm)
+})
+#+END_SRC
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+var(do.call(rbind,ls.sim))-vcov(e.mets)
+var(do.call(rbind,ls.sim))-crossprod(iid(e.wglm))
+#+END_SRC
+#+RESULTS:
+:results:
+              (Intercept)   treatmentT
+(Intercept) -5.162353e-06  9.88919e-05
+treatmentT   9.889190e-05 -3.92990e-04
+              (Intercept)    treatmentT
+(Intercept)  1.231973e-05 -5.269787e-05
+treatmentT  -5.269787e-05 -1.962764e-04
+:end:
 
 
 ** Simulation study
 
 The quality of the previous estimators is compared using a simulation
-study. The results are summarized by autoref:fig:simulationBinary and autoref:fig:simulationBinarySD 
+study. The results are summarized by autoref:fig:simulationBinary.
 #+name: fig:simulationBinary
 #+ATTR_LaTeX: :width \textwidth :placement [!h]
 #+CAPTION: Comparison between the empirical distributions of the estimators (binary case) 
 #+CAPTION: across sample size. Based on 1000 replicates.
 [[./figures/simStudy-bin-bias.pdf]]
 
-#+name: fig:simulationBinarySD
-#+ATTR_LaTeX: :width \textwidth :placement [!h]
-#+CAPTION: Comparison between the modeled standard errors of the estimates (boxplot) and the empirical ones (triangles linked by a line)
-#+CAPTION: across sample size. Based on 1000 replicates.
-[[./figures/simStudy-bin-sd.pdf]]
 
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+warper <- function(n, dmu, dpC, tau){
+
+    ## simulate data
+    dt <- simTrial(n = n, dmu = dmu, dpC = dpC)
+    dt$responseUncensored <- dt$eventtimeUncensored<=tau
+    dt$response <- ifelse((dt$status==1)+(dt$eventtime>tau),dt$eventtime<=tau,NA)
+    dt$observed <- ifelse((dt$status==1)+(dt$eventtime>tau),1,0)
+
+    ## oracle estimator
+    e.oracle <- glm(responseUncensored ~ treatment, data = dt, family = binomial(link="logit"))
+
+    ## complete case estimator
+    dt.cc <- dt[dt$observed==1]
+    e.cc <- glm(response ~ treatment, data = dt.cc, family = binomial(link="logit"))
+
+    ## IPCW version 1
+    e.IPCmodel <- glm(observed ~ group*treatment, data = dt, family = binomial(link="logit"))
+    dt$IPCweights <- 1/predict(e.IPCmodel, newdata = dt, type = "response")
+    dt.cc <- dt[dt$observed==1]
+    e.IPCWglm <- suppressWarnings(glm(response ~ treatment, data = dt.cc, family = binomial(link="logit"), weights = dt.cc$IPCweights))
+
+    ## IPCW version 2
+    e.IPCWcox <- wglm(regressor.event = ~treatment,
+                      formula.censor = Surv(eventtime,status==0)~group*treatment,
+                      times = 1,
+                      data = dt[,.(eventtime,status,group,treatment)])
+
+    ## IPCW mets
+    e.mets <- logitIPCW(formula = Event(eventtime,status) ~ treatment,
+                        cens.model = ~group*treatment,
+                        time = 1, data = dt, cens.code = 0, cause = 1)
+
+    ## assemble
+    res.oracle <- setNames(summary(e.oracle)$coef["treatmentT",c(1:2,4)], c("estimate","sd","p.value"))
+    res.cc <- setNames(summary(e.cc)$coef["treatmentT",c(1:2,4)], c("estimate","sd","p.value"))
+    res.IPCWglm <- setNames(summary(e.IPCWglm)$coef["treatmentT",c(1:2,4)], c("estimate","sd","p.value"))
+    res.IPCWcox <- setNames(summary(e.IPCWcox, print = FALSE)[[1]]["treatmentT",c(1:2,4)], c("estimate","sd","p.value"))
+    res.mets <- setNames(summary(e.mets)$coef["treatmentT",c(1:2,5)], c("estimate","sd","p.value"))
+    
+    out <- rbind(cbind(estimator = "oracle", as.data.frame(as.list(res.oracle))),
+                 cbind(estimator = "cc", as.data.frame(as.list(res.cc))),
+                 cbind(estimator = "IPCWglm", as.data.frame(as.list(res.IPCWglm))),
+                 cbind(estimator = "IPCWcox", as.data.frame(as.list(res.IPCWcox))),
+                 cbind(estimator = "mets", as.data.frame(as.list(res.mets))))
+    ##
+    return(cbind(n=n,tau=tau,out))
+}
+#+END_SRC
+
+#+RESULTS:
+:results:
+:end:
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+## Sanity check
+set.seed(11)
+warper(n = 1000, dmu = c(0,1), dpC = c(0,1), tau = 1)
+#+END_SRC
+
+#+RESULTS:
+:results:
+     n tau estimator   estimate         sd      p.value
+1 1000   1    oracle -0.2706027 0.06341278 1.978345e-05
+2 1000   1        cc -0.4222127 0.07955849 1.114767e-07
+3 1000   1   IPCWglm -0.3341242 0.06411408 1.874189e-07
+4 1000   1   IPCWcox -0.2647245 0.08136191 1.139258e-03
+5 1000   1      mets -0.2647245 0.08256194 1.344187e-03
+:end:
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+library(pbapply)
+n.sim <- 100
+ls.res <- pblapply(1:n.sim, function(iSim){
+  rbind(warper(n = 100, dmu = c(0,1), dpC = c(0,1), tau = 1),
+        warper(n = 500, dmu = c(0,1), dpC = c(0,1), tau = 1),
+        warper(n = 1000, dmu = c(0,1), dpC = c(0,1), tau = 1))
+})
+#+END_SRC
+
+#+RESULTS:
+:results:
+  |                                                  | 0 % ~calculating    |+                                                 | 1 % ~03m 23s        |+                                                 | 2 % ~03m 19s        |++                                                | 3 % ~03m 16s        |++                                                | 4 % ~03m 13s        |+++                                               | 5 % ~03m 11s        |+++                                               | 6 % ~03m 09s        |++++                                              | 7 % ~03m 07s        |++++                                              | 8 % ~03m 05s        |+++++                                             | 9 % ~03m 03s        |+++++                                             | 10% ~03m 01s        |++++++                                            | 11% ~02m 59s        |++++++                                            | 12% ~02m 56s        |+++++++                                           | 13% ~02m 54s        |+++++++                                           | 14% ~02m 52s        |++++++++                                          | 15% ~02m 51s        |++++++++                                          | 16% ~02m 49s        |+++++++++                                         | 17% ~02m 47s        |+++++++++                                         | 18% ~02m 44s        |++++++++++                                        | 19% ~02m 43s        |++++++++++                                        | 20% ~02m 41s        |+++++++++++                                       | 21% ~02m 39s        |+++++++++++                                       | 22% ~02m 37s        |++++++++++++                                      | 23% ~02m 35s        |++++++++++++                                      | 24% ~02m 33s        |+++++++++++++                                     | 25% ~02m 31s        |+++++++++++++                                     | 26% ~02m 29s        |++++++++++++++                                    | 27% ~02m 27s        |++++++++++++++                                    | 28% ~02m 25s        |+++++++++++++++                                   | 29% ~02m 23s        |+++++++++++++++                                   | 30% ~02m 21s        |++++++++++++++++                                  | 31% ~02m 19s        |++++++++++++++++                                  | 32% ~02m 17s        |+++++++++++++++++                                 | 33% ~02m 15s        |+++++++++++++++++                                 | 34% ~02m 13s        |++++++++++++++++++                                | 35% ~02m 11s        |++++++++++++++++++                                | 36% ~02m 09s        |+++++++++++++++++++                               | 37% ~02m 07s        |+++++++++++++++++++                               | 38% ~02m 05s        |++++++++++++++++++++                              | 39% ~02m 03s        |++++++++++++++++++++                              | 40% ~02m 01s        |+++++++++++++++++++++                             | 41% ~01m 59s        |+++++++++++++++++++++                             | 42% ~01m 57s        |++++++++++++++++++++++                            | 43% ~01m 55s        |++++++++++++++++++++++                            | 44% ~01m 53s        |+++++++++++++++++++++++                           | 45% ~01m 51s        |+++++++++++++++++++++++                           | 46% ~01m 49s        |++++++++++++++++++++++++                          | 47% ~01m 47s        |++++++++++++++++++++++++                          | 48% ~01m 45s        |+++++++++++++++++++++++++                         | 49% ~01m 43s        |+++++++++++++++++++++++++                         | 50% ~01m 41s        |++++++++++++++++++++++++++                        | 51% ~01m 40s        |++++++++++++++++++++++++++                        | 52% ~01m 38s        |+++++++++++++++++++++++++++                       | 53% ~01m 35s        |+++++++++++++++++++++++++++                       | 54% ~01m 33s        |++++++++++++++++++++++++++++                      | 55% ~01m 31s        |++++++++++++++++++++++++++++                      | 56% ~01m 29s        |+++++++++++++++++++++++++++++                     | 57% ~01m 27s        |+++++++++++++++++++++++++++++                     | 58% ~01m 25s        |++++++++++++++++++++++++++++++                    | 59% ~01m 23s        |++++++++++++++++++++++++++++++                    | 60% ~01m 21s        |+++++++++++++++++++++++++++++++                   | 61% ~01m 19s        |+++++++++++++++++++++++++++++++                   | 62% ~01m 17s        |++++++++++++++++++++++++++++++++                  | 63% ~01m 15s        |++++++++++++++++++++++++++++++++                  | 64% ~01m 13s        |+++++++++++++++++++++++++++++++++                 | 65% ~01m 11s        |+++++++++++++++++++++++++++++++++                 | 66% ~01m 09s        |++++++++++++++++++++++++++++++++++                | 67% ~01m 07s        |++++++++++++++++++++++++++++++++++                | 68% ~01m 05s        |+++++++++++++++++++++++++++++++++++               | 69% ~01m 03s        |+++++++++++++++++++++++++++++++++++               | 70% ~01m 01s        |++++++++++++++++++++++++++++++++++++              | 71% ~59s            |++++++++++++++++++++++++++++++++++++              | 72% ~57s            |+++++++++++++++++++++++++++++++++++++             | 73% ~55s            |+++++++++++++++++++++++++++++++++++++             | 74% ~53s            |++++++++++++++++++++++++++++++++++++++            | 75% ~51s            |++++++++++++++++++++++++++++++++++++++            | 76% ~49s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~47s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~45s            |++++++++++++++++++++++++++++++++++++++++          | 79% ~43s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~41s            |+++++++++++++++++++++++++++++++++++++++++         | 81% ~39s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~37s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~35s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~33s            |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~31s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~29s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~27s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~24s            |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~22s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~20s            |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~18s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~16s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~14s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~12s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~10s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~08s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~06s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~04s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~02s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=03m 24s
+:end:
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+library(ggplot2)
+library(data.table)
+dt.res <- as.data.table(do.call(rbind,ls.res))
+dt.res[, estimator := factor(estimator,
+                             levels = c("cc","IPCWglm","IPCWcox","mets","oracle"),
+                             labels = c("complete case","wrong IPCW (glm censoring model)","IPCW (riskRegression)","IPCW (mets)","oracle"))]
+dt.res[, empirical.sd := sd(estimate), by  = c("n","tau","estimator")]
+dt.res[, sample.size := factor(paste0("sample.size: ",n), levels = unique(paste0("sample.size: ",n)))]
+gg.beta <- ggplot(dt.res, aes(y = estimate))
+gg.beta <- gg.beta + geom_boxplot(aes(fill=estimator))
+gg.beta <- gg.beta + facet_wrap(~sample.size)
+gg.beta <- gg.beta + guides(fill = guide_legend(nrow = 3gggggggn, byrow = TRUE))
+gg.beta <- gg.beta + theme(text = element_text(size=15),
+                           axis.line = element_line(size = 1.25),
+                           axis.ticks = element_line(size = 2),
+                           axis.ticks.length=unit(.25, "cm"),
+                           legend.position="bottom", 
+                           legend.direction = "horizontal")
+
+gg.beta
+## ggsave(gg.beta, filename = "./figures/simStudy-bin-bias.pdf", width = 8.5)
+#+END_SRC
+
+#+RESULTS:
+:results:
+:end:
+
+# #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+#   ##dt.res[estimator == "oracle", .(empirical = sd(estimate), model = mean(sd)),by="sample.size"]
+#   res <- do.call(rbind,lapply(1:100, function(i){
+#     dt <- simTrial(n = 1000,  dmu = c(0,1), dpC = c(0,1))
+#     dt$responseUncensored <- dt$eventtimeUncensored<=tau
+#     dt$response <- ifelse((dt$status==1)+(dt$eventtime>tau),dt$eventtime<=tau,NA)
+#     dt$observed <- ifelse((dt$status==1)+(dt$eventtime>tau),1,0)
+#     summary(glm(responseUncensored ~ treatment, data = dt, family = binomial(link="logit")))$coef[2,]
+#   }))
+# sd(res[,1])
+# mean(res[,2])
+# #+END_SRC
+
+# #+RESULTS:
+# : [1] 0.05509405
+# : [1] 0.06338228
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+gg.sd <- ggplot(dt.res, aes(y = sd))
+gg.sd <- gg.sd + geom_boxplot(aes(fill=estimator, x = as.factor(n)))
+gg.sd <- gg.sd + geom_point(aes(y=empirical.sd, x = as.factor(n)), shape = 2, size = 2) + geom_line(aes(y=empirical.sd, x = as.factor(n), group=estimator))
+gg.sd <- gg.sd + facet_grid(~estimator) + xlab("sample size")
+gg.sd <- gg.sd + theme(text = element_text(size=15),
+                       axis.line = element_line(size = 1.25),
+                       axis.ticks = element_line(size = 2),
+                       axis.ticks.length=unit(.25, "cm"),
+                       legend.position="bottom",
+                       legend.direction = "horizontal")
+gg.sd
+#+END_SRC
+#+RESULTS:
+:results:
+:end:
 
 # * Reference
 # # help: https://gking.harvard.edu/files/natnotes2.pdf
@@ -919,16 +1146,17 @@ study. The results are summarized by autoref:fig:simulationBinary and autoref:fi
 Alternative R code to fit a random intercept model
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(LMMstar)
-e.lmm <- lmm(Yobs~time, repetition = ~time|id, structure = "CS",
-             data = dtL.B)
-eOracle.lmm <- lmm(Yobs~mdd*time, repetition = ~time|id, structure = "CS",
-                   data = dtL.B)
+e.lmm <- lmm(Yobs~time, repetition = ~time|id,
+             structure = "CS", data = dtL.B)
+eOracle.lmm <- lmm(Yobs~time*mdd, repetition = ~time|id,
+                   structure = "CS", data = dtL.B)
 #+END_SRC
 
 #+RESULTS:
 
 Identify patient with missing data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+id.NA <- unique(sort(dtL.B[is.na(Yobs),id]))
 dtL.BNA <- dtL.B[id %in% id.NA==TRUE]
 dtL.BNA$group2 <- paste0(dtL.BNA$mdd," (partially observed)")
 dtL.BNNA <- dtL.B[id %in% id.NA==FALSE]
@@ -949,6 +1177,62 @@ predOracle.B$mdd <- paste(predOracle.B$mdd," (imputed)")
 
 #+RESULTS:
 
+Mixed model (feasible) estimate as a t-test on the imputed values:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+diff.lmm <- c(dtL.BNNA[,diff(Yobs),by="id"][[2]],
+              pred.B[,estimate[2]-Yobs[1],by="id"][[2]])
+t.test(diff.lmm)
+coef(e.lmm)["timeT2"]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	One Sample t-test
+
+data:  diff.lmm
+t = -149.14, df = 1999, p-value < 2.2e-16
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ -35.17796 -34.26483
+sample estimates:
+mean of x 
+-34.72139
+   timeT2 
+-34.72139
+#+end_example
+
+Mixed model (oracle) estimate as a t-test on the imputed values:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+diff.lmm.oracle <- c(dtL.BNNA[,diff(Yobs),by="id"][[2]],
+                     predOracle.B[,estimate[2]-Yobs[1],by="id"][[2]])
+t.test(diff.lmm.oracle)
+glht(eOracle.lmm, linfct = "timeT2+0.5*timeT2:mddsevere=0")
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	One Sample t-test
+
+data:  diff.lmm.oracle
+t = -125.01, df = 1999, p-value < 2.2e-16
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ -38.02137 -36.84682
+sample estimates:
+mean of x 
+ -37.4341
+
+	 General Linear Hypotheses
+
+Linear Hypotheses:
+                                     Estimate
+timeT2 + 0.5 * timeT2:mddsevere == 0   -37.43
+#+end_example
+
+Graphical display (feasible):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 gg.imp <- ggplot(mapping = aes(x=time, color = group2))
 gg.imp <- gg.imp + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Yobs))
@@ -970,6 +1254,7 @@ gg.imp
 : 1: Removed 969 rows containing non-finite values (stat_boxplot). 
 : 2: Removed 969 rows containing non-finite values (stat_boxplot).
 
+Graphical display (oracle):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 gg.impOracle <- ggplot(mapping = aes(x=time, color = group2))
 gg.impOracle <- gg.impOracle + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Yobs))

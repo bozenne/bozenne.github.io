@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: aug  3 2021 (17:46) 
 ## Version: 
-## Last-Updated: aug  4 2021 (18:08) 
+## Last-Updated: okt 14 2021 (12:16) 
 ##           By: Brice Ozenne
-##     Update #: 9
+##     Update #: 10
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -164,9 +164,9 @@ warper <- function(n, dmu, dpC, tau){
                       data = dt[,.(eventtime,status,group,treatment)])
 
     ## IPCW mets
-    e.mets <- binreg(formula = Event(eventtime,status) ~ treatment,
-                     cens.model = ~group*treatment,
-                     time = 1, data = dt, cens.code = 0, cause = 1)
+    e.mets <- logitIPCW(formula = Event(eventtime,status) ~ treatment,
+                        cens.model = ~group*treatment,
+                        time = 1, data = dt, cens.code = 0, cause = 1)
 
     ## assemble
     res.oracle <- setNames(summary(e.oracle)$coef["treatmentT",c(1:2,4)], c("estimate","sd","p.value"))
