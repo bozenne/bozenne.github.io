@@ -1586,6 +1586,29 @@ hist(epsilon, main = "histogram of the residuals")
 
 ** Customize graphic 
 
+*** Greek letter in facet
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+seqX <- 1:15
+df <- rbind(data.frame(density = dpois(seqX,lambda = 1),
+                       lambda = 1,
+                       x = seqX),
+            data.frame(density = dpois(seqX,lambda = 2),
+                       lambda = 2,
+                       x = seqX))
+
+df$lambda <- factor(df$lambda, levels = c(1,2),
+                    labels=c(expression(paste(lambda,"=1")),
+                             expression(paste(lambda,"=2")))
+                    )
+
+library(ggplot2)
+gg <- ggplot(df, aes(y=density,x=x)) + geom_bar(stat="identity")
+gg + facet_wrap(~lambda, nrow = 1, labeller = label_parsed)
+
+#+END_SRC
+
+#+RESULTS:
+
 *** Modify the legend of a discrete scale (with greek letters)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
