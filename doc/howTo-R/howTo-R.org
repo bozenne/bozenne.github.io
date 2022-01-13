@@ -1586,6 +1586,29 @@ hist(epsilon, main = "histogram of the residuals")
 
 ** Customize graphic 
 
+*** Greek letter in facet
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+seqX <- 1:15
+df <- rbind(data.frame(density = dpois(seqX,lambda = 1),
+                       lambda = 1,
+                       x = seqX),
+            data.frame(density = dpois(seqX,lambda = 2),
+                       lambda = 2,
+                       x = seqX))
+
+df$lambda <- factor(df$lambda, levels = c(1,2),
+                    labels=c(expression(paste(lambda,"=1")),
+                             expression(paste(lambda,"=2")))
+                    )
+
+library(ggplot2)
+gg <- ggplot(df, aes(y=density,x=x)) + geom_bar(stat="identity")
+gg + facet_wrap(~lambda, nrow = 1, labeller = label_parsed)
+
+#+END_SRC
+
+#+RESULTS:
+
 *** Modify the legend of a discrete scale (with greek letters)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3249,6 +3272,63 @@ total correlation     0 0.000203386
 #+end_example
 
 
+** Handling left, right, and interval censored data
+
+Simulate data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n <- 10000
+tau <- c(left = -2, right = 2)
+
+set.seed(10)
+X <- rnorm(n)
+Y <- rnorm(n, mean = X)
+df <- data.frame(Y=Y,X=X)
+#+END_SRC
+
+#+RESULTS:
+
+Right censoring:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df$YobsR <- pmin(Y,tau["right"])
+df$censR <- Y>tau["right"]
+
+df$SurvR <- Surv(df$YobsR,df$censR==FALSE, type = "right")
+
+rbind(naive = coef(lm(YobsR ~ X, data = df)),
+      corrected = coef(estimate(lvm(SurvR ~ X), df))[1:2])
+#+END_SRC
+
+#+RESULTS:
+:           (Intercept)         X
+: naive     -0.07039338 0.9290829
+: corrected -0.02081243 1.0065446
+
+Left censoring:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df$YobsL <- pmax(Y,tau["left"])
+df$censL <- Y< (tau["left"])
+
+df$SurvL <- Surv(df$YobsL,df$censL==FALSE, type = "left")
+
+rbind(naive = coef(lm(YobsL ~ X, data = df)),
+      corrected = coef(estimate(lvm(SurvL ~ X), df))[1:2])
+#+END_SRC
+
+#+RESULTS:
+:           (Intercept)         X
+: naive      0.03314233 0.9150299
+: corrected -0.02171591 0.9991420
+
+Interval censoring:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df$Yobs <- pmax(pmin(Y,tau["right"]),tau["left"])
+df$Surv <- Surv(time = ifelse(df$censL,-Inf,df$YobsR),
+                time2 = ifelse(df$censR,+Inf,df$YobsL),
+                type = "interval2")
+
+rbind(naive = coef(lm(Yobs ~ X, data = df)),
+      corrected = coef(estimate(lvm(Surv ~ X), df))[1:2]) ## FAILS
+#+END_SRC
 
 ** LVM as a weighted mean
 Simulate some data:
