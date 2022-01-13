@@ -44,6 +44,12 @@ absolute risks standardized to each of the treatments (g-formula)"
 interpreted as what one would have observed in arandomized clinical
 trial."
 
+* Mixed model
+Changes in bodyweight over time were analyzed using a linear mixed
+model which included follow-up time (categorical) as fixed effect and
+which further assumed an unstructured covariance pattern to account
+for repleated measurements on the same subjects.
+
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
