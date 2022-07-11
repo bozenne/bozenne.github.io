@@ -1,0 +1,561 @@
+#+TITLE: Partial correlation in linear models
+#+Author: Brice Ozenne
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+if(system("whoami",intern=TRUE)=="bozenne"){
+  path <- "~/Documents/"
+}else{
+  path <- "c:/Users/hpl802/Documents/"
+}
+setwd(file.path(path,"GitHub/bozenne.github.io/doc/2022_07_08-partial-correlation/"))
+#+END_SRC
+
+#+RESULTS:
+
+* Summary
+
+This document starts by presenting how to extract from a (univariate)
+linear regression model partial correlation coefficients. It also
+precise what type of "partial" (i.e. adjusted on which covariate) we
+get. When having multiple measurements of pairs of variables, various
+technics to estimate (partial) correlations are being compared.
+
+* Illustration
+
+For illustration we will use the following packages:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(LMMstar);library(mvtnorm);library(ggplot2);library(nlme)
+LMMstar.options(method.numDeriv = "Richardson",
+                columns.confint = c("estimate","se","statistic","df","p.value"))
+#+END_SRC
+
+#+RESULTS:
+
+and dataset citep:bland1995calculating:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+data("bland1995", package = "rmcorr")
+bland1995$Subject <- as.factor(bland1995$Subject)
+head(bland1995)
+#+END_SRC
+
+#+RESULTS:
+:   Subject   pH PacO2
+: 1       1 6.68  3.97
+: 2       1 6.53  4.12
+: 3       1 6.43  4.09
+: 4       1 6.33  3.97
+: 5       2 6.85  5.27
+: 6       2 7.06  5.37
+
+The aim is to relate intramural pH and PaCO2 using eight subjects:
+
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
+gg <- ggplot(bland1995, aes(x = pH, y = PacO2,
+                            group = Subject, color = Subject))
+gg <- gg + geom_point() + geom_smooth(method = "lm", se = FALSE)
+gg
+#+END_SRC
+
+#+RESULTS:
+: `geom_smooth()` using formula 'y ~ x'
+
+#+BEGIN_SRC R :exports none :results output raw drawer :session *R* :cache no
+ggsave(gg + theme(text = element_text(size=15),
+                  axis.line = element_line(size = 1),
+                  axis.ticks = element_line(size = 1),
+                  axis.ticks.length=unit(.25, "cm")), filename = file.path("figures","gg-describe-dataset.pdf") )
+#+END_SRC
+
+#+RESULTS:
+:results:
+Saving 6.99 x 7 in image
+`geom_smooth()` using formula 'y ~ x'
+:end:
+
+#+ATTR_LaTeX: :width 1\textwidth :options trim={0 0 0 0} :placement [!h]
+[[./figures/gg-describe-dataset.pdf]]
+
+
+\clearpage
+
+* Partial partial in multiple linear regression
+
+Consider the linear model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lmm <- lmm(pH ~ Subject + PacO2, data = bland1995)
+eTable.lmm <- confint(e.lmm)
+eTable.lmm
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+            estimate     se statistic df  p.value
+(Intercept)    6.930 0.1295     53.53 38 0.00e+00
+Subject2       0.705 0.0774      9.11 38 4.28e-11
+Subject3       0.950 0.0611     15.55 38 0.00e+00
+Subject4       0.972 0.0735     13.22 38 8.88e-16
+Subject5       0.860 0.0584     14.73 38 0.00e+00
+Subject6       0.926 0.0660     14.04 38 0.00e+00
+Subject7       0.692 0.1049      6.60 38 8.67e-08
+Subject8       0.703 0.0616     11.42 38 7.46e-14
+PacO2         -0.108 0.0299     -3.62 38 8.47e-04
+#+end_example
+
+The F-statistic testing the effect of each factor:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+anova(e.lmm)
+#+END_SRC
+
+#+RESULTS:
+: 
+: 	|| mean coefficients || 
+: 
+:  - Multivariate Wald test (global null hypothesis)
+:         F-statistic df.num df.denom    p.value    
+: Subject      48.247      7       38          0 ***
+: PacO2        13.131      1       38 0.00084711 ***
+: ---
+:  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+equal the Wald-statistic squared (divided by 1, the number of parameters)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Wald <- eTable.lmm["PacO2","statistic"]
+Wald^2
+#+END_SRC
+
+#+RESULTS:
+: [1] 13.13132
+
+This F-statistic is also related to the sum of squares
+(ANOVA). Consider a model with a single regressor:
+#+BEGIN_EXPORT latex
+\[ Y = X\beta + \varepsilon\text{, } \varepsilon\sim\Gaus(0,\sigma^2)\]
+#+END_EXPORT
+
+where we would have centered the outcome \(Y\). Here we denote by
+\(X\) the design matrix, \(n\) the number of observations and \(p=1\)
+the number of coefficients, \(H = X (X\trans{X})^{-1} \trans{X}\) the
+hat matrix and \(\widehat{\beta} = (X\trans{X})^{-1} \trans{X}Y\) the
+OLS estimator of the regression coefficients.
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var(Y) = Y\trans{Y} =& YH\trans{Y} + Y(1-H)\trans{Y} \\
+SST =& SSR + SSE \\
+    =& \hat{\beta} (X\trans{X}) \trans{\hat{\beta}} + Y (1-H) \trans{Y} \\
+    =& \sigma^2 (\hat{\beta} \Sigma^{-1}_{\hat{\beta}} \trans{\hat{\beta}} + n-p) \\
+\end{align*}
+#+END_EXPORT
+Introducing \(MSSR = SSR/1\) and \(MSSE = SSE/(n-p)\), we obtain that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{MSSR}{MSSE} = \frac{\hat{\beta}^2}{\Sigma_{\hat{\beta}}} = Wald^2
+\end{align*}
+#+END_EXPORT
+
+So the F-statistic equals the ratio of the residual sum of squared
+(normalized by their degrees of freedom). We can check that this extends to multiple regression using the
+usual anova table:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+anova(lm(pH ~ Subject + PacO2, data = bland1995))
+#+END_SRC
+
+#+RESULTS:
+: Analysis of Variance Table
+: 
+: Response: pH
+:           Df  Sum Sq Mean Sq F value    Pr(>F)    
+: Subject    7 2.86484 0.40926  46.600 < 2.2e-16 ***
+: PacO2      1 0.11532 0.11532  13.131 0.0008471 ***
+: Residuals 38 0.33373 0.00878                      
+: ---
+: Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+\Warning Since \Rlogo output type 1 anova only the last and second to
+last line are relevant. The first line (=Subject=) is for a model
+without =PacO2= so it should be expected that the F-value does not
+match with the one of =Subject= in a model with =PacO2=.
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sigma2 <- as.double(sigma(e.lmm))
+beta <- eTable.lmm["PacO2","estimate"]
+sigma_beta <- eTable.lmm["PacO2","se"]
+c(MSSE = sigma2, MSSR = sigma2 * beta^2 /sigma_beta^2)
+#+END_SRC
+
+#+RESULTS:
+:        MSSE        MSSR 
+: 0.008782435 0.115324959
+
+
+Finally the \(R^2\) is defined as the proportion of variance explained, i.e.:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^2 =& \frac{SSR}{SSR + SSE} \\
+    =& \frac{1}{1 + SSE/SSR} \\
+    =& \frac{1}{1 + n-p/(\beta^2/\sigma^2_\beta)} \\
+    = \frac{Wald^2}{Wald^2 + n-p}
+\end{align*}
+#+END_EXPORT
+
+So the partial correlation coefficient is the square root of that
+quantity, with sign the sign of the test statistic:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df <- eTable.lmm["PacO2","df"]
+sign(Wald)*sqrt(Wald^2/(Wald^2+df))
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.5067697
+
+which matches exactly the partial correlation coefficient when *both*
+outcome are adjusted for =Subject=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.partialCor <- partialCor(list(pH ~ Subject, PacO2 ~ Subject), data = bland1995)
+print(e.partialCor, digit = 5)
+#+END_SRC
+
+#+RESULTS:
+:               estimate      se     df    lower   upper   p.value
+: rho(pH,PacO2) -0.50677 0.16013 25.669 -0.71027 -0.2251 0.0017756
+: Note: estimates and confidence intervals for rho have been back-transformed. 
+:       standard errors are not back-transformed.
+
+Similar values can be obtained using dedicated packages, e.g.:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(rmcorr)
+rmcorr(Subject, PacO2, pH, bland1995)$r
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.5067697
+
+\clearpage
+
+* Partial partial with repeated measurements
+
+Several references on the subject citep:bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation
+
+* Rcode :noexport:
+library(rmcorr)
+library(LMMstar)
+library(mvtnorm)
+
+## * No time effect
+
+## ** setting
+rhoA <- 0.8
+rhoB <- 0.6
+rho <- 0.4
+
+Rho <- diag(1,6,6)
+Rho[2:3,1] <- Rho[c(1,3),2] <- Rho[1:2,3] <- rhoA
+Rho[5:6,4] <- Rho[c(4,6),5] <- Rho[4:5,6] <- rhoB
+Rho[1:3,4:6] <- Rho[4:6,1:3] <- rho
+dimnames(Rho) <- list(c(paste0("delta",1:3), paste0("MREG",1:3)),c(paste0("delta",1:3), paste0("MREG",1:3)))
+Rho
+##        delta1 delta2 delta3 MREG1 MREG2 MREG3
+## delta1    1.0    0.8    0.8   0.4   0.4   0.4
+## delta2    0.8    1.0    0.8   0.4   0.4   0.4
+## delta3    0.8    0.8    1.0   0.4   0.4   0.4
+## MREG1     0.4    0.4    0.4   1.0   0.6   0.6
+## MREG2     0.4    0.4    0.4   0.6   1.0   0.6
+## MREG3     0.4    0.4    0.4   0.6   0.6   1.0
+
+## sanity check
+all(eigen(Rho)$values>0)
+table(Rho - t(Rho))
+
+## ** simulate data 
+set.seed(10)
+n <- 1000
+dfW2 <- cbind(id = as.factor(1:n), setNames(as.data.frame(rmvnorm(n, mean = 1:6, sigma = Rho)), colnames(Rho))) ## one line per subject 
+dfL <- reshape2::melt(dfW2, id.vars = "id") ## one line per measurement (and so per subject and per time)
+dfL$type <- gsub("1|2|3","",dfL$variable)
+dfL$time <- gsub("delta|MREG","",dfL$variable)
+dfW1 <- reshape2::dcast(dfL, formula = id+time ~ type, value.var = c("value")) ## one line per time (and so per subject)
+
+## ** analysis
+e.lmm <- lmm(value ~ variable,
+             repetition = ~ variable|id,
+             structure = CS(~type, heterogeneous = TRUE),
+             data = dfL,
+             control = list(optimizer = "FS"))
+summary(e.lmm)
+##        delta1 delta2 delta3 MREG1 MREG2 MREG3
+## delta1  1.000  0.813  0.813 0.412 0.412 0.412
+## delta2  0.813  1.000  0.813 0.412 0.412 0.412
+## delta3  0.813  0.813  1.000 0.412 0.412 0.412
+## MREG1   0.412  0.412  0.412 1.000 0.620 0.620
+## MREG2   0.412  0.412  0.412 0.620 1.000 0.620
+## MREG3   0.412  0.412  0.412 0.620 0.620 1.000
+
+rmcorr(
+    participant = "id",
+    measure1 = "delta",
+    measure2 = "MREG",
+    dataset =  dfW1
+)
+## r
+## 0.7705921
+## 95% confidence interval
+## 0.7521614 0.7878181 
+
+
+* Reference
+# # help: https://gking.harvard.edu/files/natnotes2.pdf
+
+#+BEGIN_EXPORT latex
+\begingroup
+\renewcommand{\section}[2]{}
+#+END_EXPORT
+bibliographystyle:apalike
+[[bibliography:bibliography.bib]] 
+#+BEGIN_EXPORT latex
+\endgroup
+#+END_EXPORT
+
+#+BEGIN_EXPORT LaTeX
+\appendix \titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+#+END_EXPORT
+
+* CONFIG :noexport:
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+
+** Display of the document
+# ## space between lines
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+
+# ## margins
+#+LATEX_HEADER:\geometry{top=1cm}
+
+# ## personalize the prefix in the name of the sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+# ## fix bug in titlesec version
+# ##  https://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+#+LaTeX_HEADER: \usepackage{etoolbox}
+#+LaTeX_HEADER: 
+#+LaTeX_HEADER: \makeatletter
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+#+LaTeX_HEADER: \patchcmd{\ttlh@hang}{\noindent}{}{}{}
+#+LaTeX_HEADER: \makeatother
+
+** Color
+# ## define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+#+LaTeX_HEADER: \definecolor{gray}{gray}{0.5}
+
+# ## change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+#+LaTeX_HEADER: \newenvironment{note}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+** Symbols
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# # R Software
+#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip\skipamount   \skipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output (global change)
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+
+** Lists
+#+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
+
+** Image and graphs
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LaTeX_HEADER: \RequirePackage{tikz-cd} % graph
+# ## https://tools.ietf.org/doc/texlive-doc/latex/tikz-cd/tikz-cd-doc.pdf
+
+** Table
+#+LATEX_HEADER: \RequirePackage{booktabs} % for nice lines in table (e.g. toprule, bottomrule, midrule, cmidrule)
+
+** Inline latex
+# @@latex:any arbitrary LaTeX code@@
+
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+
+*** Template for shortcut
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+
+**** Probability
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\logLikelihood[2][1=,2=]{\defOperator{#1}{#2}{\ell}{}{(}{)}{}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+
+#+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+#+LATEX_HEADER: \newcommand\sample{\chi}
+#+LATEX_HEADER: \newcommand\Hspace{\mathcal{H}}
+#+LATEX_HEADER: \newcommand\Tspace{\mathcal{T}}
+
+
+** Notations
