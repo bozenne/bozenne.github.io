@@ -1,4 +1,4 @@
-m#+TITLE: "How to" in orgmode
+#+TITLE: "How to" in orgmode
 #+Author: Brice Ozenne
 
 * Box
@@ -216,7 +216,12 @@ This is a footnote[fn:1].
 \vfill
 #+END_EXPORT
 
+** No numbering for the section
+:PROPERTIES:  
+:UNNUMBERED: t  
+:END:  
 ** Change margin
+
 (require changepage)
 #+LaTeX: \begin{adjustwidth}{-1em}{-1em}
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

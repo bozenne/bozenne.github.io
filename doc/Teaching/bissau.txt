@@ -1,4 +1,4 @@
-"id" "fuptime" "dead" "bcg" "dtp" "age" "agem" "dtpany"
+"id" "fuptime" "fupstatus" "bcg" "dtp" "age" "agem" "dtpany"
 "1" 65 "dead" "yes" 1 182 5 TRUE
 "2" 161 "censored" "yes" 2 125 4 TRUE
 "3" 166 "censored" "no" 0 69 2 FALSE

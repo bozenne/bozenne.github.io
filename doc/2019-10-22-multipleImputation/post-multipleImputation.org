@@ -8,7 +8,7 @@ package. See https://stefvanbuuren.name/mice/.
 \bigskip
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
-path <- "~/Documents/GitHub/bozenne.github.io/doc/2019-10-22-multipleImputation/"
+path <- "~/Github/bozenne.github.io/doc/2019-10-22-multipleImputation/"
 setwd(path)
 #+END_SRC
 
@@ -547,12 +547,91 @@ tanh(mean(atanh(vec.rsquared)))
 
 \clearpage
 
+* Special case: stratified imputation \newline and variable transformation
+
+Mice can be adapted to use a group-specific imputation model[fn:https://thestatsgeek.com/2021/06/02/multiple-imputation-separately-by-groups-in-r-and-stata/
+]:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtMale.data <- dt.data[dt.data$gender=="Male",]
+dtFemale.data <- dt.data[dt.data$gender=="Female",]
+
+all.variables <- c("Y","group","season","bmi","age","gender")
+n.variables <- length(all.variables)
+Mlink <- matrix(0, n.variables, n.variables,
+                dimnames = list(all.variables,all.variables))
+Mlink["bmi",c("group","season","age")] <- 1
+Mlink
+
+## stratified imputation
+dtMale.mice <- mice(dtMale.data,
+                    m=10, 
+                    maxit = 50, 
+                    predictorMatrix = Mlink,
+                    method = c("","","","norm","",""),
+                    seed = 500, printFlag = FALSE)
+dtFemale.mice <- mice(dtFemale.data,
+                      m=10, 
+                      maxit = 50,
+                      predictorMatrix = Mlink,
+                      method = c("","","","norm","",""),
+                      seed = 500, printFlag = FALSE)
+dt.mice <- rbind(dtMale.mice, dtFemale.mice)
+
+## sanity check
+test <- complete(dt.mice)$bmi
+GS <-  c(complete(dtMale.mice)$bmi,
+             complete(dtFemale.mice)$bmi)
+range(test-GS)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+       Y group season bmi age gender
+Y      0     0      0   0   0      0
+group  0     0      0   0   0      0
+season 0     0      0   0   0      0
+bmi    0     1      1   0   1      0
+age    0     0      0   0   0      0
+gender 0     0      0   0   0      0
+Advarselsbesked:
+Number of logged events: 1
+Advarselsbesked:
+Number of logged events: 1
+[1] 0 0
+#+end_example
+
+and to define new variables post-imputation[fn:https://github.com/amices/mice/issues/34]:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtLong.mice <- complete(dt.mice, action='long', include=TRUE)
+dtLong.mice$newvar <- dtLong.mice$Y^2
+dt2.mice <- as.mids(dtLong.mice)
+
+## sanity check
+range(complete(dt2.mice)$newvar - complete(dt.mice)$Y^2)
+
+## run model
+elm.mice <- with(dt2.mice, lm(newvar ~ group+season+bmi+age+gender))
+summary(pool(elm.mice))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0 0
+:           term    estimate  std.error   statistic       df      p.value
+: 1  (Intercept) -4389.00375 386.635258 -11.3517939 23.29985 5.655387e-11
+: 2      groupHC   -53.95254  82.370728  -0.6549965 83.82218 5.142635e-01
+: 3 seasonsummer   172.60520  84.141766   2.0513617 75.16262 4.371633e-02
+: 4          bmi   115.09828  16.840419   6.8346443 19.81157 1.275398e-06
+: 5          age   148.31890   2.280725  65.0314676 84.14586 0.000000e+00
+: 6 genderFemale   203.09995  84.971650   2.3902084 69.70597 1.954547e-02
+
+\clearpage
+
 * Special case: imputation using a specific law and no covariate
 Mice can be adapted in order, for instance, to sample from a uniform
 distribution or a truncated normal distribution. First define a
 function able to generate data like:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-mice.impute.SI_unif <- function(y, ry, ...){ ## uniform law
+mice.impute.SI_unif <- function(y, ry, ...){ ## uniform xglaw
     n.NA <- sum(ry==FALSE)
     sample <- runif(n.NA, min = 0, max = 1)
     return(cbind(sample))
@@ -763,8 +842,8 @@ bibliographystyle:apalike
 
 ** Font
 # https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
-#+LaTeX_HEADER: \newenvironment{comment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
-#+LaTeX_HEADER: \newenvironment{activity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{mycomment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+#+LaTeX_HEADER: \newenvironment{myactivity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
 
 ** Symbols
 # ## valid and cross symbols

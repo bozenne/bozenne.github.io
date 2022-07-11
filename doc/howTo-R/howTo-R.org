@@ -1670,6 +1670,11 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 \clearpage
 *** Increase size of the legend labels 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + theme(text = element_text(size=15), 
+                axis.line = element_line(size = 1.25),
+                axis.ticks = element_line(size = 2),
+                axis.ticks.length=unit(.25, "cm"))
+
 gg.mean + theme(axis.title = element_text(size=10), 
                 axis.line = element_line(size = 1.25),
                 axis.ticks = element_line(size = 2),
