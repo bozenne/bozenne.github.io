@@ -47,7 +47,7 @@ I have been also been reading about:
 - **GAM** with the excellent book *Generalized Additive Models: An
   Introduction with R* (Wood 2017)
 - **Asymptotic theory** with *Asymptotic statistics* (van der Vaart,
-  1998), *In all likelihood* (Yudi Pawitan, 2001), and U-Statistics
+  1998), *In all likelihood* (Yudi Pawitan, 2001), and *U-Statistics: theory and practice*
   (Lee, 1990).
 - **Dynamic Regression Models** with the nice book *Dynamic Regression
   Models for Survival Data* (Torben Martinussen and Thomas Scheike,
@@ -59,8 +59,8 @@ I have been also been reading about:
 
 I'm currently reading about:
 - **Group sequential design** with *Group Sequential and Confirmatory
-    Adaptive Designs in Clinical Trials* (Wassmer, 2006) and Group
-    Sequential Methods with Applications to Clinical Trials (Jennison
+    Adaptive Designs in Clinical Trials* (Wassmer, 2006) and *Group
+    Sequential Methods with Applications to Clinical Trials* (Jennison
     and Turnbull, 1999)
 - **Dynamic Treatment Regimes** with *Dynamic Treatment Regimes:
     Statistical Methods for Precision Medicine* (Tsiatis et al., 2019)
