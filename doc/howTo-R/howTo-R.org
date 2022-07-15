@@ -1670,15 +1670,17 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 \clearpage
 *** Increase size of the legend labels 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-gg.mean + theme(text = element_text(size=15), 
-                axis.line = element_line(size = 1.25),
-                axis.ticks = element_line(size = 2),
-                axis.ticks.length=unit(.25, "cm"))
+    gg.mean + theme(text = element_text(size=15), 
+                    axis.line = element_line(size = 1.25),
+                    axis.ticks = element_line(size = 2),
+                    axis.ticks.length=unit(.25, "cm"),
+                    legend.key.size = unit(3,"line"))
 
-gg.mean + theme(axis.title = element_text(size=10), 
-                axis.line = element_line(size = 1.25),
-                axis.ticks = element_line(size = 2),
-                axis.ticks.length=unit(.25, "cm"))
+    gg.mean + theme(axis.title = element_text(size=10), 
+                    axis.line = element_line(size = 1.25),
+                    axis.ticks = element_line(size = 2),
+                    axis.ticks.length=unit(.25, "cm"),
+                    legend.key.size = unit(3,"line"))
 #+END_SRC
 
 *** Put the legend at the bottom
@@ -2891,6 +2893,36 @@ parallel::stopCluster(cl)
 #+END_SRC
 
 #+RESULTS:
+*** Parallel computation in C++
+https://github.com/boennecd/pedmod/blob/main/src/r-api.cpp
+
+Header:
+#+BEGIN_SRC C++ :exports both :results output :session *R* :cache no
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+#+END_SRC
+
+
+#+BEGIN_SRC C++ :exports both :results output :session *R* :cache no
+    #ifdef _OPENMP
+    #pragma omp parallel num_threads(n_threads)
+    {
+    #endif
+
+    #ifdef _OPENMP
+    #pragma omp for schedule(static) reduction(+:n_fails)
+    #endif
+
+    for(int i = 0; i < all_idx.size(); ++i){
+      n_fails += did_fail;
+    }
+
+#ifdef _OPENMP
+}
+#endif
+#+END_SRC
+
 
 * /lava/ package 
 ** Generate repeated measurements
@@ -3516,7 +3548,7 @@ as.data.frame(coef(eS, std = "xy", type = 9))[1,,drop=FALSE]
 is though.
 
 * Miscellaneous
-** Profile code
+** Profile code R
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
@@ -3567,6 +3599,11 @@ max(summaryRprof(tf, memory = "both")$by.total$mem.total)
 
 #+RESULTS:
 : [1] 129.8
+
+** Profile code C
+R -d "valgrind --tool=cachegrind" -f myfile.R
+R -d "valgrind --tool=callgrind" -f myfile.R
+https://kcachegrind.github.io/html/Home.html
 
 ** Debug
 To not show to many line before debug:

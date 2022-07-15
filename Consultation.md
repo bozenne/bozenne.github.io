@@ -212,4 +212,12 @@ method).
 - [statistical advisory services](https://publichealth.ku.dk/about-the-department/biostat/) with three types of services: [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/), [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/), and [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
 - [data analysis group at NRU](https://nru.dk/index.php/research-menu/78-data-analysis)
  
-
+## Useful references
+- Adjustment for multiple comparisons ([Dmitrienko, 2013](https://doi.org/10.1002/sim.5990))
+- Mann-Whitney parameter ([Fay, 2018](https://doi.org/10.1002/sim.7799))
+- Observed power ([Hoenig, 2001](http://www.jstor.org/stable/2685525))
+- t-test vs. Mann-Whitney ([Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x))
+- Competing risks ([Andersen, 2012](https://doi.org/10.1093/ije/dyr213))
+- Recurrent events ([Furberg, 2021](https://doi.org/10.1002/pst.2167))
+- Mediation ([VamderWeeæe, 2009]( https://dx.doi.org/10.4310/SII.2009.v2.n4.a7))
+- Groups sequential design ([Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x))

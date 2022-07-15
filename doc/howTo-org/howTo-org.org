@@ -3,6 +3,14 @@
 
 * Box
 
+** Default box
+
+#+BEGIN_EXPORT latex
+\begin{block}{Nested models}
+	Consider two models $ \mathcal{M}_0 $ and $ \mathcal{M} $
+\end{block}
+#+END_EXPORT
+
 ** Round box 
 # http://mcclinews.free.fr/latex/introbeamer/elements_contenu.html
 
@@ -330,6 +338,14 @@ bibliographystyle:apalike
 
 ** Color
 #+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+
+** Box
+#+LaTeX_HEADER:\definecolor{purplebox1}{rgb}{0.84, 0.84, 0.9375}
+#+LaTeX_HEADER:\definecolor{purplebox2}{rgb}{0.96, 0.96, 0.91}
+#+LaTeX_HEADER:\newenvironment{blueblock}[1]{%
+#+LaTeX_HEADER:	\setbeamercolor{block title}{bg=purplebox1,fg=title.fg}
+#+LaTeX_HEADER:	\setbeamercolor{block body}{bg=purplebox2,fg=normal text.fg}
+#+LaTeX_HEADER:	\begin{block}{#1}}{\end{block}}
 
 ** Lists
 # # fix bug with beamer when specifying options for itemize
