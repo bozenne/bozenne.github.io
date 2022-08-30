@@ -1,4 +1,4 @@
-% Created 2022-07-08 Fri 12:32
+% Created 2022-08-30 ti 19:03
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -203,7 +203,7 @@ linkcolor=[rgb]{0,0,0.5},
  pdftitle={Partial correlation in linear models},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 26.3 (Org mode 9.4.6)},
+ pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
  pdflang={English}
  }
 \begin{document}
@@ -211,7 +211,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:org361d5ba}
+\label{sec:org3978e17}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -220,7 +220,7 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Illustration}
-\label{sec:org3ff4add}
+\label{sec:orgfcda72e}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -267,27 +267,27 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:orge65b71e}
+\label{sec:orga67eef6}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.lmm <- lmm(pH ~ Subject + PacO2, data = bland1995)
-eTable.lmm <- confint(e.lmm)
+eTable.lmm <- model.tables(e.lmm)
 eTable.lmm
 \end{lstlisting}
 
 \begin{verbatim}
-            estimate     se statistic df  p.value
-(Intercept)    6.930 0.1295     53.53 38 0.00e+00
-Subject2       0.705 0.0774      9.11 38 4.28e-11
-Subject3       0.950 0.0611     15.55 38 0.00e+00
-Subject4       0.972 0.0735     13.22 38 8.88e-16
-Subject5       0.860 0.0584     14.73 38 0.00e+00
-Subject6       0.926 0.0660     14.04 38 0.00e+00
-Subject7       0.692 0.1049      6.60 38 8.67e-08
-Subject8       0.703 0.0616     11.42 38 7.46e-14
-PacO2         -0.108 0.0299     -3.62 38 8.47e-04
+              estimate         se df      lower       upper      p.value
+(Intercept)  6.9298543 0.12946898 38  6.6677580  7.19195056 0.000000e+00
+Subject2     0.7046113 0.07735488 38  0.5480145  0.86120804 4.277623e-11
+Subject3     0.9500127 0.06109545 38  0.8263314  1.07369394 0.000000e+00
+Subject4     0.9715577 0.07350906 38  0.8227464  1.12036905 8.881784e-16
+Subject5     0.8603817 0.05839543 38  0.7421663  0.97859708 0.000000e+00
+Subject6     0.9264284 0.06599450 38  0.7928295  1.06002730 0.000000e+00
+Subject7     0.6921056 0.10490935 38  0.4797277  0.90448342 8.670218e-08
+Subject8     0.7033361 0.06157141 38  0.5786913  0.82798087 7.460699e-14
+PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
 \end{verbatim}
 
 The F-statistic testing the effect of each factor:
@@ -297,22 +297,18 @@ anova(e.lmm)
 \end{lstlisting}
 
 \begin{verbatim}
+	     Multivariate Wald test 
 
-	|| mean coefficients || 
-
- - Multivariate Wald test (global null hypothesis)
-        F-statistic df.num df.denom    p.value    
-Subject      48.247      7       38          0 ***
-PacO2        13.131      1       38 0.00084711 ***
----
- Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  F-statistic       df p.value    
+1      48.247 (7,38.0)  <0.001 ***
+2      13.131 (1,38.0)  <0.001 ***
 \end{verbatim}
 
 
 equal the Wald-statistic squared (divided by 1, the number of parameters)
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-Wald <- eTable.lmm["PacO2","statistic"]
+Wald <- eTable.lmm["PacO2","estimate"]/eTable.lmm["PacO2","se"]
 Wald^2
 \end{lstlisting}
 
@@ -358,7 +354,7 @@ Subject    7 2.86484 0.40926  46.600 < 2.2e-16 ***
 PacO2      1 0.11532 0.11532  13.131 0.0008471 ***
 Residuals 38 0.33373 0.00878                      
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
 
 
@@ -386,7 +382,7 @@ Finally the \(R^2\) is defined as the proportion of variance explained, i.e.:
 \begin{align*}
 R^2 =& \frac{SSR}{SSR + SSE} \\
     =& \frac{1}{1 + SSE/SSR} \\
-    =& \frac{1}{1 + n-p/(\beta^2/\sigma^2_\beta)} \\
+    =& \frac{1}{1 + (n-p)/(\beta^2/\sigma^2_\beta)} \\
     = \frac{Wald^2}{Wald^2 + n-p}
 \end{align*}
 
@@ -407,15 +403,18 @@ which matches exactly the partial correlation coefficient when \textbf{both}
 outcome are adjusted for \texttt{Subject}:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-e.partialCor <- partialCor(list(pH ~ Subject, PacO2 ~ Subject), data = bland1995)
+e.partialCor <- partialCor(list(pH ~ Subject, PacO2 ~ Subject),
+			   data = bland1995)
 print(e.partialCor, digit = 5)
 \end{lstlisting}
 
 \begin{verbatim}
-              estimate      se     df    lower   upper   p.value
-rho(pH,PacO2) -0.50677 0.16013 25.669 -0.71027 -0.2251 0.0017756
-Note: estimates and confidence intervals for rho have been back-transformed. 
-      standard errors are not back-transformed.
+		Partial correlation 
+
+              estimate    se   df lower  upper p.value
+rho(pH,PacO2)   -0.507 0.125 25.7 -0.71 -0.225 0.00178
+
+   Note: estimate, standard error, confidence interval have been back-transformed (rho parameters with tanh).
 \end{verbatim}
 
 
@@ -434,12 +433,195 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial partial with repeated measurements}
-\label{sec:org845bc37}
+\label{sec:org8571f8d}
 
-Several references on the subject \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}
+There are several references on the subject
+\citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
+will focus on the mixed model approach. The idea is to jointly model
+the variance and covariance of all measurements under appropriate
+constrains. For instance denoting one measurement \(X\) and the other
+measurement \(Y\), both indexed by time \(t\), our target parameter
+may be \(\rho = cor(X(t),Y(t))\) (marginal) assumed independent of \(t\) while
+\(X\) and \(Y\) may or may not be stationnary. Another target
+parameter could be the correlation between a de-noised version of
+\(X\) and \(Y\), where we have for instance removed
+individual-specific variations (conditional).
+
+\subsection{Illustration}
+\label{sec:org877187b}
+
+Let's illustrate \(\rho\) and \(r\) on an example with 3 timepoints,
+\(r=0.8\), and 250 individuals:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.time <- 3
+n.id <- 250
+Sigma <- matrix(c(1,0.8,0.8,1),2,2)
+Sigma
+\end{lstlisting}
+
+\begin{verbatim}
+     [,1] [,2]
+[1,]  1.0  0.8
+[2,]  0.8  1.0
+\end{verbatim}
+
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+set.seed(11)
+df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
+		   time = rep(1:n.time,n.id),
+		   rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+		   )
+head(df.W)
+\end{lstlisting}
+
+\clearpage
+
+We introduce random effects to impose a constant correlation
+within-individuals for \(X\) and for \(Y\):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sd.id <- 1.5
+df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
+df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+df.W$id <- as.factor(df.W$id)
+df.L <- reshape2::melt(df.W, id.vars = c("id","time")) 
+df.L$time2 <- as.factor(as.numeric(as.factor(paste(df.L$variable,df.L$time,sep="."))))
+\end{lstlisting}
+
+This will lead to the following correlation structure:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Sigma.GS <- as.matrix(bdiag(Sigma,Sigma,Sigma))[c(1,3,5,2,4,6),c(1,3,5,2,4,6)]
+Sigma.GS[1:3,1:3] <- Sigma.GS[1:3,1:3] + (sd.id/4)^2
+Sigma.GS[4:6,4:6] <- Sigma.GS[4:6,4:6] + sd.id^2
+cov2cor(Sigma.GS)
+\end{lstlisting}
+
+\begin{verbatim}
+          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
+[1,] 1.0000000 0.1232877 0.1232877 0.4155056 0.0000000 0.0000000
+[2,] 0.1232877 1.0000000 0.1232877 0.0000000 0.4155056 0.0000000
+[3,] 0.1232877 0.1232877 1.0000000 0.0000000 0.0000000 0.4155056
+[4,] 0.4155056 0.0000000 0.0000000 1.0000000 0.6923077 0.6923077
+[5,] 0.0000000 0.4155056 0.0000000 0.6923077 1.0000000 0.6923077
+[6,] 0.0000000 0.0000000 0.4155056 0.6923077 0.6923077 1.0000000
+\end{verbatim}
+
+
+We can now estimate two types of correlation: marginal and conditional
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.LMMstar <- partialCor(c(X1,X2) ~ 1, repetition = ~ time|id, data = df.W, heterogeneous = 0.5)
+e.LMMstar
+\end{lstlisting}
+
+\begin{verbatim}
+		Partial correlation 
+
+               estimate     se   df lower upper p.value
+rho(1.X1,1.X2)    0.427 0.0346 34.8 0.356 0.493 6.5e-13
+r(1.X1,1.X2)      0.790 0.0672 66.4 0.656 0.925 0.0e+00
+	----------------------------------------------------
+	rho: marginal correlation 
+	r  : correlation conditional on the individual
+\end{verbatim}
+
+
+The conditional is very close to what other packages output:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rmcorr(id, X1, X2, df.W)$r
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.7941749
+\end{verbatim}
+
+
+Here the modeled correlation matrix is:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Sigma <- sigma(attr(e.LMMstar,"lmm"))
+Rho <- cov2cor(Sigma)
+Rho
+\end{lstlisting}
+
+\begin{verbatim}
+            1.X1        2.X1        3.X1        1.X2        2.X2        3.X2
+1.X1  1.00000000  0.06545230  0.06545230  0.42652595 -0.00432106 -0.00432106
+2.X1  0.06545230  1.00000000  0.06545230 -0.00432106  0.42652595 -0.00432106
+3.X1  0.06545230  0.06545230  1.00000000 -0.00432106 -0.00432106  0.42652595
+1.X2  0.42652595 -0.00432106 -0.00432106  1.00000000  0.68836567  0.68836567
+2.X2 -0.00432106  0.42652595 -0.00432106  0.68836567  1.00000000  0.68836567
+3.X2 -0.00432106 -0.00432106  0.42652595  0.68836567  0.68836567  1.00000000
+\end{verbatim}
+
+
+From which the conditional correlation can be deduced:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Rho[1,4]/sqrt((1-Rho[1,2])*(1-Rho[4,5]))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.7903548
+\end{verbatim}
+
+
+or equivalently:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+Sigma[1,4]/sqrt((Sigma[1,1]-Sigma[1,2])*(Sigma[4,4]-Sigma[4,5]))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.7903548
+\end{verbatim}
+
+\subsection{Simulation study}
+\label{sec:orge9afdbd}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(data.table)
+
+n.id <- 100
+warper <- function(n){
+  df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
+		     time = rep(1:n.time,n.id),
+		     rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+		     )
+  df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
+  df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+  df.W$id <- as.factor(df.W$id)
+
+  res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
+  res2 <- partialCor(c(X1,X2) ~ 1, repetition = ~ time|id, data = df.W, heterogeneous = 0.5)
+  return(rbind(cbind(as.data.frame(as.list(res1)), se = NA, method = "rmcorr"),
+	       cbind(res2[2,c("estimate","lower","upper","se")],method="lmm")))
+}
+
+ls.res <- pbapply::pblapply(1:101,function(iSim){
+  cbind(sim = iSim, warper(100))
+})
+dt.res <- as.data.table(do.call(rbind, ls.res))
+\end{lstlisting}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+ggplot(dt.res,aes(x=method,y=estimate))+ geom_boxplot()
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[trim={0 0 0 0},width=1\textwidth]{./figures/gg-comp-corEstimator.pdf}
+\end{center}
+
 
 \section{Reference}
-\label{sec:org4da149b}
+\label{sec:orgb946f09}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
