@@ -1,4 +1,4 @@
-% Created 2022-09-02 fr 15:01
+% Created 2022-09-02 fr 16:04
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -213,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:org0de5a22}
+\label{sec:orgec0b77e}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -222,15 +222,15 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Example}
-\label{sec:org7bd2597}
+\label{sec:org209e692}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 library(LMMstar)
-library(mvtnorm)
 library(ggplot2)
-library(nlme)
+library(lme4)
+library(lmerTest)
 library(Matrix)
 library(data.table)
 \end{lstlisting}
@@ -275,7 +275,7 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:orgf0da0a5}
+\label{sec:org61a53c0}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -451,10 +451,10 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial correlation with repeated measurements}
-\label{sec:org37bf15e}
+\label{sec:org0fa4e98}
 
 \subsection{Marginal and conditional correlation}
-\label{sec:org2f77cfe}
+\label{sec:orgd9e0327}
 There are several references on the subject
 \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -525,7 +525,7 @@ while the conditional correlation is:
 \end{align*}
 
 \subsection{Approximated conditional correlation}
-\label{sec:orgb58f6ab}
+\label{sec:org30310cf}
 
 We now show that formula \ref{eq:pCor-formula} generalizes to mixed
 models. Consider the following mixed model relating \(\VY =
@@ -576,7 +576,7 @@ where \(df=n-p\). A corresponding correlation coefficient can computed as:
 \clearpage
 
 \subsection{Back to the example}
-\label{sec:orgcec21a6}
+\label{sec:orge69a84d}
 
 In the example, we see a very small marginal correlation and a large conditional one:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -674,8 +674,8 @@ e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
 [1] -0.4627676
 \end{verbatim}
 
-\subsection{Simulation study}
-\label{sec:org467e557}
+\subsection{Simulation study (compound symmetry model)}
+\label{sec:org1291cfc}
 
 We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
@@ -871,8 +871,67 @@ dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=up
 2:    lmm   0.026 0.949692
 \end{verbatim}
 
+\subsection{Simulation study (crossed random effect model)}
+\label{sec:org7c69bed}
+
+We will modify the previous simulation setting by introducing more
+structure on the correlation. More precisely, observations will be
+correlated within individual (biological variation) and within
+timepoint (batch effect). This violates the compound symmetry
+structure and therefore we expect \texttt{rmcorr} to give biased
+estimates. We will use \texttt{lmer} instead of \texttt{lmm} as a reference since
+\texttt{lmer} is very convenient to use and fast when dealing with crossed
+random effects. Note that, however, it is not straightforward to have a
+measure of uncertainty.
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+n.time <- 4
+n.id <- 100
+warper <- function(n){
+    df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
+		       time = rep(1:n.time,n.id),
+		       rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+		       )
+    df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
+    df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+    df.W$X1 <- df.W$X1 + rnorm(n.time, sd = sd.id/3)[df.W$time]
+    df.W$X2 <- df.W$X2 + rnorm(n.time, sd = sd.id/2)[df.W$time]
+    df.W$id <- as.factor(df.W$id)
+
+    e.lmer <- lmer(X2 ~ X1 + (1|time) + (1|id), data = df.W)
+    e.Slmer <- summary(e.lmer)$coefficient
+
+    res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
+    res2 <- c(estimate = e.Slmer["X1","t value"]/sqrt(e.Slmer["X1","t value"]^2+e.Slmer["X1","df"]), lower = NA, upper = NA)
+
+    return(rbind(cbind(as.data.frame(as.list(res1)), method = "rmcorr"),
+		 cbind(as.data.frame(as.list(res2)), method= "lmer")))
+}
+
+ls.res <- pbapply::pblapply(1:101,function(iSim){
+  cbind(sim = iSim, warper(100))
+})
+dt.res <- as.data.table(do.call(rbind, ls.res))
+\end{lstlisting}
+
+We can clearly see that the \texttt{rmcorr} estimator is biased and very
+variable while the \texttt{lmer}-based estimator (i.e. using
+\autoref{eq:pCor-formula}) gives reasonnable results:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+rbind(rmcorr = quantile(dt.res[method=="rmcorr",estimate]),
+      lmer = quantile(dt.res[method=="lmer",estimate]))
+\end{lstlisting}
+
+\begin{verbatim}
+                0%       25%       50%       75%      100%
+rmcorr 0.001331043 0.4887141 0.6207839 0.7273354 0.8670439
+lmer   0.732343195 0.7738880 0.7900921 0.8094797 0.8472541
+\end{verbatim}
+
 \section{Reference}
-\label{sec:org3d6bb8c}
+\label{sec:orgfe2e07b}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
