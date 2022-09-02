@@ -654,24 +654,30 @@ measure of uncertainty.
 n.time <- 4
 n.id <- 100
 warper <- function(n){
-    df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
-                       time = rep(1:n.time,n.id),
-                       rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
-                       )
-    df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
-    df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
-    df.W$X1 <- df.W$X1 + rnorm(n.time, sd = sd.id/3)[df.W$time]
-    df.W$X2 <- df.W$X2 + rnorm(n.time, sd = sd.id/2)[df.W$time]
-    df.W$id <- as.factor(df.W$id)
-  
-    e.lmer <- lmer(X2 ~ X1 + (1|time) + (1|id), data = df.W)
-    e.Slmer <- summary(e.lmer)$coefficient
+  df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
+                     time = rep(1:n.time,n.id),
+                     rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+                     )
+  df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
+  df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+  df.W$X1 <- df.W$X1 + rnorm(n.time, sd = sd.id/3)[df.W$time]
+  df.W$X2 <- df.W$X2 + rnorm(n.time, sd = sd.id/2)[df.W$time]
+  df.W$id <- as.factor(df.W$id)
+  df.W$time <- as.factor(df.W$time)
 
-    res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
-    res2 <- c(estimate = e.Slmer["X1","t value"]/sqrt(e.Slmer["X1","t value"]^2+e.Slmer["X1","df"]), lower = NA, upper = NA)
+  e.lm <- lm(X1~X2+id+time, data = df.W)
+  e.Slm <- summary(e.lm)$coef
 
-    return(rbind(cbind(as.data.frame(as.list(res1)), method = "rmcorr"),
-                 cbind(as.data.frame(as.list(res2)), method= "lmer")))
+  e.lmer <- lmer(X2 ~ X1 + (1|time) + (1|id), data = df.W)
+  e.Slmer <- summary(e.lmer)$coefficient
+
+  res0 <- c(estimate = e.Slm["X2","t value"]/sqrt(e.Slm["X2","t value"]^2+df.residual(e.lm)), lower = NA, upper = NA)
+  res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
+  res2 <- c(estimate = e.Slmer["X1","t value"]/sqrt(e.Slmer["X1","t value"]^2+e.Slmer["X1","df"]), lower = NA, upper = NA)
+
+  return(rbind(cbind(as.data.frame(as.list(res0)), method = "lm"),
+               cbind(as.data.frame(as.list(res1)), method = "rmcorr"),
+               cbind(as.data.frame(as.list(res2)), method= "lmer")))
 }
 
 ls.res <- pbapply::pblapply(1:101,function(iSim){
@@ -680,18 +686,32 @@ ls.res <- pbapply::pblapply(1:101,function(iSim){
 dt.res <- as.data.table(do.call(rbind, ls.res))
 #+END_SRC
 
+#+RESULTS:
+:   |                                                  | 0 % ~calculating    |+                                                 | 2 % ~22s            |++                                                | 4 % ~15s            |+++                                               | 6 % ~16s            |++++                                              | 8 % ~14s            |+++++                                             | 10% ~15s            |++++++                                            | 12% ~13s            |+++++++                                           | 14% ~13s            |++++++++                                          | 16% ~12s            |+++++++++                                         | 18% ~12s            |++++++++++                                        | 20% ~12s            |+++++++++++                                       | 22% ~11s            |++++++++++++                                      | 24% ~11s            |+++++++++++++                                     | 25% ~10s            |++++++++++++++                                    | 27% ~10s            |+++++++++++++++                                   | 29% ~10s            |++++++++++++++++                                  | 31% ~10s            |+++++++++++++++++                                 | 33% ~10s            |++++++++++++++++++                                | 35% ~10s            |+++++++++++++++++++                               | 37% ~10s            |++++++++++++++++++++                              | 39% ~10s            |+++++++++++++++++++++                             | 41% ~09s            |++++++++++++++++++++++                            | 43% ~09s            |+++++++++++++++++++++++                           | 45% ~09s            |++++++++++++++++++++++++                          | 47% ~08s            |+++++++++++++++++++++++++                         | 49% ~08s            |++++++++++++++++++++++++++                        | 51% ~07s            |+++++++++++++++++++++++++++                       | 53% ~07s            |++++++++++++++++++++++++++++                      | 55% ~07s            |+++++++++++++++++++++++++++++                     | 57% ~06s            |++++++++++++++++++++++++++++++                    | 59% ~06s            |+++++++++++++++++++++++++++++++                   | 61% ~06s            |++++++++++++++++++++++++++++++++                  | 63% ~05s            |+++++++++++++++++++++++++++++++++                 | 65% ~05s            |++++++++++++++++++++++++++++++++++                | 67% ~05s            |+++++++++++++++++++++++++++++++++++               | 69% ~05s            |++++++++++++++++++++++++++++++++++++              | 71% ~04s            |+++++++++++++++++++++++++++++++++++++             | 73% ~04s            |++++++++++++++++++++++++++++++++++++++            | 75% ~04s            |+++++++++++++++++++++++++++++++++++++++           | 76% ~04s            |++++++++++++++++++++++++++++++++++++++++          | 78% ~03s            |+++++++++++++++++++++++++++++++++++++++++         | 80% ~03s            |++++++++++++++++++++++++++++++++++++++++++        | 82% ~03s            |+++++++++++++++++++++++++++++++++++++++++++       | 84% ~02s            |++++++++++++++++++++++++++++++++++++++++++++      | 86% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++     | 88% ~02s            |++++++++++++++++++++++++++++++++++++++++++++++    | 90% ~02s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 92% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 94% ~01s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 96% ~01s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=16s  
+: Advarselsbeskeder:
+: 1: I checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+:   Model failed to converge with max|grad| = 0.00242359 (tol = 0.002, component 1)
+: 2: I checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+:   Model failed to converge with max|grad| = 0.00331164 (tol = 0.002, component 1)
+
 We can clearly see that the =rmcorr= estimator is biased and very
 variable while the =lmer=-based estimator (i.e. using
 autoref:eq:pCor-formula) gives reasonnable results:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-rbind(rmcorr = quantile(dt.res[method=="rmcorr",estimate]),
+rbind(lm = quantile(dt.res[method=="lm",estimate]),
+      rmcorr = quantile(dt.res[method=="rmcorr",estimate]),
       lmer = quantile(dt.res[method=="lmer",estimate]))
 #+END_SRC
 
 #+RESULTS:
-:                 0%       25%       50%       75%      100%
-: rmcorr 0.001331043 0.4887141 0.6207839 0.7273354 0.8670439
-: lmer   0.732343195 0.7738880 0.7900921 0.8094797 0.8472541
+:                0%       25%       50%       75%      100%
+: lm     0.74113022 0.7802503 0.7989544 0.8145657 0.8544672
+: rmcorr 0.05260171 0.4773873 0.6189341 0.7273679 0.8425171
+: lmer   0.73416614 0.7739002 0.7937885 0.8103669 0.8529145
+
+Note that the linear regression approach can be fixed in that example
+by adjusting on time. However with more complex covariance pattern it
+may not always be possible to find an appropriate =lm= approach.
 
 * Reference
 # # help: https://gking.harvard.edu/files/natnotes2.pdf

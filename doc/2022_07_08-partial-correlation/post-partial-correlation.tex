@@ -1,4 +1,4 @@
-% Created 2022-09-02 fr 16:04
+% Created 2022-09-02 fr 16:49
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -213,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:orgec0b77e}
+\label{sec:org51b8684}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -222,7 +222,7 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Example}
-\label{sec:org209e692}
+\label{sec:org1e68a92}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -275,7 +275,7 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:org61a53c0}
+\label{sec:orgd6c4d4b}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -451,10 +451,10 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial correlation with repeated measurements}
-\label{sec:org0fa4e98}
+\label{sec:org5bfb8ca}
 
 \subsection{Marginal and conditional correlation}
-\label{sec:orgd9e0327}
+\label{sec:org4cb8028}
 There are several references on the subject
 \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -525,7 +525,7 @@ while the conditional correlation is:
 \end{align*}
 
 \subsection{Approximated conditional correlation}
-\label{sec:org30310cf}
+\label{sec:org63e6766}
 
 We now show that formula \ref{eq:pCor-formula} generalizes to mixed
 models. Consider the following mixed model relating \(\VY =
@@ -576,7 +576,7 @@ where \(df=n-p\). A corresponding correlation coefficient can computed as:
 \clearpage
 
 \subsection{Back to the example}
-\label{sec:orge69a84d}
+\label{sec:org023b53a}
 
 In the example, we see a very small marginal correlation and a large conditional one:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -675,7 +675,7 @@ e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
 \end{verbatim}
 
 \subsection{Simulation study (compound symmetry model)}
-\label{sec:org1291cfc}
+\label{sec:org22ecc7b}
 
 We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
@@ -872,7 +872,7 @@ dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=up
 \end{verbatim}
 
 \subsection{Simulation study (crossed random effect model)}
-\label{sec:org7c69bed}
+\label{sec:org323f216}
 
 We will modify the previous simulation setting by introducing more
 structure on the correlation. More precisely, observations will be
@@ -889,24 +889,30 @@ measure of uncertainty.
 n.time <- 4
 n.id <- 100
 warper <- function(n){
-    df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
-		       time = rep(1:n.time,n.id),
-		       rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
-		       )
-    df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
-    df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
-    df.W$X1 <- df.W$X1 + rnorm(n.time, sd = sd.id/3)[df.W$time]
-    df.W$X2 <- df.W$X2 + rnorm(n.time, sd = sd.id/2)[df.W$time]
-    df.W$id <- as.factor(df.W$id)
+  df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
+		     time = rep(1:n.time,n.id),
+		     rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+		     )
+  df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
+  df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+  df.W$X1 <- df.W$X1 + rnorm(n.time, sd = sd.id/3)[df.W$time]
+  df.W$X2 <- df.W$X2 + rnorm(n.time, sd = sd.id/2)[df.W$time]
+  df.W$id <- as.factor(df.W$id)
+  df.W$time <- as.factor(df.W$time)
 
-    e.lmer <- lmer(X2 ~ X1 + (1|time) + (1|id), data = df.W)
-    e.Slmer <- summary(e.lmer)$coefficient
+  e.lm <- lm(X1~X2+id+time, data = df.W)
+  e.Slm <- summary(e.lm)$coef
 
-    res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
-    res2 <- c(estimate = e.Slmer["X1","t value"]/sqrt(e.Slmer["X1","t value"]^2+e.Slmer["X1","df"]), lower = NA, upper = NA)
+  e.lmer <- lmer(X2 ~ X1 + (1|time) + (1|id), data = df.W)
+  e.Slmer <- summary(e.lmer)$coefficient
 
-    return(rbind(cbind(as.data.frame(as.list(res1)), method = "rmcorr"),
-		 cbind(as.data.frame(as.list(res2)), method= "lmer")))
+  res0 <- c(estimate = e.Slm["X2","t value"]/sqrt(e.Slm["X2","t value"]^2+df.residual(e.lm)), lower = NA, upper = NA)
+  res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
+  res2 <- c(estimate = e.Slmer["X1","t value"]/sqrt(e.Slmer["X1","t value"]^2+e.Slmer["X1","df"]), lower = NA, upper = NA)
+
+  return(rbind(cbind(as.data.frame(as.list(res0)), method = "lm"),
+	       cbind(as.data.frame(as.list(res1)), method = "rmcorr"),
+	       cbind(as.data.frame(as.list(res2)), method= "lmer")))
 }
 
 ls.res <- pbapply::pblapply(1:101,function(iSim){
@@ -920,18 +926,25 @@ variable while the \texttt{lmer}-based estimator (i.e. using
 \autoref{eq:pCor-formula}) gives reasonnable results:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-rbind(rmcorr = quantile(dt.res[method=="rmcorr",estimate]),
+rbind(lm = quantile(dt.res[method=="lm",estimate]),
+      rmcorr = quantile(dt.res[method=="rmcorr",estimate]),
       lmer = quantile(dt.res[method=="lmer",estimate]))
 \end{lstlisting}
 
 \begin{verbatim}
-                0%       25%       50%       75%      100%
-rmcorr 0.001331043 0.4887141 0.6207839 0.7273354 0.8670439
-lmer   0.732343195 0.7738880 0.7900921 0.8094797 0.8472541
+               0%       25%       50%       75%      100%
+lm     0.74113022 0.7802503 0.7989544 0.8145657 0.8544672
+rmcorr 0.05260171 0.4773873 0.6189341 0.7273679 0.8425171
+lmer   0.73416614 0.7739002 0.7937885 0.8103669 0.8529145
 \end{verbatim}
 
+
+Note that the linear regression approach can be fixed in that example
+by adjusting on time. However with more complex covariance pattern it
+may not always be possible to find an appropriate \texttt{lm} approach.
+
 \section{Reference}
-\label{sec:orgfe2e07b}
+\label{sec:org9ebd9be}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
