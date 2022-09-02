@@ -20,11 +20,16 @@ precise what type of "partial" (i.e. adjusted on which covariate) we
 get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
-* Illustration
+* Example
 
 For illustration we will use the following packages:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-library(LMMstar);library(mvtnorm);library(ggplot2);library(nlme)
+library(LMMstar)
+library(mvtnorm)
+library(ggplot2)
+library(nlme)
+library(Matrix)
+library(data.table)
 LMMstar.options(method.numDeriv = "Richardson",
                 columns.confint = c("estimate","se","statistic","df","p.value"))
 #+END_SRC
@@ -35,17 +40,20 @@ and dataset citep:bland1995calculating:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 data("bland1995", package = "rmcorr")
 bland1995$Subject <- as.factor(bland1995$Subject)
+bland1995$time <- unlist(tapply(bland1995$Subject,bland1995$Subject, function(x){1:length(x)}))
 head(bland1995)
 #+END_SRC
 
 #+RESULTS:
-:   Subject   pH PacO2
-: 1       1 6.68  3.97
-: 2       1 6.53  4.12
-: 3       1 6.43  4.09
-: 4       1 6.33  3.97
-: 5       2 6.85  5.27
-: 6       2 7.06  5.37
+:   Subject   pH PacO2 time
+: 1       1 6.68  3.97    1
+: 2       1 6.53  4.12    2
+: 3       1 6.43  4.09    3
+: 4       1 6.33  3.97    4
+: 5       2 6.85  5.27    1
+: 6       2 7.06  5.37    2
+
+\clearpage
 
 The aim is to relate intramural pH and PaCO2 using eight subjects:
 
@@ -101,7 +109,28 @@ Subject8     0.7033361 0.06157141 38  0.5786913  0.82798087 7.460699e-14
 PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
 #+end_example
 
-The F-statistic testing the effect of each factor:
+We claim the partial correlation (adjusting =pH= and =PacO2= for
+=Subject=) can be deduced from the Wald statistic and degrees of
+freedom:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Wald <- eTable.lmm["PacO2","statistic"]
+Wald/sqrt(Wald^2+eTable.lmm["PacO2","df"])
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.5067697
+
+The proof can be split in three steps:
+- 1. :: the F-statistic testing the effect of each factor equals the
+  Wald-statistic squared (divided by 1, the number of parameters)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Wald^2
+#+END_SRC
+
+#+RESULTS:
+: [1] 13.13132
+
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 anova(e.lmm)
 #+END_SRC
@@ -109,48 +138,14 @@ anova(e.lmm)
 #+RESULTS:
 : 		Multivariate Wald test 
 : 
-:      F-statistic       df p.value    
-:    1      48.247 (7,38.0)  <0.001 ***
-:    2      13.131 (1,38.0)  <0.001 ***
+:                  F-statistic       df p.value    
+:    mean: Subject      48.247 (7,38.0)  <0.001 ***
+:        : PacO2        13.131 (1,38.0)  <0.001 ***
 
-equal the Wald-statistic squared (divided by 1, the number of parameters)
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-Wald <- eTable.lmm["PacO2","estimate"]/eTable.lmm["PacO2","se"]
-Wald^2
-#+END_SRC
-
-#+RESULTS:
-: [1] 13.13132
-
-This F-statistic is also related to the sum of squares
-(ANOVA). Consider a model with a single regressor:
-#+BEGIN_EXPORT latex
-\[ Y = X\beta + \varepsilon\text{, } \varepsilon\sim\Gaus(0,\sigma^2)\]
-#+END_EXPORT
-
-where we would have centered the outcome \(Y\). Here we denote by
-\(X\) the design matrix, \(n\) the number of observations and \(p=1\)
-the number of coefficients, \(H = X (X\trans{X})^{-1} \trans{X}\) the
-hat matrix and \(\widehat{\beta} = (X\trans{X})^{-1} \trans{X}Y\) the
-OLS estimator of the regression coefficients.
-#+BEGIN_EXPORT latex
-\begin{align*}
-\Var(Y) = Y\trans{Y} =& YH\trans{Y} + Y(1-H)\trans{Y} \\
-SST =& SSR + SSE \\
-    =& \hat{\beta} (X\trans{X}) \trans{\hat{\beta}} + Y (1-H) \trans{Y} \\
-    =& \sigma^2 (\hat{\beta} \Sigma^{-1}_{\hat{\beta}} \trans{\hat{\beta}} + n-p) \\
-\end{align*}
-#+END_EXPORT
-Introducing \(MSSR = SSR/1\) and \(MSSE = SSE/(n-p)\), we obtain that:
-#+BEGIN_EXPORT latex
-\begin{align*}
-\frac{MSSR}{MSSE} = \frac{\hat{\beta}^2}{\Sigma_{\hat{\beta}}} = Wald^2
-\end{align*}
-#+END_EXPORT
-
-So the F-statistic equals the ratio of the residual sum of squared
-(normalized by their degrees of freedom). We can check that this extends to multiple regression using the
-usual anova table:
+- 2. :: this F-statistic equals \(\frac{MSSR}{MSSE}\) where \(MSSR =
+  SSR/1\) and \(MSSE = SSE/(n-p)\) with \(SSE\) and \(SSR\) being the
+  explained and residual sum of squares. We can check that this
+  extends to multiple regression using the usual anova table:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 anova(lm(pH ~ Subject + PacO2, data = bland1995))
 #+END_SRC
@@ -166,10 +161,10 @@ anova(lm(pH ~ Subject + PacO2, data = bland1995))
 : ---
 : Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-\Warning Since \Rlogo output type 1 anova only the last and second to
+which is to be compared to[fn::\Warning Since \Rlogo output type 1 anova only the last and second to
 last line are relevant. The first line (=Subject=) is for a model
 without =PacO2= so it should be expected that the F-value does not
-match with the one of =Subject= in a model with =PacO2=.
+match with the one of =Subject= in a model with =PacO2=.]
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 sigma2 <- as.double(sigma(e.lmm))
@@ -182,8 +177,28 @@ c(MSSE = sigma2, MSSR = sigma2 * beta^2 /sigma_beta^2)
 :        MSSE        MSSR 
 : 0.008782435 0.115324959
 
+This result can be easily proved when considering a model with a single
+regressor:
+#+BEGIN_EXPORT latex
+\[ Y = X\beta + \varepsilon\text{, } \varepsilon\sim\Gaus(0,\sigma^2)\]
+#+END_EXPORT
+where we would have centered the outcome \(Y\). Here we denote by
+\(X\) the design matrix, \(n\) the number of observations and \(p=1\)
+the number of coefficients, \(H = X (X\trans{X})^{-1} \trans{X}\) the
+hat matrix and \(\widehat{\beta} = (X\trans{X})^{-1} \trans{X}Y\) the
+OLS estimator of the regression coefficients.
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var(Y) = Y\trans{Y} =& YH\trans{Y} + Y(1-H)\trans{Y} \\
+SST =& SSR + SSE \\
+    =& \hat{\beta} (X\trans{X}) \trans{\hat{\beta}} + Y (1-H) \trans{Y} \\
+    =& \sigma^2 (\hat{\beta} \Sigma^{-1}_{\hat{\beta}} \trans{\hat{\beta}} + n-p) \\
+\frac{MSSR}{MSSE} &= \frac{\hat{\beta}^2}{\Sigma_{\hat{\beta}}} = Wald^2
+\end{align*}
+#+END_EXPORT
 
-Finally the \(R^2\) is defined as the proportion of variance explained, i.e.:
+- 3. :: the \(R^2\) is defined as the proportion of variance explained, so
+  using the previous results we get:
 #+BEGIN_EXPORT latex
 \begin{align*}
 R^2 =& \frac{SSR}{SSR + SSE} \\
@@ -193,18 +208,8 @@ R^2 =& \frac{SSR}{SSR + SSE} \\
 \end{align*}
 #+END_EXPORT
 
-So the partial correlation coefficient is the square root of that
-quantity, with sign the sign of the test statistic:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-df <- eTable.lmm["PacO2","df"]
-sign(Wald)*sqrt(Wald^2/(Wald^2+df))
-#+END_SRC
-
-#+RESULTS:
-: [1] -0.5067697
-
-which matches exactly the partial correlation coefficient when *both*
-outcome are adjusted for =Subject=:
+This formula matches exactly the partial correlation coefficient when
+*both* outcome are adjusted for =Subject=:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.partialCor <- partialCor(list(pH ~ Subject, PacO2 ~ Subject),
                            data = bland1995)
@@ -230,23 +235,136 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 
 \clearpage
 
-* Partial partial with repeated measurements
+* Partial correlation with repeated measurements
 
+** Theory
 There are several references on the subject
 citep:bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation. We
 will focus on the mixed model approach. The idea is to jointly model
 the variance and covariance of all measurements under appropriate
 constrains. For instance denoting one measurement \(X\) and the other
 measurement \(Y\), both indexed by time \(t\), our target parameter
-may be \(\rho = cor(X(t),Y(t))\) (marginal) assumed independent of \(t\) while
-\(X\) and \(Y\) may or may not be stationnary. Another target
-parameter could be the correlation between a de-noised version of
-\(X\) and \(Y\), where we have for instance removed
+may be \(\rho = \mathbb{C}or(X(t),Y(t))\) (marginal) assumed independent of
+\(t\) while \(X\) and \(Y\) may or may not be stationnary. Another
+target parameter could be the correlation between a de-noised version
+of \(X\) and \(Y\), where we have for instance removed
 individual-specific variations (conditional).
 
-** Illustration
+\bigskip
 
-Let's illustrate \(\rho\) and \(r\) on an example with 3 timepoints,
+To be more specific let's consider the following statistical model:
+#+BEGIN_EXPORT latex
+\begin{align*}
+X_i(t) &= \mu_{X,i}(t) + u_i + \varepsilon_{X,i}(t) \\
+Y_i(t) &= \mu_{Y,i}(t) + v_i + \varepsilon_{Y,i}(t) \\
+\text{where } \begin{bmatrix}u \\ v \\ \varepsilon_X(t) \\ \varepsilon_Y(t) \end{bmatrix}
+&= \Gaus\left(\begin{bmatrix}0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
+\begin{bmatrix}
+\tau_u & \tau_{uv} & 0 & 0 \\ \tau_{uv} & \tau_v & 0 & 0 \\ 
+ 0 & 0 & \sigma_X & \sigma_{XY} \\ 0 & 0 & \sigma_{XY} & \sigma_X \\ 
+\end{bmatrix} \right)
+\end{align*}
+#+END_EXPORT
+It implies the following residual covariance matrix:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Omega = \Var\begin{bmatrix}X(1) \\ X(2) \\ X(3) \\ Y(1) \\ Y(2) \\ Y(3) \end{bmatrix}
+&= \begin{bmatrix}
+\tau_u + \sigma_X & \tau_u & \tau_u & \tau_{uv} + \sigma_{XY} & \tau_{uv} & \tau_{uv} \\
+\tau_u & \tau_u + \sigma_X & \tau_u & \tau_{uv} & \tau_{uv} + \sigma_{XY} & \tau_{uv} \\
+\tau_u & \tau_u & \tau_u + \sigma_X & \tau_{uv} & \tau_{uv} & \tau_{uv} + \sigma_{XY} \\
+\tau_{uv} + \sigma_{XY} & \tau_{uv}  & \tau_{uv} & \tau_v + \sigma_Y & \tau_v & \tau_v \\
+\tau_{uv} & \tau_{uv} + \sigma_{XY} & \tau_{uv}  & \tau_v & \tau_v + \sigma_Y & \tau_v \\
+\tau_{uv} & \tau_{uv} & \tau_{uv} + \sigma_{XY}  & \tau_v & \tau_v & \tau_v + \sigma_Y  \\
+\end{bmatrix} \\
+&= \begin{bmatrix}
+\sigma_1 & \sigma_2 & \sigma_2 & \sigma_3 & \sigma_4 & \sigma_4 \\
+\sigma_2 & \sigma_1 & \sigma_2 & \sigma_4 & \sigma_3 & \sigma_4 \\
+\sigma_2 & \sigma_2 & \sigma_1 & \sigma_4 & \sigma_4 & \sigma_3 \\
+\sigma_3 & \sigma_4 & \sigma_4 & \sigma_5 & \sigma_6 & \sigma_6 \\
+\sigma_4 & \sigma_3 & \sigma_4 & \sigma_6 & \sigma_5 & \sigma_6 \\
+\sigma_4 & \sigma_4 & \sigma_3 & \sigma_6 & \sigma_6 & \sigma_5  \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+and the following residual correlation matrix:
+#+BEGIN_EXPORT latex
+\[ R = \mathbb{C}or\begin{bmatrix}X(1) \\ X(2) \\ X(3) \\ Y(1) \\ Y(2) \\ Y(3) \end{bmatrix}
+= \begin{bmatrix}
+1      & \rho_1 & \rho_1 & \rho_2 & \rho_3 & \rho_3 \\
+\rho_1 & 1      & \rho_1 & \rho_3 & \rho_2 & \rho_3 \\
+\rho_1 & \rho_1 & 1      & \rho_3 & \rho_3 & \rho_2 \\
+\rho_2 & \rho_3 & \rho_3 & 1      & \rho_4 & \rho_4 \\
+\rho_3 & \rho_2 & \rho_3 & \rho_4 & 1      & \rho_4 \\
+\rho_3 & \rho_3 & \rho_2 & \rho_4 & \rho_4 & 1  \\
+\end{bmatrix}
+\]
+#+END_EXPORT
+
+
+The marginal correlation is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\rho_M &= \frac{\Cov[u_i + \varepsilon_{X,i}(t),v_i + \varepsilon_{Y,i}(t)]}{\sqrt{\Var[u_i + \varepsilon_{X,i}(t)]\Var[v_i + \varepsilon_{Y,i}(t)]}} \\
+&= \frac{\tau_{uv} + \sigma_{XY}}{\sqrt{(\tau_u+\sigma_X)(\tau_v+\sigma_Y)}} = \frac{\sigma_3}{\sqrt{\sigma_1\sigma_5}} =  \rho_2
+\end{align*}
+#+END_EXPORT
+while the conditional correlation is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\rho_C &= \frac{\Cov[\varepsilon_{X,i}(t),\varepsilon_{Y,i}(t)]}{\sqrt{\Var[\varepsilon_{X,i}(t)]\Var[\varepsilon_{Y,i}(t)]}} \\
+&= \frac{\sigma_{XY}}{\sqrt{\sigma_X\sigma_Y}} = \frac{\sigma_3-\sigma_4}{\sqrt{(\sigma_1-\sigma_2)(\sigma_5-\sigma_6)}} =  \frac{\rho_2-\rho_3}{\sqrt{(1-\rho_1)(1-\rho_2)}}
+\end{align*}
+#+END_EXPORT
+
+** Back to the example
+
+In the example, we see a very small marginal correlation and a large conditional one:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.pcor <- partialCor(c(pH,PacO2)~1, repetition = ~time|Subject, data = bland1995, heterogeneous = 0.5)
+e.pcor
+#+END_SRC
+
+#+RESULTS:
+: 		Partial correlation 
+: 
+:                    estimate    se   df  lower    upper p.value
+: rho(1.pH,1.PacO2) -1.63e-05 0.313 1.24 -0.988  0.98791  1.0000
+: r(1.pH,1.PacO2)   -5.09e-01 0.125 2.63 -0.806 -0.00546  0.0489
+: 	--------------------------------------------------------
+: 	rho: marginal correlation 
+: 	r  : correlation conditional on the individual 
+: 	estimates, standard errors, confidence intervals have been back-transformed (tanh).
+
+\clearpage
+
+This matches the estimate (but not the uncertainty) of another software:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(r = rmcorr(Subject, pH, PacO2, bland1995)$r,
+  p = rmcorr(Subject, pH, PacO2, bland1995)$p)
+#+END_SRC
+
+#+RESULTS:
+:             r             p 
+: -0.5067697422  0.0008471081
+
+We can also extract the underlying correlation coefficients:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+round(coef(attr(e.pcor,"lmm"), effects = "correlation"),5)
+#+END_SRC
+
+#+RESULTS:
+:    rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2)       rho(1.pH,2.pH) 
+:             -0.00002              0.10168              0.66317              0.88129
+
+that reveal a very strong within =pH= correlation (almost 0.9) and a
+rather strong within =PacO2= correlation (about 0.65). The
+instantaneous correlation is nearly 0 but the lag correlation is about
+0.1 leading to the observed conditional correlation.
+
+** Simulation study
+
+We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 n.time <- 3
@@ -269,10 +387,19 @@ df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
 head(df.W)
 #+END_SRC
 
+#+RESULTS:
+:   id time       X1       X2
+: 1  1    1 2.483259 2.759470
+: 2  1    2 1.034157 1.102983
+: 3  1    3 3.636308 2.691506
+: 4  2    1 4.463341 4.150878
+: 5  2    2 2.510048 2.081439
+: 6  2    3 2.103239 2.317938
+
 \clearpage
 
-We introduce random effects to impose a constant correlation
-within-individuals for \(X\) and for \(Y\):
+We use random effects to obtain a constant correlation within \(X\)
+and within \(Y\):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 sd.id <- 1.5
 df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
@@ -309,25 +436,26 @@ e.LMMstar
 #+RESULTS:
 : 		Partial correlation 
 : 
-:                estimate     se   df lower upper p.value
-: rho(1.X1,1.X2)    0.427 0.0346 34.8 0.356 0.493 6.5e-13
-: r(1.X1,1.X2)      0.790 0.0672 66.4 0.656 0.925 0.0e+00
+:                estimate     se   df lower upper  p.value
+: rho(1.X1,1.X2)    0.427 0.0346 34.7 0.356 0.493 6.76e-13
+: r(1.X1,1.X2)      0.798 0.0251 58.9 0.764 0.829 0.00e+00
 : 	----------------------------------------------------
 : 	rho: marginal correlation 
-: 	r  : correlation conditional on the individual
+: 	r  : correlation conditional on the individual 
+: 	estimates, standard errors, confidence intervals have been back-transformed (tanh).
 
-The conditional is very close to what other packages output:
+The conditional coefficient is identical to what other packages output:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-rmcorr(id, X1, X2, df.W)$r
+rmcorr:::rmcorr(id, X1, X2, df.W)$r
 #+END_SRC
 
 #+RESULTS:
-: [1] 0.7941749
+: [1] 0.7983617
 
 Here the modeled correlation matrix is:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-Sigma <- sigma(attr(e.LMMstar,"lmm"))
-Rho <- cov2cor(Sigma)
+Omega <- sigma(attr(e.LMMstar,"lmm"))
+Rho <- cov2cor(Omega)
 Rho
 #+END_SRC
 
@@ -342,33 +470,32 @@ Rho
 
 From which the conditional correlation can be deduced:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-Rho[1,4]/sqrt((1-Rho[1,2])*(1-Rho[4,5]))
+(Rho[1,4]-Rho[1,5])/sqrt((1-Rho[1,2])*(1-Rho[4,5]))
 #+END_SRC
 
 #+RESULTS:
-: [1] 0.7903548
+: [1] 0.7983617
 
 or equivalently:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-Sigma[1,4]/sqrt((Sigma[1,1]-Sigma[1,2])*(Sigma[4,4]-Sigma[4,5]))
+(Omega[1,4]-Omega[1,5])/sqrt((Omega[1,1]-Omega[1,2])*(Omega[4,4]-Omega[4,5]))
 #+END_SRC
 
 #+RESULTS:
-: [1] 0.7903548
+: [1] 0.7983617
 
-** Simulation study
-
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-library(data.table)
-
+Replicating this a thousand times:
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
 n.id <- 100
-warper <- function(n){
-  df.W <- data.frame(id = unlist(lapply(1:n.id, rep, n.time)),
-                     time = rep(1:n.time,n.id),
-                     rmvnorm(n.time*n.id, mean = c(3,3), sigma = Sigma)
+n.sim <- 1000
+n.cpus <- 25 ## run on the server
+warper <- function(n){ 
+  df.W <- data.frame(id = unlist(lapply(1:n, rep, n.time)),
+                     time = rep(1:n.time,n),
+                     rmvnorm(n.time*n, mean = c(3,3), sigma = Sigma)
                      )
-  df.W$X1 <- df.W$X1 + rnorm(n.id, sd = sd.id/4)[df.W$id]
-  df.W$X2 <- df.W$X2 + rnorm(n.id, sd = sd.id)[df.W$id]
+  df.W$X1 <- df.W$X1 + rnorm(n, sd = sd.id/4)[df.W$id]
+  df.W$X2 <- df.W$X2 + rnorm(n, sd = sd.id)[df.W$id]
   df.W$id <- as.factor(df.W$id)
 
   res1 <- setNames(c(rmcorr(id, X1, X2, df.W)$r, rmcorr(id, X1, X2, df.W)$CI), c("estimate","lower","upper"))
@@ -377,51 +504,28 @@ warper <- function(n){
                cbind(res2[2,c("estimate","lower","upper","se")],method="lmm")))
 }
 
-ls.res <- pbapply::pblapply(1:101,function(iSim){
-  cbind(sim = iSim, warper(100))
-})
+ls.res <- pbapply::pblapply(1:n.sim,function(iSim){
+  cbind(sim = iSim, warper(n.id))
+}, cl = n.cpus)
 dt.res <- as.data.table(do.call(rbind, ls.res))
 #+END_SRC
 
-#+RESULTS:
-
+lead to the same estimate for the two implementations:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-ggplot(dt.res,aes(x=method,y=estimate))+ geom_boxplot()
-#+END_SRC
-
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-ggsave(ggplot(dt.res,aes(x=method,y=estimate))+ geom_boxplot(), filename = file.path("figures","gg-comp-corEstimator.pdf"))
+range(dt.res[method=="rmcorr",estimate]-dt.res[method=="lmm",estimate], na.rm=TRUE)
 #+END_SRC
 
 #+RESULTS:
-: Saving 6.38 x 6.38 in image
+: [1] -8.572216e-10  2.108167e-09
 
-#+ATTR_LaTeX: :width 1\textwidth :options trim={0 0 0 0} :placement [!h]
-[[./figures/gg-comp-corEstimator.pdf]]
-
-
-** back to the example :noexport:
-
+and lead to a reasonnable coverage:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-bland1995$time <- unlist(tapply(bland1995$Subject,bland1995$Subject, function(x){1:length(x)}))
-e.LMMstar <- partialCor(c(pH,PacO2)~1, repetition = ~time|Subject, data = bland1995, heterogeneous = 0.5)
-e.LMMstar
+dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=upper), na.rm=TRUE)), by = "method"]
 #+END_SRC
 
-#+RESULTS:
-: 		Partial correlation 
-: 
-:                    estimate    se   df  lower upper p.value
-: rho(1.pH,1.PacO2) -1.63e-05 0.313 1.23 -0.989 0.989       1
-: r(1.pH,1.PacO2)   -8.14e-05 1.565 2.68 -5.334 5.334       1
-: 	--------------------------------------------------------
-: 	rho: marginal correlation 
-: 	r  : correlation conditional on the individual
-
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-summary(attr(e.LMMstar,"lmm"))
-#+END_SRC
-
+:    method missing coverage
+: 1: rmcorr   0.000 0.941000
+: 2:    lmm   0.026 0.949692
 
 * Reference
 # # help: https://gking.harvard.edu/files/natnotes2.pdf
