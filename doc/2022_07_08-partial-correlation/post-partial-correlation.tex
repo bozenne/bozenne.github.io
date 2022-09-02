@@ -1,4 +1,4 @@
-% Created 2022-09-02 fr 12:02
+% Created 2022-09-02 fr 15:01
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -190,10 +190,12 @@ linkcolor=[rgb]{0,0,0.5},
 \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
 \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
 \newcommand\Veta{\boldsymbol{\eta}}
-\newcommand\VX{\mathbf{X}}
 \newcommand\sample{\chi}
 \newcommand\Hspace{\mathcal{H}}
 \newcommand\Tspace{\mathcal{T}}
+\newcommand\VY{\mathbf{Y}}
+\newcommand\VX{\mathbf{X}}
+\newcommand\Vvarepsilon{\boldsymbol{\varepsilon}}
 \author{Brice Ozenne}
 \date{\today}
 \title{Partial correlation in linear models}
@@ -211,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:org17f1c46}
+\label{sec:org0de5a22}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -220,7 +222,7 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Example}
-\label{sec:org5102ded}
+\label{sec:org7bd2597}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -231,8 +233,6 @@ library(ggplot2)
 library(nlme)
 library(Matrix)
 library(data.table)
-LMMstar.options(method.numDeriv = "Richardson",
-		columns.confint = c("estimate","se","statistic","df","p.value"))
 \end{lstlisting}
 
 and dataset \citep{bland1995calculating}:
@@ -275,7 +275,7 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:org745315f}
+\label{sec:orgf0da0a5}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -301,6 +301,11 @@ PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
 We claim the partial correlation (adjusting \texttt{pH} and \texttt{PacO2} for
 \texttt{Subject}) can be deduced from the Wald statistic and degrees of
 freedom:
+
+\begin{align}
+\rho = \frac{\frac{\beta}{\sigma_{\beta}}}{\sqrt{\frac{\beta^2}{\sigma^2_{\beta}}+df}} = \frac{\beta}{\sqrt{\beta^2+df*\sigma_{\beta}^2}} \label{eq:pCor-formula}
+\end{align}
+
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 Wald <- eTable.lmm["PacO2","statistic"]
@@ -446,10 +451,10 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial correlation with repeated measurements}
-\label{sec:orgbfe47ec}
+\label{sec:org37bf15e}
 
-\subsection{Theory}
-\label{sec:orgf4f13f2}
+\subsection{Marginal and conditional correlation}
+\label{sec:org2f77cfe}
 There are several references on the subject
 \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -519,8 +524,59 @@ while the conditional correlation is:
 &= \frac{\sigma_{XY}}{\sqrt{\sigma_X\sigma_Y}} = \frac{\sigma_3-\sigma_4}{\sqrt{(\sigma_1-\sigma_2)(\sigma_5-\sigma_6)}} =  \frac{\rho_2-\rho_3}{\sqrt{(1-\rho_1)(1-\rho_2)}}
 \end{align*}
 
+\subsection{Approximated conditional correlation}
+\label{sec:orgb58f6ab}
+
+We now show that formula \ref{eq:pCor-formula} generalizes to mixed
+models. Consider the following mixed model relating \(\VY =
+(Y_1,\ldots,Y_T)\) and \(\VX = (X_1,\ldots,X_T)\):
+\[ \VY = \VX \beta + \Vvarepsilon \]
+where \(\boldsymbol{\varepsilon}\sim\Gaus[0,\Omega]\). Introducing the
+cholesky decomposition \(\Omega = \omega\trans{\omega}\), we can equivalently study:
+\[ \omega^{-1}\VY = \omega^{-1}\VX + \boldsymbol{\zeta} \]
+where \(\boldsymbol{\zeta}\) follow a standard normal distribution. We
+are back the univariate case up to a factor \(\omega^{-1}\).
+
+\begin{description}
+\item[{1.}] F-statistics are still equal the Wald statistic squared
+(divided by the number of parameters).
+\item[{2.}] F-statistics still equal \(\frac{MSSR}{MSSE}\). Indeed:
+\end{description}
+\begin{align*}
+SSE &= \trans{\left(\omega^{-1}\VY\right)}\left(I-\omega^{-1}\VX\left(\trans{\left(\omega^{-1}\VX\right)}\left(\omega^{-1}\VX\right)\right)^{-1} \trans{\left(\omega^{-1}\VX\right)}\right)\left(\omega^{-1}\VY\right) \\
+&= \trans{\VY} \Omega^{-1} \VY - \trans{\VY} \Omega^{-1} \VX \left(\trans{\VX}\Omega^{-1}\VX\right)^{-1} \trans{\VX} \Omega^{-1} \VY  \\
+&= \trans{\VY} (I-\trans{H})\Omega^{-1} (I-\trans{H}) \VY
+\end{align*}
+where \(H = \VX \left(\trans{\VX}\Omega^{-1} \VX \right)^{-1}
+\trans{\VX} \Omega^{-1}\). Indeed:
+\[ (I-\trans{H})\Omega^{-1}
+(I-\trans{H})= \Omega^{-1} - \trans{H}\Omega^{-1} - \Omega^{-1} H +
+\trans{H}\Omega^{-1}H = \Omega^{-1} - \trans{H}\Omega^{-1} \]
+and \(MSSE = \frac{SSE}{n-p} = \sigma^2\) with \(p\) being the rank
+of \(X\). Using that \(HH=H\) :
+\begin{align*}
+SSR &= \trans{\left(\omega^{-1}\VY\right)}\left(\omega^{-1}\VX\left(\trans{\left(\omega^{-1}\VX\right)}\left(\omega^{-1}\VX\right)\right)^{-1} \trans{\left(\omega^{-1}\VX\right)}\right)\left(\omega^{-1}\VY\right) \\
+&= \trans{\VY} \Omega^{-1} \VX \left(\trans{\VX}\Omega^{-1}\VX\right)^{-1} \trans{\VX} \Omega^{-1} \VY  \\
+&= \trans{\VY} \trans{H} \Omega^{-1} \VY = \trans{\VY} \trans{H}\trans{H} \Omega^{-1} \VY  \\
+&= \trans{\VY} \trans{H} \Omega^{-1} H \VY \\
+&= \trans{\widehat{\beta}} \trans{X} \Omega^{-1} X \widehat{\beta}  = \trans{\widehat{\beta}} \Sigma^{-1}_{\widehat{\beta}} \widehat{\beta} 
+\end{align*}
+where \(\widehat{\beta} = \left(\trans{\VX}\Omega^{-1} \VX
+\right)^{-1}\trans{\VX} \Omega^{-1}\VY\) is the GLS estimator of
+\(\beta\). So for a single covariate: 
+\[ F=\frac{MSSR}{MSSE}=\frac{\widehat{\beta}\Sigma^{-1}\widehat{\beta}}{\sigma^2} \]
+
+\begin{description}
+\item[{3.}] Defining \(R^2\) as the proportion of variance explained, we get back
+\end{description}
+\[ R^2 = \frac{\beta^2}{\beta^2 + df \sigma^2_{\beta} } \]
+where \(df=n-p\). A corresponding correlation coefficient can computed as:
+\[ \rho = \frac{\beta}{\sqrt{\beta^2 + df \sigma^2_{\beta}} } \]
+
+\clearpage
+
 \subsection{Back to the example}
-\label{sec:org29c9e03}
+\label{sec:orgcec21a6}
 
 In the example, we see a very small marginal correlation and a large conditional one:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -541,8 +597,6 @@ r(1.pH,1.PacO2)   -5.09e-01 0.125 2.63 -0.806 -0.00546  0.0489
 	estimates, standard errors, confidence intervals have been back-transformed (tanh).
 \end{verbatim}
 
-
-\clearpage
 
 This matches the estimate (but not the uncertainty) of another software:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -574,8 +628,54 @@ rather strong within \texttt{PacO2} correlation (about 0.65). The
 instantaneous correlation is nearly 0 but the lag correlation is about
 0.1 leading to the observed conditional correlation.
 
+\bigskip
+
+An alternative approach is to fit a mixed model on only one outcome,
+regressing out the other:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.CS <- lmm(pH ~ PacO2, repetition = ~time|Subject, data = bland1995,
+	    structure = "CS")
+\end{lstlisting}
+
+Then estimate the partial correlation formula:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.CSaov <- anova(e.CS, effects = "PacO2=0")
+confint(e.CSaov, columns = c("estimate","se","df","partial.r"))
+\end{lstlisting}
+
+\begin{verbatim}
+      estimate     se   df partial.r
+PacO2   -0.103 0.0295 39.6    -0.486
+\end{verbatim}
+
+
+\clearpage
+
+Here approximate degrees of freedom are used, i.e. 39.6 instead of:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+NROW(bland1995)-2
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 45
+\end{verbatim}
+
+
+which would lead to a correlation of:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] -0.4627676
+\end{verbatim}
+
 \subsection{Simulation study}
-\label{sec:orgdde1aaa}
+\label{sec:org467e557}
 
 We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
@@ -772,7 +872,7 @@ dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=up
 \end{verbatim}
 
 \section{Reference}
-\label{sec:org352b0dc}
+\label{sec:org3d6bb8c}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}

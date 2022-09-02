@@ -30,8 +30,6 @@ library(ggplot2)
 library(nlme)
 library(Matrix)
 library(data.table)
-LMMstar.options(method.numDeriv = "Richardson",
-                columns.confint = c("estimate","se","statistic","df","p.value"))
 #+END_SRC
 
 #+RESULTS:
@@ -112,6 +110,20 @@ PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
 We claim the partial correlation (adjusting =pH= and =PacO2= for
 =Subject=) can be deduced from the Wald statistic and degrees of
 freedom:
+
+#+BEGIN_EXPORT latex
+\begin{align}
+\rho = \frac{\frac{\beta}{\sigma_{\beta}}}{\sqrt{\frac{\beta^2}{\sigma^2_{\beta}}+df}} = \frac{\beta}{\sqrt{\beta^2+df*\sigma_{\beta}^2}} \label{eq:pCor-formula}
+\end{align}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+eTable.lmm["PacO2","estimate"]/sqrt(eTable.lmm["PacO2","estimate"]^2+eTable.lmm["PacO2","df"]*eTable.lmm["PacO2","se"]^2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.5067697
+
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 Wald <- eTable.lmm["PacO2","statistic"]
 Wald/sqrt(Wald^2+eTable.lmm["PacO2","df"])
@@ -237,7 +249,7 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 
 * Partial correlation with repeated measurements
 
-** Theory
+** Marginal and conditional correlation
 There are several references on the subject
 citep:bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -317,6 +329,68 @@ while the conditional correlation is:
 \end{align*}
 #+END_EXPORT
 
+** Approximated conditional correlation
+
+We now show that formula \ref{eq:pCor-formula} generalizes to mixed
+models. Consider the following mixed model relating \(\VY =
+(Y_1,\ldots,Y_T)\) and \(\VX = (X_1,\ldots,X_T)\):
+#+BEGIN_EXPORT latex
+\[ \VY = \VX \beta + \Vvarepsilon \]
+#+END_EXPORT
+where \(\boldsymbol{\varepsilon}\sim\Gaus[0,\Omega]\). Introducing the
+cholesky decomposition \(\Omega = \omega\trans{\omega} \), we can equivalently study:
+#+BEGIN_EXPORT latex
+\[ \omega^{-1}\VY = \omega^{-1}\VX + \boldsymbol{\zeta} \]
+#+END_EXPORT
+where \(\boldsymbol{\zeta}\) follow a standard normal distribution. We
+are back the univariate case up to a factor \(\omega^{-1}\).
+
+- 1. :: F-statistics are still equal the Wald statistic squared
+  (divided by the number of parameters).
+- 2. :: F-statistics still equal \(\frac{MSSR}{MSSE}\). Indeed:
+#+BEGIN_EXPORT latex
+\begin{align*}
+SSE &= \trans{\left(\omega^{-1}\VY\right)}\left(I-\omega^{-1}\VX\left(\trans{\left(\omega^{-1}\VX\right)}\left(\omega^{-1}\VX\right)\right)^{-1} \trans{\left(\omega^{-1}\VX\right)}\right)\left(\omega^{-1}\VY\right) \\
+&= \trans{\VY} \Omega^{-1} \VY - \trans{\VY} \Omega^{-1} \VX \left(\trans{\VX}\Omega^{-1}\VX\right)^{-1} \trans{\VX} \Omega^{-1} \VY  \\
+&= \trans{\VY} (I-\trans{H})\Omega^{-1} (I-\trans{H}) \VY
+\end{align*}
+#+END_EXPORT
+where \(H = \VX \left(\trans{\VX}\Omega^{-1} \VX \right)^{-1}
+\trans{\VX} \Omega^{-1}\). Indeed:
+#+BEGIN_EXPORT latex
+\[ (I-\trans{H})\Omega^{-1}
+(I-\trans{H})= \Omega^{-1} - \trans{H}\Omega^{-1} - \Omega^{-1} H +
+\trans{H}\Omega^{-1}H = \Omega^{-1} - \trans{H}\Omega^{-1} \]
+#+END_EXPORT
+and \(MSSE = \frac{SSE}{n-p} = \sigma^2\) with \(p\) being the rank
+of \(X\). Using that \(HH=H\) :
+#+BEGIN_EXPORT latex
+\begin{align*}
+SSR &= \trans{\left(\omega^{-1}\VY\right)}\left(\omega^{-1}\VX\left(\trans{\left(\omega^{-1}\VX\right)}\left(\omega^{-1}\VX\right)\right)^{-1} \trans{\left(\omega^{-1}\VX\right)}\right)\left(\omega^{-1}\VY\right) \\
+&= \trans{\VY} \Omega^{-1} \VX \left(\trans{\VX}\Omega^{-1}\VX\right)^{-1} \trans{\VX} \Omega^{-1} \VY  \\
+&= \trans{\VY} \trans{H} \Omega^{-1} \VY = \trans{\VY} \trans{H}\trans{H} \Omega^{-1} \VY  \\
+&= \trans{\VY} \trans{H} \Omega^{-1} H \VY \\
+&= \trans{\widehat{\beta}} \trans{X} \Omega^{-1} X \widehat{\beta}  = \trans{\widehat{\beta}} \Sigma^{-1}_{\widehat{\beta}} \widehat{\beta} 
+\end{align*}
+#+END_EXPORT
+where \(\widehat{\beta} = \left(\trans{\VX}\Omega^{-1} \VX
+\right)^{-1}\trans{\VX} \Omega^{-1}\VY\) is the GLS estimator of
+\(\beta\). So for a single covariate: 
+#+BEGIN_EXPORT latex
+\[ F=\frac{MSSR}{MSSE}=\frac{\widehat{\beta}\Sigma^{-1}\widehat{\beta}}{\sigma^2} \]
+#+END_EXPORT
+
+- 3. :: Defining \(R^2\) as the proportion of variance explained, we get back
+#+BEGIN_EXPORT latex
+\[ R^2 = \frac{\beta^2}{\beta^2 + df \sigma^2_{\beta} } \]
+#+END_EXPORT
+where \(df=n-p\). A corresponding correlation coefficient can computed as:
+#+BEGIN_EXPORT latex
+\[ \rho = \frac{\beta}{\sqrt{\beta^2 + df \sigma^2_{\beta}} } \]
+#+END_EXPORT
+
+\clearpage
+
 ** Back to the example
 
 In the example, we see a very small marginal correlation and a large conditional one:
@@ -335,8 +409,6 @@ e.pcor
 : 	rho: marginal correlation 
 : 	r  : correlation conditional on the individual 
 : 	estimates, standard errors, confidence intervals have been back-transformed (tanh).
-
-\clearpage
 
 This matches the estimate (but not the uncertainty) of another software:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -361,6 +433,45 @@ that reveal a very strong within =pH= correlation (almost 0.9) and a
 rather strong within =PacO2= correlation (about 0.65). The
 instantaneous correlation is nearly 0 but the lag correlation is about
 0.1 leading to the observed conditional correlation.
+
+\bigskip
+
+An alternative approach is to fit a mixed model on only one outcome,
+regressing out the other:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.CS <- lmm(pH ~ PacO2, repetition = ~time|Subject, data = bland1995,
+            structure = "CS")
+#+END_SRC
+
+#+RESULTS:
+
+Then estimate the partial correlation formula:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.CSaov <- anova(e.CS, effects = "PacO2=0")
+confint(e.CSaov, columns = c("estimate","se","df","partial.r"))
+#+END_SRC
+
+#+RESULTS:
+:       estimate     se   df partial.r
+: PacO2   -0.103 0.0295 39.6    -0.486
+
+\clearpage
+
+Here approximate degrees of freedom are used, i.e. 39.6 instead of:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+NROW(bland1995)-2
+#+END_SRC
+
+#+RESULTS:
+: [1] 45
+
+which would lead to a correlation of:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.4627676
 
 ** Simulation study
 
@@ -778,10 +889,12 @@ bibliographystyle:apalike
 #+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
 
 #+LATEX_HEADER: \newcommand\Veta{\boldsymbol{\eta}}
-#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
 #+LATEX_HEADER: \newcommand\sample{\chi}
 #+LATEX_HEADER: \newcommand\Hspace{\mathcal{H}}
 #+LATEX_HEADER: \newcommand\Tspace{\mathcal{T}}
 
 
 ** Notations
+#+LATEX_HEADER: \newcommand\VY{\mathbf{Y}}
+#+LATEX_HEADER: \newcommand\VX{\mathbf{X}}
+#+LATEX_HEADER: \newcommand\Vvarepsilon{\boldsymbol{\varepsilon}}
