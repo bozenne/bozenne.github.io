@@ -1,4 +1,4 @@
-% Created 2022-09-02 fr 16:49
+% Created 2022-09-18 sø 15:56
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -213,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:org51b8684}
+\label{sec:org62fe41c}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -222,7 +222,7 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Example}
-\label{sec:org1e68a92}
+\label{sec:org5043c95}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -275,7 +275,7 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:orgd6c4d4b}
+\label{sec:org6b84dc5}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -286,16 +286,16 @@ eTable.lmm
 \end{lstlisting}
 
 \begin{verbatim}
-              estimate         se df      lower       upper      p.value
-(Intercept)  6.9298543 0.12946898 38  6.6677580  7.19195056 0.000000e+00
-Subject2     0.7046113 0.07735488 38  0.5480145  0.86120804 4.277623e-11
-Subject3     0.9500127 0.06109545 38  0.8263314  1.07369394 0.000000e+00
-Subject4     0.9715577 0.07350906 38  0.8227464  1.12036905 8.881784e-16
-Subject5     0.8603817 0.05839543 38  0.7421663  0.97859708 0.000000e+00
-Subject6     0.9264284 0.06599450 38  0.7928295  1.06002730 0.000000e+00
-Subject7     0.6921056 0.10490935 38  0.4797277  0.90448342 8.670218e-08
-Subject8     0.7033361 0.06157141 38  0.5786913  0.82798087 7.460699e-14
-PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
+              estimate         se      df      lower       upper      p.value
+(Intercept)  6.9298543 0.12946898 38.0076  6.6677598  7.19194884 0.000000e+00
+Subject2     0.7046113 0.07735488 38.0076  0.5480155  0.86120702 4.269674e-11
+Subject3     0.9500127 0.06109545 38.0076  0.8263322  1.07369313 0.000000e+00
+Subject4     0.9715577 0.07350906 38.0076  0.8227474  1.12036807 8.881784e-16
+Subject5     0.8603817 0.05839543 38.0076  0.7421671  0.97859630 0.000000e+00
+Subject6     0.9264284 0.06599450 38.0076  0.7928304  1.06002642 0.000000e+00
+Subject7     0.6921056 0.10490935 38.0076  0.4797291  0.90448203 8.662210e-08
+Subject8     0.7033361 0.06157141 38.0076  0.5786921  0.82798005 7.438494e-14
+PacO2       -0.1083230 0.02989281 38.0076 -0.1688375 -0.04780862 8.469583e-04
 \end{verbatim}
 
 We claim the partial correlation (adjusting \texttt{pH} and \texttt{PacO2} for
@@ -308,12 +308,12 @@ freedom:
 
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-Wald <- eTable.lmm["PacO2","statistic"]
+Wald <- eTable.lmm["PacO2","estimate"]/eTable.lmm["PacO2","se"]
 Wald/sqrt(Wald^2+eTable.lmm["PacO2","df"])
 \end{lstlisting}
 
 \begin{verbatim}
-[1] -0.5067697
+[1] -0.5067321
 \end{verbatim}
 
 
@@ -341,9 +341,9 @@ anova(e.lmm)
 \begin{verbatim}
 	     Multivariate Wald test 
 
-              F-statistic       df p.value    
-mean: Subject      48.247 (7,38.0)  <0.001 ***
-    : PacO2        13.131 (1,38.0)  <0.001 ***
+              F-statistic       df  p.value    
+mean: Subject      48.247 (7,38.0)  < 2e-16 ***
+    : PacO2        13.131 (1,38.0) 0.000847 ***
 \end{verbatim}
 
 
@@ -427,12 +427,8 @@ print(e.partialCor, digit = 5)
 \end{lstlisting}
 
 \begin{verbatim}
-		Partial correlation 
-
-              estimate    se   df lower  upper p.value
-rho(pH,PacO2)   -0.507 0.125 25.7 -0.71 -0.225 0.00178
-
-   Note: estimate, standard error, confidence interval have been back-transformed (rho parameters with tanh).
+              estimate      se     df    lower   upper   p.value
+rho(pH,PacO2) -0.50677 0.12514 25.674 -0.71027 -0.2251 0.0017753
 \end{verbatim}
 
 
@@ -451,10 +447,10 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial correlation with repeated measurements}
-\label{sec:org5bfb8ca}
+\label{sec:org0d803cc}
 
 \subsection{Marginal and conditional correlation}
-\label{sec:org4cb8028}
+\label{sec:org1d15c34}
 There are several references on the subject
 \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -525,7 +521,7 @@ while the conditional correlation is:
 \end{align*}
 
 \subsection{Approximated conditional correlation}
-\label{sec:org63e6766}
+\label{sec:org6f78650}
 
 We now show that formula \ref{eq:pCor-formula} generalizes to mixed
 models. Consider the following mixed model relating \(\VY =
@@ -576,7 +572,7 @@ where \(df=n-p\). A corresponding correlation coefficient can computed as:
 \clearpage
 
 \subsection{Back to the example}
-\label{sec:org023b53a}
+\label{sec:orgc8a1cbc}
 
 In the example, we see a very small marginal correlation and a large conditional one:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -586,15 +582,9 @@ e.pcor
 \end{lstlisting}
 
 \begin{verbatim}
-		Partial correlation 
-
                    estimate    se   df  lower    upper p.value
-rho(1.pH,1.PacO2) -1.63e-05 0.313 1.24 -0.988  0.98791  1.0000
-r(1.pH,1.PacO2)   -5.09e-01 0.125 2.63 -0.806 -0.00546  0.0489
-	--------------------------------------------------------
-	rho: marginal correlation 
-	r  : correlation conditional on the individual 
-	estimates, standard errors, confidence intervals have been back-transformed (tanh).
+rho(1.pH,1.PacO2) -1.63e-05 0.313 1.23 -0.989 0.988993  1.0000
+r(1.pH,1.PacO2)   -5.09e-01 0.125 2.59 -0.808 0.000496  0.0501
 \end{verbatim}
 
 
@@ -674,8 +664,113 @@ e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
 [1] -0.4627676
 \end{verbatim}
 
+
+Finally we could also compute the Person's correlation (ignoring
+repeated measurements):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+cor(dtW$pH,dtW$PacO2)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] -0.06521774
+\end{verbatim}
+
+
+and use a bootstrap at the individual level for assessing the
+uncertainty:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(boot)
+library(data.table)
+dtW <- as.data.table(bland1995)
+dtL <- dcast(dtW, value.var = c("pH","PacO2"), formula = Subject ~ time)
+calcCor <- function(data, statistic){
+  data2 <- data[statistic]
+  data3 <- melt(data2, id.vars = c("Subject"), 
+		measure=patterns("pH","PacO2"),
+		variable.name = "time", value.name = c("pH","PacO2"))
+  cor(data3$pH, data3$PacO2)
+}
+e.boot <- boot(dtW, calcCor, R = 1000)
+e.boot
+\end{lstlisting}
+
+\begin{verbatim}
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = dtW, statistic = calcCor, R = 1000)
+
+
+Bootstrap Statistics :
+       original      bias    std. error
+t1* -0.06521774 -0.01635557   0.1989813
+\end{verbatim}
+
+In summary we have obtained the following estimates:
+\begin{itemize}
+\item for the marginal correlation
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+out.naive <- c(estimate = e.boot$t0, se = sd(e.boot$t), df = NA,
+	       lower = boot.ci(e.boot, type = "perc")$percent[4],
+	       upper = boot.ci(e.boot, type = "perc")$percent[5],
+	       p.value = NA)
+e.pcor2 <- partialCor(c(pH,PacO2)~1, repetition = ~time|Subject, df = FALSE,
+		      data = bland1995, heterogeneous = 0.5)
+\end{lstlisting}
+
+\begin{itemize}
+\item for the conditional correlation
+\end{itemize}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+e.rmcorr <- rmcorr(Subject, PacO2, pH, bland1995)
+out.rmcorr <- c(estimate = e.rmcorr$r, se = NA, df = e.rmcorr$df,
+		lower = e.rmcorr[[4]][1], upper = e.rmcorr[[4]][2], p.value = e.rmcorr[[3]])
+out.magic <- estimate(e.CS, f = function(p){
+  e.vcov <- vcov(e.CS, df = TRUE, p = p)
+  p["PacO2"]/sqrt(p["PacO2"]^2+e.vcov["PacO2","PacO2"]*attr(e.vcov,"df")["PacO2"])
+})
+\end{lstlisting}
+
+So overall:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+out <- rbind(
+  data.frame(type = "marginal", rbind(naive = out.naive, lmmM = e.pcor2[1,])),
+  data.frame(type = "conditional", rbind(rmcorr = out.rmcorr, lmmC = e.pcor2[2,], magic = out.magic))
+)
+out <- cbind(name = rownames(out), out)
+rownames(out) <- NULL
+out
+\end{lstlisting}
+
+\begin{verbatim}
+    name        type      estimate         se       df      lower      upper      p.value
+1  naive    marginal -6.521774e-02 0.19898132       NA -0.5183738  0.2809898           NA
+2   lmmM    marginal -1.627833e-05 0.31296494      Inf -0.5465274  0.5465046 9.999585e-01
+3 rmcorr conditional -5.067697e-01         NA 38.00000 -0.7112297 -0.2232550 8.471081e-04
+4   lmmC conditional -5.085547e-01 0.12542915      Inf -0.7043437 -0.2408608 4.862469e-04
+5  magic conditional -4.864796e-01 0.08698358 30.83874 -0.6639214 -0.3090378 3.992869e-06
+\end{verbatim}
+
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.forest <- ggplot(out, aes(x = name, y = estimate, color = type))
+gg.forest <- gg.forest + geom_hline(yintercept=0, linetype = 2)
+gg.forest <- gg.forest + geom_point(size = 2) + geom_errorbar(aes(ymin = lower, ymax = upper))
+gg.forest <- gg.forest + coord_flip() 
+gg.forest
+\end{lstlisting}
+
 \subsection{Simulation study (compound symmetry model)}
-\label{sec:org22ecc7b}
+\label{sec:org8a20edd}
 
 We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
@@ -872,7 +967,7 @@ dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=up
 \end{verbatim}
 
 \subsection{Simulation study (crossed random effect model)}
-\label{sec:org323f216}
+\label{sec:orgad5e3e9}
 
 We will modify the previous simulation setting by introducing more
 structure on the correlation. More precisely, observations will be
@@ -944,7 +1039,7 @@ by adjusting on time. However with more complex covariance pattern it
 may not always be possible to find an appropriate \texttt{lm} approach.
 
 \section{Reference}
-\label{sec:org9ebd9be}
+\label{sec:orgc2b2cda}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
