@@ -263,8 +263,8 @@ individual-specific variations (conditional).
 To be more specific let's consider the following statistical model:
 #+BEGIN_EXPORT latex
 \begin{align*}
-X_i(t) &= \mu_{X,i}(t) + u_i + \varepsilon_{X,i}(t) \\
-Y_i(t) &= \mu_{Y,i}(t) + v_i + \varepsilon_{Y,i}(t) \\
+X_i(t) &= \mu_{X}(t) + u_i + \varepsilon_{X,i}(t) \\
+Y_i(t) &= \mu_{Y}(t) + v_i + \varepsilon_{Y,i}(t) \\
 \text{where } \begin{bmatrix}u \\ v \\ \varepsilon_X(t) \\ \varepsilon_Y(t) \end{bmatrix}
 &= \Gaus\left(\begin{bmatrix}0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
 \begin{bmatrix}
@@ -416,8 +416,10 @@ round(coef(attr(e.pcor,"lmm"), effects = "correlation"),5)
 #+END_SRC
 
 #+RESULTS:
-:    rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2)       rho(1.pH,2.pH) 
-:             -0.00002              0.10168              0.66317              0.88129
+:    rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2) 
+:             -0.00002              0.10168              0.66317 
+:       rho(1.pH,2.pH) 
+:              0.88129
 
 that reveal a very strong within =pH= correlation (almost 0.9) and a
 rather strong within =PacO2= correlation (about 0.65). The

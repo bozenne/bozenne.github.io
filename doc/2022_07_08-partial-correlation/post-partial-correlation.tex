@@ -1,4 +1,4 @@
-% Created 2022-09-18 sø 15:56
+% Created 2022-09-20 ti 11:43
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -213,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Summary}
-\label{sec:org62fe41c}
+\label{sec:org5f0800c}
 
 This document starts by presenting how to extract from a (univariate)
 linear regression model partial correlation coefficients. It also
@@ -222,7 +222,7 @@ get. When having multiple measurements of pairs of variables, various
 technics to estimate (partial) correlations are being compared.
 
 \section{Example}
-\label{sec:org5043c95}
+\label{sec:org5a61bef}
 
 For illustration we will use the following packages:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -275,7 +275,7 @@ gg
 \clearpage
 
 \section{Partial partial in multiple linear regression}
-\label{sec:org6b84dc5}
+\label{sec:org235ae36}
 
 Consider the linear model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -447,10 +447,10 @@ rmcorr(Subject, PacO2, pH, bland1995)$r
 \clearpage
 
 \section{Partial correlation with repeated measurements}
-\label{sec:org0d803cc}
+\label{sec:org2328ed5}
 
 \subsection{Marginal and conditional correlation}
-\label{sec:org1d15c34}
+\label{sec:org144b47e}
 There are several references on the subject
 \citep{bland1995calculating,Lipsitz2001partial,bakdash2017repeated,shan2020correlation}. We
 will focus on the mixed model approach. The idea is to jointly model
@@ -467,8 +467,8 @@ individual-specific variations (conditional).
 
 To be more specific let's consider the following statistical model:
 \begin{align*}
-X_i(t) &= \mu_{X,i}(t) + u_i + \varepsilon_{X,i}(t) \\
-Y_i(t) &= \mu_{Y,i}(t) + v_i + \varepsilon_{Y,i}(t) \\
+X_i(t) &= \mu_{X}(t) + u_i + \varepsilon_{X,i}(t) \\
+Y_i(t) &= \mu_{Y}(t) + v_i + \varepsilon_{Y,i}(t) \\
 \text{where } \begin{bmatrix}u \\ v \\ \varepsilon_X(t) \\ \varepsilon_Y(t) \end{bmatrix}
 &= \Gaus\left(\begin{bmatrix}0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
 \begin{bmatrix}
@@ -521,7 +521,7 @@ while the conditional correlation is:
 \end{align*}
 
 \subsection{Approximated conditional correlation}
-\label{sec:org6f78650}
+\label{sec:org4b5632d}
 
 We now show that formula \ref{eq:pCor-formula} generalizes to mixed
 models. Consider the following mixed model relating \(\VY =
@@ -572,7 +572,7 @@ where \(df=n-p\). A corresponding correlation coefficient can computed as:
 \clearpage
 
 \subsection{Back to the example}
-\label{sec:orgc8a1cbc}
+\label{sec:org4cb0eea}
 
 In the example, we see a very small marginal correlation and a large conditional one:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -608,8 +608,10 @@ round(coef(attr(e.pcor,"lmm"), effects = "correlation"),5)
 \end{lstlisting}
 
 \begin{verbatim}
-rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2)       rho(1.pH,2.pH) 
-         -0.00002              0.10168              0.66317              0.88129
+rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2) 
+         -0.00002              0.10168              0.66317 
+   rho(1.pH,2.pH) 
+          0.88129
 \end{verbatim}
 
 
@@ -770,7 +772,7 @@ gg.forest
 \end{lstlisting}
 
 \subsection{Simulation study (compound symmetry model)}
-\label{sec:org8a20edd}
+\label{sec:org6ca2fe1}
 
 We'll compare \(\rho\) and \(r\) in the case of 3 timepoints,
 \(r=0.8\), and 250 individuals:
@@ -967,7 +969,7 @@ dt.res[,.(missing = mean(is.na(estimate)), coverage = mean((0.8>=lower)*(0.8<=up
 \end{verbatim}
 
 \subsection{Simulation study (crossed random effect model)}
-\label{sec:orgad5e3e9}
+\label{sec:org9bb6802}
 
 We will modify the previous simulation setting by introducing more
 structure on the correlation. More precisely, observations will be
@@ -1039,7 +1041,7 @@ by adjusting on time. However with more complex covariance pattern it
 may not always be possible to find an appropriate \texttt{lm} approach.
 
 \section{Reference}
-\label{sec:orgc2b2cda}
+\label{sec:orgba0cd87}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
