@@ -1,35 +1,36 @@
-% Created 2020-12-14 man 12:47
+% Created 2022-10-15 Sat 22:18
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
 %%%% settings when exporting code %%%% 
 
 \usepackage{listings}
-\lstset{
-backgroundcolor=\color{white},
-basewidth={0.5em,0.4em},
-basicstyle=\ttfamily\small,
-breakatwhitespace=false,
-breaklines=true,
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
 columns=fullflexible,
-commentstyle=\color[rgb]{0.5,0,0.5},
-frame=single,
-keepspaces=true,
-keywordstyle=\color{black},
-literate={~}{$\sim$}{1},
-numbers=left,
-numbersep=10pt,
-numberstyle=\ttfamily\tiny\color{gray},
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
 showspaces=false,
 showstringspaces=false,
-stepnumber=1,
-stringstyle=\color[rgb]{0,.5,0},
-tabsize=4,
-xleftmargin=.23in,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
 emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
-emphstyle=\color{blue}
-}
-
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
 %%%% packages %%%%%
 
 \usepackage[utf8]{inputenc}
@@ -70,6 +71,11 @@ right=20mm,
 top=20mm,
 bottom=20mm
 }
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
 \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
 \renewcommand{\baselinestretch}{1.1}
 \usepackage{framed}
@@ -104,14 +110,11 @@ bottom=20mm
 \title{}
 \hypersetup{
  colorlinks=true,
- citecolor=[rgb]{0,0.5,0},
- urlcolor=[rgb]{0,0,0.5},
- linkcolor=[rgb]{0,0,0.5},
  pdfauthor={Brice Ozenne},
  pdftitle={},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 27.0.50 (Org mode 9.0.4)},
+ pdfcreator={Emacs 26.3 (Org mode 9.4.6)},
  pdflang={English}
  }
 \begin{document}
@@ -156,14 +159,14 @@ bottom=20mm
 \bigskip
 My research work is organized around three topics:
 \begin{itemize}
-\item the development of \textbf{latent variable models} for data analysis in
-neuroscience - see publications
+\item the development of \textbf{multivariate models} for data analysis in
+neuroscience, mainly latent variable models (LVM) and mixed models (LMM) - see publications
 \cite{ebert2019molecular,stenbaek2017brain,fisher2017bdnf}. From a
 methodological point of view, I study how to perform statistical
 \textbf{estimation and inference in small samples} \citep{ozenne2020small} as
 well as efficient corrections for \textbf{multiple testing}
-\citep{ozenne20XXcontroling}. These developments are available in the
-R package \texttt{lavaSearch2}.
+\citep{ozenne2022controlling}. These developments are available in the
+R packages \texttt{lavaSearch2} (LVM) and \texttt{LMMstar} (LMM).
 
 \item the analysis of registry data in presence of \textbf{right-censoring},
 \textbf{competing risks}, and \textbf{confounding} \textbf{competing risks}. A typical
@@ -194,7 +197,7 @@ the \texttt{BuyseTest} using the U-statistique theory.
 \bigskip
 
 \section*{\emph{Other domains of interest in statistics:}}
-\label{sec:org52c6e19}
+\label{sec:org161f5c0}
 \begin{itemize}
 \item Smoothing splines and functional data analysis
 \item Causal inference and dynamic treatment regimes
@@ -203,12 +206,12 @@ the \texttt{BuyseTest} using the U-statistique theory.
 \resheading{Skills}
 
 \section*{\emph{Language}}
-\label{sec:org9597f6a}
+\label{sec:org90b0f12}
 French (native language), english (fluent), danish (intermediate),
 basics in italian.
 
 \section*{\emph{Software}}
-\label{sec:org62022d7}
+\label{sec:org9168a13}
 Proficient in \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
 Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
 git/github (via \href{https://magit.vc/}{magit}).
@@ -273,10 +276,15 @@ Co-supervision of \textbf{master 2} student:
 
 \resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
 \section*{\emph{Publications (methodological)}}
-\label{sec:orgc868aba}
+\label{sec:orgc2fc4ac}
 
 Published:
 \begin{enumerate}
+   \item \bibentry{scheike2022efficient}
+   \item \bibentry{ozenne2022controlling}
+   \item \bibentry{ozenne2021asymptotic}
+   \item \bibentry{peron2021correcting}
+   \item \bibentry{cantagallo2021new}
    \item \bibentry{ozenne2020small}
    \item \bibentry{verbeeck2020evaluation}
    \item \bibentry{ozenne2020estimation}
@@ -289,26 +297,74 @@ Published:
 
 \pagebreak[3]
 
-In revision:
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXcontroling}
-    \item \bibentry{peron20XXunbiased}
-    \item \bibentry{cantagallo20XXnew}
-\end{enumerate}
+\resheading{Software development}
 
-In preparation
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXasymptotic}
-\end{enumerate}
+Packages for the \href{https://www.r-project.org/}{R} software:
+\begin{itemize}
+\item \textbf{BuyseTest} (author and maintainer): implementation of generalized
+pairwise comparisons, including recent developments to handle
+right-censoring
+\citep{peron2016extension,peron2021correcting}. Available on \href{https://cran.r-project.org/web/packages/BuyseTest/index.html}{CRAN} and on
+\href{https://github.com/bozenne/BuyseTest}{Github}.
+
+\item \textbf{lavaSearch2} (author and maintainer): Inference and diagnostic
+tools for latent variable models.  Methodology described in
+\citep{ozenne2020small} and \citep{ozenne2022controlling}. Available on
+\href{https://cran.r-project.org/web/packages/lavaSearch2/index.html}{CRAN} and on \href{https://github.com/bozenne/lavaSearch2}{Github}. .
+
+\item \textbf{LMMstar} (author and maintainer) : linear mixed model via
+covariance structure (marginal formulation). Inference in small
+sample, test linear and non-linear combinations of parameters,
+multiple comparisons adjustment. Disponible sur le \href{https://cran.r-project.org/web/packages/LMMstar/index.html}{CRAN} et sur
+\href{https://github.com/bozenne/LMMstar}{Github}. .
+
+\item \textbf{riskRegression} (contributor): computation of absolute risks and
+average treatment effects. Methodology described in
+\citep{ozenne2017riskregression} and
+\citep{ozenne2020estimation}. Available on \href{https://cran.r-project.org/web/packages/riskRegression/index.html}{CRAN} and on \href{https://github.com/tagteam/riskRegression}{Github}.
+\end{itemize}
+
+\clearpage
+
+Package for \href{https://www.gnu.org/software/emacs/}{emacs}:
+\begin{itemize}
+\item \textbf{emacs-config} (author and maintainer) : Configuration files for
+emacs to ease the interaction with
+R/C++/orgmode/latex/git. Disponible on \href{https://github.com/bozenne/emacs-config}{Github}.
+\end{itemize}
 
 \pagebreak[3]
 
 \section*{\emph{Publications (clinical applications)}}
-\label{sec:orgd45f8fb}
+\label{sec:org7189838}
 
-Published:
 \begin{enumerate}[resume]
-   \item \bibentry{dam2020hot}
+   \item \bibentry{nasser2022reliability}
+   \item \bibentry{armand2022brain}
+   \item \bibentry{kohler2022concurrent}
+   \item \bibentry{armand2022acute}
+   \item \bibentry{armand2022brain}
+   \item \bibentry{fisher2022emotional}
+   \item \bibentry{beaman2022blood}
+   \item \bibentry{drummond2022psilocybin}
+   \item \bibentry{larsen2022impact}
+   \item \bibentry{mcculloch2022lasting}
+   \item \bibentry{ip2021eeg}
+   \item \bibentry{madsen2021psilocybin}
+   \item \bibentry{joergensen2021default}
+   \item \bibentry{brandt2021reward}
+   \item \bibentry{dea2021brain}
+   \item \bibentry{ip2021pretreatement}
+   \item \bibentry{hoghe2021MAMA}
+   \item \bibentry{raval2021single}
+   \item \bibentry{hogsted2021stress}
+   \item \bibentry{donovan2021effects}
+   \item \bibentry{lee2020absolute}
+   \item \bibentry{hansen2020visual}
+   \item \bibentry{spies2020common}
+   \item \bibentry{larsen2020oral}
+   \item \bibentry{thystrup2020severity}
+   \item \bibentry{dam2020hot}x
    \item \bibentry{hjordt2020psychometric}
    \item \bibentry{beliveau2020structure}
    \item \bibentry{madsen2020single}
@@ -333,37 +389,6 @@ Published:
    \item \bibentry{ozenne2015evaluation}
    \item \bibentry{hermitte2013very}
  \end{enumerate}
-
-\pagebreak[3]
-\resheading{Software development}
-
-Packages for the \href{https://www.r-project.org/}{R} software:
-\begin{itemize}
-\item \textbf{BuyseTest} (author and maintainer): implementation of generalized
-pairwise comparisons, including recent developments to handle
-right-censoring
-\citep{peron2016extension,peron20XXunbiased}. Available on \href{https://cran.r-project.org/web/packages/BuyseTest/index.html}{CRAN} and on
-\href{https://github.com/bozenne/BuyseTest}{Github}.
-
-\item \textbf{lavaSearch2} (author and maintainer): Inference and diagnostic
-tools for latent variable models.  Methodology described in
-\citep{ozenne2020small} and \citep{ozenne20XXcontroling}. Available on
-\href{https://cran.r-project.org/web/packages/lavaSearch2/index.html}{CRAN} and on \href{https://github.com/bozenne/lavaSearch2}{Github}. .
-
-\item \textbf{riskRegression} (contributor): computation of absolute risks and
-average treatment effects. Methodology described in
-\citep{ozenne2017riskregression} and
-\citep{ozenne2020estimation}. Available on \href{https://cran.r-project.org/web/packages/riskRegression/index.html}{CRAN} and on \href{https://github.com/tagteam/riskRegression}{Github}.
-\end{itemize}
-
-\bigskip
-
-Package for \href{https://www.gnu.org/software/emacs/}{emacs}:
-\begin{itemize}
-\item \textbf{emacs-config} (author and maintainer) : Configuration files for
-emacs to ease the interaction with
-R/C++/orgmode/latex/git. Disponible on \href{https://github.com/bozenne/emacs-config}{Github}.
-\end{itemize}
 
 \pagebreak[3]
 \resheading{Peer review}
@@ -416,6 +441,13 @@ Chairman at international conferences:
 && \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhagen, Denmark
 \end{tabular}
 
+\bigskip
+
+Organisation of a workshop:
+\begin{tabular}{l@{ }l@{ }l}
+2021 &:& Analysis of repeated measurements with mixed models using the R package LMMstar (1h+3h) \\
+&& Methods Week, Karolinska institute, Stockholm, Suède
+\end{tabular}
 
 \bibliographystyle{plainnat}
 

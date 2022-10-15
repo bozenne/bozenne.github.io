@@ -46,15 +46,16 @@
 \bigskip
 
 Mon travail de recherche s'articule autour de trois thèmes:
-- le développement de *modèles à variables latentes* pour l'analyse de
-  données en neuroscience - voir les publications
+- le développement de *modèles multivariés* pour l'analyse de données
+  en neuroscience. Principalement modèles mixed (LMM) et modèles à
+  variables latentes (LVM) - voir les publications
   citep:ebert2019molecular,stenbaek2017brain,fisher2017bdnf pour des
   exemples d'application. D'un point de vue méthodologique, je
   m'intéresse à *l'estimation et l'inférence en petits échantillons*
   citep:ozenne2020small ainsi qu'à développer des corrections
   efficaces en présence de *tests multiples*
-  citep:ozenne20XXcontroling. Ces développements sont implémentés dans
-  la librairie R =lavaSearch2=.
+  citep:ozenne2022controlling. Ces développements sont implémentés dans
+  les librairies R =lavaSearch2= (LVM) et =LMMstar= (LMM).
 
 \bigskip
 
@@ -68,7 +69,9 @@ Mon travail de recherche s'articule autour de trois thèmes:
   régressions et utilisé sa fonction d'influence pour obtenir sa
   distribution asymptotique citep:ozenne2020estimation. Cette méthode
   est implémentée dans la fonction =ate= de la librairie R
-  =riskRegression=.
+  =riskRegression=. Voir aussi citep:scheike2022efficient pour un
+  travail plus théorique sur l'efficacité d'estimateurs issus du
+  modèle de Fine and Gray.
 
 \bigskip
 
@@ -82,15 +85,15 @@ Mon travail de recherche s'articule autour de trois thèmes:
   citep:peron2016assessment). Je m'intéresse par exemple à la théorie
   des U-statistiques pour obtenir la distribution asymptotique de
   certains estimateurs implémentés dans la librairie R =BuyseTest=
-  (citep:ozenne20XXasymptotic, papier en cours de redaction).
+  (citep:ozenne2021asymptotic).
 
 \bigskip
 
 ** /Autres domaines d'intérêt en statistiques:/
 - Spline de lissages et modélisation fonctionnelle
 - Inférence causale et régimes de traitement dynamiques
+- Essais cliniques séquentiels 
 - Inférence statistique après sélection 
-
 
 * Compétences                                                        :ignore:
 #+LaTeX: \resheading{Compétences}
@@ -151,14 +154,31 @@ Enseignement (CM : cours magistral, TD : travaux dirigés):
 
 \medskip
 
+Doctorants en santé:
 #+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l}
-2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Analyse statistique de données répétées}. TD pour doctorants en médecine (18h). \\
-2016 - 2017 : & Modèles d'équations structurelles. CM pour étudiants de master en statistiques (2h). \\
-2014 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733301}{Modèles de Survie}. TD pour étudiants de master en santé publique (18h).\\
-2013 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733304}{Statistique bayésienne}. TD pour étudiants de master en santé publique (6h).\\
+\begin{tabular}{r@{ }l}
+2021 - 2022 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Analyse statistique de données répétées}. CM et TD (6h et 18h). \\
+            : & Outils statistiques pour l'épidémiologie. Responsable CM, TD (10h et 18h). \\
+            : & Introduction aux statistiques. CM, TD (3h et 3h). \\
+2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Analyse statistique de données répétées}. TD (18h). \\
 \end{tabular}
 #+END_EXPORT
+
+Etudiants de master de statistiques:
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2016 - 2017 : & Modèles d'équations structurelles. CM (2h). \\
+\end{tabular}
+#+END_EXPORT
+
+Etudiants de master en santé publique:
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2014 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733301}{Modèles de Survie}. TD (18h).\\
+2013 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733304}{Statistique bayésienne}. TD (6h).\\
+\end{tabular}
+#+END_EXPORT
+
 
 \bigskip
 
@@ -200,9 +220,13 @@ Co-encadrant d'étudiant en *master 2*:
 #+LaTeX: \resheading{Production scientifique}
 ** /Publications (méthodologiques)/
 
-Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{scheike2022efficient}
+    \item \bibentry{ozenne2022controlling}
+    \item \bibentry{ozenne2021asymptotic}
+    \item \bibentry{peron2021correcting}
+    \item \bibentry{cantagallo2021new}
     \item \bibentry{ozenne2020small}
     \item \bibentry{verbeeck2020evaluation}
     \item \bibentry{ozenne2020estimation}
@@ -214,32 +238,71 @@ Publié:
   \end{enumerate}
 #+END_EXPORT
 
+** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
+#+LaTeX: \begin{minipage}{0.01\textwidth}
+#+LaTeX: \hspace{\fill}
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.92\textwidth}
+- *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
+  généralisées. Implémentation de la méthode décrite dans
+  citep:peron2016extension,peron2021correcting. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]]
+  et sur [[https://github.com/bozenne/BuyseTest][Github]].
+
+- *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
+  diagnostiques dans les modèles à variables latentes
+  (cite:ozenne2020small,ozenne2022controling). Disponible sur
+  le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
+
+- *LMMstar* (Créateur et mainteneur) : Modèles mixtes linéaires:
+  formulation marginale avec differentes structures de
+  variance-covariance residuelle et outils d'inférence statistique
+  associés'. Disponible sur le [[https://cran.r-project.org/web/packages/LMMstar/index.html][CRAN]] et sur [[https://github.com/bozenne/LMMstar][Github]]. .
+
+- *riskRegression* (Contributeur) : Calculateur du risque
+  d'évènenement en présence de risques compétitifs. Implémentation de
+  la méthode décrite dans cite:ozenne2017riskregression et
+  cite:ozenne2020estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
+#+LaTeX: \end{minipage}
+
 \bigskip
 
-En révision:
-#+BEGIN_EXPORT latex
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXcontroling}
-    \item \bibentry{peron20XXunbiased}
-    \item \bibentry{cantagallo20XXnew}
-\end{enumerate}
-#+END_EXPORT
+Librairie pour le logiciel [[https://www.gnu.org/software/emacs/][emacs]]:
+- *emacs-config* (Créateur et mainteneur) : configuration facilitant
+  l'intéraction avec R/C++/orgmode/latex/git. Disponible sur sur
+  [[https://github.com/bozenne/emacs-config][Github]].
 
-\bigskip
-
-En préparation:
-#+BEGIN_EXPORT latex
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXasymptotic}
-\end{enumerate}
-#+END_EXPORT
+\pagebreak[3]
 
 ** /Publications (applications cliniques)/
 
-Publié:
 #+BEGIN_EXPORT latex
  \begin{enumerate}[resume]
-    \item \bibentry{dam2020hot}
+    \item \bibentry{nasser2022reliability}
+    \item \bibentry{armand2022brain}
+    \item \bibentry{kohler2022concurrent}
+    \item \bibentry{armand2022acute}
+    \item \bibentry{armand2022brain}
+    \item \bibentry{fisher2022emotional}
+    \item \bibentry{beaman2022blood}
+    \item \bibentry{drummond2022psilocybin}
+    \item \bibentry{larsen2022impact}
+    \item \bibentry{mcculloch2022lasting}
+    \item \bibentry{ip2021eeg}
+    \item \bibentry{madsen2021psilocybin}
+    \item \bibentry{joergensen2021default}
+    \item \bibentry{brandt2021reward}
+    \item \bibentry{dea2021brain}
+    \item \bibentry{ip2021pretreatement}
+    \item \bibentry{hoghe2021MAMA}
+    \item \bibentry{raval2021single}
+    \item \bibentry{hogsted2021stress}
+    \item \bibentry{donovan2021effects}
+    \item \bibentry{lee2020absolute}
+    \item \bibentry{hansen2020visual}
+    \item \bibentry{spies2020common}
+    \item \bibentry{larsen2020oral}
+    \item \bibentry{thystrup2020severity}
+    \item \bibentry{dam2020hot}x
     \item \bibentry{hjordt2020psychometric}
     \item \bibentry{beliveau2020structure}
     \item \bibentry{madsen2020single}
@@ -268,35 +331,6 @@ Publié:
 
 \pagebreak[3]
 
-** /Développement logiciel (librairies pour le logiciel [[https://www.r-project.org/][R]])/
-#+LaTeX: \begin{minipage}{0.01\textwidth}
-#+LaTeX: \hspace{\fill}
-#+LaTeX: \end{minipage}
-#+LaTeX: \begin{minipage}{0.92\textwidth}
-- *BuyseTest* (Créateur et mainteneur) : Comparisons par paires
-  généralisées. Implémentation de la méthode décrite dans
-  citep:peron2016extension,peron20XXunbiased. Disponible sur le [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]]
-  et sur [[https://github.com/bozenne/BuyseTest][Github]].
-
-- *lavaSearch2* (Créateur et mainteneur) : Inférence et outils
-  diagnostiques dans les modèles à variables latentes
-  (cite:ozenne2020small,ozenne20XXcontroling). Disponible sur
-  le [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] et sur [[https://github.com/bozenne/lavaSearch2][Github]]. .
-
-- *riskRegression* (Contributeur) : Calculateur du risque
-  d'évènenement en présence de risques compétitifs. Implémentation de
-  la méthode décrite dans cite:ozenne2017riskregression et
-  cite:ozenne2020estimation. Disponible sur le [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] et sur [[https://github.com/tagteam/riskRegression][Github]].
-#+LaTeX: \end{minipage}
-
-\bigskip
-
-Librairie pour le logiciel [[https://www.gnu.org/software/emacs/][emacs]]:
-- *emacs-config* (Créateur et mainteneur) : configuration facilitant
-  l'intéraction avec R/C++/orgmode/latex/git. Disponible sur sur
-  [[https://github.com/bozenne/emacs-config][Github]].
-
-\pagebreak[3]
 
 * Relecture d'articles                                               :ignore:
 #+LaTeX: \resheading{Relecture d'article}
@@ -304,7 +338,8 @@ J'ai relu des articles pour Biometrics, Statistics in Medicine,
 International Journal of Biostatistics, and BMC medical reasearch
 methodology. Voir mon [[https://publons.com/researcher/1214277/brice-maxime-hugues-ozenne/][profile publons]] pour plus d'informations.
 
-\pagebreak[3]
+
+\clearpage
 
 * Communications orales                                             :ignore:
 #+LaTeX: \resheading{Conférences}
@@ -323,12 +358,16 @@ Présentations orales lors de conférences internationales:
 && \href{http://www.iscb2017.info/}{ISCB}, Vigo, Espagne \\
 2019 &:& Generalized pairwise comparisons for right-censored time to event outcomes \\
 && \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark \\
+2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
+&& and competing risks \\
+&& \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, Londres, Angleterre \\
 \end{tabular}
 #+END_EXPORT
 
 \bigskip
 
 Responsable de session ("chairman"):
+
 \smallskip
 
 #+BEGIN_EXPORT latex
@@ -337,6 +376,19 @@ Responsable de session ("chairman"):
 && \href{https://publicifsv.sund.ku.dk/~safjr2019/}{Survival analysis for junior researcher}, Copenhague, Danemark
 \end{tabular}
 #+END_EXPORT
+
+\bigskip
+
+Organisation d'une formation ("Workshop"):
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2021 &:& Analysis of repeated measurements with mixed models using the R package LMMstar (1h+3h) \\
+&& Methods Week, Karolinska institute, Stockholm, Sweden
+\end{tabular}
+#+END_EXPORT
+
+\smallskip
+
 
 * Reference                                                          :ignore:
 
@@ -374,6 +426,14 @@ Responsable de session ("chairman"):
 #+LaTeX_HEADER: right=20mm,
 #+LaTeX_HEADER: top=20mm,
 #+LaTeX_HEADER: bottom=20mm
+#+LaTeX_HEADER: }
+
+** Color
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
 #+LaTeX_HEADER: }
 
 ** Line spacing

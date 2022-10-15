@@ -46,14 +46,14 @@
 
 \bigskip
 My research work is organized around three topics:
-- the development of *latent variable models* for data analysis in
-  neuroscience - see publications
+- the development of *multivariate models* for data analysis in
+  neuroscience, mainly latent variable models (LVM) and mixed models (LMM) - see publications
   cite:ebert2019molecular,stenbaek2017brain,fisher2017bdnf. From a
   methodological point of view, I study how to perform statistical
   *estimation and inference in small samples* citep:ozenne2020small as
   well as efficient corrections for *multiple testing*
-  citep:ozenne20XXcontroling. These developments are available in the
-  R package =lavaSearch2=.
+  citep:ozenne2022controlling. These developments are available in the
+  R packages =lavaSearch2= (LVM) and =LMMstar= (LMM).
 
 - the analysis of registry data in presence of *right-censoring*,
   *competing risks*, and *confounding* *competing risks*. A typical
@@ -172,6 +172,11 @@ Co-supervision of *master 2* student:
 Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}
+    \item \bibentry{scheike2022efficient}
+    \item \bibentry{ozenne2022controlling}
+    \item \bibentry{ozenne2021asymptotic}
+    \item \bibentry{peron2021correcting}
+    \item \bibentry{cantagallo2021new}
     \item \bibentry{ozenne2020small}
     \item \bibentry{verbeeck2020evaluation}
     \item \bibentry{ozenne2020estimation}
@@ -183,32 +188,88 @@ Published:
   \end{enumerate}
 #+END_EXPORT
 
+# In revision:
+# #+BEGIN_EXPORT latex
+# \begin{enumerate}[resume]
+#    \item
+# \end{enumerate}
+# #+END_EXPORT
+
+# In preparation
+# #+BEGIN_EXPORT latex
+# \begin{enumerate}[resume]
+#     \item Corine
+#     \item Correlation
+# \end{enumerate}
+# #+END_EXPORT
+
 \pagebreak[3]
 
-In revision:
-#+BEGIN_EXPORT latex
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXcontroling}
-    \item \bibentry{peron20XXunbiased}
-    \item \bibentry{cantagallo20XXnew}
-\end{enumerate}
-#+END_EXPORT
+** Software development                                             :ignore:
+#+LaTeX: \resheading{Software development}
 
-In preparation
-#+BEGIN_EXPORT latex
-\begin{enumerate}[resume]
-    \item \bibentry{ozenne20XXasymptotic}
-\end{enumerate}
-#+END_EXPORT
+Packages for the [[https://www.r-project.org/][R]] software:
+- *BuyseTest* (author and maintainer): implementation of generalized
+  pairwise comparisons, including recent developments to handle
+  right-censoring
+  citep:peron2016extension,peron2021correcting. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on
+  [[https://github.com/bozenne/BuyseTest][Github]].
+
+- *lavaSearch2* (author and maintainer): Inference and diagnostic
+  tools for latent variable models.  Methodology described in
+  citep:ozenne2020small and citep:ozenne2022controlling. Available on
+  [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] and on [[https://github.com/bozenne/lavaSearch2][Github]]. .
+
+- *LMMstar* (author and maintainer) : linear mixed model via
+  covariance structure (marginal formulation). Inference in small
+  sample, test linear and non-linear combinations of parameters,
+  multiple comparisons adjustment. Disponible sur le [[https://cran.r-project.org/web/packages/LMMstar/index.html][CRAN]] et sur
+  [[https://github.com/bozenne/LMMstar][Github]]. .
+
+- *riskRegression* (contributor): computation of absolute risks and
+  average treatment effects. Methodology described in
+  citep:ozenne2017riskregression and
+  citep:ozenne2020estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
+
+\clearpage
+
+Package for [[https://www.gnu.org/software/emacs/][emacs]]:
+- *emacs-config* (author and maintainer) : Configuration files for
+  emacs to ease the interaction with
+  R/C++/orgmode/latex/git. Disponible on [[https://github.com/bozenne/emacs-config][Github]].
 
 \pagebreak[3]
 
 ** /Publications (clinical applications)/
 
-Published:
 #+BEGIN_EXPORT latex
  \begin{enumerate}[resume]
-    \item \bibentry{dam2020hot}
+    \item \bibentry{nasser2022reliability}
+    \item \bibentry{armand2022brain}
+    \item \bibentry{kohler2022concurrent}
+    \item \bibentry{armand2022acute}
+    \item \bibentry{armand2022brain}
+    \item \bibentry{fisher2022emotional}
+    \item \bibentry{beaman2022blood}
+    \item \bibentry{drummond2022psilocybin}
+    \item \bibentry{larsen2022impact}
+    \item \bibentry{mcculloch2022lasting}
+    \item \bibentry{ip2021eeg}
+    \item \bibentry{madsen2021psilocybin}
+    \item \bibentry{joergensen2021default}
+    \item \bibentry{brandt2021reward}
+    \item \bibentry{dea2021brain}
+    \item \bibentry{ip2021pretreatement}
+    \item \bibentry{hoghe2021MAMA}
+    \item \bibentry{raval2021single}
+    \item \bibentry{hogsted2021stress}
+    \item \bibentry{donovan2021effects}
+    \item \bibentry{lee2020absolute}
+    \item \bibentry{hansen2020visual}
+    \item \bibentry{spies2020common}
+    \item \bibentry{larsen2020oral}
+    \item \bibentry{thystrup2020severity}
+    \item \bibentry{dam2020hot}x
     \item \bibentry{hjordt2020psychometric}
     \item \bibentry{beliveau2020structure}
     \item \bibentry{madsen2020single}
@@ -238,34 +299,6 @@ Published:
 \pagebreak[3]
 
 
-* Software development                                              :ignore:
-#+LaTeX: \resheading{Software development}
-
-Packages for the [[https://www.r-project.org/][R]] software:
-- *BuyseTest* (author and maintainer): implementation of generalized
-  pairwise comparisons, including recent developments to handle
-  right-censoring
-  citep:peron2016extension,peron20XXunbiased. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on
-  [[https://github.com/bozenne/BuyseTest][Github]].
-
-- *lavaSearch2* (author and maintainer): Inference and diagnostic
-  tools for latent variable models.  Methodology described in
-  citep:ozenne2020small and citep:ozenne20XXcontroling. Available on
-  [[https://cran.r-project.org/web/packages/lavaSearch2/index.html][CRAN]] and on [[https://github.com/bozenne/lavaSearch2][Github]]. .
-
-- *riskRegression* (contributor): computation of absolute risks and
-  average treatment effects. Methodology described in
-  citep:ozenne2017riskregression and
-  citep:ozenne2020estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
-
-\bigskip
-
-Package for [[https://www.gnu.org/software/emacs/][emacs]]:
-- *emacs-config* (author and maintainer) : Configuration files for
-  emacs to ease the interaction with
-  R/C++/orgmode/latex/git. Disponible on [[https://github.com/bozenne/emacs-config][Github]].
-
-\pagebreak[3]
 * Peer review       :ignore:
 #+LaTeX: \resheading{Peer review}
 I have reviewed papers for Biometrics, Statistics in Medicine, and the
@@ -324,6 +357,15 @@ Chairman at international conferences:
 \end{tabular}
 #+END_EXPORT
 
+\bigskip
+
+Organisation of a workshop:
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2021 &:& Analysis of repeated measurements with mixed models using the R package LMMstar (1h+3h) \\
+&& Methods Week, Karolinska institute, Stockholm, Suède
+\end{tabular}
+#+END_EXPORT
 
 * Reference :ignore:
 
@@ -362,6 +404,15 @@ Chairman at international conferences:
 #+LaTeX_HEADER: top=20mm,
 #+LaTeX_HEADER: bottom=20mm
 #+LaTeX_HEADER: }
+
+** Color
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
 
 ** Line spacing
 #+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
