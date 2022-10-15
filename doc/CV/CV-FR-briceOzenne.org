@@ -155,6 +155,7 @@ Enseignement (CM : cours magistral, TD : travaux dirigés):
 \medskip
 
 Doctorants en santé:
+
 #+BEGIN_EXPORT latex
 \begin{tabular}{r@{ }l}
 2021 - 2022 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Analyse statistique de données répétées}. CM et TD (6h et 18h). \\
@@ -164,14 +165,20 @@ Doctorants en santé:
 \end{tabular}
 #+END_EXPORT
 
+\bigskip
+
 Etudiants de master de statistiques:
+
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
 2016 - 2017 : & Modèles d'équations structurelles. CM (2h). \\
 \end{tabular}
 #+END_EXPORT
 
+\bigskip
+
 Etudiants de master en santé publique:
+
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
 2014 - 2015 : & \href{https://clarolineconnect.univ-lyon1.fr/resource/open/file/2733301}{Modèles de Survie}. TD (18h).\\
