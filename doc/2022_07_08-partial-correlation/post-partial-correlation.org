@@ -95,16 +95,16 @@ eTable.lmm
 
 #+RESULTS:
 #+begin_example
-              estimate         se df      lower       upper      p.value
-(Intercept)  6.9298543 0.12946898 38  6.6677580  7.19195056 0.000000e+00
-Subject2     0.7046113 0.07735488 38  0.5480145  0.86120804 4.277623e-11
-Subject3     0.9500127 0.06109545 38  0.8263314  1.07369394 0.000000e+00
-Subject4     0.9715577 0.07350906 38  0.8227464  1.12036905 8.881784e-16
-Subject5     0.8603817 0.05839543 38  0.7421663  0.97859708 0.000000e+00
-Subject6     0.9264284 0.06599450 38  0.7928295  1.06002730 0.000000e+00
-Subject7     0.6921056 0.10490935 38  0.4797277  0.90448342 8.670218e-08
-Subject8     0.7033361 0.06157141 38  0.5786913  0.82798087 7.460699e-14
-PacO2       -0.1083230 0.02989281 38 -0.1688379 -0.04780822 8.471081e-04
+              estimate         se      df      lower       upper      p.value
+(Intercept)  6.9298543 0.12946898 38.0076  6.6677598  7.19194884 0.000000e+00
+Subject2     0.7046113 0.07735488 38.0076  0.5480155  0.86120702 4.269674e-11
+Subject3     0.9500127 0.06109545 38.0076  0.8263322  1.07369313 0.000000e+00
+Subject4     0.9715577 0.07350906 38.0076  0.8227474  1.12036807 8.881784e-16
+Subject5     0.8603817 0.05839543 38.0076  0.7421671  0.97859630 0.000000e+00
+Subject6     0.9264284 0.06599450 38.0076  0.7928304  1.06002642 0.000000e+00
+Subject7     0.6921056 0.10490935 38.0076  0.4797291  0.90448203 8.662210e-08
+Subject8     0.7033361 0.06157141 38.0076  0.5786921  0.82798005 7.438494e-14
+PacO2       -0.1083230 0.02989281 38.0076 -0.1688375 -0.04780862 8.469583e-04
 #+end_example
 
 We claim the partial correlation (adjusting =pH= and =PacO2= for
@@ -122,15 +122,15 @@ eTable.lmm["PacO2","estimate"]/sqrt(eTable.lmm["PacO2","estimate"]^2+eTable.lmm[
 #+END_SRC
 
 #+RESULTS:
-: [1] -0.5067697
+: [1] -0.5067321
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-Wald <- eTable.lmm["PacO2","statistic"]
+Wald <- eTable.lmm["PacO2","estimate"]/eTable.lmm["PacO2","se"]
 Wald/sqrt(Wald^2+eTable.lmm["PacO2","df"])
 #+END_SRC
 
 #+RESULTS:
-: [1] -0.5067697
+: [1] -0.5067321
 
 The proof can be split in three steps:
 - 1. :: the F-statistic testing the effect of each factor equals the
@@ -150,9 +150,9 @@ anova(e.lmm)
 #+RESULTS:
 : 		Multivariate Wald test 
 : 
-:                  F-statistic       df p.value    
-:    mean: Subject      48.247 (7,38.0)  <0.001 ***
-:        : PacO2        13.131 (1,38.0)  <0.001 ***
+:                  F-statistic       df  p.value    
+:    mean: Subject      48.247 (7,38.0)  < 2e-16 ***
+:        : PacO2        13.131 (1,38.0) 0.000847 ***
 
 - 2. :: this F-statistic equals \(\frac{MSSR}{MSSE}\) where \(MSSR =
   SSR/1\) and \(MSSE = SSE/(n-p)\) with \(SSE\) and \(SSR\) being the
@@ -229,12 +229,8 @@ print(e.partialCor, digit = 5)
 #+END_SRC
 
 #+RESULTS:
-: 		Partial correlation 
-: 
-:               estimate    se   df lower  upper p.value
-: rho(pH,PacO2)   -0.507 0.125 25.7 -0.71 -0.225 0.00178
-: 
-:    Note: estimate, standard error, confidence interval have been back-transformed (rho parameters with tanh).
+:               estimate      se     df    lower   upper   p.value
+: rho(pH,PacO2) -0.50677 0.12514 25.674 -0.71027 -0.2251 0.0017753
 
 Similar values can be obtained using dedicated packages, e.g.:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -267,8 +263,8 @@ individual-specific variations (conditional).
 To be more specific let's consider the following statistical model:
 #+BEGIN_EXPORT latex
 \begin{align*}
-X_i(t) &= \mu_{X,i}(t) + u_i + \varepsilon_{X,i}(t) \\
-Y_i(t) &= \mu_{Y,i}(t) + v_i + \varepsilon_{Y,i}(t) \\
+X_i(t) &= \mu_{X}(t) + u_i + \varepsilon_{X,i}(t) \\
+Y_i(t) &= \mu_{Y}(t) + v_i + \varepsilon_{Y,i}(t) \\
 \text{where } \begin{bmatrix}u \\ v \\ \varepsilon_X(t) \\ \varepsilon_Y(t) \end{bmatrix}
 &= \Gaus\left(\begin{bmatrix}0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
 \begin{bmatrix}
@@ -400,15 +396,9 @@ e.pcor
 #+END_SRC
 
 #+RESULTS:
-: 		Partial correlation 
-: 
 :                    estimate    se   df  lower    upper p.value
-: rho(1.pH,1.PacO2) -1.63e-05 0.313 1.24 -0.988  0.98791  1.0000
-: r(1.pH,1.PacO2)   -5.09e-01 0.125 2.63 -0.806 -0.00546  0.0489
-: 	--------------------------------------------------------
-: 	rho: marginal correlation 
-: 	r  : correlation conditional on the individual 
-: 	estimates, standard errors, confidence intervals have been back-transformed (tanh).
+: rho(1.pH,1.PacO2) -1.63e-05 0.313 1.23 -0.989 0.988993  1.0000
+: r(1.pH,1.PacO2)   -5.09e-01 0.125 2.59 -0.808 0.000496  0.0501
 
 This matches the estimate (but not the uncertainty) of another software:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -426,8 +416,10 @@ round(coef(attr(e.pcor,"lmm"), effects = "correlation"),5)
 #+END_SRC
 
 #+RESULTS:
-:    rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2)       rho(1.pH,2.pH) 
-:             -0.00002              0.10168              0.66317              0.88129
+:    rho(1.pH,1.PacO2)    rho(1.pH,2.PacO2) rho(1.PacO2,2.PacO2) 
+:             -0.00002              0.10168              0.66317 
+:       rho(1.pH,2.pH) 
+:              0.88129
 
 that reveal a very strong within =pH= correlation (almost 0.9) and a
 rather strong within =PacO2= correlation (about 0.65). The
@@ -472,6 +464,103 @@ e.CSaov$univariate$statistic/sqrt(e.CSaov$univariate$statistic^2+45)
 
 #+RESULTS:
 : [1] -0.4627676
+
+Finally we could also compute the Person's correlation (ignoring
+repeated measurements):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cor(dtW$pH,dtW$PacO2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.06521774
+
+and use a bootstrap at the individual level for assessing the
+uncertainty:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(boot)
+library(data.table)
+dtW <- as.data.table(bland1995)
+dtL <- dcast(dtW, value.var = c("pH","PacO2"), formula = Subject ~ time)
+calcCor <- function(data, statistic){
+  data2 <- data[statistic]
+  data3 <- melt(data2, id.vars = c("Subject"), 
+                measure=patterns("pH","PacO2"),
+                variable.name = "time", value.name = c("pH","PacO2"))
+  cor(data3$pH, data3$PacO2)
+}
+e.boot <- boot(dtW, calcCor, R = 1000)
+e.boot
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = dtW, statistic = calcCor, R = 1000)
+
+
+Bootstrap Statistics :
+       original      bias    std. error
+t1* -0.06521774 -0.01635557   0.1989813
+#+end_example
+
+In summary we have obtained the following estimates:
+- for the marginal correlation
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+out.naive <- c(estimate = e.boot$t0, se = sd(e.boot$t), df = NA,
+               lower = boot.ci(e.boot, type = "perc")$percent[4],
+               upper = boot.ci(e.boot, type = "perc")$percent[5],
+               p.value = NA)
+e.pcor2 <- partialCor(c(pH,PacO2)~1, repetition = ~time|Subject, df = FALSE,
+                      data = bland1995, heterogeneous = 0.5)
+#+END_SRC  
+
+#+RESULTS:
+
+- for the conditional correlation
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.rmcorr <- rmcorr(Subject, PacO2, pH, bland1995)
+out.rmcorr <- c(estimate = e.rmcorr$r, se = NA, df = e.rmcorr$df,
+                lower = e.rmcorr[[4]][1], upper = e.rmcorr[[4]][2], p.value = e.rmcorr[[3]])
+out.magic <- estimate(e.CS, f = function(p){
+  e.vcov <- vcov(e.CS, df = TRUE, p = p)
+  p["PacO2"]/sqrt(p["PacO2"]^2+e.vcov["PacO2","PacO2"]*attr(e.vcov,"df")["PacO2"])
+})
+#+END_SRC  
+
+#+RESULTS:
+
+So overall:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+out <- rbind(
+  data.frame(type = "marginal", rbind(naive = out.naive, lmmM = e.pcor2[1,])),
+  data.frame(type = "conditional", rbind(rmcorr = out.rmcorr, lmmC = e.pcor2[2,], magic = out.magic))
+)
+out <- cbind(name = rownames(out), out)
+rownames(out) <- NULL
+out
+#+END_SRC
+
+#+RESULTS:
+:     name        type      estimate         se       df      lower      upper      p.value
+: 1  naive    marginal -6.521774e-02 0.19898132       NA -0.5183738  0.2809898           NA
+: 2   lmmM    marginal -1.627833e-05 0.31296494      Inf -0.5465274  0.5465046 9.999585e-01
+: 3 rmcorr conditional -5.067697e-01         NA 38.00000 -0.7112297 -0.2232550 8.471081e-04
+: 4   lmmC conditional -5.085547e-01 0.12542915      Inf -0.7043437 -0.2408608 4.862469e-04
+: 5  magic conditional -4.864796e-01 0.08698358 30.83874 -0.6639214 -0.3090378 3.992869e-06
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.forest <- ggplot(out, aes(x = name, y = estimate, color = type))
+gg.forest <- gg.forest + geom_hline(yintercept=0, linetype = 2)
+gg.forest <- gg.forest + geom_point(size = 2) + geom_errorbar(aes(ymin = lower, ymax = upper))
+gg.forest <- gg.forest + coord_flip() 
+gg.forest
+#+END_SRC
+
+#+RESULTS:
 
 ** Simulation study (compound symmetry model)
 
