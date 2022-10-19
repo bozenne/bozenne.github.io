@@ -2530,14 +2530,325 @@ Cramer von Mises-test: p-value=0.006
 Based on 1000 realizations. Cumulated residuals ordered by size-variable.
 ---
 #+end_example
-** Displaying partial residuals in a linear model
+** Compute and display partial residuals in a linear model
+
+For a given model:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e.lm <- lm(weight ~ Age + Treatment + size,
-           data = dtL.data)
+e.lmm <- lmm(weight ~ Age + Treatment + size,
+             data = dtL.data)
+#+END_SRC
+
+Compute the partial residual (i.e. removing Treatment and size effects):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ePres.lmm <- residuals(e.lmm, var = c("(Intercept)","Age"), type = "partial")
+head(ePres.lmm)
+#+END_SRC
+
+#+RESULTS:
+: [1]  9.245476 10.928046  8.910788 11.102611  9.455830 12.307822
+
+Graphical display:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+residuals(e.lmm, var = c("(Intercept)","Age"), type = "partial", plot = "scatterplot")
+#+END_SRC
+
+#+RESULTS:
+: `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+To get the regression line on top:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm <- lm(weight ~ Age + Treatment + size, data = dtL.data)
 autoplot(butils::partialResiduals(e.lm, var = "Age"))
 #+END_SRC
 
 #+RESULTS:
+
+Note that the default partial residuals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+GS <- residuals(e.lm, type = "partial")[,"Age"]
+#+END_SRC
+
+#+RESULTS:
+
+also remove the overall average (i.e. intercept) and are computed for
+a average covariate value:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+table(round(GS - ePres.lmm,5))
+#+END_SRC
+
+#+RESULTS:
+: 
+: -10.90649 
+:       306
+
+This is what is obtained with ="partial-center"=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+range(GS - residuals(e.lmm, var = c("(Intercept)","Age"), type = "partial-center"))
+#+END_SRC
+
+** Equivalence Poisson and Cox model
+
+Load veteran dataset and subset it to ease visualization:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(survival) 
+veteranR <- veteran[veteran$celltype=="large" & veteran$status == 1,]
+#+END_SRC
+
+#+RESULTS:
+
+Make sure there is not ties:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+any(duplicated(veteranR$time))
+#+END_SRC
+
+#+RESULTS:
+: [1] FALSE
+
+For reference here is the treatment effect estimated by a Cox model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.coxph <- coxph(Surv(time,status)~trt, data = veteranR, x = TRUE)
+eBeta.coxph <- summary(e.coxph)$coef
+eBeta.coxph
+#+END_SRC
+
+#+RESULTS:
+:          coef exp(coef)  se(coef)         z  Pr(>|z|)
+: trt 0.3673965   1.44397 0.4061045 0.9046847 0.3656324
+
+and the baseline hazards:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ePred.coxph <- predictCox(e.coxph, centered = FALSE,
+                          type = c("hazard","cumhazard","survival"))
+eLambda.coxph <- as.data.table(ePred.coxph)[1:3,]
+eLambda.coxph
+#+END_SRC
+
+#+RESULTS:
+:    observation times     hazard  cumhazard  survival
+: 1:           1    12 0.02210619 0.02210619 0.9781364
+: 2:           2    15 0.02283511 0.04494130 0.9560536
+: 3:           3    19 0.02397669 0.06891800 0.9334032
+
+We can emulate a Cox model using a Poisson model. This can be achieved
+by using fine enough time intervals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+timeInterval <- sort(unique(veteranR$time))
+n.interval <- length(timeInterval)
+#+END_SRC
+
+#+RESULTS:
+
+First we split the data per interval:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+veteranRexpanded <- survSplit(Surv(time,status)~id+trt, data = veteranR,
+                              cut = timeInterval, episode = "interval")
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+We note that we can retrive the previous Cox model with this data
+format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.coxph2 <- coxph(Surv(tstart,time,status) ~ trt, data = veteranRexpanded)
+summary(e.coxph2)$coef
+#+END_SRC
+
+#+RESULTS:
+:          coef exp(coef)  se(coef)         z  Pr(>|z|)
+: trt 0.3673965   1.44397 0.4061045 0.9046847 0.3656324
+
+We can now compute the at risk time as:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+veteranRexpanded$atrisk <- veteranRexpanded$time - veteranRexpanded$tstart
+#+END_SRC
+
+#+RESULTS:
+
+And fit the Poisson model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+  e.pois <- glm(status ~ trt + factor(interval), family = poisson(link="log"),
+                offset = log(atrisk), data = veteranRexpanded)
+  logLik(e.pois)
+  summary(e.pois)$coef["trt",,drop=FALSE]
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -86.85672 (df=27)
+:      Estimate Std. Error  z value  Pr(>|z|)
+: trt 0.3673965  0.4061043 0.904685 0.3656323
+
+We note that all subjects have the same at risk time within each
+interval so the offset is in fact optional to estimate the treatment effect:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.pois2 <- glm(status ~ trt + factor(interval), family = poisson(link="log"),
+               data = veteranRexpanded)
+logLik(e.pois2)
+summary(e.pois2)$coef["trt",,drop=FALSE]
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -86.85672 (df=27)
+:      Estimate Std. Error  z value  Pr(>|z|)
+: trt 0.3673965  0.4061043 0.904685 0.3656323
+
+The additional benefit is that the hazard can be more easily deduced
+from this parametrisation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+elambda.pois <- c(exp(coef(e.pois2)["(Intercept)"]),
+                  exp(coef(e.pois2)["(Intercept)"] + coef(e.pois2)["factor(interval)2"]),
+                  exp(coef(e.pois2)["(Intercept)"] + coef(e.pois2)["factor(interval)3"]))
+cbind(times = timeInterval[1:3],
+      hazard = unname(elambda.pois),
+      cumhazard = unname(cumsum(elambda.pois)),
+      survival = unname(exp(-cumsum(elambda.pois)))) 
+#+END_SRC
+
+#+RESULTS:
+:      times     hazard  cumhazard  survival
+: [1,]    12 0.02210619 0.02210619 0.9781364
+: [2,]    15 0.02283511 0.04494130 0.9560536
+: [3,]    19 0.02397669 0.06891800 0.9334032
+
+than when specifying the time at risk:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+elambda.pois2 <- c(exp(coef(e.pois)["(Intercept)"])*timeInterval[1],
+                   exp(coef(e.pois)["(Intercept)"] + coef(e.pois)["factor(interval)2"]) * diff(timeInterval)[1],
+                   exp(coef(e.pois)["(Intercept)"] + coef(e.pois)["factor(interval)3"]) * diff(timeInterval)[2])
+cbind(times = timeInterval[1:3],
+      hazard = unname(elambda.pois2),
+      cumhazard = unname(cumsum(elambda.pois2)),
+      survival = unname(exp(-cumsum(elambda.pois2)))) 
+#+END_SRC
+
+#+RESULTS:
+:      times     hazard  cumhazard  survival
+: [1,]    12 0.02210619 0.02210619 0.9781364
+: [2,]    15 0.02283511 0.04494130 0.9560536
+: [3,]    19 0.02397669 0.06891800 0.9334032
+
+** Displaying incidence rates with confidence intervals
+
+Load veteran dataset and split the dataset into 3 time periods:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(survival) 
+timeInterval <- c(50,200)
+veteran$id <- 1:NROW(veteran)
+veteranE <- survSplit(Surv(time,status)~id+trt, data = veteran,
+                      cut = timeInterval, episode = "interval")
+head(veteranE)
+#+END_SRC
+
+#+RESULTS:
+:   id trt tstart time status interval
+: 1  1   1      0   50      0        1
+: 2  1   1     50   72      1        2
+: 3  2   1      0   50      0        1
+: 4  2   1     50  200      0        2
+: 5  2   1    200  411      1        3
+: 6  3   1      0   50      0        1
+
+Introducing the time spent in each interval:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+veteranE$atrisk <- veteranE$time - veteranE$tstart
+head(veteranE)
+#+END_SRC
+
+#+RESULTS:
+:   id trt tstart time status interval atrisk
+: 1  1   1      0   50      0        1     50
+: 2  1   1     50   72      1        2     22
+: 3  2   1      0   50      0        1     50
+: 4  2   1     50  200      0        2    150
+: 5  2   1    200  411      1        3    211
+: 6  3   1      0   50      0        1     50
+
+We can compute the incidence rate by counting the number of events
+divided the total time spent in each interval:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+veteranE$interval.trt <- interaction(veteranE$interval,veteranE$trt)
+by(veteranE,veteranE$interval.trt,
+   function(iData){sum(iData$status)/sum(iData$atrisk)}
+   )
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+veteranE$interval.trt: 1.1
+[1] 0.008139105
+------------------------------------------------------------ 
+veteranE$interval.trt: 2.1
+[1] 0.008012406
+------------------------------------------------------------ 
+veteranE$interval.trt: 3.1
+[1] 0.008011653
+------------------------------------------------------------ 
+veteranE$interval.trt: 1.2
+[1] 0.01160542
+------------------------------------------------------------ 
+veteranE$interval.trt: 2.2
+[1] 0.007243991
+------------------------------------------------------------ 
+veteranE$interval.trt: 3.2
+[1] 0.003875969
+#+end_example
+
+Alternatively we can fit a Poisson model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+veteranE$trt.f <- as.factor(veteranE$trt)
+veteranE$interval.f <- as.factor(veteranE$interval)
+
+e.pois <- glm(status ~ 0+interval.f:trt.f, family = poisson(link="log"),
+              offset = log(atrisk), data = veteranE)
+logLik(e.pois)
+summary(e.pois)$coef
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -316.1628 (df=6)
+:                     Estimate Std. Error   z value      Pr(>|z|)
+: interval.f1:trt.f1 -4.811075  0.2131883 -22.56726 9.090518e-113
+: interval.f2:trt.f1 -4.826764  0.1796051 -26.87431 4.385988e-159
+: interval.f3:trt.f1 -4.826858  0.3015113 -16.00888  1.107909e-57
+: interval.f1:trt.f2 -4.456283  0.1825727 -24.40827 1.397279e-131
+: interval.f2:trt.f2 -4.927583  0.2131745 -23.11526 3.252023e-118
+: interval.f3:trt.f2 -5.552960  0.2886751 -19.23602  1.848808e-82
+
+and exponentiate the coefficient and confidence intervals to get the incidence rates:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exp(cbind(coef(e.pois),confint(e.pois)))
+#+END_SRC
+
+#+RESULTS:
+: Waiting for profiling to be done...
+:                                      2.5 %      97.5 %
+: interval.f1:trt.f1 0.008139105 0.005194146 0.012029059
+: interval.f2:trt.f1 0.008012406 0.005512570 0.011172997
+: interval.f3:trt.f1 0.008011653 0.004159865 0.013719853
+: interval.f1:trt.f2 0.011605416 0.007932257 0.016267460
+: interval.f2:trt.f2 0.007243991 0.004622910 0.010706140
+: interval.f3:trt.f2 0.003875969 0.002075417 0.006500046
+
+Note that here because treatment is coded 1 and 2 (and not 0 and 1),
+using treatment as numeric does not (directly) lead to the log incidence rates:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.pois2 <- glm(status ~ 0+interval.f+interval.f:trt, family = poisson(link="log"),
+               offset = log(atrisk), data = veteranE)
+logLik(e.pois)
+summary(e.pois2)$coef
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -316.1628 (df=6)
+:                   Estimate Std. Error     z value     Pr(>|z|)
+: interval.f1     -5.1658668  0.4638208 -11.1376351 8.227506e-29
+: interval.f2     -4.7259453  0.4177025 -11.3141421 1.116895e-29
+: interval.f3     -4.1007567  0.6685579  -6.1337344 8.583980e-10
+: interval.f1:trt  0.3547917  0.2806814   1.2640372 2.062167e-01
+: interval.f2:trt -0.1008188  0.2787496  -0.3616824 7.175894e-01
+: interval.f3:trt -0.7261015  0.4174235  -1.7394837 8.194972e-02
+
 
 ** Twin study
 *** Data
