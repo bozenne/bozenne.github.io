@@ -1696,6 +1696,8 @@ print(gg.mean4)
 #+END_SRC
 
 #+RESULTS:
+
+#+ATTR_LaTeX: :width 0.7\textwidth :options trim={0 0 0 0} :placement [!h]
 [[file:./figures/fig-meanTime4.pdf]]
 \clearpage
 *** Number of lines in the legend
@@ -1723,7 +1725,7 @@ ggthemes::colorblind_pal()(8) ## also consider scale_color_colorblind
 : [1] "#000000" "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7"
 
 *** Rotate x-axis labels 
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+#+BEGIN_SRC R :exports code :results output :session *R* :cache no
 theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
@@ -1794,8 +1796,46 @@ out
 [[file:./figures/fig-combine.pdf]]
 
 *** Symbols in facet names
-# t.Heatmap[method == "sqrt(statistic)", method := "sqrt[statistic]"]
-# facet_grid(a~method, labeller = label_parsed)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df <- data.frame(x = 1:5, y = rnorm(5), method = "df[num]+omega+sqrt(2)")
+gg <- ggplot(df, aes(x,y)) + geom_point() + facet_grid(~method, labeller = label_parsed)
+gg <- gg + theme(text = element_text(size=20))
+gg
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :results graphics :file "./figures/fig-symbolfacet.pdf" :exports results :session *R* :cacheno
+gg
+#+END_SRC
+
+#+RESULTS:
+
+#+ATTR_LaTeX: :width 0.5\textwidth :options trim={0 0 0 0} :placement [!h]
+[[./figures/fig-symbolfacet.pdf]]
+
+
+*** Extract labels of the x/y thicks
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df <- rbind(data.frame(x = "a", y = rnorm(5)),
+            data.frame(x = "b", y = rnorm(5)),
+            data.frame(x = "c", y = rnorm(5)))
+
+gg <- ggplot(df, aes(x,y)) + geom_boxplot()
+ggplot_build(gg)$layout$panel_params[[1]]$x$get_labels()
+#+END_SRC
+
+#+RESULTS:
+: [1] "a" "b" "c"
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ggplot_build(gg)$layout$panel_params[[1]]$y$get_labels()
+#+END_SRC
+
+#+RESULTS:
+: [1] "-2" "-1" "0"  "1"  NA
 
 \clearpage
 
