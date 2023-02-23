@@ -1,0 +1,23 @@
+Dear participants
+
+Welcome to the tutorial "Analysis of repeated measurements with mixed models using the R package LMMstar" that will take place Tuesday 7th of June between 13.30 and 16.30 (Petren).
+
+The tutorial is divided into 3 parts:
+- general introduction to linear mixed models
+- analysis of baseline follow-up studies
+- advanced topics (optimization, statistical inference, prediction) 
+Each part include a short presentation of the theoretical background, introduction to the software interface, and exercises.
+
+You will find in attached to this email the course material
+- .pdf for the slides
+- .R for the code used to solve the exercises
+
+To be able to run the code and solve the exercises, you will need:
+- a fairly recent version of R (>4.0.0, https://cloud.r-project.org/)
+- a nice user interface to R (e.g. R studio, https://www.rstudio.com/products/rstudio/download/#download)
+- the latest version of the following packages installed: LMMstar, lava, ggplot2, qqtest, multcomp, psych, lattice, optimx.
+  To do so, you can open an R session and run:
+install.packages(c("LMMstar", "lava", "ggplot2", "qqtest", "multcomp", "psych", "lattice", "optimx"))
+
+Looking forward to see you on Tuesday,
+Brice and Julie

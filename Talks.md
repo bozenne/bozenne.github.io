@@ -25,7 +25,14 @@ outcomes](https://bozenne.github.io/doc/Talks/2019-prezSAfJR-GPC.pdf), Survival 
 Copenhagen, Denmark
 - [Multiple testing in latent variable models](https://bozenne.github.io/doc/Talks/2019-ISCB-multcomp_LVM.pdf), ISCB, 14-18 July 2019,
   Leuven, Belgium.
-
+- [Robust estimation of the Average Treatment Effect](https://bozenne.github.io/doc/Talks/2020-CMStatistics-ateRobust.pdf), CMstatistics, 19-21 December 2020,
+  Virtual Conference.
+- [Unified framework for analyzing repeated measurements](https://bozenne.github.io/doc/Talks/2021-KI-LMMstar.pdf), Method week (Karolinska Institutet), 7-10 June 2022,
+  Stockholm, Sweden.
+- [Benefit-risk assessment via Generalized Pairwise Comparisons](https://bozenne.github.io/doc/Talks/2022-CMStatistics-GPC.pdf), CMstatistics, 17-19 December 2022,
+  London, England.
+- [Benefit-risk assessment via Generalized Pairwise Comparisons](https://bozenne.github.io/doc/Talks/2022-CMStatistics-GPC.pdf), CMstatistics, 17-19 December 2022,
+  London, England.
 
 And also some more pedagogical talks given at the Christmas symposium
 of NRU:
@@ -36,5 +43,7 @@ power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
 - about [DAGs](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
 - about [multiple
 comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
+- about [pooling estimates](https://bozenne.github.io/doc/Talks/2022-XNRU-pooling.pdf) in 2022.
 
-
+and for the Brain drug project:
+- about [handling time-varying exposure in registry data analysis](https://bozenne.github.io/doc/Talks/2022-ECF-immortalBias.pdf) in 2022.
