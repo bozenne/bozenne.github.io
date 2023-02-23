@@ -309,6 +309,7 @@ bibliographystyle:apalike
 
 ** List
 #+LaTeX_HEADER: \RequirePackage{enumitem}
+
 ** Display 
 #+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
 
@@ -331,6 +332,7 @@ bibliographystyle:apalike
 #+LaTeX_HEADER:   \xspace
 #+LaTeX_HEADER: }
 
+# ## margin
 #+LATEX_HEADER: \usepackage{changepage}
 
 ** Table
