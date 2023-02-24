@@ -40,15 +40,20 @@ I have been also been reading about:
 - **Causal inference** with *Causal Inference: What If* (Hernan MA,
   Robins JM, 2020), *Causal Inference in Statistics - A Primer*
   (Pearl, 2016), and *Causality: Models, Reasoning and Inference*
-  (Pearl, 2013) 
+  (Pearl, 2000)
 - **Semi parametric theory** with *Semiparametric Theory and Missing
   Data* (Tsiatis, 2006)
 - **Statistical inference** with *Multiple comparisons using R* (Bretz, 2011)
 - **GAM** with the excellent book *Generalized Additive Models: An
   Introduction with R* (Wood 2017)
 - **Asymptotic theory** with *Asymptotic statistics* (van der Vaart,
-  1998), *In all likelihood* (Yudi Pawitan, 2001), and *U-Statistics: theory and practice*
-  (Lee, 1990).
+  1998), *In all likelihood* (Yudi Pawitan, 2001), and *U-Statistics:
+  theory and practice* (Lee, 1990). I have also read most of
+  *High-Dimensional Statistics: A Non-Asymptotic Viewpoint* (Martin
+  J. Wainwright., 2019) but would not claim to master the topic.
+- **Epidemiology** with the classical reference *Statistical Methods
+  in Epidemiology* (David Clayton and Michael Hills, 1993), a nice and
+  concise book.
 - **Dynamic Regression Models** with the nice book *Dynamic Regression
   Models for Survival Data* (Torben Martinussen and Thomas Scheike,
   2006)
@@ -56,6 +61,8 @@ I have been also been reading about:
   post-selection inference, with application to the lasso* (Lee et
   al., 2016) or *Optimal Inference After Model Selection* (Fithian et
   al., 2014)
+- **Communication in science** with *Designing Science Presentations*
+    (Carter, 2021)
 
 I'm currently reading about:
 - **Group sequential design** with *Group Sequential and Confirmatory
@@ -64,5 +71,3 @@ I'm currently reading about:
     and Turnbull, 1999)
 - **Dynamic Treatment Regimes** with *Dynamic Treatment Regimes:
     Statistical Methods for Precision Medicine* (Tsiatis et al., 2019)
-- **Communication in science** with *Designing Science Presentations*
-    (Carter, 2021)

@@ -1583,7 +1583,6 @@ hist(epsilon, main = "histogram of the residuals")
 ## gg.forest <- gg.forest + xlab("Label") + ylab("Mean (95% CI)") 
 #+END_SRC
 
-
 ** Customize graphic 
 
 *** Greek letter in facet
@@ -1671,14 +1670,14 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 *** Increase size of the legend labels 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
     gg.mean + theme(text = element_text(size=15), 
-                    axis.line = element_line(size = 1.25),
-                    axis.ticks = element_line(size = 2),
+                    axis.line = element_line(linewidth = 1.25),
+                    axis.ticks = element_line(linewidth = 2),
                     axis.ticks.length=unit(.25, "cm"),
                     legend.key.size = unit(3,"line"))
 
     gg.mean + theme(axis.title = element_text(size=10), 
-                    axis.line = element_line(size = 1.25),
-                    axis.ticks = element_line(size = 2),
+                    axis.line = element_line(linewidth = 1.25),
+                    axis.ticks = element_line(linewidth = 2),
                     axis.ticks.length=unit(.25, "cm"),
                     legend.key.size = unit(3,"line"))
 #+END_SRC
@@ -1912,6 +1911,52 @@ ggsave(gg, filename = "./figures/fig-gg-lexis.pdf")
 
 #+RESULTS:
 : Saving 7 x 7 in image
+** Font
+*** Display available fonts
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+windowsFonts()
+#+END_SRC
+
+#+RESULTS:
+: $serif
+: [1] "TT Times New Roman"
+: 
+: $sans
+: [1] "TT Arial"
+: 
+: $mono
+: [1] "TT Courier New"
+
+See also: http://www.cookbook-r.com/Graphs/Fonts/
+
+*** Add more fonts
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(extrafont)
+## font_import() ## only needed once
+loadfonts(device = "win", quiet = TRUE)
+head(windowsFonts())
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+$serif
+[1] "TT Times New Roman"
+
+$sans
+[1] "TT Arial"
+
+$mono
+[1] "TT Courier New"
+
+$`Agency FB`
+[1] "Agency FB"
+
+$Algerian
+[1] "Algerian"
+
+$`Arial Black`
+[1] "Arial Black"
+#+end_example
 
 * Modeling
 ** Test proportions
@@ -3274,7 +3319,6 @@ Header:
 #endif
 #+END_SRC
 
-
 * /lava/ package 
 ** Generate repeated measurements
 :PROPERTIES:
@@ -4067,6 +4111,8 @@ RDcsan
 wget -O - https://github.com/bozenne/BuyseTest/tarball/master | tar xz
 
 # https://nbviewer.jupyter.org/github/ericspod/ContainersForCollaboration/blob/master/ContainersForCollaboration.ipynb
+** Regular expressions
+https://posit.co/wp-content/uploads/2022/10/regex.pdf
 
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
