@@ -1,0 +1,234 @@
+% Created 2023-02-19 Sun 16:54
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+%
+%%%% specifications %%%%
+%
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{xargs}
+\usepackage{xspace}
+\newcommand{\first}{1\textsuperscript{st} }
+\newcommand{\second}{2\textsuperscript{nd} }
+\newcommand{\third}{3\textsuperscript{rd} }
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\geometry{top=1cm}
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\RequirePackage{pifont}
+\RequirePackage{relsize}
+\newcommand{\Cross}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+\newcommand{\Valid}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+\newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+\newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+\usepackage{stackengine}
+\usepackage{scalerel}
+\newcommand\Warning[1][3ex]{%
+\renewcommand\stacktype{L}%
+\scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+\xspace
+}
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{capt-of} %
+\RequirePackage{caption} % newlines in graphics
+\RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+\definecolor{light}{rgb}{1, 1, 0.9}
+\definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+\definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+\newcommand{\darkblue}{blue!80!black}
+\newcommand{\darkgreen}{green!50!black}
+\newcommand{\darkred}{red!50!black}
+\usepackage{mdframed}
+\definecolor{grayR}{HTML}{8A8990}
+\definecolor{grayL}{HTML}{C4C7C9}
+\definecolor{blueM}{HTML}{1F63B5}
+\newcommand{\Rlogo}[1][0.07]{
+\begin{tikzpicture}[scale=#1]
+\shade [right color=grayR,left color=grayL,shading angle=60]
+(-3.55,0.3) .. controls (-3.55,1.75)
+and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)
+and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2)
+and (1.55,-2) .. (0,-2) .. controls (-2.3,-2)
+and (-3.55,-0.75) .. cycle;
+
+\fill[white]
+(-2.15,0.2) .. controls (-2.15,1.2)
+and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8)
+and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75)
+and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45)
+and (-2.15,-0.7) .. cycle;
+
+\fill[blueM]
+(1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) --
+(0.95,-1.15)  .. controls (1.15,-1.15)
+and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1)
+and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9)
+and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7)
+and (2.5,1.2) .. cycle;
+
+\fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3)
+and (1.75,0.4) .. cycle;
+
+\end{tikzpicture}
+}
+\date{}
+\title{Teaching Portfolio}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={},
+ pdftitle={Teaching Portfolio},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.4.6)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+
+\section{Teaching responsabilities (per year)}
+\label{sec:org8128d3d}
+
+Current teaching activity at the University of Copenhagen (KU) for Phd
+students in medical sciences:
+
+\smallskip
+
+\begin{tabular}{l@{ }l}
+2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
+              & 3 lectures of 3 hours and 6 practicals of 3 hours\\
+              & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
+2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
+              & 3.5 lectures of 3 hours, 7 practical of 3 hours, 1/2 day student presentations \\
+2021 - 2023 : & \href{http://paulblanche.com/files/BasicStat2022.html}{Basic statistics}  (course director Paul Blanche). \\
+              & 2 lecture of 3 hours, 2 practical of 3 hours, 2 day student presentations
+\end{tabular}
+
+\bigskip
+
+\noindent Past teaching activity at KU for students in Master of
+statistics:
+
+\begin{tabular}{l@{ }l}
+2016 - 2017 : & Structural Equation Models (2h, lecture). \\
+\end{tabular}
+
+\bigskip
+
+\noindent Past teaching activity at the University of Lyon 1 (France) for students in Master of biostatistics
+
+\smallskip
+
+\begin{tabular}{l@{ }l}
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, practicals).\\
+2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, practicals).\\
+\end{tabular}
+
+
+
+
+\section{Formal pedagogic training}
+\label{sec:org34e13a4}
+\begin{tabular}{r@{ }l}
+April 2022 : & \href{https://absalon.ku.dk/courses/58829}{Introduction to University Pedagogy} \\
+ 2022-2023 : & \href{https://absalon.ku.dk/courses/58114}{University Pedagogy} (Universitetspædagogikum) \\
+\end{tabular}
+Key learning points:
+\begin{itemize}
+\item Didactic triangle: a learner acquires a knowledge or a skill with
+the help of a teacher by being exposed to notions and interacting
+with them.
+\item planning and organizing teaching around intended learning outcomes
+(ILOs) and phases from the theory of didactical situations (TDS):
+\item Involve students using an inductive (i.e. problem-based) approach
+\item constructively receive feedback on their own teaching.
+\item 
+\end{itemize}
+
+Didactic triangle
+
+Plan, conduct and evaluate own teaching with student activities
+Select and apply the introduced pedagogical themes in own teaching (onsite as well as online)
+Identify pedagogical themes and provide feedback on the teaching of others,
+Discuss the possibilities and limitations of teaching, based on the pedagogical themes: 
+
+
+\section{Course development}
+\label{sec:org24b73be}
+\section{Pedagogical supervison}
+\label{sec:orgf2c03f9}
+\section{Evaluation}
+\label{sec:org1a72725}
+\section{Personal description}
+\label{sec:orga33c582}
+\subsection{Theoretical anchoring}
+\label{sec:org5d741a7}
+\subsection{Reflection on own teaching}
+\label{sec:org76a7728}
+\end{document}

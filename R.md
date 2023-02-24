@@ -13,7 +13,7 @@ Collegues from KU have made a nice [tutorial](http://r.sund.ku.dk/) that
 should cover most of the basics. 
 
 Cheat sheet (synthetic description) :
-- basic R [short](https://rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf) or [long](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf)
+- basic R [short](https://posit.co/wp-content/uploads/2022/10/base-r.pdf) or [long](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf)
 - [R studio](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rstudio-ide.pdf)
 
 ## KU basic statistic course
@@ -45,7 +45,7 @@ A very nice course where you can learn basic notions in statistics and R program
 
 *ggplot2* for generating graphical displays:
 - [tutorial](http://r4ds.had.co.nz/data-visualisation.html)
-- [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+- [cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
 
 *Programming tools* to write more efficient and readable code (e.g. using a function instead of copy-pasting)  
 - [if and do](https://adv-r.hadley.nz/control-flow.html)

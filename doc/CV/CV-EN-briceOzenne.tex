@@ -1,4 +1,4 @@
-% Created 2022-10-15 Sat 22:18
+% Created 2023-02-19 Sun 14:22
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -59,7 +59,6 @@ lineskip = 0pt} % specifies additional space between lines in listings
 \usepackage{natbib}
 \pagestyle{empty} % no page numbering
 \usepackage[french, english]{babel}
-\newcommand{\Rlogo}{\textbf{\textsf{R}}}
 \newcommand{\Cpp}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 \usepackage{eurosym} % euro symbol
 \usepackage{titlesec}
@@ -106,6 +105,38 @@ linkcolor=[rgb]{0,0,0.5},
 \newcommand{\myname}[1]{\textbf{#1}}
 \usepackage{url}
 \usepackage{enumitem}
+\definecolor{grayR}{HTML}{8A8990}
+\definecolor{grayL}{HTML}{C4C7C9}
+\definecolor{blueM}{HTML}{1F63B5}
+\newcommand{\Rlogo}[1][0.07]{
+\begin{tikzpicture}[scale=#1]
+\shade [right color=grayR,left color=grayL,shading angle=60]
+(-3.55,0.3) .. controls (-3.55,1.75)
+and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)
+and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2)
+and (1.55,-2) .. (0,-2) .. controls (-2.3,-2)
+and (-3.55,-0.75) .. cycle;
+
+\fill[white]
+(-2.15,0.2) .. controls (-2.15,1.2)
+and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8)
+and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75)
+and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45)
+and (-2.15,-0.7) .. cycle;
+
+\fill[blueM]
+(1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) --
+(0.95,-1.15)  .. controls (1.15,-1.15)
+and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1)
+and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9)
+and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7)
+and (2.5,1.2) .. cycle;
+
+\fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3)
+and (1.75,0.4) .. cycle;
+
+\end{tikzpicture}
+}
 \date{\today}
 \title{}
 \hypersetup{
@@ -144,19 +175,19 @@ linkcolor=[rgb]{0,0,0.5},
 
 \resheading{Current position}
 \begin{tabular}{l@{ }l}
-	November 2015- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
+	November 2020- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
-	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
+	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen (KU) \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
 	& - a research unit in neuroscience \\
-	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} \\
+	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} (NRU) \\
 	& Copenhagen University Hospital, Rigshospitalet \\
 	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark \\ [2mm]
-      & where I do research in biostatistics along with a consulting activity in statistics \\
-      & and some teaching.
 \end{tabular}
+where I do research in biostatistics along with a consulting and teachign activity in statistics.
 
 \bigskip
+
 My research work is organized around three topics:
 \begin{itemize}
 \item the development of \textbf{multivariate models} for data analysis in
@@ -166,7 +197,8 @@ methodological point of view, I study how to perform statistical
 \textbf{estimation and inference in small samples} \citep{ozenne2020small} as
 well as efficient corrections for \textbf{multiple testing}
 \citep{ozenne2022controlling}. These developments are available in the
-R packages \texttt{lavaSearch2} (LVM) and \texttt{LMMstar} (LMM).
+R packages \texttt{lavaSearch2} (LVM) and \texttt{LMMstar} (LMM). \newline
+\textbf{Collaborators}: Esben Budtz-Jørgensen \& Julie Forman (KU, Denmark)
 
 \item the analysis of registry data in presence of \textbf{right-censoring},
 \textbf{competing risks}, and \textbf{confounding} \textbf{competing risks}. A typical
@@ -177,7 +209,8 @@ on the \textbf{semi-parametric theory}, I have developped a robust
 estimator of the average treatment effect and derived its asymptotic
 distribution via its influence function
 \citep{ozenne2020estimation}. This has been implemented in the \texttt{ate}
-function of the \texttt{riskRegression} R package.
+function of the \texttt{riskRegression} R package. \newline
+\textbf{Collaborators}: Thomas Alexander Gerds \& Thomas Scheike (KU, Denmark)
 \end{itemize}
 
 \clearpage
@@ -191,27 +224,38 @@ typical application is the evaluation of chemotherapies where
 jointly considering gains in survival and side effects is critical
 \citep{peron2016net,peron2016assessment}. I am now working on deriving
 the asymptotic distribution of some of the estimators implemented in
-the \texttt{BuyseTest} using the U-statistique theory.
+the \texttt{BuyseTest} using the U-statistique theory. \newline
+\textbf{Collaborators}: Julien Péron \& Max Piffoux (HCL, France), \newline
+\hphantom{*Collaborators*:} Michaël De Backer \& Marc Buyse (IDDI,
+Belgium)
 \end{itemize}
 
-\bigskip
 
 \section*{\emph{Other domains of interest in statistics:}}
-\label{sec:org161f5c0}
+\label{sec:org34873c5}
+\begin{minipage}{0.45\linewidth}
 \begin{itemize}
-\item Smoothing splines and functional data analysis
-\item Causal inference and dynamic treatment regimes
+\item Group sequential trials
+\item Smoothing splines
+\end{itemize}
+\end{minipage}
+\begin{minipage}{0.05\linewidth}
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{itemize}
+\item Causal inference
 \item Post-selection inference
 \end{itemize}
+\end{minipage}
 \resheading{Skills}
 
 \section*{\emph{Language}}
-\label{sec:org90b0f12}
+\label{sec:org78fa973}
 French (native language), english (fluent), danish (intermediate),
 basics in italian.
 
 \section*{\emph{Software}}
-\label{sec:org9168a13}
+\label{sec:orgf1bcd01}
 Proficient in \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
 Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
 git/github (via \href{https://magit.vc/}{magit}).
@@ -235,12 +279,34 @@ git/github (via \href{https://magit.vc/}{magit}).
 
 \resheading{Teaching and supervision}
 
-Teaching (L : lecture, PC : practical classes)
+Current teaching activity for Phd students in medical sciences:
 \begin{tabular}{l@{ }l}
-2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\ 
-2016 - 2017 : & Structural Equation Models for Master students in statistics (2h, L). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
-2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
+2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
+              & 3 lectures of 3 hours and 6 practicals of 3 hours\\
+              & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
+2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
+              & 3.5 lectures of 3 hours, 7 practical of 3 hours, 1/2 day student presentations \\
+2021 - 2023 : & \href{http://paulblanche.com/files/BasicStat2022.html}{Basic statistics}  (course director Paul Blanche). \\
+              & 1 lecture of 3 hours, 1 practical of 3 hours, 1 day student presentations
+\end{tabular}
+
+More in depth presentation of the present and past teaching activity
+as well as the pedagocial approach can be found in my \href{https://bozenne.github.io/doc/CV/TP-EN-briceOzenne.pdf}{teaching
+portofilio}.
+
+\bigskip
+
+Co-supervision of students: 
+
+\medskip
+
+\begin{tabular}{l@{ }l@{ }l}
+2021 &:& Ramlah Sara Rehman (Bachelor in data science)\\
+\multicolumn{3}{l}{An Analysis of Clustering Algorithms: Clustering Trajectories of the Cortisol Concentration.} \\ [3mm]
+2019 &:& Alice Brouquet-Laglaire (Master 2 in biostatistics)\\
+\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
+2014 &:& Ceren Tozlu (Master 2 in biostatistics)\\
+\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke \citep{tozlu2019comparison}.} \\ [3mm]
 \end{tabular}
 
 \bigskip
@@ -251,20 +317,10 @@ statistical tools/issues:
 \item \href{https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf}{Do we need more power?} (\href{https://www.nru.dk/images/News/NeurobiologyResearchUnit-Christmas-symposium2017.pdf}{NRU Christmas Symposium 2017}).
 \item \href{https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf}{To adjust or not adjust, that is the question} (NRU Christmas Symposium 2018).
 \item \href{https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf}{A refresher on multiple comparisons}? (\href{https://nru.dk/index.php/news-menu/279-nru-christimas-symposium-2019}{NRU Christmas Symposium 2019}).
+\item The data-processing multiverse: achieving reconciliation for
+Christmas (NRU Christmas Symposium 2022).
 \end{itemize}
 
-\bigskip
-
-Co-supervision of \textbf{master 2} student: 
-
-\medskip
-
-\begin{tabular}{l@{ }l@{ }l}
-2014 &:& Ceren Tozlu \\
-\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke \citep{tozlu2019comparison}.} \\ [3mm]
-2019 &:& Alice Brouquet-Laglaire \\
-\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
-\end{tabular}
 
 \resheading{Grants}
 \begin{tabular}{l@{ }l}
@@ -274,29 +330,38 @@ Co-supervision of \textbf{master 2} student:
 
 \clearpage
 
-\resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
-\section*{\emph{Publications (methodological)}}
-\label{sec:orgc2fc4ac}
-
-Published:
+\resheading{Publications in peer reviewed scientific journals \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
+\section*{\emph{Methodological} (selected publications - 8/14)}
+\label{sec:org89f54f8}
 \begin{enumerate}
    \item \bibentry{scheike2022efficient}
    \item \bibentry{ozenne2022controlling}
    \item \bibentry{ozenne2021asymptotic}
-   \item \bibentry{peron2021correcting}
-   \item \bibentry{cantagallo2021new}
    \item \bibentry{ozenne2020small}
-   \item \bibentry{verbeeck2020evaluation}
    \item \bibentry{ozenne2020estimation}
-   \item \bibentry{norgaard2019preprocessing}
    \item \bibentry{ozenne2017riskregression}
-   \item \bibentry{peron2016extension}
    \item \bibentry{ozenne2015precision}
    \item \bibentry{ozenne2015spatially}
  \end{enumerate}
 
 \pagebreak[3]
 
+\section*{\emph{Clinical applications} (selected publications - 10/54)}
+\label{sec:orgbf61c8b}
+\begin{enumerate}[resume]
+   \item \bibentry{kohler2023serotonin}
+   \item \bibentry{nasser2022reliability}
+   \item \bibentry{kohler2022concurrent}
+   \item \bibentry{beaman2022blood}
+   \item \bibentry{larsen2022impact}
+   \item \bibentry{ozenne2019individualized}
+   \item \bibentry{ebert2019molecular}
+   \item \bibentry{staerk2018standard}
+   \item \bibentry{stenbaek2017brain}
+   \item \bibentry{ozenne2015evaluation}
+ \end{enumerate}
+
+\bigskip
 \resheading{Software development}
 
 Packages for the \href{https://www.r-project.org/}{R} software:
@@ -315,16 +380,13 @@ tools for latent variable models.  Methodology described in
 \item \textbf{LMMstar} (author and maintainer) : linear mixed model via
 covariance structure (marginal formulation). Inference in small
 sample, test linear and non-linear combinations of parameters,
-multiple comparisons adjustment. Disponible sur le \href{https://cran.r-project.org/web/packages/LMMstar/index.html}{CRAN} et sur
-\href{https://github.com/bozenne/LMMstar}{Github}. .
+multiple comparisons adjustment. Available on \href{https://cran.r-project.org/web/packages/LMMstar/index.html}{CRAN} and on \href{https://github.com/bozenne/LMMstar}{Github}.
 
 \item \textbf{riskRegression} (contributor): computation of absolute risks and
 average treatment effects. Methodology described in
 \citep{ozenne2017riskregression} and
 \citep{ozenne2020estimation}. Available on \href{https://cran.r-project.org/web/packages/riskRegression/index.html}{CRAN} and on \href{https://github.com/tagteam/riskRegression}{Github}.
 \end{itemize}
-
-\clearpage
 
 Package for \href{https://www.gnu.org/software/emacs/}{emacs}:
 \begin{itemize}
@@ -335,66 +397,12 @@ R/C++/orgmode/latex/git. Disponible on \href{https://github.com/bozenne/emacs-co
 
 \pagebreak[3]
 
-\section*{\emph{Publications (clinical applications)}}
-\label{sec:org7189838}
-
-\begin{enumerate}[resume]
-   \item \bibentry{nasser2022reliability}
-   \item \bibentry{armand2022brain}
-   \item \bibentry{kohler2022concurrent}
-   \item \bibentry{armand2022acute}
-   \item \bibentry{armand2022brain}
-   \item \bibentry{fisher2022emotional}
-   \item \bibentry{beaman2022blood}
-   \item \bibentry{drummond2022psilocybin}
-   \item \bibentry{larsen2022impact}
-   \item \bibentry{mcculloch2022lasting}
-   \item \bibentry{ip2021eeg}
-   \item \bibentry{madsen2021psilocybin}
-   \item \bibentry{joergensen2021default}
-   \item \bibentry{brandt2021reward}
-   \item \bibentry{dea2021brain}
-   \item \bibentry{ip2021pretreatement}
-   \item \bibentry{hoghe2021MAMA}
-   \item \bibentry{raval2021single}
-   \item \bibentry{hogsted2021stress}
-   \item \bibentry{donovan2021effects}
-   \item \bibentry{lee2020absolute}
-   \item \bibentry{hansen2020visual}
-   \item \bibentry{spies2020common}
-   \item \bibentry{larsen2020oral}
-   \item \bibentry{thystrup2020severity}
-   \item \bibentry{dam2020hot}x
-   \item \bibentry{hjordt2020psychometric}
-   \item \bibentry{beliveau2020structure}
-   \item \bibentry{madsen2020single}
-   \item \bibentry{ozenne2019individualized}
-   \item \bibentry{ebert2019molecular}
-   \item \bibentry{madsen2019psychedelic}
-   \item \bibentry{tozlu2019comparison}
-   \item \bibentry{ip2018pre}
-   \item \bibentry{borgsted2018amygdala}
-   \item \bibentry{hjordt2018self}
-   \item \bibentry{foged2018verbal}
-   \item \bibentry{staerk2018standard}
-   \item \bibentry{hjordt2017season}
-   \item \bibentry{beliveau2017high}
-   \item \bibentry{stenbaek2017brain}
-   \item \bibentry{staerk2017resumption}
-   \item \bibentry{fisher2017bdnf}
-   \item \bibentry{foged2017safety}
-   \item \bibentry{peron2016net}
-   \item \bibentry{staerk2016ischaemic}
-   \item \bibentry{peron2016assessment}
-   \item \bibentry{ozenne2015evaluation}
-   \item \bibentry{hermitte2013very}
- \end{enumerate}
-
-\pagebreak[3]
 \resheading{Peer review}
-I have reviewed papers for Biometrics, Statistics in Medicine, and the
-International Journal of Biostatistics.
+I have reviewed papers for \href{https://onlinelibrary.wiley.com/journal/15214036}{Biometrical Journal}, \href{https://onlinelibrary.wiley.com/journal/15410420}{Biometrics}, \href{https://www.jstatsoft.org/index}{Journal of
+statistical software}, \href{https://onlinelibrary.wiley.com/journal/10970258}{Statistics in Medicine}, and \href{https://www.degruyter.com/journal/key/ijb/html}{the International
+Journal of Biostatistics}.
 
+\clearpage
 
 \resheading{Oral communications}
 Oral presentation at international conferences: 
@@ -425,9 +433,11 @@ Invited speaker at an internation conference:
 \begin{tabular}{l@{ }l@{ }l}
 2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
 && \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
-december 2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
+2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
 && and competing risks \\
 && \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, London, England \\
+2022 &:&  	Benefit-risk assessment via generalized pairwise comparisons  \\
+&& \href{http://www.cmstatistics.org/CMStatistics2022/programme.php}{CMStatistics}, London, England \\
 \end{tabular}
 
 \bigskip

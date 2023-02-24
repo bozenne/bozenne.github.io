@@ -1,0 +1,199 @@
+#+TITLE: Teaching Portfolio
+#+Author: 
+
+* Teaching responsabilities (per year)
+
+Current teaching activity at the University of Copenhagen (KU) for Phd
+students in medical sciences:
+
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
+              & 3 lectures of 3 hours and 6 practicals of 3 hours\\
+              & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
+2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
+              & 3.5 lectures of 3 hours, 7 practical of 3 hours, 1/2 day student presentations \\
+2021 - 2023 : & \href{http://paulblanche.com/files/BasicStat2022.html}{Basic statistics}  (course director Paul Blanche). \\
+              & 2 lecture of 3 hours, 2 practical of 3 hours, 2 day student presentations
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+\noindent Past teaching activity at KU for students in Master of
+statistics:
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2016 - 2017 : & Structural Equation Models (2h, lecture). \\
+\end{tabular}
+#+END_EXPORT
+
+\bigskip
+
+\noindent Past teaching activity at the University of Lyon 1 (France) for students in Master of biostatistics
+
+\smallskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, practicals).\\
+2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, practicals).\\
+\end{tabular}
+#+END_EXPORT
+
+
+
+
+* Formal pedagogic training
+#+BEGIN_EXPORT latex
+\begin{tabular}{r@{ }l}
+April 2022 : & \href{https://absalon.ku.dk/courses/58829}{Introduction to University Pedagogy} \\
+ 2022-2023 : & \href{https://absalon.ku.dk/courses/58114}{University Pedagogy} (Universitetspædagogikum) \\
+\end{tabular}
+#+END_EXPORT
+Key learning points:
+- Didactic triangle: teaching is about facilitating student
+  interactions with the new knoweldge or skill. It is by actively
+  engaging with some content that the students will learn. The teacher
+  is here to exposed the student to the content, encourage them to
+  interact with it, and provide feedback.  and
+- planning and organizing teaching around intended learning outcomes
+  (ILOs) and phases from the theory of didactical situations (TDS): 
+-  Involve students using an inductive (i.e. problem-based) approach
+-  constructively receive feedback on their own teaching.
+- 
+
+Didactic triangle
+
+    Plan, conduct and evaluate own teaching with student activities
+    Select and apply the introduced pedagogical themes in own teaching (onsite as well as online)
+    Identify pedagogical themes and provide feedback on the teaching of others,
+    Discuss the possibilities and limitations of teaching, based on the pedagogical themes: 
+
+
+* Course development
+* Pedagogical supervison
+* Evaluation
+* Personal description
+** Theoretical anchoring
+** Reflection on own teaching
+
+# @@latex:any arbitrary LaTeX code@@
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:nil date:nil toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+LATEX_HEADER: %
+#+LATEX_HEADER: %%%% specifications %%%%
+#+LATEX_HEADER: %
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+
+#+LATEX_HEADER: \newcommand{\first}{1\textsuperscript{st} }
+#+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
+#+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
+
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+#+LATEX_HEADER:\geometry{top=1cm}
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+** List
+#+LATEX_HEADER: \RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+** Color
+#+LaTeX_HEADER: \definecolor{light}{rgb}{1, 1, 0.9}
+#+LaTeX_HEADER: \definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+#+LaTeX_HEADER: \definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+** Box
+#+LATEX_HEADER: \usepackage{mdframed}
+
+** Rlogo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}   
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }

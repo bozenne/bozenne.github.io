@@ -1,0 +1,282 @@
+% Created 2023-02-19 Sun 14:18
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+\pagestyle{empty} % no page numbering
+\usepackage[french, english]{babel}
+\newcommand{\Cpp}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
+\usepackage{eurosym} % euro symbol
+\usepackage{titlesec}
+\titleformat{\section}{\large}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.25\baselineskip}{0.25\baselineskip}
+\geometry{
+left=20mm,
+right=20mm,
+top=20mm,
+bottom=20mm
+}
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{framed}
+\usepackage{tocloft}
+\newlength{\outerbordwidth}
+\raggedbottom
+\raggedright
+\setlength{\outerbordwidth}{3pt}  % Width of border outside of title bars
+\definecolor{shadecolor}{gray}{0.75}  % Outer background color of title bars (0 = black, 1 = white)
+\definecolor{shadecolorB}{gray}{0.93}  % Inner background color of title bars
+\usepackage{mdframed}
+\newcommand{\resitem}[1]{\item #1 \vspace{-2pt}}
+\newcommand{\resheading}[1]{
+\vspace{8pt}
+\parbox{\textwidth}{\setlength{\FrameSep}{\outerbordwidth}
+\begin{shaded}
+\setlength{\fboxsep}{0pt}\framebox[\textwidth][l]{\setlength{\fboxsep}{4pt}\fcolorbox{shadecolorB}{shadecolorB}{\textbf{\sffamily{\mbox{~}\makebox[6.762in][l]{\large #1} \vphantom{p\^{E}}}}}}
+\end{shaded}
+}\vspace{-5pt}
+}
+\newcommand{\ressubheading}[4]{
+\begin{tabular*}{6.5in}{l@{\cftdotfill{\cftsecdotsep}\extracolsep{\fill}}r}
+\textbf{#1} & #2 \\
+\textit{#3} & \textit{#4} \\
+\end{tabular*}\vspace{-6pt}}
+\usepackage{bibentry}
+\nobibliography*
+\newcommand{\myname}[1]{\textbf{#1}}
+\usepackage{url}
+\usepackage{enumitem}
+\definecolor{grayR}{HTML}{8A8990}
+\definecolor{grayL}{HTML}{C4C7C9}
+\definecolor{blueM}{HTML}{1F63B5}
+\newcommand{\Rlogo}[1][0.07]{
+\begin{tikzpicture}[scale=#1]
+\shade [right color=grayR,left color=grayL,shading angle=60]
+(-3.55,0.3) .. controls (-3.55,1.75)
+and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)
+and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2)
+and (1.55,-2) .. (0,-2) .. controls (-2.3,-2)
+and (-3.55,-0.75) .. cycle;
+
+\fill[white]
+(-2.15,0.2) .. controls (-2.15,1.2)
+and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8)
+and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75)
+and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45)
+and (-2.15,-0.7) .. cycle;
+
+\fill[blueM]
+(1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) --
+(0.95,-1.15)  .. controls (1.15,-1.15)
+and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1)
+and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9)
+and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7)
+and (2.5,1.2) .. cycle;
+
+\fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3)
+and (1.75,0.4) .. cycle;
+
+\end{tikzpicture}
+}
+\date{\today}
+\title{Publication List}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={Brice Ozenne},
+ pdftitle={Publication List},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.4.6)},
+ pdflang={English}
+ }
+\begin{document}
+
+
+\resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
+\section*{\emph{Publications (methodological)}}
+\label{sec:orgbc6d307}
+
+Published:
+\begin{enumerate}
+   \item \bibentry{giai2023individualized}
+   \item \bibentry{scheike2022efficient}
+   \item \bibentry{ozenne2022controlling}
+   \item \bibentry{ozenne2021asymptotic}
+   \item \bibentry{peron2021correcting}
+   \item \bibentry{cantagallo2021new}
+   \item \bibentry{ozenne2020small}
+   \item \bibentry{verbeeck2020evaluation}
+   \item \bibentry{ozenne2020estimation}
+   \item \bibentry{norgaard2019preprocessing}
+   \item \bibentry{ozenne2017riskregression}
+   \item \bibentry{peron2016extension}
+   \item \bibentry{ozenne2015precision}
+   \item \bibentry{ozenne2015spatially}
+ \end{enumerate}
+
+In preparation
+\begin{enumerate}[resume]
+    \item \bibentry{ozenne202Xsensitivity}
+    \item \bibentry{ozenne202Xmarginal}
+    \item \bibentry{baayen202Xdesign}
+\end{enumerate}
+
+\clearpage
+
+\section*{\emph{Publications (clinical applications)}}
+\label{sec:orgcb617b0}
+
+\begin{enumerate}[resume]
+   \item \bibentry{hvid2023myopia}
+   \item \bibentry{kohler2023serotonin}
+   \item \bibentry{olsen2022psilocybin}
+   \item \bibentry{nasser2022reliability}
+   \item \bibentry{dam2022evaluating}
+   \item \bibentry{sondergaard2022lasting}
+   \item \bibentry{armand2022brain}
+   \item \bibentry{kohler2022concurrent}
+   \item \bibentry{armand2022acute}
+   \item \bibentry{armand2022brain}
+   \item \bibentry{fisher2022emotional}
+   \item \bibentry{beaman2022blood}
+   \item \bibentry{drummond2022psilocybin}
+   \item \bibentry{larsen2022impact}
+   \item \bibentry{mcculloch2022lasting}
+   \item \bibentry{ip2021eeg}
+   \item \bibentry{madsen2021psilocybin}
+   \item \bibentry{joergensen2021default}
+   \item \bibentry{brandt2021reward}
+   \item \bibentry{dea2021brain}
+   \item \bibentry{ip2021pretreatement}
+   \item \bibentry{hoghe2021MAMA}
+   \item \bibentry{raval2021single}
+   \item \bibentry{hogsted2021stress}
+   \item \bibentry{donovan2021effects}
+   \item \bibentry{lee2020absolute}
+   \item \bibentry{hansen2020visual}
+   \item \bibentry{spies2020common}
+   \item \bibentry{larsen2020oral}
+   \item \bibentry{thystrup2020severity}
+   \item \bibentry{dam2020hot}x
+   \item \bibentry{hjordt2020psychometric}
+   \item \bibentry{beliveau2020structure}
+   \item \bibentry{madsen2020single}
+   \item \bibentry{ozenne2019individualized}
+   \item \bibentry{ebert2019molecular}
+   \item \bibentry{madsen2019psychedelic}
+   \item \bibentry{tozlu2019comparison}
+   \item \bibentry{ip2018pre}
+   \item \bibentry{borgsted2018amygdala}
+   \item \bibentry{hjordt2018self}
+   \item \bibentry{foged2018verbal}
+   \item \bibentry{staerk2018standard}
+   \item \bibentry{hjordt2017season}
+   \item \bibentry{beliveau2017high}
+   \item \bibentry{stenbaek2017brain}
+   \item \bibentry{staerk2017resumption}
+   \item \bibentry{fisher2017bdnf}
+   \item \bibentry{foged2017safety}
+   \item \bibentry{peron2016net}
+   \item \bibentry{staerk2016ischaemic}
+   \item \bibentry{peron2016assessment}
+   \item \bibentry{ozenne2015evaluation}
+   \item \bibentry{hermitte2013very}
+ \end{enumerate}
+
+\clearpage
+\resheading{Software development}
+
+Packages for the \href{https://www.r-project.org/}{R} software:
+\begin{itemize}
+\item \textbf{BuyseTest} (author and maintainer): implementation of generalized
+pairwise comparisons, including recent developments to handle
+right-censoring
+\citep{peron2016extension,peron2021correcting}. Available on \href{https://cran.r-project.org/web/packages/BuyseTest/index.html}{CRAN} and on
+\href{https://github.com/bozenne/BuyseTest}{Github}.
+
+\item \textbf{lavaSearch2} (author and maintainer): Inference and diagnostic
+tools for latent variable models.  Methodology described in
+\citep{ozenne2020small} and \citep{ozenne2022controlling}. Available on
+\href{https://cran.r-project.org/web/packages/lavaSearch2/index.html}{CRAN} and on \href{https://github.com/bozenne/lavaSearch2}{Github}. .
+
+\item \textbf{LMMstar} (author and maintainer) : linear mixed model via
+covariance structure (marginal formulation). Inference in small
+sample, test linear and non-linear combinations of parameters,
+multiple comparisons adjustment. Available on \href{https://cran.r-project.org/web/packages/LMMstar/index.html}{CRAN} and on \href{https://github.com/bozenne/LMMstar}{Github}.
+
+\item \textbf{riskRegression} (contributor): computation of absolute risks and
+average treatment effects. Methodology described in
+\citep{ozenne2017riskregression} and
+\citep{ozenne2020estimation}. Available on \href{https://cran.r-project.org/web/packages/riskRegression/index.html}{CRAN} and on \href{https://github.com/tagteam/riskRegression}{Github}.
+\end{itemize}
+
+Package for \href{https://www.gnu.org/software/emacs/}{emacs}:
+\begin{itemize}
+\item \textbf{emacs-config} (author and maintainer) : Configuration files for
+emacs to ease the interaction with
+R/C++/orgmode/latex/git. Disponible on \href{https://github.com/bozenne/emacs-config}{Github}.
+\end{itemize}
+
+\bibliographystyle{plainnat}
+
+\nobibliography{publicationBO}
+\end{document}

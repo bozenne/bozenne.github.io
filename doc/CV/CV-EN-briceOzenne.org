@@ -31,20 +31,20 @@
 #+LaTeX: \resheading{Current position}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	November 2015- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
+	November 2020- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
-	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen \\
+	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen (KU) \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
 	& - a research unit in neuroscience \\
-	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} \\
+	& \href{https://nru.dk/index.php/staff-list/post-docs/110-brice-ozenne}{Neurobiology Research Unit} (NRU) \\
 	& Copenhagen University Hospital, Rigshospitalet \\
 	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark \\ [2mm]
-      & where I do research in biostatistics along with a consulting activity in statistics \\
-      & and some teaching.
 \end{tabular}
 #+END_EXPORT
+where I do research in biostatistics along with a consulting and teachign activity in statistics.
 
 \bigskip
+
 My research work is organized around three topics:
 - the development of *multivariate models* for data analysis in
   neuroscience, mainly latent variable models (LVM) and mixed models (LMM) - see publications
@@ -53,7 +53,8 @@ My research work is organized around three topics:
   *estimation and inference in small samples* citep:ozenne2020small as
   well as efficient corrections for *multiple testing*
   citep:ozenne2022controlling. These developments are available in the
-  R packages =lavaSearch2= (LVM) and =LMMstar= (LMM).
+  R packages =lavaSearch2= (LVM) and =LMMstar= (LMM). \newline
+  *Collaborators*: Esben Budtz-Jørgensen & Julie Forman (KU, Denmark)
 
 - the analysis of registry data in presence of *right-censoring*,
   *competing risks*, and *confounding* *competing risks*. A typical
@@ -64,7 +65,8 @@ My research work is organized around three topics:
   estimator of the average treatment effect and derived its asymptotic
   distribution via its influence function
   citep:ozenne2020estimation. This has been implemented in the =ate=
-  function of the =riskRegression= R package.
+  function of the =riskRegression= R package. \newline
+  *Collaborators*: Thomas Alexander Gerds & Thomas Scheike (KU, Denmark)
 
 \clearpage
 
@@ -76,14 +78,23 @@ My research work is organized around three topics:
   jointly considering gains in survival and side effects is critical
   citep:peron2016net,peron2016assessment. I am now working on deriving
   the asymptotic distribution of some of the estimators implemented in
-  the =BuyseTest= using the U-statistique theory.
+  the =BuyseTest= using the U-statistique theory. \newline
+  *Collaborators*: Julien Péron & Max Piffoux (HCL, France), \newline
+  \hphantom{*Collaborators*:} Michaël De Backer & Marc Buyse (IDDI,
+  Belgium)
 
-\bigskip
 
 ** /Other domains of interest in statistics:/
-- Smoothing splines and functional data analysis
-- Causal inference and dynamic treatment regimes
+#+LaTeX: \begin{minipage}{0.45\linewidth} 
+- Group sequential trials
+- Smoothing splines
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.05\linewidth} 
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.45\linewidth} 
+- Causal inference
 - Post-selection inference
+#+LaTeX: \end{minipage}
 
 * Skills                                                             :ignore:
 #+LaTeX: \resheading{Skills}
@@ -121,13 +132,37 @@ git/github (via [[https://magit.vc/][magit]]).
 * Teaching and supervision                                           :ignore:
 #+LaTeX: \resheading{Teaching and supervision}
 
-Teaching (L : lecture, PC : practical classes)
+Current teaching activity for Phd students in medical sciences:
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2015 - 2020 : & \href{http://publicifsv.sund.ku.dk/~jufo/RepeatedMeasures2019.html}{Statistical analysis of repeated measurements} for Phd students in medical sciences (18h, PC). \\ 
-2016 - 2017 : & Structural Equation Models for Master students in statistics (2h, L). \\
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, PC).\\
-2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, PC).\\
+2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
+              & 3 lectures of 3 hours and 6 practicals of 3 hours\\
+              & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
+2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
+              & 3.5 lectures of 3 hours, 7 practical of 3 hours, 1/2 day student presentations \\
+2021 - 2023 : & \href{http://paulblanche.com/files/BasicStat2022.html}{Basic statistics}  (course director Paul Blanche). \\
+              & 1 lecture of 3 hours, 1 practical of 3 hours, 1 day student presentations
+\end{tabular}
+#+END_EXPORT
+
+More in depth presentation of the present and past teaching activity
+as well as the pedagocial approach can be found in my [[https://bozenne.github.io/doc/CV/TP-EN-briceOzenne.pdf][teaching
+portofilio]].
+
+\bigskip
+
+Co-supervision of students: 
+
+\medskip
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l@{ }l}
+2021 &:& Ramlah Sara Rehman (Bachelor in data science)\\
+\multicolumn{3}{l}{An Analysis of Clustering Algorithms: Clustering Trajectories of the Cortisol Concentration.} \\ [3mm]
+2019 &:& Alice Brouquet-Laglaire (Master 2 in biostatistics)\\
+\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
+2014 &:& Ceren Tozlu (Master 2 in biostatistics)\\
+\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke \citep{tozlu2019comparison}.} \\ [3mm]
 \end{tabular}
 #+END_EXPORT
 
@@ -138,21 +173,9 @@ statistical tools/issues:
 - [[https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf][Do we need more power?]] ([[https://www.nru.dk/images/News/NeurobiologyResearchUnit-Christmas-symposium2017.pdf][NRU Christmas Symposium 2017]]).
 - [[https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf][To adjust or not adjust, that is the question]] (NRU Christmas Symposium 2018).
 - [[https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf][A refresher on multiple comparisons]]? ([[https://nru.dk/index.php/news-menu/279-nru-christimas-symposium-2019][NRU Christmas Symposium 2019]]).
+- The data-processing multiverse: achieving reconciliation for
+  Christmas (NRU Christmas Symposium 2022).
 
-\bigskip
-
-Co-supervision of *master 2* student: 
-
-\medskip
-
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l@{ }l}
-2014 &:& Ceren Tozlu \\
-\multicolumn{3}{l}{Comparison of classification methods for tissue outcome after ischemic stroke \citep{tozlu2019comparison}.} \\ [3mm]
-2019 &:& Alice Brouquet-Laglaire \\
-\multicolumn{3}{l}{Comparison of inference methods for generalized pairwise comparisons.} \\ [3mm]
-\end{tabular}
-#+END_EXPORT
 
 * Grants                                                             :ignore:
 #+LaTeX: \resheading{Grants}
@@ -165,47 +188,43 @@ Co-supervision of *master 2* student:
 
 \clearpage
 
-* Scientific output     :ignore:                          
-#+LaTeX: \resheading{Scientific output \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
-** /Publications (methodological)/
-
-Published:
+* Publications                                                :ignore:                          
+#+LaTeX: \resheading{Publications in peer reviewed scientific journals \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
+** /Methodological/ (selected publications - 8/14)
 #+BEGIN_EXPORT latex
  \begin{enumerate}
     \item \bibentry{scheike2022efficient}
     \item \bibentry{ozenne2022controlling}
     \item \bibentry{ozenne2021asymptotic}
-    \item \bibentry{peron2021correcting}
-    \item \bibentry{cantagallo2021new}
     \item \bibentry{ozenne2020small}
-    \item \bibentry{verbeeck2020evaluation}
     \item \bibentry{ozenne2020estimation}
-    \item \bibentry{norgaard2019preprocessing}
     \item \bibentry{ozenne2017riskregression}
-    \item \bibentry{peron2016extension}
     \item \bibentry{ozenne2015precision}
     \item \bibentry{ozenne2015spatially}
   \end{enumerate}
 #+END_EXPORT
 
-# In revision:
-# #+BEGIN_EXPORT latex
-# \begin{enumerate}[resume]
-#    \item
-# \end{enumerate}
-# #+END_EXPORT
-
-# In preparation
-# #+BEGIN_EXPORT latex
-# \begin{enumerate}[resume]
-#     \item Corine
-#     \item Correlation
-# \end{enumerate}
-# #+END_EXPORT
-
 \pagebreak[3]
 
-** Software development                                             :ignore:
+** /Clinical applications/ (selected publications - 10/54)
+#+BEGIN_EXPORT latex
+ \begin{enumerate}[resume]
+    \item \bibentry{kohler2023serotonin}
+    \item \bibentry{nasser2022reliability}
+    \item \bibentry{kohler2022concurrent}
+    \item \bibentry{beaman2022blood}
+    \item \bibentry{larsen2022impact}
+    \item \bibentry{ozenne2019individualized}
+    \item \bibentry{ebert2019molecular}
+    \item \bibentry{staerk2018standard}
+    \item \bibentry{stenbaek2017brain}
+    \item \bibentry{ozenne2015evaluation}
+  \end{enumerate}
+#+END_EXPORT
+
+\bigskip
+
+* Software development                                               :ignore:
 #+LaTeX: \resheading{Software development}
 
 Packages for the [[https://www.r-project.org/][R]] software:
@@ -223,15 +242,12 @@ Packages for the [[https://www.r-project.org/][R]] software:
 - *LMMstar* (author and maintainer) : linear mixed model via
   covariance structure (marginal formulation). Inference in small
   sample, test linear and non-linear combinations of parameters,
-  multiple comparisons adjustment. Disponible sur le [[https://cran.r-project.org/web/packages/LMMstar/index.html][CRAN]] et sur
-  [[https://github.com/bozenne/LMMstar][Github]]. .
+  multiple comparisons adjustment. Available on [[https://cran.r-project.org/web/packages/LMMstar/index.html][CRAN]] and on [[https://github.com/bozenne/LMMstar][Github]].
 
 - *riskRegression* (contributor): computation of absolute risks and
   average treatment effects. Methodology described in
   citep:ozenne2017riskregression and
   citep:ozenne2020estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
-
-\clearpage
 
 Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 - *emacs-config* (author and maintainer) : Configuration files for
@@ -240,70 +256,13 @@ Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 
 \pagebreak[3]
 
-** /Publications (clinical applications)/
-
-#+BEGIN_EXPORT latex
- \begin{enumerate}[resume]
-    \item \bibentry{nasser2022reliability}
-    \item \bibentry{armand2022brain}
-    \item \bibentry{kohler2022concurrent}
-    \item \bibentry{armand2022acute}
-    \item \bibentry{armand2022brain}
-    \item \bibentry{fisher2022emotional}
-    \item \bibentry{beaman2022blood}
-    \item \bibentry{drummond2022psilocybin}
-    \item \bibentry{larsen2022impact}
-    \item \bibentry{mcculloch2022lasting}
-    \item \bibentry{ip2021eeg}
-    \item \bibentry{madsen2021psilocybin}
-    \item \bibentry{joergensen2021default}
-    \item \bibentry{brandt2021reward}
-    \item \bibentry{dea2021brain}
-    \item \bibentry{ip2021pretreatement}
-    \item \bibentry{hoghe2021MAMA}
-    \item \bibentry{raval2021single}
-    \item \bibentry{hogsted2021stress}
-    \item \bibentry{donovan2021effects}
-    \item \bibentry{lee2020absolute}
-    \item \bibentry{hansen2020visual}
-    \item \bibentry{spies2020common}
-    \item \bibentry{larsen2020oral}
-    \item \bibentry{thystrup2020severity}
-    \item \bibentry{dam2020hot}x
-    \item \bibentry{hjordt2020psychometric}
-    \item \bibentry{beliveau2020structure}
-    \item \bibentry{madsen2020single}
-    \item \bibentry{ozenne2019individualized}
-    \item \bibentry{ebert2019molecular}
-    \item \bibentry{madsen2019psychedelic}
-    \item \bibentry{tozlu2019comparison}
-    \item \bibentry{ip2018pre}
-    \item \bibentry{borgsted2018amygdala}
-    \item \bibentry{hjordt2018self}
-    \item \bibentry{foged2018verbal}
-    \item \bibentry{staerk2018standard}
-    \item \bibentry{hjordt2017season}
-    \item \bibentry{beliveau2017high}
-    \item \bibentry{stenbaek2017brain}
-    \item \bibentry{staerk2017resumption}
-    \item \bibentry{fisher2017bdnf}
-    \item \bibentry{foged2017safety}
-    \item \bibentry{peron2016net}
-    \item \bibentry{staerk2016ischaemic}
-    \item \bibentry{peron2016assessment}
-    \item \bibentry{ozenne2015evaluation}
-    \item \bibentry{hermitte2013very}
-  \end{enumerate}
-#+END_EXPORT
-
-\pagebreak[3]
-
-
 * Peer review       :ignore:
 #+LaTeX: \resheading{Peer review}
-I have reviewed papers for Biometrics, Statistics in Medicine, and the
-International Journal of Biostatistics.
+I have reviewed papers for [[https://onlinelibrary.wiley.com/journal/15214036][Biometrical Journal]], [[https://onlinelibrary.wiley.com/journal/15410420][Biometrics]], [[https://www.jstatsoft.org/index][Journal of
+statistical software]], [[https://onlinelibrary.wiley.com/journal/10970258][Statistics in Medicine]], and [[https://www.degruyter.com/journal/key/ijb/html][the International
+Journal of Biostatistics]].
 
+\clearpage
 
 * Oral communications                                                         :ignore:
 #+LaTeX: \resheading{Oral communications}
@@ -338,9 +297,11 @@ Invited speaker at an internation conference:
 \begin{tabular}{l@{ }l@{ }l}
 2019 &:& Region-Based and Voxel-Wise Analysis of Medical Images Using Latent Variables \\
 && \href{https://events.razzby.com/nbbc19/}{7th NBBC}, Vilnius, Lithuania \\
-december 2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
+2020 &:& Robust estimation of the average treatment effects in presence of right-censoring \\
 && and competing risks \\
 && \href{http://www.cmstatistics.org/conferences.php}{CMStatistics}, London, England \\
+2022 &:&  	Benefit-risk assessment via generalized pairwise comparisons  \\
+&& \href{http://www.cmstatistics.org/CMStatistics2022/programme.php}{CMStatistics}, London, England \\
 \end{tabular}
 #+END_EXPORT
 
@@ -388,7 +349,6 @@ Organisation of a workshop:
 #+LATEX_HEADER: \usepackage[french]{babel}
 
 ** Notations
-#+LaTeX_HEADER: \newcommand{\Rlogo}{\textbf{\textsf{R}}}
 #+LaTeX_HEADER: \newcommand{\Cpp}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 #+LaTeX_HEADER: \usepackage{eurosym} % euro symbol
 
@@ -460,3 +420,38 @@ Organisation of a workshop:
 
 # ## [resume] (keep the numbering over several enumerate list)
 #+LaTeX_HEADER: \usepackage{enumitem}
+
+** Rlogo
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}   
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
