@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: Feb 18 2023 (14:10) 
 ## Version: 
-## Last-Updated: feb 22 2023 (19:12) 
+## Last-Updated: Feb 24 2023 (12:38) 
 ##           By: Brice Ozenne
-##     Update #: 13
+##     Update #: 37
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -22,6 +22,7 @@ library(riskRegression)
 library(exact2x2)
 library(data.table)
 library(prodlim)
+library(mets)
 
 ## * load data
 url <- "https://bozenne.github.io/doc/Teaching/bissau.txt"
@@ -95,7 +96,7 @@ bissau0 <- bissau
 bissau0$bcg <- "yes"
 mean(predict(e.glmI, newdata = bissau0, type = "response"))
 
-## * Accounting for right censoring
+## * Accounting for right censoring (rate)
 
 ## ** toy example
 ## orignal data with graphical display
@@ -154,20 +155,94 @@ dtPred.coxph <- as.data.table(ePred.coxph)
 dtPred.coxph$risk <- 1-dtPred.coxph$survival
 dtPred.coxph
 
-
-## ** IPCW
+## * Accounting for right censoring (IPCW)
+## ** toy example
 
 ## by hand
-
 df$survC <- predict(prodlim(Hist(time, event==0) ~ 1, data = df), time = df$time-0.00001)
 
 1 - mean((df$time<=6)*(df$event==1)/df$survC)
 
 ## using a software package
-e.ipcw <- wglm(~1, formula.censor = Surv(time,event==0)~1,
+e0.ipcw <- wglm(~1, formula.censor = Surv(time,event==0)~1,
                times = 6, data = df, product.limit = TRUE)
-1/(1+exp(-coef(e.ipcw)))
+1/(1+exp(-coef(e0.ipcw)))
 
+## ** bissau
+## update dataset to specify that censored patient at time 183 are alive (no censored)
+bissau2 <- bissau
+bissau2[(bissau2$fuptime==183) & (bissau2$fupstatus=="censored"),"fuptime"] <- 183.1
+
+e.ipcw <- wglm(~bcg, formula.censor = Surv(fuptime,fupstatus=="censored")~bcg,
+               times = 183, data = bissau2, product.limit = TRUE)
+summary(e.ipcw)
+
+## small discrepancy with KM probably due to ties
+1/(1+exp(-cumsum(coef(e.ipcw))))
+1-data.frame(ePred.KM)
+
+## using age in months to account for heterogeneity
+e.ipcwI <- wglm(~bcg*as.factor(agem),
+                formula.censor = Surv(fuptime,fupstatus=="censored")~bcg*as.factor(agem),
+                times = 183, data = bissau2, product.limit = TRUE)
+summary(e.ipcwI)
+
+## * Competing risks
+data(Melanoma, package = "riskRegression")
+
+## ** No censoring
+## make a dataset without censoring
+## do not do that in real study!!! This is conditioning on the future and will bias risk estimates (upward)
+Melanoma2 <- Melanoma[Melanoma$status != 0, ]
+tau <- 5*365.25
+
+## risk of death at 5 years days
+mean((Melanoma2$time <= tau))
+
+e.KM <- prodlim(Hist(time, status>0) ~ 1, data = Melanoma2)
+1-predict(e.KM, time = tau)
+
+## risk of death due to malignant melanoma at 200 days
+mean((Melanoma2$time <= tau) * (Melanoma2$status == 1))
+
+e.wrongKM1 <- prodlim(Hist(time, status==1) ~ 1, data = Melanoma2)
+1-predict(e.wrongKM1, time = tau)
+
+
+## risk of death due to other causes at 200 days
+mean((Melanoma2$time <= tau) * (Melanoma2$status == 2))
+
+e.wrongKM2 <- prodlim(Hist(time, status==2) ~ 1, data = Melanoma2)
+1-predict(e.wrongKM2, time = tau)
+
+## ** Censoring
+
+## AJ approach
+predict(prodlim(Hist(time, status) ~ 1, data = Melanoma2), time = tau)
+
+e.AJ <- prodlim(Hist(time, status) ~ 1, data = Melanoma)
+predict(e.AJ, time = tau)
+
+par(mfrow = c(1,2))
+plot(e.AJ, cause = 1, title = "Cancer related death")
+plot(e.AJ, cause = 2, title = "Death from other causes")
+
+## ICPW approach
+e.ipcw.M2 <- wglm(~1,
+                  formula.censor = Surv(time,status==0)~1,
+                  times = tau, data = Melanoma2,
+                  cause = 1, product.limit = TRUE)
+1/(1+exp(-coef(e.ipcw.M2)))
+
+
+e.ipcw.M <- wglm(~1,
+                  formula.censor = Surv(time,status==0)~1,
+                  times = tau, data = Melanoma,
+                  cause = 1, product.limit = TRUE)
+1/(1+exp(-coef(e.ipcw.M)))
+
+Melanoma$survC <- predict(prodlim(Hist(time, status==0) ~ 1, data = Melanoma), time = pmin(tau,Melanoma$time)-0.00001)
+mean((Melanoma$time <= tau) * (Melanoma$status == 1) / Melanoma$survC)
 
 ##----------------------------------------------------------------------
 ### exercise-workshopEpi.R ends here
