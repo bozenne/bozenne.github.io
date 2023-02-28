@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: Feb 18 2023 (14:10) 
 ## Version: 
-## Last-Updated: Feb 24 2023 (12:38) 
+## Last-Updated: Feb 28 2023 (10:09) 
 ##           By: Brice Ozenne
-##     Update #: 37
+##     Update #: 38
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -59,8 +59,10 @@ binomMeld.test(x1 = t22["no","TRUE"],
                parmtype = "difference")
 
 ## Implementation 2
-e.glm <- glm(status ~ 0+bcg, data = bissau, family = binomial(link="logit"))
-1/(1+exp(-coef(e.glm)))
+e.logit <- glm(status ~ 0+bcg, data = bissau, family = binomial(link="logit"))
+1/(1+exp(-coef(e.logit)))
+e.id <- glm(status ~ bcg, data = bissau, family = binomial(link="identity"))
+coef(e.id)
 
 ## Implementation 1
 binomMeld.test(x1 = t22["no","TRUE"],
@@ -71,8 +73,8 @@ binomMeld.test(x1 = t22["no","TRUE"],
                parmtype = "ratio")
 
 ## Implementation 2
-e.glmBis <- glm(status ~ bcg, data = bissau, family = binomial(link="logit"))
-exp(coef(e.glmBis))
+e.log <- glm(status ~ bcg, data = bissau, family = binomial(link="log"))
+exp(coef(e.log))
 
 ## * Accounting for treatment heterogeneity
 e.glmI <- glm(status ~ ageC * bcg, data = bissau, 
@@ -106,6 +108,7 @@ gg.traj <- ggplot(data = df)
 gg.traj <- gg.traj + geom_point(aes(x = time, y = id,
                                     color = as.factor(event), shape = as.factor(event)))
 gg.traj <- gg.traj + geom_segment(aes(x = 0, xend = time, y = id, yend = id))
+gg.traj
 
 ## split data at each event
 df.split <- survSplit(Surv(time,event)~1, data = df, cut = df$time,

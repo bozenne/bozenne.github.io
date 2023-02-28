@@ -31,8 +31,6 @@ Copenhagen, Denmark
   Stockholm, Sweden.
 - [Benefit-risk assessment via Generalized Pairwise Comparisons](https://bozenne.github.io/doc/Talks/2022-CMStatistics-GPC.pdf), CMstatistics, 17-19 December 2022,
   London, England.
-- [Benefit-risk assessment via Generalized Pairwise Comparisons](https://bozenne.github.io/doc/Talks/2022-CMStatistics-GPC.pdf), CMstatistics, 17-19 December 2022,
-  London, England.
 
 And also some more pedagogical talks given at the Christmas symposium
 of NRU:
