@@ -93,6 +93,62 @@ Didactic triangle
 "Thanks for a great course. It has been very enlightening and inspiring. Towards the end of the course I did appreciate more the statistical focus (as I became familiar with them) but if I have one comment it is to maybe include even more examples of epidemiological articles from the real world displaying some of the concepts (other than the Guinea-Bissau study)
 I liked the emphasis on the intuitive study process vs using a “random” arsenal of statistical methods: defining the population, exposure outcomes etc and then deciding on the statistics in relation to the research question. It is obvious but I think non-statisticians forget this perspective sometimes.
 All in all I would give it a 5/5 though!"
+
+* Previous notes  :export:
+
+
+Students stress the importance of the social aspect in learning
+- teacher is interested in them, how they learn, what they think
+- need for a safe environement especially with respect to the other
+  student, to not be afraid to interact
+- class are also a social activity, e.g. meeting people and comparing
+  themself to people
+
+I feel I have limited abilities and responsabilities with respect ot
+this social aspect in learning. Obviously I will try to favor a safe
+learning environment:
+- encouraging students to ask questions during lectures and
+  exercise classes. This can be achieved by reminding students that
+  there are no stupid questions, asking students to discuss in pairs
+  before asking for questions, and not judging the validity of the
+  response putting into perspective to favor discussion between
+  students.
+- flatten the hierarchie teacher/student, ....
+- encouraging students to work in pairs during exercise classes
+
+Interactivity
+
+* Teaching approach
+
+Rigourous scientific content, even when teaching non-statisticians
+- do not give up using formula and math notation but try to carefuly
+  introduce them.
+- focus on scientific/probabilistic reasonning
+- details/proof may not included in the lecture are distributed as lecture nots
+
+Critical thinking
+- learning statistics is not getting a receipe book
+- combine (medical) context with relevant statistical concepts/tools
+  to take actions
+- using paradox to get the student think and discuss about the use of
+  statistics
+
+Anchored with real examples/practical needs:
+-
+-
+
+
+ Strengths:
+ - structure
+ - energy and humor
+ - knowledge
+ 
+ Challenging:
+ - balancing content and time
+ - being at the right level for the students
+ - having a good flow
+  
+
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
