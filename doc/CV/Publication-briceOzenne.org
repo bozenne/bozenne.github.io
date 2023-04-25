@@ -134,7 +134,7 @@ Packages for the [[https://www.r-project.org/][R]] software:
 Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 - *emacs-config* (author and maintainer) : Configuration files for
   emacs to ease the interaction with
-  R/C++/orgmode/latex/git. Disponible on [[https://github.com/bozenne/emacs-config][Github]].
+  R/C++/orgmode/latex/git. Available on [[https://github.com/bozenne/emacs-config][Github]].
 
 * Reference :ignore:
 

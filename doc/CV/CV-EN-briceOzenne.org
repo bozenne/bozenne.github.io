@@ -98,6 +98,7 @@ My research work is organized around three topics:
 
 * Skills                                                             :ignore:
 #+LaTeX: \resheading{Skills}
+#+LaTeX: \vspace{-0.8cm}
 
 ** /Language/
 French (native language), english (fluent), danish (intermediate),
@@ -112,6 +113,7 @@ git/github (via [[https://magit.vc/][magit]]).
 #+LaTeX: \resheading{Education and research carrier}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
+2022 - 2023 : & Course in teaching and learning in higher education (Universitetspædagogikum) \\
 2020 - 2015 : & Post-doc in biostatistics with a shared positive between: \\
               & \emph{University of Copenhagen}: researcher and teacher at the Graduate School \\
               & of Health and Medical Sciences \\ 
@@ -256,11 +258,17 @@ Package for [[https://www.gnu.org/software/emacs/][emacs]]:
 
 \pagebreak[3]
 
-* Peer review       :ignore:
+* Reviewing activity                                                 :ignore:
 #+LaTeX: \resheading{Peer review}
 I have reviewed papers for [[https://onlinelibrary.wiley.com/journal/15214036][Biometrical Journal]], [[https://onlinelibrary.wiley.com/journal/15410420][Biometrics]], [[https://www.jstatsoft.org/index][Journal of
 statistical software]], [[https://onlinelibrary.wiley.com/journal/10970258][Statistics in Medicine]], and [[https://www.degruyter.com/journal/key/ijb/html][the International
 Journal of Biostatistics]].
+
+\bigskip
+
+I am also in the Data and Safety Monitoring Board (DSMB) of the
+clinical trial [[http://www.traumox2.org/][TRAUMOX2]] (1420 patients, 5 sites in europe).
+
 
 \clearpage
 
@@ -289,7 +297,7 @@ Oral presentation at international conferences:
 
 \bigskip
 
-Invited speaker at an internation conference: 
+Invited speaker at an international conference: 
 
 \medskip
 
@@ -324,7 +332,7 @@ Organisation of a workshop:
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
 2021 &:& Analysis of repeated measurements with mixed models using the R package LMMstar (1h+3h) \\
-&& Methods Week, Karolinska institute, Stockholm, Suède
+&& Methods Week, Karolinska institute, Stockholm, Sweden
 \end{tabular}
 #+END_EXPORT
 

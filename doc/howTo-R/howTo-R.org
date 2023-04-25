@@ -3703,7 +3703,6 @@ direct correlation    0 0.000203386
 total correlation     0 0.000203386
 #+end_example
 
-
 ** Handling left, right, and interval censored data
 
 Simulate data:

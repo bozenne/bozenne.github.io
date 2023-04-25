@@ -1,94 +1,569 @@
 #+TITLE: Teaching Portfolio
-#+Author: 
+#+Author: Brice Ozenne
 
-* Teaching responsabilities (per year)
+* Teaching responsabilities
 
-Current teaching activity at the University of Copenhagen (KU) for Phd
-students in medical sciences:
+*Current teaching activity* at the University of Copenhagen (KU) for
+Phd students in medical sciences:
+- [[https://absalon.ku.dk/courses/47665][Statistical analysis of repeated measurements]]: \newline It is a 6
+  days, 5 ECTS, course taught in english with 40-50 students. Julie
+  Forman is the course director. \newline I am doing 3 lectures of 3
+  hours and 6 exercise classes of 3 hours. I have been doing the
+  practical in this course since 2015 and started to lecture two years
+  ago. 
+- [[https://absalon.ku.dk/courses/58764][Epidemiological methods in medical research]]: \newline It is a 10
+  days, 7 ECTS, course taught in english with 20-30 students. I am the
+  course director. \newline I am doing 3.5 lectures of 3 hours, 7
+  exercise classes of 3 hours, and 3 hours of oral assessment (student
+  presentation). I have run the course 3 times (since 2021).
+- [[http://paulblanche.com/files/BasicStat2023.html][Basic statistics]]: \newline It is a 10 days, 8 ECTS, course taught in
+  english with 30 students. Paul Blanche is the course
+  director. \newline I am doing 1 lectures of 3 hours and 1 exercise
+  classe of 3 hours and 6 hours of oral assessment (student
+  presentation). I have taught in this course 2 times (since 2021).
 
-\smallskip
+*Past teaching activity*:
+- in 2016 I have taught a 2 hours lecture to statistics students
+  (Master level) for the course [[https://absalon.instructure.com/courses/2385][Structural Equation Models]] at KU.
+- between 2013 and 2015, I was a teaching assistant at the [[https://mastersantepublique.univ-lyon1.fr/icap_website/299/5382][University
+  of Lyon 1]] (France) for biostatistics students (Master level). I was
+  doing 18h of practical in a survival analysis course and 6 hours of
+  practical in a course about Bayesian statistics.
 
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l}
-2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
-              & 3 lectures of 3 hours and 6 practicals of 3 hours\\
-              & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
-2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
-              & 3.5 lectures of 3 hours, 7 practical of 3 hours, 1/2 day student presentations \\
-2021 - 2023 : & \href{http://paulblanche.com/files/BasicStat2022.html}{Basic statistics}  (course director Paul Blanche). \\
-              & 2 lecture of 3 hours, 2 practical of 3 hours, 2 day student presentations
-\end{tabular}
-#+END_EXPORT
+#+LATEX: \newgeometry{top=3cm}
+
+* Supervision
+
+I am/have been an official supervisor or co-supervisor of:
+- Tanne Ebert Jørgensen and Johanne Triantafyllou Lorenzen (Master
+  students in epidemiology, 2023) about the childcare and symptoms of
+  ADHD in the danish population. The main supervisor is Anne-Marie
+  Nybo Andersen from the section of epidemiology.
+- Simon Christoffer Ziersen (Ph.D in biostatistics, from 2021) about
+  target trial emulation in observational studies of epilepsy and
+  depression. The main supervisors are Esben Budtz-Jørgensen and
+  Thomas Alexander Gerds from the section of biostatistics.
+- Ramlah Sara Rehman (Bachelor in data science, 2021) about clustering
+  trajectories of the cortisol concentration, comparing several
+  clustering algorithms. This was a co-supervision with Melanie
+  Ganz-Benjaminsen from the department of computer science.
+- Alice Brouquet-Laglaire (Master 2 in biostatistics, 2019) about the
+  comparison of inference methods for generalized pairwise
+  comparisons. The main supervisor was Julien Péron from the
+  University Lyon 1 (France).
+- Ceren Tozlu (Master 2 in biostatistics, 2014) about comparison of
+  classification methods for tissue outcome after ischemic stroke. The
+  main supervisor was Delphine Maucort-Boulch from the University Lyon
+  1 (France) This master project has lead to a publication
+  citep:tozlu2019comparison
 
 \bigskip
 
-\noindent Past teaching activity at KU for students in Master of
-statistics:
+I am also a statistical consultant at the Neurobiology research unit
+(NRU). I help medical doctors, psychologists, neuro-scientists,
+biologists, engineer of various levels (mainly Master and
+Ph.D. students) to plan and perform data analysis. My Tuesday
+afternoon is dedicated to this activity: understanding the context and
+research question(s), advising and explain statistic concepts and
+methods. \newline Via these consultations, I have informally
+supervised many Master and Ph.D. students. For instance Kristin
+Köhler-Forsberg (medical Ph.D., from 2016 until 2020) who I helped to
+use latent variable models to anlayse PET data
+citep:kohler2023serotonin,kohler2022concurrent, Camilla Borgsted
+(Ph.D. in neuroscience from 2018 until 2022) who I helped to use
+linear mixed model to analyse fMRI data citep:borgsted2018amygdala, or
+Søren Vinther Larsen (medical Ph.D., from 2020) who I helped with
+mulitple comparison adjustment, handling of detection limit, survival
+analysis and study design citep:larsen2020oral,larsen2022impact.
 
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l}
-2016 - 2017 : & Structural Equation Models (2h, lecture). \\
-\end{tabular}
-#+END_EXPORT
+
+* Pedagogical development projects
+
+*LMMstar*: a common student feedback about practicals of the course
+"Statistical analysis of repeated measurements" was the difficulty to
+work with repeated measurements in \Rlogo. Student felts it required
+substantial programming expertise and data management was very time
+consuming and were sometimes discuraged. It is true that the code was
+sometimes complex, relying on different software packages. Software
+limitations also meant that ideas developped during the lecture could
+not be examplified in the practicals. \newline During the last three
+years I have developped, in collaboration with Julie Forman, a
+software facilating student interactions with repeated measurements,
+and in particular the use of linear mixed models. Having a dedicated
+software solution to compute relevant summary statistics (mean,
+correlation, number of missing data) and fit statistical models with
+default option suited to the course has greatly facilitated the
+programming aspect (see appendix [[#appendix-software]] for two examples),
+freeing some time to discuss modeling and interpretation. Removing the
+feasibility issue also leads to a better alignement between what is
+being taught during the lectures and what is being done during the
+exercises. \newline This is still an on-going project since models for
+binary and count data are not yet included in the software. We would
+also like to write pedagogical material about the analysis of repeated
+measurements targeted to our students and applied researchers.
 
 \bigskip
 
-\noindent Past teaching activity at the University of Lyon 1 (France) for students in Master of biostatistics
-
-\smallskip
-
-#+BEGIN_EXPORT latex
-\begin{tabular}{l@{ }l}
-2014 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Survival Analysis} for Master students in public health (18h, practicals).\\
-2013 - 2015 : & \href{http://mastersantepublique.univ-lyon1.fr/webapp/website/website.html?id=3124911&pageId=215839}{Bayesian statistics} for Master students in public health (6h, practicals).\\
-\end{tabular}
-#+END_EXPORT
-
-
-
-
-* Formal pedagogic training
-#+BEGIN_EXPORT latex
-\begin{tabular}{r@{ }l}
-April 2022 : & \href{https://absalon.ku.dk/courses/58829}{Introduction to University Pedagogy} \\
- 2022-2023 : & \href{https://absalon.ku.dk/courses/58114}{University Pedagogy} (Universitetspædagogikum) \\
-\end{tabular}
-#+END_EXPORT
-Key learning points:
-- Didactic triangle: teaching is about facilitating student
-  interactions with the new knoweldge or skill. It is by actively
-  engaging with some content that the students will learn. The teacher
-  is here to exposed the student to the content, encourage them to
-  interact with it, and provide feedback.  and
-- planning and organizing teaching around intended learning outcomes
-  (ILOs) and phases from the theory of didactical situations (TDS): 
--  Involve students using an inductive (i.e. problem-based) approach
--  constructively receive feedback on their own teaching.
-- 
-
-Didactic triangle
-
-    Plan, conduct and evaluate own teaching with student activities
-    Select and apply the introduced pedagogical themes in own teaching (onsite as well as online)
-    Identify pedagogical themes and provide feedback on the teaching of others,
-    Discuss the possibilities and limitations of teaching, based on the pedagogical themes: 
+*Mini Epi seminar*: when I took over the epidemiology course there was
+no student assessment (other than attendance). I believe that having
+some formative assessment is useful to the student to get feedback on
+knowledge, skills, or competences that has been acquired. Instead of
+an exam I favor a form authentic assessment where students are asked
+to present one of their research project in relation to concepts seens
+during the course. The audience (other students and the teacher) then
+engage in a conversation with the student about working assumptions,
+limitations, and perspectives. Students usually really like this
+activity as it links the content of the course to their
+research. \newline To engage ealry the students and ensure that the
+activity is well understood, I recently introduced a peer-feedback
+session mid-way through the course. Students send me the output of
+this peer-feedback session on which I give feedback. See appendix
+[[#appendix-seminar]] for details and discussion about this
+activity. \newline The quality and learning achieved during session
+depends on the students. A very large majority of them take it
+seriously, delivering interesting presentations and asking
+questions. This year was especially successful, maybe partly thanks to
+the introduction of the peer-feedback session.
 
 
-* Course development
-* Pedagogical supervison
-* Evaluation
-* Personal description
-** Theoretical anchoring
-** Reflection on own teaching
+\clearpage
 
+
+* Formal pedagogical training
+
+I have taken two courses about pedagogy: the [[https://absalon.ku.dk/courses/58829][Introduction to
+University Pedagogy]] in April 2022 and recently finished [fn::for the
+practical part I am missing the observations with the educational
+supervisor. They are planned May 15th.] the theoretical part of the
+[[https://absalon.ku.dk/courses/58114][University Pedagogy]] (Universitetspædagogikum). My pedagogical project
+was about implementing a peer feedback session that is described and
+evaluated in appendix [[#appendix-seminar]].
+
+* Pedagogical approach
+
+# ## https://www.slu.edu/cttl/docs/cuts-forms/preparing-a-teaching-portfolio.pdf
+# Sketch out your reflections on your teaching (your beliefs, values, strategies) and how it relates to student learning in your field
+# Your beliefs about how student learning in your field occurs.
+# Given those reflections, your beliefs about how you as a teacher can best help students learn
+# How you put into practice your beliefs about effective teaching and learning. (If you discuss your teaching methods in a separate section, such as the one below,you might simply refer to that section in your philosophy statement.)
+# Your goals for students
+
+Teaching is for me sharing my entousiasm and my knowledge about a
+subject, hoping to stimulate the appropriation of statistical concepts
+and the curiosity of the students.
+
+\bigskip
+
+While I try to examplify and illustrate statistical concepts (e.g see
+appendix [[#appendix-illustration]]), I strongly believe that proper
+understanding of biostatistics concepts require some mathematical
+representation. The level of formalism used when teaching will
+dependent on the audience (medical vs. mathematic students) and on the
+targeted level of understanding. This being said, mathematics are here
+to explicit an idea, not to obscure it. So I also believe that
+learning biostatistics involve developping its intuition, for instance
+to understand the practical implications of a statistical hypothesis
+(e.g. see appendix [[#appendix-intuition]]). Being lucid and explicit
+about hypotheses withstanding a scientific investigation is
+suprisingly difficult to master but a key part of biostatistics.
+
+\bigskip
+
+After several years of teaching, I have come to realize that a clear,
+rigorous but intuitve explaination of statistical concepts requires
+quite a substancial expertise on the topic. Examples or experience
+from research project are generally approciated by students. I
+therefore try, when possible and relevant, to relate my teaching
+activity to my research activity. The LMMstar package is an example of
+interconnexion between the two, initially motivated by the teaching
+but made possible by knowledge acquired during research projects.
+
+\bigskip
+
+Finally I try to develop a learning environment open to discussion and
+where the students feel confortable. Having interactions with students
+during lectures and practicals to assess their understanding is not
+only critical to adjust my teaching but also motivating. Using humor,
+being supportive, taking the time to discuss with the students, and
+showing vulnerability (e.g. mentionning mistakes I have made in the
+past) seems to help having this safe learning environment.
+
+ 
+#  Challenging:
+#  - balancing content and time
+#  - being at the right level for the students
+#  - having a good flow
+
+#    Silence
+
+
+# How do you think about teaching? What are your priorities? What is approach
+# to students, to active participation, to yourself as a teacher?
+# What kind of teacher do one meet when meeting you? Provide examples,
+# including references to appendices
+
+# E.g., course plans, assignments, evaluations, slides, written material (lecture notes, reports, articles, etc.)
+# Show the breadth and underpin the philosophy
+# Document your competences
+
+# Teaching is about exposing and facilitating interactions between a
+# content (knowledge, skills, competence) to an audience
+
+# is for me exposing students to new knowledge
+# I have high expectations of my students
+# active learners. 
+# stimulating, challenging, supportive, and interactive
+
+# *Teaching approach*
+# - activate students
+# - provide and receive feedback to update the course
+# - whenever possible related to research (software/articles)
+# - 
+
+# Key learning points:
+# - Didactic triangle: teaching is about facilitating student
+#   interactions with the new knoweldge or skill. It is by actively
+#   engaging with some content that the students will learn. The teacher
+#   is here to exposed the student to the content, encourage them to
+#   interact with it, and provide feedback.  and
+# - planning and organizing teaching around intended learning outcomes
+#   (ILOs) and phases from the theory of didactical situations (TDS): 
+# -  Involve students using an inductive (i.e. problem-based) approach
+# -  constructively receive feedback on their own teaching.
+# - 
+
+# Didactic triangle
+
+#     Plan, conduct and evaluate own teaching with student activities
+#     Select and apply the introduced pedagogical themes in own teaching (onsite as well as online)
+#     Identify pedagogical themes and provide feedback on the teaching of others,
+#     Discuss the possibilities and limitations of teaching, based on the pedagogical themes: 
+
+
+# \bigskip
+
+# Something about the project and development of the 
+
+# Teaching bio-statistics is not only about mathematics and programming
+# but also about scientific reasoning. I believe that as scientist we
+# should:
+# - be able to navigate with different level of evidence: a mathematical
+#   argument is correct or incorrect while the choice of a statistical
+#   model or the validity of study can be debated. Nevertheless this
+#   apparent subjectivity should not shadow that choices or
+#   interpretation may be clearly unreasonnable.
+# - be lucid and explicit about hypotheses withstanding a scientific
+#   investigation. Being able to argument about their validity and
+#   importance. \newline Differentiate convenience/routine and validity.
+# - balance skepticism and open-mindedness. For instance, when using a
+#   non-conventional statistical method, one has to demonstrate its
+#   validity. However one cannot expect extensive knowledge about a new
+#   method.
+# - be open to and value contradiction, acknoweldge when mistakes have
+#   been made, and modify accordingly a scientific investigation.
+
+
+
+
+* Personal development as a teacher
+
+The formal training I received during the University Pedagogy course
+made me question my pedagogical approach and experience different
+teaching technics, often based on group work and use of online-tools
+(polls & quizzes):
+- it helped me better structure my teaching around intended learning
+  objectives (ILOs). I have realized that *each ILOs should be tested
+  during the lecture with short exercises* (see appendix
+  [[#appendix-quizz]] for an example). These short exercises provide
+  feedback to the students and the teacher about whether the knowledge
+  or skill has been acquired. It also creates variations during the
+  lecture which is beneficial to the student attention.
+
+- it made me reflect about the role of the teacher and the student in
+  the learning process. The student has the central role whereas the
+  teacher is here to facilitate the interaction between the student
+  and a subject. Indeed most students learn by doing and by
+  appropriation. I am in a process to *reduce the curriculum seen
+  during lecture or practicals and rely self study* for technical
+  skills. This leave more time during the class for experimentation
+  and discussion. The self study is supported by the lecture notes,
+  exercise solutions, or scientific articles. \newline
+  As an example, I have greatly reduced the attention given to
+  programming in the Epidemiology course (e.g. the code and software
+  output are given in most of the exercices). Learning programming is
+  left to self study even though I happily answer any question and
+  have a dedicated section in each of my lecture notes.
+
+- it provided me tools to *create a safe learning environment*. For
+  instance when a student answer a question, I would (try to) not
+  immediatly qualify it (correct or incorrect answer). Instead ask the
+  opinion of other students or ask a follow-up question to make the
+  student reflect/orient them in the right direction.
+
+- it stressed the importance of *engaging the student* using an
+  inductive approach, e.g. based on a motivating example where there
+  is a need for statistical tools. I generally use classical
+  statistical paradoxes (see appendix [[#appendix-paradox]] for an
+  example), as find a simple but realistic example for a specific ILO
+  is challenging - often realistic examples are complex and would cover
+  several ILOs. 
+
+Discussions and teaching material from colleagues have been a great
+source of inspiration. They have also contributed to my evolution as a
+teacher but in a more subtle and continuous way that will not explicit
+here.
+
+  
 # @@latex:any arbitrary LaTeX code@@
+
+* References
+#+LaTeX: \begingroup
+#+LaTeX: \renewcommand{\section}[2]{}
+bibliographystyle:apalike
+bibliography:publicationBO.bib
+# help: https://gking.harvard.edu/files/natnotes2.pdf
+#+LaTeX: \endgroup
+
+#+LaTeX: \appendix
+#+LaTeX: \titleformat{\section}
+#+LaTeX: {\normalfont\Large\bfseries}{Appendix~\thesection}{1em}{}
+
+\clearpage
+
+* Old vs. new software solution
+:PROPERTIES:
+:CUSTOM_ID: appendix-software
+:END:
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+library(LMMstar)
+data(gastricbypassL)
+
+#+END_SRC
+
+#+RESULTS:
+
+** Computing summary statistics
+
+#+LaTeX: \RecustomVerbatimEnvironment{verbatim}{Verbatim}{formatcom = {\color[rgb]{0.5,0,0}}}
+
+Initially, we were teaching the students to use the =aggregate=
+function to evaluate the mean and other statistics per timepoint:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+w.summaries <- aggregate(glucagonAUC~time, data=gastricbypassL,
+                         FUN = function(iAUC){
+  c("observed" = sum(!is.na(iAUC)),
+    "missing" = sum(is.na(iAUC)),
+    "mean" = mean(iAUC, na.rm = TRUE),
+    "sd" = sd(iAUC, na.rm = TRUE),
+    "min" = min(iAUC, na.rm = TRUE),
+    "median" = median(iAUC, na.rm = TRUE),
+    "max" = max(iAUC, na.rm = TRUE))},
+  na.action=na.pass)
+                               
+w.summaries <- data.frame(w.summaries[1],w.summaries[[2]])
+print(w.summaries, digits=4)
+
+#+END_SRC
+
+#+RESULTS:
+:            time observed missing  mean   sd  min median   max
+: 1 3monthsBefore       20       0  7860 3781 2500   6786 16798
+: 2   1weekBefore       19       1  7149 3289 2376   6202 16300
+: 3    1weekAfter       19       1 16954 6153 7906  16269 29980
+: 4  3monthsAfter       20       0 11063 4479 4551  10911 23246
+
+While this is a very flexible approach, it was difficult for medical
+students to understand. Instead we now use the =summarize= function
+from LMMstar which has well suited default output for the applications
+we have in mind in the course:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summarize(glucagonAUC ~ time|id, data = gastricbypassL, na.rm = TRUE)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+           time observed missing      mean       sd    min        q1  median       q3      max
+1 3monthsBefore       20       0  7860.443 3781.459 2500.5  5185.875  6786.0 10337.51 16797.75
+2   1weekBefore       19       1  7148.589 3288.933 2376.0  5113.500  6202.5  8082.75 16300.50
+3    1weekAfter       19       1 16953.671 6152.867 7906.5 12466.500 16269.0 20271.00 29979.75
+4  3monthsAfter       20       0 11063.025 4479.478 4551.0  7914.225 10911.0 12340.50 23245.50
+
+ Pearson's correlation: 
+              3monthsBefore 1weekBefore  1weekAfter 3monthsAfter
+3monthsBefore     1.0000000  0.83158346  0.13902263   -0.2496747
+1weekBefore       0.8315835  1.00000000 -0.09418889   -0.2232003
+1weekAfter        0.1390226 -0.09418889  1.00000000    0.5988570
+3monthsAfter     -0.2496747 -0.22320033  0.59885696    1.0000000
+#+end_example
+
+Note that key arguments, such as how to handle missing data are kept
+to stress their importance to the students. One functionality has been
+added to obtain the correlation matrix by explaining in the formula
+interface how the data are grouped. This enable to have a single
+statement outputing all the standard descriptive statistics. The
+student can now focus on the interpretation of these statistics and
+their implication in term of statistical modeling.
+
+** Fitting linear mixed models
+
+Another difficulty was to estimate linear mixed models with
+unstructured covariance patterns. We advocate their use during the
+course but, at the time, the \Rlogo syntax was complicated:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+fit.main <- gls(glucagonAUC ~ time,
+                data = gastricbypassL,
+                correlation = corSymm(form=~as.numeric(time)|id),
+                weights = varIdent(form=~1|time),
+                na.action=  na.exclude,
+                control = glsControl(opt="optim"))
+logLik(fit.main)
+#+END_SRC
+
+#+RESULTS:
+: 'log Lik.' -712.161 (df=14)
+
+We developped our own mixed model implementation, with a simpler
+syntax that stresses the choice of the covariance structure (one of
+the learning point of the course):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+fit.main2 <- lmm(glucagonAUC ~ time,
+                data = gastricbypassL,
+                repetition = ~time|id,
+                structure = "UN")
+logLik(fit.main2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -712.161
+
+\clearpage 
+
+* Pedagogy project (without appendix)
+:PROPERTIES:
+:CUSTOM_ID: appendix-seminar
+:END:
+
+#+BEGIN_EXPORT latex
+
+\vspace{-1cm}
+
+\begin{figure}[!h]
+\centering
+\tcbox[colback=blue!5,boxsep=5mm,boxrule=1mm]{\includegraphics[page=1, scale=.75, clip, trim=20mm 27mm 20mm 5mm]{figures/finalProject.pdf}}
+\end{figure}
+
+\clearpage
+
+\foreach \mypage in {2,...,5}{
+
+\begin{figure}[!h]
+\centering
+\tcbox[colback=blue!5,boxsep=5mm,boxrule=1mm]{\includegraphics[page=\mypage, scale=.75, clip, trim=20mm 27mm 20mm 5mm]{figures/finalProject.pdf}}
+\end{figure}
+
+}
+% \includepdf[pages=-,clip, trim=20mm 27mm 20mm 5mm,
+%     pages=-,
+%     frame,
+%     scale=.7,
+%     pagecommand={}]{figures/finalProject.pdf}
+#+END_EXPORT
+
+* Example of teaching material
+
+** Course on Epidemiology (illustration)
+:PROPERTIES:
+:CUSTOM_ID: appendix-illustration 
+:END:
+
+Slide explaining how to evaluate the risk of a disease based on the
+incidence rate. The intuition behind the mathematical formula is
+illustrated via a series of graphs.
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0}, page = 6, width=1\textwidth]{./figures/L5-confounding.pdf}
+\label{fig:lmm-slide-wiw}
+\end{figure}
+#+END_EXPORT
+
+\clearpage
+
+** Course on Epidemiology (intuition)
+:PROPERTIES:
+:CUSTOM_ID: appendix-intuition 
+:END:
+
+Slide illustrating the implications of the independent censoring
+assumption used by the Kaplan Meier estimator. This estimator can be
+re-formulated as a simple weighted average, where the weight accounts
+for the lost to follow-up, and help expliciting implications of the
+Kaplan Meier approach.
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0}, page = 24, width=1\textwidth]{./figures/L13-registry.pdf}
+\label{fig:lmm-slide-wiw}
+\end{figure}
+#+END_EXPORT
+
+\clearpage
+
+** Course on repeated measurement (exercise)
+:PROPERTIES:
+:CUSTOM_ID: appendix-quizz
+:END:
+
+Exercise slide where the students are asked to associate a study
+design (symbolized by a graph) with a correlation structure. This
+tests the ILO: "Describing a correlation structure via a graph"
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0}, page = 21, width=1\textwidth]{./figures/repMes-randomEffects-lecture.pdf}
+\label{fig:lmm-slide-wiw}
+\end{figure}
+#+END_EXPORT
+
+\clearpage
+
+** Course on Epidemiology (paradox)
+:PROPERTIES:
+:CUSTOM_ID: appendix-paradox
+:END:
+
+Example of statistical paradox that should make the student reflect
+upon:
+- what do we actually mean by /beneficial/ or /having an effect/?
+- when one should or should not adjust an analysis for covariates?
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0}, page = 20, width=1\textwidth]{./figures/L5-confounding.pdf}
+\label{fig:lmm-slide-wiw}
+\end{figure}
+#+END_EXPORT
+
+After a short reflection time, I will ask the opinion of the
+students. I will not provide the answer but stress that paradoxes
+challenge our intuition and a more objective approach, counterfactuals
+and directed acyclic graphs (DAGs), are needed to resolve the paradox
+in a convicing way. When explaining counterfactuals and DAGs I would
+relate them (as much as possible) to the paradox and the intuition of
+the students.
+
+
 
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
 #+LaTeX_CLASS: org-article
 #+LaTeX_CLASS_OPTIONS: [12pt]
-#+OPTIONS:   title:t author:nil date:nil toc:nil todo:nil
+#+OPTIONS:   title:t author:t date:nil toc:nil todo:nil
 #+OPTIONS:   H:3 num:t 
 #+OPTIONS:   TeX:t LaTeX:t
 #+LATEX_HEADER: %
@@ -104,6 +579,9 @@ Didactic triangle
 #+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
 #+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
 
+# ### display of my name
+#+LaTeX_HEADER: \newcommand{\myname}[1]{Ozenne, B.}
+
 ** Code
 # Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
 # :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
@@ -115,11 +593,17 @@ Didactic triangle
 # Code display:
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
-# ## change font size input
+# ## change font size input (global change)
+# ## doc: https://ctan.math.illinois.edu/macros/latex/contrib/listings/listings.pdf
+# #+LATEX_HEADER: \newskip kipamount    kipamount =6pt plus 0pt minus 6pt
+# #+LATEX_HEADER: \lstdefinestyle{code-tiny}{basicstyle=\ttfamily\tiny, aboveskip =  kipamount, belowskip =  kipamount}
+# #+LATEX_HEADER: \lstset{style=code-tiny}
+# ## change font size input (local change, put just before BEGIN_SRC)
 # ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
-# ## change font size output
+# ## change font size output (global change)
 # ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
 ** Display 
+#+LATEX_HEADER: \RequirePackage{titlesec} % rename sections
 #+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
 #+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
 #+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
@@ -152,6 +636,11 @@ Didactic triangle
 #+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
 #+LATEX_HEADER: \RequirePackage{capt-of} % 
 #+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+
+#+LATEX_HEADER: \RequirePackage{pdfpages} % newlines in graphics
+
+#+LATEX_HEADER: \usepackage[most]{tcolorbox}
+
 ** List
 #+LATEX_HEADER: \RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
 ** Color
