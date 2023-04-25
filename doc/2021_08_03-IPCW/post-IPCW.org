@@ -717,15 +717,15 @@ simTrial <- function(n, dmu, dpC){
                        argsBin = NULL, argsCont = NULL, 
                        argsTTE = list(scale.T = 1+dmu[1],
                                       scale.C = 1,
-                                      scale.Censoring.T = 1+dpC[1],
-                                      scale.Censoring.C = 1),
+                                      scale.censoring.T = 1+dpC[1],
+                                      scale.censoring.C = 1),
                        latent = TRUE)
   dt2  <- simBuyseTest(n.T = n, n.C = n, 
                        argsBin = NULL, argsCont = NULL, 
                        argsTTE = list(scale.T = 2+dmu[2],
                                       scale.C = 2,
-                                      scale.Censoring.T = 2+dpC[2],
-                                      scale.Censoring.C = 2),
+                                      scale.censoring.T = 2+dpC[2],
+                                      scale.censoring.C = 2),
                        latent = TRUE)
   ## gather into dataset
   dt <- rbind(

@@ -548,17 +548,21 @@ upon:
 \end{figure}
 #+END_EXPORT
 
-After a short reflection time, I will ask the opinion of the
-students. I will not provide the answer but stress that paradoxes
-challenge our intuition and a more objective approach, counterfactuals
-and directed acyclic graphs (DAGs), are needed to resolve the paradox
-in a convicing way. When explaining counterfactuals and DAGs I would
-relate them (as much as possible) to the paradox and the intuition of
-the students.
+# * Feedback from students                                             :export:
 
+# "First of all, thank you for an exciting course. It really helped me in learning the different epidemiological methods and I believe I have a better understanding now." (Epi 2023)
 
+# "Here is my evaluation file. Thanks for a great course!"
 
-* CONFIG :noexport:
+# "Thank you for a great course."
+
+# "Thanks for a great course. It has been very enlightening and inspiring. Towards the end of the course I did appreciate more the statistical focus (as I became familiar with them) but if I have one comment it is to maybe include even more examples of epidemiological articles from the real world displaying some of the concepts (other than the Guinea-Bissau study)
+# I liked the emphasis on the intuitive study process vs using a “random” arsenal of statistical methods: defining the population, exposure outcomes etc and then deciding on the statistics in relation to the research question. It is obvious but I think non-statisticians forget this perspective sometimes.
+# All in all I would give it a 5/5 though!"
+
+  
+
+* CONFIG  :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
 #+LANGUAGE:  en
 #+LaTeX_CLASS: org-article

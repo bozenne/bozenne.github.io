@@ -53,7 +53,7 @@ study**: <br> You should send me an email (<brice.ozenne@nru.dk>, please
 put **Consultation** in the subject line). The email should include:
   + a name for your project
   + a short description of your study and your questions. By short I
-    mean it can be just two sentences.    
+    mean it can be just a few sentences.    
   + [optional] additional documents with a sentence explaining at
 which part of the document I should look at (especially for articles).
 e.g. _a display of the design of the study_ <br> or _the article of a
@@ -155,7 +155,18 @@ method).
     you got when you wrote the article (you need to ask specifically
     for this).
   + answering the comments of the reviewers that are related to the
-    statistical analysis.  <br> <br>
+    statistical analysis.
+
+  This typically involves:
+  - starting from a research question, e.g. is treatment A better than treatment B?
+  - defining parameter(s) of interest that can be used to answer the research question,
+  e.g. difference in mean outcome under treatment A vs. under treatment B. Often several parameter(s) of interest are possible,
+  e.g. median outcome or frequency of a higher outcome under A vs. B, and which one to choose should mainly depend on the clinical or biological relevance.
+  - identifying complications like confounding, missing values, ...
+  - deciding on a model to estimate the parameters of interest despite the complications, e.g. a linear model adjusted for age, and expliciting the assumptions, e.g. linear age effect, no other confounder, ...
+  - deciding on an appropriate testing procedure, e.g. Wald test, possible adjustment for multiple comparisons.
+  The definition of parameter of the interest is critical: it is not possible to evaluate the quality of a statistical analysis if we cannot explicit what we want to estimate. 
+  <br> <br>
 
 - **Technical questions**: <br> I will try my best to indicate the
   appropriate software/package/function/statistical tool/criteria to
@@ -166,6 +177,8 @@ method).
   no missing values, …). In particular, I will (try to) not assess
   whether what you have been doing seems reasonable to me and I am not
   responsible for the validity of the statistical analysis.
+
+
 
 ## What I will expect from you
 
