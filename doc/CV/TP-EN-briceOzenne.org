@@ -1,57 +1,82 @@
 #+TITLE: Teaching Portfolio
 #+Author: Brice Ozenne
 
-* Teaching responsabilities
+* Teaching responsibilities
 
-*Current teaching activity* at the University of Copenhagen (KU) for
-Phd students in medical sciences:
-- [[https://absalon.ku.dk/courses/47665][Statistical analysis of repeated measurements]]: \newline It is a 6
-  days, 5 ECTS, course taught in english with 40-50 students. Julie
+*Current teaching activity* at the University of Copenhagen (KU) 
+- [[https://absalon.ku.dk/courses/47665][Statistical analysis of repeated measurements]]: It is a 6
+  days, 5 ECTS, course taught in English with 40-50 students. Julie
   Forman is the course director. \newline I am doing 3 lectures of 3
   hours and 6 exercise classes of 3 hours. I have been doing the
-  practical in this course since 2015 and started to lecture two years
-  ago. 
-- [[https://absalon.ku.dk/courses/58764][Epidemiological methods in medical research]]: \newline It is a 10
-  days, 7 ECTS, course taught in english with 20-30 students. I am the
+  practicals since 2015 and started to lecture two years ago.
+- [[https://absalon.ku.dk/courses/58764][Epidemiological methods in medical research]]: It is a 10
+  days, 7 ECTS, course taught in English with 20-30 students. I am the
   course director. \newline I am doing 3.5 lectures of 3 hours, 7
   exercise classes of 3 hours, and 3 hours of oral assessment (student
-  presentation). I have run the course 3 times (since 2021).
-- [[http://paulblanche.com/files/BasicStat2023.html][Basic statistics]]: \newline It is a 10 days, 8 ECTS, course taught in
-  english with 30 students. Paul Blanche is the course
+  presentation). I have run the course 3 times.
+- [[http://paulblanche.com/files/BasicStat2023.html][Basic statistics]]: It is a 10 days, 9 ECTS, course taught in
+  English with 30 students. Paul Blanche is the course
   director. \newline I am doing 1 lectures of 3 hours and 1 exercise
   classe of 3 hours and 6 hours of oral assessment (student
-  presentation). I have taught in this course 2 times (since 2021).
+  presentation). I have taught in this course twice.
 
-*Past teaching activity*:
+All courses are for Phd students in medical sciences. This lead to a
+total of 22.5 hours lecture, 42 hours practicals, 9 hours oral
+assessment, and 1 course direction (338 hours when including
+preparation).
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+lecture <- 3*(3+3.5+1)
+practical <- 3*(6+7+1)
+assessment <- 3*(1+2)
+c(lecture = lecture, practical = practical, assessment = assessment,
+  total = 6*lecture + 3*practical + 3*assessment + 50)
+#+END_SRC
+
+#+RESULTS:
+:    lecture  practical assessment      total 
+:       22.5       42.0        9.0      338.0
+
+\bigskip
+
+\noindent *Past teaching activity*:
 - in 2016 I have taught a 2 hours lecture to statistics students
   (Master level) for the course [[https://absalon.instructure.com/courses/2385][Structural Equation Models]] at KU.
-- between 2013 and 2015, I was a teaching assistant at the [[https://mastersantepublique.univ-lyon1.fr/icap_website/299/5382][University
-  of Lyon 1]] (France) for biostatistics students (Master level). I was
-  doing 18h of practical in a survival analysis course and 6 hours of
-  practical in a course about Bayesian statistics.
+- between 2013 and 2015, I was a teaching assistant at the
+  [[https://mastersantepublique.univ-lyon1.fr/icap_website/299/5382][University
+  of Lyon 1]] (France) for biostatistics students (Master level). I
+  was doing 18h of practical in a survival analysis course and 6 hours
+  of practical in a course about Bayesian statistics.
+
+\medskip
+
+\noindent *Workshops*: With Julie Forman, we have made a [[https://github.com/bozenne/bozenne.github.io/tree/master/doc/Teaching/2022-Workshop-LMMstar][workshop on
+linear mixed models]] (LMMs) for the method week at Karolinska
+Institutet. For the Brain drug project, I have also created a [[https://github.com/bozenne/bozenne.github.io/tree/master/doc/Teaching/2023-Workshop-Epi][workshop
+on time-to-event analysis for registry data]].
 
 #+LATEX: \newgeometry{top=3cm}
 
 * Supervision
 
 I am/have been an official supervisor or co-supervisor of:
-- Tanne Ebert Jørgensen and Johanne Triantafyllou Lorenzen (Master
+- *Tanne Ebert Jørgensen* and *Johanne Triantafyllou Lorenzen* (Master
   students in epidemiology, 2023) about the childcare and symptoms of
-  ADHD in the danish population. The main supervisor is Anne-Marie
+  ADHD in the Danish population. The main supervisor is Anne-Marie
   Nybo Andersen from the section of epidemiology.
-- Simon Christoffer Ziersen (Ph.D in biostatistics, from 2021) about
+- *Simon Christoffer Ziersen* (Ph.D in biostatistics, from 2021) about
   target trial emulation in observational studies of epilepsy and
   depression. The main supervisors are Esben Budtz-Jørgensen and
   Thomas Alexander Gerds from the section of biostatistics.
-- Ramlah Sara Rehman (Bachelor in data science, 2021) about clustering
+- *Ramlah Sara Rehman* (Bachelor in data science, 2021) about clustering
   trajectories of the cortisol concentration, comparing several
   clustering algorithms. This was a co-supervision with Melanie
   Ganz-Benjaminsen from the department of computer science.
-- Alice Brouquet-Laglaire (Master 2 in biostatistics, 2019) about the
+- *Alice Brouquet-Laglaire* (Master 2 in biostatistics, 2019) about the
   comparison of inference methods for generalized pairwise
   comparisons. The main supervisor was Julien Péron from the
   University Lyon 1 (France).
-- Ceren Tozlu (Master 2 in biostatistics, 2014) about comparison of
+- *Ceren Tozlu* (Master 2 in biostatistics, 2014) about comparison of
   classification methods for tissue outcome after ischemic stroke. The
   main supervisor was Delphine Maucort-Boulch from the University Lyon
   1 (France) This master project has lead to a publication
@@ -68,12 +93,12 @@ research question(s), advising and explain statistic concepts and
 methods. \newline Via these consultations, I have informally
 supervised many Master and Ph.D. students. For instance Kristin
 Köhler-Forsberg (medical Ph.D., from 2016 until 2020) who I helped to
-use latent variable models to anlayse PET data
+use latent variable models to analyse PET data
 citep:kohler2023serotonin,kohler2022concurrent, Camilla Borgsted
 (Ph.D. in neuroscience from 2018 until 2022) who I helped to use
-linear mixed model to analyse fMRI data citep:borgsted2018amygdala, or
+linear mixed model to analyze fMRI data citep:borgsted2018amygdala, or
 Søren Vinther Larsen (medical Ph.D., from 2020) who I helped with
-mulitple comparison adjustment, handling of detection limit, survival
+multiple comparison adjustment, handling of detection limit, survival
 analysis and study design citep:larsen2020oral,larsen2022impact.
 
 
@@ -83,19 +108,19 @@ analysis and study design citep:larsen2020oral,larsen2022impact.
 "Statistical analysis of repeated measurements" was the difficulty to
 work with repeated measurements in \Rlogo. Student felts it required
 substantial programming expertise and data management was very time
-consuming and were sometimes discuraged. It is true that the code was
+consuming and were sometimes discouraged. It is true that the code was
 sometimes complex, relying on different software packages. Software
-limitations also meant that ideas developped during the lecture could
+limitations also meant that ideas developed during the lecture could
 not be examplified in the practicals. \newline During the last three
-years I have developped, in collaboration with Julie Forman, a
-software facilating student interactions with repeated measurements,
+years I have developed, in collaboration with Julie Forman, a
+software facilitating student interactions with repeated measurements,
 and in particular the use of linear mixed models. Having a dedicated
 software solution to compute relevant summary statistics (mean,
 correlation, number of missing data) and fit statistical models with
 default option suited to the course has greatly facilitated the
 programming aspect (see appendix [[#appendix-software]] for two examples),
 freeing some time to discuss modeling and interpretation. Removing the
-feasibility issue also leads to a better alignement between what is
+feasibility issue also leads to a better alignment between what is
 being taught during the lectures and what is being done during the
 exercises. \newline This is still an on-going project since models for
 binary and count data are not yet included in the software. We would
@@ -109,7 +134,7 @@ no student assessment (other than attendance). I believe that having
 some formative assessment is useful to the student to get feedback on
 knowledge, skills, or competences that has been acquired. Instead of
 an exam I favor a form authentic assessment where students are asked
-to present one of their research project in relation to concepts seens
+to present one of their research project in relation to concepts seen
 during the course. The audience (other students and the teacher) then
 engage in a conversation with the student about working assumptions,
 limitations, and perspectives. Students usually really like this
@@ -149,8 +174,8 @@ evaluated in appendix [[#appendix-seminar]].
 # Your goals for students
 
 Teaching is for me sharing my entousiasm and my knowledge about a
-subject, hoping to stimulate the appropriation of statistical concepts
-and the curiosity of the students.
+subject, hoping to facilitate the appropriation of statistical
+concepts and stimulate the curiosity of the students.
 
 \bigskip
 
@@ -161,7 +186,7 @@ representation. The level of formalism used when teaching will
 dependent on the audience (medical vs. mathematic students) and on the
 targeted level of understanding. This being said, mathematics are here
 to explicit an idea, not to obscure it. So I also believe that
-learning biostatistics involve developping its intuition, for instance
+learning biostatistics involve developing one's intuition, for instance
 to understand the practical implications of a statistical hypothesis
 (e.g. see appendix [[#appendix-intuition]]). Being lucid and explicit
 about hypotheses withstanding a scientific investigation is
@@ -170,9 +195,9 @@ suprisingly difficult to master but a key part of biostatistics.
 \bigskip
 
 After several years of teaching, I have come to realize that a clear,
-rigorous but intuitve explaination of statistical concepts requires
-quite a substancial expertise on the topic. Examples or experience
-from research project are generally approciated by students. I
+rigorous but intuitive explanation of statistical concepts requires
+quite a substantial expertise on the topic. Examples or experience
+from research project are generally appreciated by students. I
 therefore try, when possible and relevant, to relate my teaching
 activity to my research activity. The LMMstar package is an example of
 interconnexion between the two, initially motivated by the teaching
@@ -181,12 +206,12 @@ but made possible by knowledge acquired during research projects.
 \bigskip
 
 Finally I try to develop a learning environment open to discussion and
-where the students feel confortable. Having interactions with students
-during lectures and practicals to assess their understanding is not
-only critical to adjust my teaching but also motivating. Using humor,
-being supportive, taking the time to discuss with the students, and
-showing vulnerability (e.g. mentionning mistakes I have made in the
-past) seems to help having this safe learning environment.
+where the students feel comfortable. Having interactions with students
+during lectures and practicals to assess their understanding is
+critical to adjust my teaching and also motivating. Using humor, being
+supportive, taking the time to discuss with the students, and showing
+vulnerability (e.g. mentioning mistakes I have made in the past) seems
+to help having this safe learning environment.
 
  
 #  Challenging:
@@ -284,19 +309,19 @@ teaching technics, often based on group work and use of online-tools
   teacher is here to facilitate the interaction between the student
   and a subject. Indeed most students learn by doing and by
   appropriation. I am in a process to *reduce the curriculum seen
-  during lecture or practicals and rely self study* for technical
-  skills. This leave more time during the class for experimentation
-  and discussion. The self study is supported by the lecture notes,
-  exercise solutions, or scientific articles. \newline
+  during lecture or practicals* and *rely more onself study for
+  technical skills*. This leave more time during the class for
+  experimentation and discussion. The self study is supported by the
+  lecture notes, exercise solutions, or scientific articles. \newline
   As an example, I have greatly reduced the attention given to
   programming in the Epidemiology course (e.g. the code and software
-  output are given in most of the exercices). Learning programming is
+  output are given in most of the exercises). Learning programming is
   left to self study even though I happily answer any question and
   have a dedicated section in each of my lecture notes.
 
 - it provided me tools to *create a safe learning environment*. For
   instance when a student answer a question, I would (try to) not
-  immediatly qualify it (correct or incorrect answer). Instead ask the
+  immediately qualify it (correct or incorrect answer). Instead ask the
   opinion of other students or ask a follow-up question to make the
   student reflect/orient them in the right direction.
 
@@ -304,9 +329,9 @@ teaching technics, often based on group work and use of online-tools
   inductive approach, e.g. based on a motivating example where there
   is a need for statistical tools. I generally use classical
   statistical paradoxes (see appendix [[#appendix-paradox]] for an
-  example), as find a simple but realistic example for a specific ILO
-  is challenging - often realistic examples are complex and would cover
-  several ILOs. 
+  example). Finding a simple but realistic example for a specific ILO
+  is nevertheless a challending task - often realistic examples are
+  complex and would cover several ILOs.
 
 Discussions and teaching material from colleagues have been a great
 source of inspiration. They have also contributed to my evolution as a
@@ -423,7 +448,7 @@ logLik(fit.main)
 #+RESULTS:
 : 'log Lik.' -712.161 (df=14)
 
-We developped our own mixed model implementation, with a simpler
+We developed our own mixed model implementation, with a simpler
 syntax that stresses the choice of the covariance structure (one of
 the learning point of the course):
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -498,9 +523,9 @@ illustrated via a series of graphs.
 
 Slide illustrating the implications of the independent censoring
 assumption used by the Kaplan Meier estimator. This estimator can be
-re-formulated as a simple weighted average, where the weight accounts
-for the lost to follow-up, and help expliciting implications of the
-Kaplan Meier approach.
+re-formulated as a simple weighted average (Efron's redistribution to-the-right algorithm), where the weight accounts
+for the lost to follow-up, and help making explicit the implications
+of the Kaplan Meier approach.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]

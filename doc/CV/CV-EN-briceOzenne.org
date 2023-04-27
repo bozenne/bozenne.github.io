@@ -159,6 +159,10 @@ Co-supervision of students:
 
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l@{ }l}
+2023 &:& Tanne Ebert Jørgensen and Johanne Triantafyllou Lorenzen (Master in epidemiology)\\
+\multicolumn{3}{l}{Childcare and symptoms of ADHD in the Danish population.} \\ [3mm]
+2021-2024 &:& Simon Christoffer Ziersen (Ph.D in biostatistics)\\
+\multicolumn{3}{l}{Target trial emulation in observational studies of epilepsy and depression.} \\ [3mm]
 2021 &:& Ramlah Sara Rehman (Bachelor in data science)\\
 \multicolumn{3}{l}{An Analysis of Clustering Algorithms: Clustering Trajectories of the Cortisol Concentration.} \\ [3mm]
 2019 &:& Alice Brouquet-Laglaire (Master 2 in biostatistics)\\
