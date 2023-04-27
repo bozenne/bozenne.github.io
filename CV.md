@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Curriculum Vitae (last update: 19 February 2023)
+title: Curriculum Vitae
 permalink: /CV/
 ---
 
