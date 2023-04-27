@@ -65,9 +65,9 @@ I am/have been an official supervisor or co-supervisor of:
   ADHD in the Danish population. The main supervisor is Anne-Marie
   Nybo Andersen from the section of epidemiology.
 - *Simon Christoffer Ziersen* (Ph.D in biostatistics, from 2021) about
-  target trial emulation in observational studies of epilepsy and
-  depression. The main supervisors are Esben Budtz-Jørgensen and
-  Thomas Alexander Gerds from the section of biostatistics.
+  causal inference in time to event analysis with competing risks. The
+  main supervisors are Esben Budtz-Jørgensen and Thomas Alexander
+  Gerds from the section of biostatistics.
 - *Ramlah Sara Rehman* (Bachelor in data science, 2021) about clustering
   trajectories of the cortisol concentration, comparing several
   clustering algorithms. This was a co-supervision with Melanie
@@ -140,8 +140,8 @@ engage in a conversation with the student about working assumptions,
 limitations, and perspectives. Students usually really like this
 activity as it links the content of the course to their
 research. \newline To engage ealry the students and ensure that the
-activity is well understood, I recently introduced a peer-feedback
-session mid-way through the course. Students send me the output of
+activity is well understood, I recently introduced a /peer-feedback
+session/ mid-way through the course. Students send me the output of
 this peer-feedback session on which I give feedback. See appendix
 [[#appendix-seminar]] for details and discussion about this
 activity. \newline The quality and learning achieved during session
@@ -309,7 +309,7 @@ teaching technics, often based on group work and use of online-tools
   teacher is here to facilitate the interaction between the student
   and a subject. Indeed most students learn by doing and by
   appropriation. I am in a process to *reduce the curriculum seen
-  during lecture or practicals* and *rely more onself study for
+  during lecture or practicals* and *rely more on self study for
   technical skills*. This leave more time during the class for
   experimentation and discussion. The self study is supported by the
   lecture notes, exercise solutions, or scientific articles. \newline
@@ -327,15 +327,15 @@ teaching technics, often based on group work and use of online-tools
 
 - it stressed the importance of *engaging the student* using an
   inductive approach, e.g. based on a motivating example where there
-  is a need for statistical tools. I generally use classical
-  statistical paradoxes (see appendix [[#appendix-paradox]] for an
-  example). Finding a simple but realistic example for a specific ILO
-  is nevertheless a challending task - often realistic examples are
-  complex and would cover several ILOs.
+  is a need for statistical tools. Finding a simple but realistic
+  example for a specific ILO is a suprisingly challending task - often
+  realistic examples are complex and would cover several ILOs. I
+  generally use classical statistical paradoxes (see appendix
+  [[#appendix-paradox]] for an example).
 
 Discussions and teaching material from colleagues have been a great
 source of inspiration. They have also contributed to my evolution as a
-teacher but in a more subtle and continuous way that will not explicit
+teacher but in a more subtle and continuous way that I do not explicit
 here.
 
   
