@@ -34,3 +34,35 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
 - Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
+
+## Learning R
+
+Basics:
+- [Introduction tutorial](http://r.sund.ku.dk/) made by colleague from KU and covering installation, data management, and basic data visualisation
+- [Basic statistic course](http://paulblanche.com/files/BasicStat2020.html) made by a colleague from KU covering basic notions in statistics and corresponding R code
+- [basic R cheat sheed](https://posit.co/wp-content/uploads/2022/10/base-r.pdf) or [long](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf)
+- [R studio  cheat sheed](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rstudio-ide.pdf)
+
+Efficient data management using *data.table*:
+- tutorial:  [introduction](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html)
+- tutorial:  [update data table objects](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html)
+- tutorial:  [wide and long format](https://rdatatable.gitlab.io/data.table/articles/datatable-reshape.html)
+- [presentation](https://raw.githubusercontent.com/wiki/Rdatatable/data.table/talks/MontReal2018_Arun.pdf)
+- [cheat sheet](https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf)
+
+Efficient generation of graphical displays using *ggplot2*:
+- [tutorial](http://r4ds.had.co.nz/data-visualisation.html)
+- [cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+
+Specialized or advanced topics:
+- [R markdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html) and [R markdown cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) for generating documents mixing text, R code, R outputs, and graphical display generated in R.
+- [Linear models, diagnostics, and remedies](https://bozenne.github.io/doc/2020-09-17-linearModel/post-linearModel.pdf)
+- [Multiple imputation workshop](https://amices.org/Winnipeg/) and ["homemade" summary](https://bozenne.github.io/doc/2019-10-22-multipleImputation/post-multipleImputation.pdf) for using the mice package.
+- [Analyzing repeated measurements](http://publicifsv.sund.ku.dk/~jufo/courses/rm2019/gastricbypass_tutorial_R.pdf)
+- [formula in R (section 11.1)](https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf)
+- [If and do](https://adv-r.hadley.nz/control-flow.html)
+- [Functions](https://adv-r.hadley.nz/functions.html)
+- [Simulating data](https://publicifsv.sund.ku.dk/~tag/download/tagteam-lava-presentation.pdf)
+
+If you are using R and you think you’re in hell, this is for you:
+- [pdf](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf)
