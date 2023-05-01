@@ -42,6 +42,3 @@ power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
 - about [multiple
 comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
 - about [pooling estimates](https://bozenne.github.io/doc/Talks/2022-XNRU-pooling.pdf) in 2022.
-
-and for the Brain drug project:
-- about [handling time-varying exposure in registry data analysis](https://bozenne.github.io/doc/Talks/2022-ECF-immortalBias.pdf) in 2022.
