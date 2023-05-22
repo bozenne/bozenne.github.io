@@ -2934,7 +2934,6 @@ summary(e.pois2)$coef
 : interval.f2:trt -0.1008188  0.2787496  -0.3616824 7.175894e-01
 : interval.f3:trt -0.7261015  0.4174235  -1.7394837 8.194972e-02
 
-
 ** Twin study
 *** Data
 
@@ -3523,28 +3522,65 @@ plot(e.KM)
 [[file:./figures/fig-delayedTreatmentEffect.pdf]]
 
 ** Tune optimization parameters
+** Interaction in lava (mean coefficients)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
 set.seed(10)
-dd <- sim(lvm(Y~X1+X2+X3), 100)
-ee <- estimate(lvm(Y~X1+X2+X3+eta), data = dd, control = list(trace = 1, iter.max = 200))
+data(mtcars, package = "datasets")
+mtcars$vs <- as.factor(mtcars$vs)
+
+e.lmI <- lm(mpg ~ vs*drat, data = mtcars)
+coef(e.lmI)
+
+e.lmI.bis <- lm(mpg ~ vs + drat:vs, data = mtcars)
+coef(e.lmI.bis)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-  0:     260.69531: -0.00392152  0.00000  0.00000  0.00000  0.00000  1.89517  1.19723 0.900000
-  1:     232.00124: -0.0200212 -0.0305115 0.473562 0.497905 0.592152  1.80796  1.17166 0.808180
-  2:     202.02739: -0.0397653 -0.0662080 0.941194 0.998447  1.03587  1.47069  1.05604 0.430261
-  3:     189.85429: -0.0476622 -0.0778219 0.942488 0.999840  1.03679  1.27746 0.902950 0.0991273
-  4:     188.92755: -0.0488980 -0.0794005 0.942488 0.999840  1.03679  1.26451 0.851417 0.0150308
-  5:     188.92730: -0.0489067 -0.0794116 0.942488 0.999840  1.03679  1.26448 0.850633 0.0137765
-  6:     188.92730: -0.0489067 -0.0794116 0.942488 0.999840  1.03679  1.26448 0.850633 0.0137765
-Warning messages:
-1: In estimate.lvm(lvm(Y ~ X1 + X2 + X3 + eta), data = dd, control = list(trace = 1)) :
-  Lack of convergence. Increase number of iteration or change starting values.
-2: In sqrt(diag(asVar)) : NaNs produced
-#+end_example
+: (Intercept)         vs1        drat    vs1:drat 
+:  -0.2127763   1.6821904   4.9611853   1.0211986
+: (Intercept)         vs1    vs0:drat    vs1:drat 
+:  -0.2127763   1.6821904   4.9611853   5.9823839
+
+With lava using a single latent variable model (LVM):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mtcars$vs0drat <- (mtcars$vs=="0")*mtcars$drat
+mtcars$vs1drat <- (mtcars$vs=="1")*mtcars$drat
+
+e.lvm <- estimate(lvm(mpg ~ vs + vs0drat+ vs1drat), data = mtcars)
+coef(e.lvm)
+estimate(e.lvm, function(p){
+  p["mpg~vs1drat"] - p["mpg~vs0drat"]
+})
+#+END_SRC
+
+#+RESULTS:
+:         mpg mpg~vs0drat mpg~vs1drat     mpg~vs1    mpg~~mpg 
+:  -0.2127763   4.9611853   5.9823839   1.6821904  13.0157822
+:             Estimate Std.Err  2.5% 97.5% P-value
+: mpg~vs1drat    1.021   2.169 -3.23 5.272  0.6378
+
+An alternative implementation uses two LVMs, one per group and where
+the variance coefficients are constrain to be the same between groups:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e2.lvm <- estimate(list(lvm(mpg[mu0:sigma] ~ beta0*drat),
+                        lvm(mpg[mu1:sigma] ~ beta1*drat)),
+                   data = split(mtcars,mtcars$vs))
+coef(e2.lvm)
+#+END_SRC
+
+#+RESULTS:
+:      mpg@1      mpg@2 mpg~drat@1 mpg~~mpg@1 mpg~drat@2 
+: -0.2127763  1.4694141  4.9611853 13.0157822  5.9823839
+
+Note that =stats::lm= and =lava::estimate= should return the same
+point estimate but will not quantify the uncertainty similarly. The
+standard error =stats::lm= is more precise as it uses restricted
+maximum likelihood (REML) instead of maximum likelihood
+(ML). =stats::lm= also uses a Student's t-distribution instead of a
+Gaussian distribution which provides better type 1 error control in
+finite samples. 
 
 ** Output correlation between two endogenous variables
 Simulate some data:

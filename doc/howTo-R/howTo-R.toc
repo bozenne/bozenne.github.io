@@ -1,126 +1,131 @@
-\contentsline {section}{\numberline {1}Packages}{5}{section.1}%
-\contentsline {section}{\numberline {2}Import/export data}{6}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Set the working directory}{6}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}See which files are present in the current directory}{7}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Check that the file we want to import exists:}{8}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Display a file before importing it}{9}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Import a data from a file (.txt, .csv)}{10}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)}{11}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Import data from a Github repository}{12}{subsection.2.7}%
-\contentsline {subsection}{\numberline {2.8}Export data}{13}{subsection.2.8}%
-\contentsline {subsection}{\numberline {2.9}Export table}{14}{subsection.2.9}%
-\contentsline {subsection}{\numberline {2.10}Export graphs}{15}{subsection.2.10}%
-\contentsline {section}{\numberline {3}Data management}{16}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Categorize age into groups}{16}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Convert list to array}{17}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Apply function for each element of a list}{18}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Data management using the \emph {data.table} package}{19}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Introduction}{19}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Display a dataset}{21}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Extract row(s), i.e. all the variables relative to one or several observations}{22}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Extract row(s) using row numbers}{22}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Extract row(s) according to conditions}{22}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}Extract column(s), i.e. all the observations relative to one or several variables}{24}{subsection.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.1}Extract column(s) using column numbers}{24}{subsubsection.4.4.1}%
-\contentsline {subsubsection}{\numberline {4.4.2}Extract column(s) using column names}{25}{subsubsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.5}Work with categorical variables}{26}{subsection.4.5}%
-\contentsline {subsubsection}{\numberline {4.5.1}Convert a numeric/character into a factor}{26}{subsubsection.4.5.1}%
-\contentsline {subsubsection}{\numberline {4.5.2}Divide a continuous variable into categories}{26}{subsubsection.4.5.2}%
-\contentsline {subsubsection}{\numberline {4.5.3}Redefine the levels of a factor variable}{27}{subsubsection.4.5.3}%
-\contentsline {subsection}{\numberline {4.6}Extract simple features of a dataset}{28}{subsection.4.6}%
-\contentsline {subsubsection}{\numberline {4.6.1}Number of rows and columns}{28}{subsubsection.4.6.1}%
-\contentsline {subsubsection}{\numberline {4.6.2}Name of the columns}{28}{subsubsection.4.6.2}%
-\contentsline {subsubsection}{\numberline {4.6.3}Type of the columns}{28}{subsubsection.4.6.3}%
-\contentsline {subsubsection}{\numberline {4.6.4}Summary statistics by column}{28}{subsubsection.4.6.4}%
-\contentsline {subsubsection}{\numberline {4.6.5}Number of missing values}{29}{subsubsection.4.6.5}%
-\contentsline {subsubsection}{\numberline {4.6.6}Mean value of a column}{29}{subsubsection.4.6.6}%
-\contentsline {subsubsection}{\numberline {4.6.7}Correlation between values of several columns}{30}{subsubsection.4.6.7}%
-\contentsline {subsection}{\numberline {4.7}Performing operations on a group of rows}{31}{subsection.4.7}%
-\contentsline {subsubsection}{\numberline {4.7.1}Computing the number of observations per subgroup}{31}{subsubsection.4.7.1}%
-\contentsline {subsubsection}{\numberline {4.7.2}Computing the mean by subgroup}{31}{subsubsection.4.7.2}%
-\contentsline {subsubsection}{\numberline {4.7.3}Computing the correlation matrix by subgroup}{32}{subsubsection.4.7.3}%
-\contentsline {subsection}{\numberline {4.8}Sort a dataset according to one or several variables}{34}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Change the names of the column in a dataset}{36}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}Converting a dataset from the wide format to the long format}{37}{subsection.4.10}%
-\contentsline {subsubsection}{\numberline {4.10.1}Univariate melt}{37}{subsubsection.4.10.1}%
-\contentsline {subsubsection}{\numberline {4.10.2}Multivariate melt}{39}{subsubsection.4.10.2}%
-\contentsline {subsection}{\numberline {4.11}Converting a dataset from the long format to the wide format}{40}{subsection.4.11}%
-\contentsline {subsubsection}{\numberline {4.11.1}Univariate}{40}{subsubsection.4.11.1}%
-\contentsline {subsubsection}{\numberline {4.11.2}Multivariate}{41}{subsubsection.4.11.2}%
-\contentsline {section}{\numberline {5}Graphical display}{42}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Descriptive plots}{42}{subsection.5.1}%
-\contentsline {subsubsection}{\numberline {5.1.1}Spaguetti plot}{42}{subsubsection.5.1.1}%
-\contentsline {subsubsection}{\numberline {5.1.2}Display the mean over time}{46}{subsubsection.5.1.2}%
-\contentsline {subsubsection}{\numberline {5.1.3}Boxplot + points (non-overlapping)}{47}{subsubsection.5.1.3}%
-\contentsline {subsection}{\numberline {5.2}Diagnostic plots}{48}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}Histogram of the residuals}{48}{subsubsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2}Forest plot}{49}{subsubsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.3}Customize graphic}{50}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}Greek letter in facet}{50}{subsubsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.2}Modify the legend of a discrete scale (with greek letters)}{50}{subsubsection.5.3.2}%
-\contentsline {subsubsection}{\numberline {5.3.3}Change the name of the legend}{52}{subsubsection.5.3.3}%
-\contentsline {subsubsection}{\numberline {5.3.4}Increase the font size}{52}{subsubsection.5.3.4}%
-\contentsline {subsubsection}{\numberline {5.3.5}Increase size of the legend labels}{53}{subsubsection.5.3.5}%
-\contentsline {subsubsection}{\numberline {5.3.6}Put the legend at the bottom}{53}{subsubsection.5.3.6}%
-\contentsline {subsubsection}{\numberline {5.3.7}Number of lines in the legend}{54}{subsubsection.5.3.7}%
-\contentsline {subsubsection}{\numberline {5.3.8}Default ggplot color palette}{54}{subsubsection.5.3.8}%
-\contentsline {subsubsection}{\numberline {5.3.9}Color blind palette}{54}{subsubsection.5.3.9}%
-\contentsline {subsubsection}{\numberline {5.3.10}Rotate x-axis labels}{54}{subsubsection.5.3.10}%
-\contentsline {subsubsection}{\numberline {5.3.11}Change tick mark labels}{54}{subsubsection.5.3.11}%
-\contentsline {subsubsection}{\numberline {5.3.12}Combine ggplots}{56}{subsubsection.5.3.12}%
-\contentsline {subsubsection}{\numberline {5.3.13}Symbols in facet names}{57}{subsubsection.5.3.13}%
-\contentsline {subsubsection}{\numberline {5.3.14}Extract labels of the x/y thicks}{57}{subsubsection.5.3.14}%
-\contentsline {subsection}{\numberline {5.4}Path diagram}{58}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Lexis diagram}{59}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Modeling}{61}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Test proportions}{61}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{62}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{65}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{66}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{67}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Testing median}{68}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{70}{subsection.6.7}%
-\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{70}{subsubsection.6.7.1}%
-\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{72}{subsubsection.6.7.2}%
-\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{72}{subsubsection.6.7.3}%
-\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{74}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Compute and display partial residuals in a linear model}{75}{subsection.6.9}%
-\contentsline {subsection}{\numberline {6.10}Equivalence Poisson and Cox model}{76}{subsection.6.10}%
-\contentsline {subsection}{\numberline {6.11}Displaying incidence rates with confidence intervals}{79}{subsection.6.11}%
-\contentsline {subsection}{\numberline {6.12}Twin study}{82}{subsection.6.12}%
-\contentsline {subsubsection}{\numberline {6.12.1}Data}{82}{subsubsection.6.12.1}%
-\contentsline {subsubsection}{\numberline {6.12.2}REML solution}{82}{subsubsection.6.12.2}%
-\contentsline {subsubsection}{\numberline {6.12.3}ML solution}{85}{subsubsection.6.12.3}%
-\contentsline {section}{\numberline {7}Loops and parallel computations}{87}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{87}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Parallel computation}{88}{subsection.7.2}%
-\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{88}{subsubsection.7.2.1}%
-\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{88}{subsubsection.7.2.2}%
-\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{88}{subsubsection.7.2.3}%
-\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{88}{subsubsection.7.2.4}%
-\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{89}{subsubsection.7.2.5}%
-\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{89}{subsubsection.7.2.6}%
-\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{89}{subsubsection.7.2.7}%
-\contentsline {subsubsection}{\numberline {7.2.8}Parallel computation in C++}{89}{subsubsection.7.2.8}%
-\contentsline {section}{\numberline {8}\emph {lava} package}{91}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{91}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{92}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{93}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{95}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{97}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Output correlation between two endogenous variables}{98}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Output correlation between two latent variables}{100}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}Handling left, right, and interval censored data}{102}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}LVM as a weighted mean}{103}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}Standardized coefficients}{105}{subsection.8.10}%
-\contentsline {section}{\numberline {9}Miscellaneous}{107}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Profile code R}{107}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Profile code C}{108}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Debug}{109}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Find all function names from a package}{110}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Install development version of R}{111}{subsection.9.5}%
-\contentsline {subsection}{\numberline {9.6}Install suggested packages}{112}{subsection.9.6}%
-\contentsline {subsection}{\numberline {9.7}R version}{113}{subsection.9.7}%
-\contentsline {subsection}{\numberline {9.8}Install a package from a zip file (windows)}{114}{subsection.9.8}%
-\contentsline {subsection}{\numberline {9.9}Install and load two version of the same package}{115}{subsection.9.9}%
-\contentsline {subsection}{\numberline {9.10}CRAN check rocker}{116}{subsection.9.10}%
+\contentsline {section}{\numberline {1}Packages}{6}{section.1}%
+\contentsline {section}{\numberline {2}Import/export data}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Set the working directory}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}See which files are present in the current directory}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Check that the file we want to import exists:}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Display a file before importing it}{10}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Import a data from a file (.txt, .csv)}{11}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Import data from a specific format (e.g. excel files or outputs from SPSS/SAS)}{12}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Import data from a Github repository}{13}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}Export data}{14}{subsection.2.8}%
+\contentsline {subsection}{\numberline {2.9}Export table}{15}{subsection.2.9}%
+\contentsline {subsection}{\numberline {2.10}Export graphs}{16}{subsection.2.10}%
+\contentsline {section}{\numberline {3}Data management}{17}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Categorize age into groups}{17}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Convert list to array}{18}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Apply function for each element of a list}{19}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Data management using the \emph {data.table} package}{20}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Introduction}{20}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Display a dataset}{22}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Extract row(s), i.e. all the variables relative to one or several observations}{23}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Extract row(s) using row numbers}{23}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Extract row(s) according to conditions}{23}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}Extract column(s), i.e. all the observations relative to one or several variables}{25}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Extract column(s) using column numbers}{25}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Extract column(s) using column names}{26}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Work with categorical variables}{27}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Convert a numeric/character into a factor}{27}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Divide a continuous variable into categories}{27}{subsubsection.4.5.2}%
+\contentsline {subsubsection}{\numberline {4.5.3}Redefine the levels of a factor variable}{28}{subsubsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.6}Extract simple features of a dataset}{29}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1}Number of rows and columns}{29}{subsubsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.2}Name of the columns}{29}{subsubsection.4.6.2}%
+\contentsline {subsubsection}{\numberline {4.6.3}Type of the columns}{29}{subsubsection.4.6.3}%
+\contentsline {subsubsection}{\numberline {4.6.4}Summary statistics by column}{29}{subsubsection.4.6.4}%
+\contentsline {subsubsection}{\numberline {4.6.5}Number of missing values}{30}{subsubsection.4.6.5}%
+\contentsline {subsubsection}{\numberline {4.6.6}Mean value of a column}{30}{subsubsection.4.6.6}%
+\contentsline {subsubsection}{\numberline {4.6.7}Correlation between values of several columns}{31}{subsubsection.4.6.7}%
+\contentsline {subsection}{\numberline {4.7}Performing operations on a group of rows}{32}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {4.7.1}Computing the number of observations per subgroup}{32}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {4.7.2}Computing the mean by subgroup}{32}{subsubsection.4.7.2}%
+\contentsline {subsubsection}{\numberline {4.7.3}Computing the correlation matrix by subgroup}{33}{subsubsection.4.7.3}%
+\contentsline {subsection}{\numberline {4.8}Sort a dataset according to one or several variables}{35}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Change the names of the column in a dataset}{37}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Converting a dataset from the wide format to the long format}{38}{subsection.4.10}%
+\contentsline {subsubsection}{\numberline {4.10.1}Univariate melt}{38}{subsubsection.4.10.1}%
+\contentsline {subsubsection}{\numberline {4.10.2}Multivariate melt}{40}{subsubsection.4.10.2}%
+\contentsline {subsection}{\numberline {4.11}Converting a dataset from the long format to the wide format}{41}{subsection.4.11}%
+\contentsline {subsubsection}{\numberline {4.11.1}Univariate}{41}{subsubsection.4.11.1}%
+\contentsline {subsubsection}{\numberline {4.11.2}Multivariate}{42}{subsubsection.4.11.2}%
+\contentsline {section}{\numberline {5}Graphical display}{43}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Descriptive plots}{43}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Spaguetti plot}{43}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Display the mean over time}{47}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Boxplot + points (non-overlapping)}{48}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}Diagnostic plots}{49}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Histogram of the residuals}{49}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Forest plot}{50}{subsubsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.3}Customize graphic}{51}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Greek letter in facet}{51}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Modify the legend of a discrete scale (with greek letters)}{51}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}Change the name of the legend}{53}{subsubsection.5.3.3}%
+\contentsline {subsubsection}{\numberline {5.3.4}Increase the font size}{53}{subsubsection.5.3.4}%
+\contentsline {subsubsection}{\numberline {5.3.5}Increase size of the legend labels}{54}{subsubsection.5.3.5}%
+\contentsline {subsubsection}{\numberline {5.3.6}Put the legend at the bottom}{54}{subsubsection.5.3.6}%
+\contentsline {subsubsection}{\numberline {5.3.7}Number of lines in the legend}{55}{subsubsection.5.3.7}%
+\contentsline {subsubsection}{\numberline {5.3.8}Default ggplot color palette}{55}{subsubsection.5.3.8}%
+\contentsline {subsubsection}{\numberline {5.3.9}Color blind palette}{55}{subsubsection.5.3.9}%
+\contentsline {subsubsection}{\numberline {5.3.10}Rotate x-axis labels}{55}{subsubsection.5.3.10}%
+\contentsline {subsubsection}{\numberline {5.3.11}Change tick mark labels}{55}{subsubsection.5.3.11}%
+\contentsline {subsubsection}{\numberline {5.3.12}Combine ggplots}{57}{subsubsection.5.3.12}%
+\contentsline {subsubsection}{\numberline {5.3.13}Symbols in facet names}{58}{subsubsection.5.3.13}%
+\contentsline {subsubsection}{\numberline {5.3.14}Extract labels of the x/y thicks}{58}{subsubsection.5.3.14}%
+\contentsline {subsection}{\numberline {5.4}Path diagram}{59}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Lexis diagram}{60}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Font}{62}{subsection.5.6}%
+\contentsline {subsubsection}{\numberline {5.6.1}Display available fonts}{62}{subsubsection.5.6.1}%
+\contentsline {subsubsection}{\numberline {5.6.2}Add more fonts}{62}{subsubsection.5.6.2}%
+\contentsline {section}{\numberline {6}Modeling}{63}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Test proportions}{63}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{64}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{67}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{68}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{69}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Testing median}{70}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{72}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{72}{subsubsection.6.7.1}%
+\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{74}{subsubsection.6.7.2}%
+\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{74}{subsubsection.6.7.3}%
+\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{76}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Compute and display partial residuals in a linear model}{77}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}Equivalence Poisson and Cox model}{78}{subsection.6.10}%
+\contentsline {subsection}{\numberline {6.11}Displaying incidence rates with confidence intervals}{81}{subsection.6.11}%
+\contentsline {subsection}{\numberline {6.12}Twin study}{84}{subsection.6.12}%
+\contentsline {subsubsection}{\numberline {6.12.1}Data}{84}{subsubsection.6.12.1}%
+\contentsline {subsubsection}{\numberline {6.12.2}REML solution}{84}{subsubsection.6.12.2}%
+\contentsline {subsubsection}{\numberline {6.12.3}ML solution}{87}{subsubsection.6.12.3}%
+\contentsline {section}{\numberline {7}Loops and parallel computations}{89}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{89}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Parallel computation}{90}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{90}{subsubsection.7.2.1}%
+\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{90}{subsubsection.7.2.2}%
+\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{90}{subsubsection.7.2.3}%
+\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{90}{subsubsection.7.2.4}%
+\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{91}{subsubsection.7.2.5}%
+\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{91}{subsubsection.7.2.6}%
+\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{91}{subsubsection.7.2.7}%
+\contentsline {subsubsection}{\numberline {7.2.8}Parallel computation in C++}{91}{subsubsection.7.2.8}%
+\contentsline {section}{\numberline {8}\emph {lava} package}{93}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{93}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{94}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{95}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{97}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{99}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Interaction in lava (mean coefficients)}{99}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Output correlation between two endogenous variables}{100}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Output correlation between two latent variables}{102}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Handling left, right, and interval censored data}{104}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}LVM as a weighted mean}{105}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}Standardized coefficients}{107}{subsection.8.11}%
+\contentsline {section}{\numberline {9}Miscellaneous}{109}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Profile code R}{109}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Profile code C}{110}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Debug}{111}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Find all function names from a package}{112}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Install development version of R}{113}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Install suggested packages}{114}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}R version}{115}{subsection.9.7}%
+\contentsline {subsection}{\numberline {9.8}Install a package from a zip file (windows)}{116}{subsection.9.8}%
+\contentsline {subsection}{\numberline {9.9}Install and load two version of the same package}{117}{subsection.9.9}%
+\contentsline {subsection}{\numberline {9.10}CRAN check rocker}{118}{subsection.9.10}%
+\contentsline {subsection}{\numberline {9.11}Regular expressions}{119}{subsection.9.11}%
