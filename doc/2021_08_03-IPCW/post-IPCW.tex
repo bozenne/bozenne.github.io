@@ -1,4 +1,4 @@
-% Created 2021-10-14 to 12:15
+% Created 2023-06-16 fr 14:27
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -203,7 +203,7 @@ linkcolor=[rgb]{0,0,0.5},
  pdftitle={Inverse probability of censoring weighting (IPCW) for linear regression},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 27.2 (Org mode 9.4.4)},
+ pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
  pdflang={English}
  }
 \begin{document}
@@ -211,7 +211,7 @@ linkcolor=[rgb]{0,0,0.5},
 \maketitle
 
 \section{Principle}
-\label{sec:orgcf670d5}
+\label{sec:org8b71893}
 
 Inverse probability of censoring weighting (IPCW) is a method able to
 handle informative drop-out. Intuitively, in presence of informative
@@ -238,10 +238,10 @@ approach (via a mixed model).
 \clearpage
 
 \section{Continuous outcome}
-\label{sec:orgb1b01ee}
+\label{sec:orgf38cdba}
 
 \subsection{Generative model}
-\label{sec:orgc30e732}
+\label{sec:orgac08498}
 
 To illustrate the use of IPCW in the continuous outcome case, we will
 consider a longitudinal study with 2 groups (\(G=0\) and \(G=1\)) and
@@ -279,7 +279,8 @@ probability of drop-out is either:
 
 \bigskip
 
-The corresponding R function is given in the next page. It uses the following arguments:
+The corresponding R function is given in appendix \ref{SM:datasim}. It uses
+the following arguments:
 \begin{itemize}
 \item \texttt{n}: [positive integer] number of patient per group
 \item \texttt{rho}: [numeric between -1 and 1] correlation over time
@@ -290,54 +291,8 @@ The corresponding R function is given in the next page. It uses the following ar
 
 \clearpage
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-simTrial <- function(n, rho, dmu, causeC, piC){
-  ## load packages and check user input
-  require(mvtnorm)
-  require(data.table)
-  causeC <- match.arg(causeC, c("random","baseline","latent"))
-  ## simulate data
-  sigma <- 10
-  Sigma <- sigma^2*matrix(c(1,rho,rho,1),2,2)
-  ## gather into dataset
-  M.Ym <- rmvnorm(n, mean = c(50, 50-dmu[1]), sigma = Sigma)
-  M.Ys <- rmvnorm(n, mean = c(75, 75-dmu[2]), sigma = Sigma)
-  dtL <- rbind(
-    data.table(id = 1:n, mdd = "moderate", time = "T1", Y = M.Ym[,1]),
-    data.table(id = 1:n, mdd = "moderate", time = "T2", Y = M.Ym[,2]),
-    data.table(id = n+(1:n), mdd = "severe", time = "T1", Y = M.Ys[,1]),
-    data.table(id = n+(1:n), mdd = "severe", time = "T2", Y = M.Ys[,2])
-  )
-  ## define probability of dropout
-  dtL$probaDO <- 0
-  if(causeC == "random"){
-    dtL[time=="T2", probaDO := piC[1]]
-  }else if(causeC == "latent"){
-    dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",piC[1],piC[2])]
-  }else if(causeC == "baseline"){
-    dtL$res <- 0.1 ## no used - just  to initialize
-    dtL[mdd=="moderate", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
-    dtL[mdd=="severe", res := c((Y[1]-62.5)/sigma,NA), by = "id"]
-    dtL[mdd=="moderate", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
-    dtL[mdd=="severe", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
-    dtL$res <- NULL
-  }
-  ## simulate dropout
-  dtL[,dropout := rbinom(.N,prob=probaDO,size=1)]
-  dtL[,Yobs:=Y]
-  dtL[dropout==1,Yobs:=NA]
-  ## export
-  dtL$probaDO <- NULL
-  setkeyv(dtL,"id")
-  return(dtL)
-}
-\end{lstlisting}
-
-\clearpage
-
 \subsection{Illustrative example 1}
-\label{sec:org332a673}
+\label{sec:org6d367ee}
 
 Consider a study were we follow depressed individual over time. They
 have a baseline measurement, then are given a treatment, and then have
@@ -356,8 +311,8 @@ We can simulate such a dataset using the following function:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 set.seed(10)
-dtL.B <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50),
-		  causeC = "baseline", piC = c(1,1))
+dtL.B <- simTrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+                   causeC = "baseline", piC = c(1,1))
 head(dtL.B)
 \end{lstlisting}
 
@@ -435,7 +390,7 @@ An alternative approach would be to use a linear mixed model
 \begin{lstlisting}
 require(nlme)
 e.BFI <- lme(Yobs~time, random = ~1|id, data = dtL.B,
-	     na.action = na.omit)
+             na.action = na.omit)
 summary(e.BFI)$tTable
 \end{lstlisting}
 
@@ -451,7 +406,10 @@ explained when seeing the mixed model as a way to "impute" missing
 values at follow-up. The current mixed model is misspecified (missing
 interaction between time and group) and it therefore use the wrong
 imputation model. This is illustrated in \autoref{fig:imputationModel}
-(see appendix \ref{SM:imputation} for the R code).
+(see appendix \ref{SM:imputation} for the R code). The bias is of opposite
+direction between the two mdd subgroups and same magnitude so it would
+cancel out under random censoring. However here because the severe
+group is more likely to be censored the bias does not cancel out.
 
 \clearpage
 
@@ -466,7 +424,7 @@ the mixed would be able to impute the observations in an unbiased way:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.BFIoracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL.B,
-		   na.action = na.omit)
+                   na.action = na.omit)
 summary(e.BFIoracle)$tTable
 \end{lstlisting}
 
@@ -506,7 +464,7 @@ for the probability of not dropping out at follow-up:
 \begin{lstlisting}
 dtW.B$observed <- !is.na(dtW.B$T2)
 e.glmW.B <- glm(observed ~ T1, data = dtW.B,
-		family = binomial(link = "logit"))
+                family = binomial(link = "logit"))
 coef(e.glmW.B)
 \end{lstlisting}
 
@@ -520,7 +478,7 @@ and then compute the weights for observations with full data:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 dtW.B$weight.oracle <- 1/predict(e.glmW.B, newdata = dtW.B,
-				 type = "response")
+                                 type = "response")
 dtW.B[observed == TRUE, sum(weight.oracle)]
 \end{lstlisting}
 
@@ -550,7 +508,7 @@ very well because we have specified the correct censoring model.
 \clearpage
 
 \subsection{Illustrative example 2}
-\label{sec:org71c30b9}
+\label{sec:orgf578993}
 
 Consider a similar study with a different cause of drop-out. This time
 drop-out is not due to baseline value but due to the severity of the
@@ -566,8 +524,8 @@ We can simulate such a dataset using the following function:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 set.seed(10)
-dtL.L <- simTrial(n = 1000, rho = 0.8, dmu = c(25,50),
-		  causeC = "latent", piC = c(0.2,0.7))
+dtL.L <- simTrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+                   causeC = "latent", piC = c(0.2,0.7))
 print(dtL.L)
 \end{lstlisting}
 
@@ -665,7 +623,7 @@ at follow-up as a function of the latent group:
 \begin{lstlisting}
 dtW.L$observed <- !is.na(dtW.L$T2)
 e.glmW.Loracle <- glm(observed ~ mdd, data = dtW.L,
-		     family = binomial(link = "logit"))
+                     family = binomial(link = "logit"))
 \end{lstlisting}
 
 and then compute the weights for observations with full data:
@@ -700,7 +658,7 @@ IPCW would use the baseline score to define the weights:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.glmW.L <- glm(observed ~ T1, data = dtW.L,
-	      family = binomial(link = "logit"))
+              family = binomial(link = "logit"))
 dtW.L$weight <- 1/predict(e.glmW.L, newdata = dtW.L, type = "response")
 dtW.L[observed == TRUE, sum(weight)]
 \end{lstlisting}
@@ -727,24 +685,260 @@ summary(e.LIPCW)$coef
 \clearpage
 
 \subsection{Simulation study}
-\label{sec:org678db91}
+\label{sec:org2e65e9f}
 
 The quality of the previous estimators is compared using a simulation
-study. The results are summarized by \autoref{fig:simulationGaussian}.
+study (see appendix \ref{SM:dataAnalysis}):
+\begin{itemize}
+\item first under the right generative model (i.e. multivariate normal distribution)
+\item then under alternative generative models (i.e multivariate
+t-distribution or Gaussian copula with margins contaminated by a
+Gamma or uniform distribution). Indeed it is believed that the LMM
+in presence of missing value is not robustness to parametric
+assumptions, i.e. lead to biased results for certain non-normal
+distributions. Some simulations studies support this point
+\citep{lu2009impact}.
+\end{itemize}
+
+\subsubsection{Valid parametric assumptions}
+\label{sec:orga033992}
+
+Here is an example of result on a single trial subject to 3 different
+drop-out mechanisms:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+warper3TrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+              piC = list(0.5,1,c(0.2,0.7)), short = TRUE, seed = 10)
+\end{lstlisting}
+
+\begin{verbatim}
+     causeC dropout rho    n dmu         model  estimate        se  statistic p.value seed
+1    random  0.4805 0.8 1000  25        oracle -37.34478 0.3131657 -119.24924       0   10
+2                                complete case -37.60385 0.4396445  -85.53240       0     
+3                                    FI.oracle -37.47880 0.1997909 -187.59009       0     
+4                                           FI -37.65209 0.4239748  -88.80738       0     
+5                                  IPCW.oracle -37.60385 0.4396445  -85.53240       0     
+6  baseline  0.4845 0.8 1000  25        oracle -37.34478 0.3131657 -119.24924       0   10
+7                                complete case -30.98307 0.3889309  -79.66214       0     
+8                                    FI.oracle -37.43410 0.2221598 -168.50078       0     
+9                                           FI -34.72139 0.3922185  -88.52563       0     
+10                                 IPCW.oracle -37.84241 0.4369635  -86.60314       0     
+11   latent  0.4545 0.8 1000  25        oracle -37.34478 0.3131657 -119.24924       0   10
+12                               complete case -31.47144 0.3853402  -81.67182       0     
+13                                   FI.oracle -37.30128 0.2145794 -173.83442       0     
+14                                          FI -33.90249 0.3789936  -89.45400       0     
+15                                 IPCW.oracle -37.35191 0.4242621  -88.03970       0     
+16                                        IPCW -36.05170 0.4258783  -84.65258       0
+\end{verbatim}
+
+Replicating a 1000 times and also varying the correlation coefficient leads to:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.simGaussian <- warper3TrialC(n = 1000, n.rep = 1000, cl = 50,
+                                rho = c(0,0.25,0.5,0.8),
+                                dmu = c(25,50),
+                                piC = list(0.5,1,c(0.2,0.7)),
+                                short = FALSE, seed = 10)
+\end{lstlisting}
+
+\clearpage
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.simGaussian <- ggSimRes(dt.simGaussian)
+\end{lstlisting}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=\textwidth]{./figures/simStudy-bias.pdf}
-\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (Gaussian case) for a sample size of 1000 using 100 datasets. FI: full information (random intercept model), IPCW: inverse probability of censoring weights.}
+\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (Gaussian case) for a sample size of 1000 using 1000 datasets. FI: full information (random intercept model), IPCW: inverse probability of censoring weights.}
 \end{figure}
 
 \clearpage
 
+\subsubsection{Incorrect parametric assumptions - heavy tails}
+\label{sec:org6c08a2e}
+
+Data were simulated using a student distribution with 3 degrees of
+freedom. See figure below for an example:
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0},width=1\textwidth]{./figures/simStudy-student-hist.pdf}
+\caption{\label{fig:student-hist}Histogram of the simulated outcome for one study when using a multivariate student distribution. The red line indicates the best fitting Gaussian distribution.}
+\end{figure}
+
+Here is an example of result on a single trial subject to 3 different
+drop-out mechanisms:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+warper3TrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+              piC = list(0.5,1,c(0.2,0.7)), df = 3,
+              short = TRUE, seed = 10)
+\end{lstlisting}
+
+\begin{verbatim}
+     causeC dropout rho    n dmu         model  estimate        se  statistic p.value seed
+1    random   0.499 0.8 1000  25        oracle -37.14393 0.3679432 -100.95019       0   10
+2                                complete case -37.16037 0.4952641  -75.03142       0     
+3                                    FI.oracle -37.29110 0.3111914 -119.83333       0     
+4                                           FI -37.11295 0.4800798  -77.30579       0     
+5                                  IPCW.oracle -37.16037 0.4952641  -75.03142       0     
+6  baseline   0.501 0.8 1000  25        oracle -37.14393 0.3679432 -100.95019       0   10
+7                                complete case -30.92928 0.4931273  -62.72067       0     
+8                                    FI.oracle -37.80839 0.3675489 -102.86630       0     
+9                                           FI -34.64776 0.4886764  -70.90122       0     
+10                                 IPCW.oracle -38.33936 0.5234635  -73.24172       0     
+11   latent  0.4405 0.8 1000  25        oracle -37.14393 0.3679432 -100.95019       0   10
+12                               complete case -31.75154 0.4764017  -66.64867       0     
+13                                   FI.oracle -37.55087 0.3591784 -104.54658       0     
+14                                          FI -33.55264 0.4642002  -72.28053       0     
+15                                 IPCW.oracle -37.55106 0.5001728  -75.07618       0     
+16                                        IPCW -34.37854 0.5064666  -67.87919       0
+\end{verbatim}
+
+Replicating a 1000 times and also varying the correlation coefficient leads to:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.simStudent <- warper3TrialC(n = 1000, n.rep = 1000, cl = 50,
+                               rho = c(0,0.25,0.5,0.8),
+                               dmu = c(25,50), df = 3,
+                               piC = list(0.5,1,c(0.2,0.7)), 
+                               short = FALSE, seed = 10)
+\end{lstlisting}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{./figures/simStudy-bias-t3.pdf}
+\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (Studence case) for a sample size of 1000 using 1000 datasets. FI: full information (random intercept model), IPCW: inverse probability of censoring weights.}
+\end{figure}
+
+\clearpage
+
+\subsubsection{Incorrect parametric assumptions - skewed}
+\label{sec:orgaba7b8b}
+
+
+Data were simulated as in the correctly specific case but a a gamma
+noise added with shape parameter 1 and scale parameter 20. See
+figure below for an example:
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0},width=1\textwidth]{./figures/simStudy-gamma-hist.pdf}
+\caption{\label{fig:student-hist}Histogram of the simulated outcome for one study when using a multivariate normal distribution with added gamma distributed noise. The red line indicates the best fitting Gaussian distribution.}
+\end{figure}
+
+Here is an example of result on a single trial subject to 3 different
+drop-out mechanisms:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+warper3TrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+              piC = list(0.5,1,c(0.2,0.7)), gamma = c(1,20),
+              short = TRUE, seed = 10)
+\end{lstlisting}
+
+\begin{verbatim}
+     causeC dropout rho    n dmu         model  estimate        se statistic       p.value seed
+1    random  0.4985 0.8 1000  25        oracle -37.71493 0.6920647 -54.49625  0.000000e+00   10
+2                                complete case -36.84023 1.0198759 -36.12227 1.229736e-183     
+3                                    FI.oracle -37.08504 0.8243480 -44.98712  0.000000e+00     
+4                                           FI -37.04004 0.9064410 -40.86315  0.000000e+00     
+5                                  IPCW.oracle -36.84023 1.0198759 -36.12227 1.229736e-183     
+6  baseline   0.731 0.8 1000  25        oracle -37.71493 0.6920647 -54.49625  0.000000e+00   10
+7                                complete case -18.62851 1.0242595 -18.18729  6.030064e-58     
+8                                    FI.oracle -35.42771 1.1314386 -31.31210  0.000000e+00     
+9                                           FI -32.20733 1.0480515 -30.73068  0.000000e+00     
+10                                 IPCW.oracle -31.92106 1.0882540 -29.33236 1.324571e-113     
+11   latent    0.45 0.8 1000  25        oracle -37.71493 0.6920647 -54.49625  0.000000e+00   10
+12                               complete case -32.20863 0.9352860 -34.43720 7.110637e-177     
+13                                   FI.oracle -37.68618 0.8512623 -44.27093  0.000000e+00     
+14                                          FI -36.49446 0.8547891 -42.69411  0.000000e+00     
+15                                 IPCW.oracle -38.15756 0.9137801 -41.75792 4.877840e-229     
+16                                        IPCW -39.57164 1.1179406 -35.39691 8.854345e-184
+\end{verbatim}
+
+Replicating a 1000 times and also varying the correlation coefficient leads to:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+gg.simGamma <- ggSimRes(dt.simGamma, ylim = c(-45, -25))
+\end{lstlisting}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{./figures/simStudy-bias-gamma.pdf}
+\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (Gamma case) for a sample size of 1000 using 1000 datasets. FI: full information (random intercept model), IPCW: inverse probability of censoring weights.}
+\end{figure}
+
+\clearpage
+
+\subsubsection{Incorrect parametric assumptions - uniform}
+\label{sec:org9d815a6}
+
+
+Data were simulated as in the correctly specific case but with a
+uniform noise added (min 0 and max 100). See figure below for an
+example:
+\begin{figure}[!h]
+\centering
+\includegraphics[trim={0 0 0 0},width=1\textwidth]{./figures/simStudy-unif-hist.pdf}
+\caption{\label{fig:student-hist}Histogram of the simulated outcome for one study when using a multivariate normal distribution with added gamma distributed noise. The red line indicates the best fitting Gaussian distribution.}
+\end{figure}
+
+
+Here is an example of result on a single trial subject to 3 different
+drop-out mechanisms:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+warper3TrialC(n = 1000, rho = 0.8, dmu = c(25,50),
+              piC = list(0.5,0.2,c(0.2,0.7)), unif = c(0,100),
+              short = TRUE, seed = 11)
+\end{lstlisting}
+
+\begin{verbatim}
+     causeC dropout rho    n dmu         model  estimate        se statistic       p.value seed
+1    random   0.501 0.8 1000  25        oracle -38.34944 0.9636263 -39.79700 1.397159e-255   11
+2                                complete case -36.68859 1.3486849 -27.20323 2.480433e-122     
+3                                    FI.oracle -37.25888 1.1481783 -32.45043  0.000000e+00     
+4                                           FI -37.26851 1.2014576 -31.01941  0.000000e+00     
+5                                  IPCW.oracle -36.68859 1.3486849 -27.20323 2.480433e-122     
+6  baseline    0.72 0.8 1000  25        oracle -38.34944 0.9636263 -39.79700 1.397159e-255   11
+7                                complete case -27.67410 1.8056059 -15.32677  1.607715e-44     
+8                                    FI.oracle -40.92304 1.4750654 -27.74321  0.000000e+00     
+9                                           FI -40.91608 1.5305085 -26.73365  0.000000e+00     
+10                                 IPCW.oracle -40.17666 1.8218866 -22.05223  5.211715e-78     
+11   latent   0.457 0.8 1000  25        oracle -38.34944 0.9636263 -39.79700 1.397159e-255   11
+12                               complete case -32.17486 1.2989146 -24.77057 1.007704e-107     
+13                                   FI.oracle -38.00854 1.2082477 -31.45757  0.000000e+00     
+14                                          FI -37.00927 1.1717526 -31.58454  0.000000e+00     
+15                                 IPCW.oracle -38.00831 1.3010987 -29.21248 7.049359e-139     
+16                                        IPCW -36.89577 1.2986463 -28.41095 3.442202e-133
+\end{verbatim}
+
+
+Replicating a 1000 times and also varying the correlation coefficient leads to:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dt.simUnif <- warper3TrialC(n = 1000, n.rep = 1000, cl = 50,
+                            rho = c(0,0.25,0.5,0.8),
+                            dmu = c(25,50), unif = c(0,100),
+                            piC = list(0.5,0.2,c(0.2,0.7)), 
+                            short = FALSE, seed = 10)
+\end{lstlisting}
+
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{./figures/simStudy-bias-unif.pdf}
+\caption{\label{fig:simulationGaussian}Comparison between the empirical distributions of the estimators (uniform case) for a sample size of 1000 using 1000 datasets. FI: full information (random intercept model), IPCW: inverse probability of censoring weights.}
+\end{figure}
+
+
+\clearpage
+
 \section{Binary outcome}
-\label{sec:orgb4e14e3}
+\label{sec:orga607cf2}
 
 \subsection{Illustrative example}
-\label{sec:orgdce3a73}
+\label{sec:org8103a10}
 A somehow similar approach can be used for binary endpoints. Consider
 now a study comparing the survival probability at 1 year of patients
 treated with a new drug vs. standard care. The population is composed
@@ -758,24 +952,24 @@ probability.
 We can simulate such a dataset using the following function:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-simTrial <- function(n, dmu, dpC){
+simTrialB <- function(n, dmu, dpC){
   require(BuyseTest)
   require(data.table)
   ## simulate data
   dt1  <- simBuyseTest(n.T = n, n.C = n, 
-		       argsBin = NULL, argsCont = NULL, 
-		       argsTTE = list(scale.T = 1+dmu[1],
-				      scale.C = 1,
-				      scale.Censoring.T = 1+dpC[1],
-				      scale.Censoring.C = 1),
-		       latent = TRUE)
+                       argsBin = NULL, argsCont = NULL, 
+                       argsTTE = list(scale.T = 1+dmu[1],
+                                      scale.C = 1,
+                                      scale.censoring.T = 1+dpC[1],
+                                      scale.censoring.C = 1),
+                       latent = TRUE)
   dt2  <- simBuyseTest(n.T = n, n.C = n, 
-		       argsBin = NULL, argsCont = NULL, 
-		       argsTTE = list(scale.T = 2+dmu[2],
-				      scale.C = 2,
-				      scale.Censoring.T = 2+dpC[2],
-				      scale.Censoring.C = 2),
-		       latent = TRUE)
+                       argsBin = NULL, argsCont = NULL, 
+                       argsTTE = list(scale.T = 2+dmu[2],
+                                      scale.C = 2,
+                                      scale.censoring.T = 2+dpC[2],
+                                      scale.censoring.C = 2),
+                       latent = TRUE)
   ## gather into dataset
   dt <- rbind(
     cbind(id = 1:NROW(dt1), group = "G1", dt1),
@@ -792,7 +986,7 @@ simTrial <- function(n, dmu, dpC){
 set.seed(11)
 tau <- 1
 
-dt <- simTrial(n = 1000, dmu = c(0,1), dpC = c(0,1))
+dt <- simTrialB(n = 1000, dmu = c(0,1), dpC = c(0,1))
 dt$responseUncensored <- dt$eventtimeUncensored<=tau
 dt$response <- ifelse((dt$status==1)+(dt$eventtime>tau),dt$eventtime<=tau,NA)
 dt$observed <- ifelse((dt$status==1)+(dt$eventtime>tau),1,0)
@@ -833,7 +1027,7 @@ probabilities at 1 year using a logistic regression:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.oracle <- glm(responseUncensored ~ treatment,
-		data = dt, family = binomial(link="logit"))
+                data = dt, family = binomial(link="logit"))
 summary(e.oracle)$coef
 \end{lstlisting}
 
@@ -851,7 +1045,7 @@ status at 1 year is known) would be biased:
 \begin{lstlisting}
 dt.cc <- dt[dt$observed==1]
 e.cc <- glm(response ~ treatment,
-	    data = dt.cc, family = binomial(link="logit"))
+            data = dt.cc, family = binomial(link="logit"))
 summary(e.cc)$coef
 \end{lstlisting}
 
@@ -882,7 +1076,7 @@ The subsequent estimator will not be correct:
 \begin{lstlisting}
 dt.cc <- dt[dt$observed==1]
 e.IPCWcc <- glm(response ~ treatment, data = dt.cc,
-		family = binomial(link="logit"), weights = dt.cc$IPCweights)
+                family = binomial(link="logit"), weights = dt.cc$IPCweights)
 summary(e.IPCWcc)$coef
 \end{lstlisting}
 
@@ -908,9 +1102,9 @@ year:
 library(survival)
 library(riskRegression)
 e.IPCmodel2 <- coxph(Surv(eventtime,status==0) ~ group*treatment,
-		     data = dt, x = TRUE, y = TRUE)
+                     data = dt, x = TRUE, y = TRUE)
 iPred <- predictCox(e.IPCmodel2, newdata = dt,
-		    time = pmin(dt$eventtime,tau)-(1e-12), diag = TRUE)$survival
+                    time = pmin(dt$eventtime,tau)-(1e-12), diag = TRUE)$survival
 dt$IPCweights2 <- dt$observed/iPred
 sum(dt$IPCweights2)
 \end{lstlisting}
@@ -925,7 +1119,7 @@ We can then use the weights in a logistic model:
 \begin{lstlisting}
 dt.cc <- dt[dt$observed==1]
 e.IPCWcc <- glm(response ~ treatment, data = dt.cc,
-		family = quasibinomial(link="logit"), weights = dt.cc$IPCweights2)
+                family = quasibinomial(link="logit"), weights = dt.cc$IPCweights2)
 summary(e.IPCWcc)$coef
 \end{lstlisting}
 
@@ -944,9 +1138,9 @@ Note that this estimator is implemented in the riskRegression package:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 e.wglm <- wglm(regressor.event = ~treatment,
-	       formula.censor = Surv(eventtime,status==0)~group*treatment,
-	       times = 1, 
-	       data = dt[,.(eventtime,status,group,treatment)])
+               formula.censor = Surv(eventtime,status==0)~group*treatment,
+               times = 1, 
+               data = dt[,.(eventtime,status,group,treatment)])
 summary(e.wglm)
 \end{lstlisting}
 
@@ -968,8 +1162,8 @@ This estimator is also implemented in the \texttt{mets} package\footnote{the sta
 \begin{lstlisting}
 library(mets)
 e.mets <- logitIPCW(formula = Event(eventtime,status) ~ treatment,
-		    cens.model = ~group*treatment,
-		    time = 1, data = dt, cens.code = 0, cause = 1)
+                    cens.model = ~group*treatment,
+                    time = 1, data = dt, cens.code = 0, cause = 1)
 e.mets
 \end{lstlisting}
 
@@ -991,7 +1185,7 @@ treatmentT   0.76742 0.65276 0.9022
 \end{verbatim}
 
 \subsection{Simulation study}
-\label{sec:orge500008}
+\label{sec:org47a04f9}
 
 The quality of the previous estimators is compared using a simulation
 study. The results are summarized by \autoref{fig:simulationBinary}.
@@ -1016,16 +1210,193 @@ study. The results are summarized by \autoref{fig:simulationBinary}.
 
 \clearpage
 
-\section{Graphical display of the imputation (\autoref{fig:imputationModel})}
+\section{Rcode (continuous case)}
+\label{sec:org291628f}
+\subsection{Generative data model}
+\label{SM:datasim}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+simTrialC <- function(n, rho, dmu, causeC, piC,
+                      df = Inf, gamma = NULL, unif = NULL){
+  
+  ## load packages and check user input
+  require(mvtnorm)
+  require(data.table)
+  causeC <- match.arg(causeC, c("random","baseline","latent"))
+  
+  ## simulate data
+  sigma <- 10
+  Sigma <- sigma^2*matrix(c(1,rho,rho,1),2,2)
+
+  ## gather into dataset
+  if(missing(df) || is.null(df) || is.infinite(df)){
+    M.Ym <- rmvnorm(n, mean = c(50, 50-dmu[1]), sigma = Sigma)
+    M.Ys <- rmvnorm(n, mean = c(75, 75-dmu[2]), sigma = Sigma)
+  }else{
+    M.Ym <- rmvt(n, delta = c(50, 50-dmu[1]), sigma = Sigma, df = df)
+    M.Ys <- rmvt(n, delta = c(75, 75-dmu[2]), sigma = Sigma, df = df)
+  }
+  if(!missing(gamma) && !is.null(gamma)){
+    M.Ym <- M.Ym + rgamma(2*n, shape = gamma[1], scale = gamma[2])
+    M.Ys <- M.Ys + rgamma(2*n, shape = gamma[1], scale = gamma[2])
+  }
+  if(!missing(unif) && !is.null(unif)){
+    M.Ym <- M.Ym + runif(2*n, min = unif[1], max = unif[2])
+    M.Ys <- M.Ys + runif(2*n, min = unif[1], max = unif[2])
+  }
+  dtL <- rbind(
+    data.table(id = 1:n, mdd = "moderate", time = "T1", Y = M.Ym[,1]),
+    data.table(id = 1:n, mdd = "moderate", time = "T2", Y = M.Ym[,2]),
+    data.table(id = n+(1:n), mdd = "severe", time = "T1", Y = M.Ys[,1]),
+    data.table(id = n+(1:n), mdd = "severe", time = "T2", Y = M.Ys[,2])
+  )
+  
+  ## define probability of dropout
+  dtL$probaDO <- 0
+  if(causeC == "random"){
+    dtL[time=="T2", probaDO := piC[1]]
+  }else if(causeC == "latent"){
+    dtL[time=="T2", probaDO := ifelse(.SD$mdd=="moderate",piC[1],piC[2])]
+  }else if(causeC == "baseline"){
+    dtL$res <- 0
+    Ybar <- dtL[time=="T1",mean(Y)]
+    dtL[mdd=="moderate", res := c((Y[1]-Ybar)/sigma,NA), by = "id"]
+    dtL[mdd=="severe", res := c((Y[1]-Ybar)/sigma,NA), by = "id"]
+    dtL[mdd=="moderate", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
+    dtL[mdd=="severe", probaDO := c(0,plogis(piC[1]*res[1])), by = "id"]
+    dtL$res <- NULL 
+  }
+  
+  ## simulate dropout
+  dtL[,c("dropout","Yobs") := .(rbinom(.N,prob=probaDO,size=1),Y)]
+  dtL[dropout==1,Yobs:=NA]
+  
+  ## export
+  dtL$probaDO <- NULL
+  setkeyv(dtL,"id")
+  return(dtL)
+}
+\end{lstlisting}
+
+\subsection{Trial analysis}
+\label{SM:dataAnalysis}
+
+\subsection{Multiple trial analysis}
+\label{SM:MultipleDataAnalysis}
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+warper3TrialC <- function(n, rho, dmu, piC, n.rep = 1,
+                          df = Inf, gamma = NULL, unif = NULL,
+                          cl = NULL, trace = n.rep>1, short = FALSE, seed = NULL){
+
+  require(pbapply)
+
+  ## normalize arguments
+  if(!is.list(piC) || length(piC)!=3){
+    stop("Argument \'piC\' should be a list of length 3. \n")
+  }
+  grid.seed <- expand.grid(rho = rho,
+                           rep = 1:n.rep)
+  if(length(seed)==1 && NROW(grid.seed)>1){
+    set.seed(seed)
+    grid.seed$seed <- sample.int(1e6, size = NROW(grid.seed), replace = FALSE)
+  }else{
+    grid.seed$seed <- seed
+  }
+
+  ## internal warper
+  .warper3TrialC <- function(iSim){ ## iSim <- 1
+    iOut <- NULL
+    for(iR in 1:length(rho)){ ## iR <- 1
+      iSeed <- grid.seed[grid.seed$rho==rho[iR] & grid.seed$rep == iSim,"seed"]
+
+      iRes <- warperTrialC(n = n, rho = rho[iR], dmu = dmu, causeC = "random", piC = piC[[1]],
+                           df = df, gamma = gamma, unif = unif, seed = iSeed)
+      if(!inherits(iRes,"try-error")){
+        iOut <- rbind(iOut,iRes)
+      }    
+      iRes <- warperTrialC(n = n, rho = rho[iR], dmu = dmu, causeC = "baseline", piC = piC[[2]],
+                           df = df, gamma = gamma, unif = unif, seed = iSeed)
+      if(!inherits(iRes,"try-error")){
+        iOut <- rbind(iOut,iRes)
+      }    
+      iRes <- warperTrialC(n = n, rho = rho[iR], dmu = dmu, causeC = "latent", piC = piC[[3]],
+                          df = df, gamma = gamma, unif = unif, seed = iSeed)
+      if(!inherits(iRes,"try-error")){
+        iOut <- rbind(iOut,iRes)
+      }    
+    }
+    return(iOut)
+  }
+  
+  ## iterate
+  if(trace==TRUE){
+    ls.res <- pblapply(1:n.rep, FUN = .warper3TrialC, cl = cl)
+  }else{
+    ls.res <- lapply(1:n.rep, FUN = .warper3TrialC)
+  }
+  out <- do.call(rbind,ls.res)
+
+  ## export
+  if(!short){
+    out$estimator <-  factor(out$model, c("complete case","FI","FI.oracle","IPCW","IPCW.oracle","oracle"))
+    out$correlation <- paste0("correlation = ", out$rho)
+    out$cause <- factor(out$causeC,
+                        levels = c("random","baseline","latent"),
+                        labels = c("dropout: random", "dropout: baseline score","dropout: latent group"))
+  }else{
+    test.col <- c("causeC","dropout","rho","n","dmu","seed")
+    test.duplicated <- duplicated(out[,test.col])
+    out[which(test.duplicated),test.col] <- ""
+  }
+  return(out)
+
+}
+\end{lstlisting}
+
+\#+END\textsubscript{SRC}
+
+\subsection{Graphical display of the simulation results}
+\label{sec:org8778932}
+
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+ggSimRes <- function(data, plot = TRUE, n.break = 5,
+                     size.text = 20, ylim = NULL){
+  gg <- ggplot(data, aes(y = estimate))
+  gg <- gg + geom_hline(yintercept = median(data[data$model=="oracle","estimate"]), color = "darkgrey", linewidth = 1)
+  gg <- gg + geom_boxplot(aes(fill=estimator))
+  gg <- gg + facet_grid(cause~correlation)
+  gg <- gg + scale_y_continuous(breaks = scales::pretty_breaks(n = n.break))
+  if(!is.null(ylim)){
+  gg <- gg + coord_cartesian(ylim = ylim)
+  }
+  gg <- gg + theme(axis.title.x=element_blank(),
+                   axis.text.x=element_blank(),
+                   axis.ticks.x=element_blank(),
+                   text = element_text(size=size.text),
+                   axis.line = element_line(linewidth = 1.25),
+                   axis.ticks = element_line(size = 2),
+                   axis.ticks.length=unit(.25, "cm"),
+                   legend.key.size = unit(2,"line"),
+                   legend.position="bottom",
+                   legend.direction = "horizontal")
+  if(plot){print(gg)}
+  
+  return(invisible(gg))
+}
+\end{lstlisting}
+
+\subsection{Graphical display of the imputation (\autoref{fig:imputationModel})}
 \label{SM:imputation}
 Alternative R code to fit a random intercept model
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 library(LMMstar)
 e.lmm <- lmm(Yobs~time, repetition = ~time|id,
-	     structure = "CS", data = dtL.B)
+             structure = "CS", data = dtL.B)
 eOracle.lmm <- lmm(Yobs~time*mdd, repetition = ~time|id,
-		   structure = "CS", data = dtL.B)
+                   structure = "CS", data = dtL.B)
 \end{lstlisting}
 
 Identify patient with missing data:
@@ -1042,10 +1413,10 @@ Identify patient with missing data and get the imputed value
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 pred.B <- predict(e.lmm, newdata = dtL.BNA, type = "dynamic",
-		  keep.newdata = TRUE)
+                  keep.newdata = TRUE)
 pred.B$mdd <- paste(pred.B$mdd," (imputed)")
 predOracle.B <- predict(eOracle.lmm, newdata = dtL.BNA, type = "dynamic",
-			keep.newdata = TRUE)
+                        keep.newdata = TRUE)
 predOracle.B$mdd <- paste(predOracle.B$mdd," (imputed)")
 \end{lstlisting}
 
@@ -1053,7 +1424,7 @@ Mixed model (feasible) estimate as a t-test on the imputed values:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 diff.lmm <- c(dtL.BNNA[,diff(Yobs),by="id"][[2]],
-	      pred.B[,estimate[2]-Yobs[1],by="id"][[2]])
+              pred.B[,estimate[2]-Yobs[1],by="id"][[2]])
 t.test(diff.lmm)
 coef(e.lmm)["timeT2"]
 \end{lstlisting}
@@ -1078,7 +1449,7 @@ Mixed model (oracle) estimate as a t-test on the imputed values:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 diff.lmm.oracle <- c(dtL.BNNA[,diff(Yobs),by="id"][[2]],
-		     predOracle.B[,estimate[2]-Yobs[1],by="id"][[2]])
+                     predOracle.B[,estimate[2]-Yobs[1],by="id"][[2]])
 t.test(diff.lmm.oracle)
 glht(eOracle.lmm, linfct = "timeT2+0.5*timeT2:mddsevere=0")
 
@@ -1112,13 +1483,13 @@ gg.imp <- gg.imp + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Yobs))
 gg.imp <- gg.imp + geom_boxplot(data = dtL.BNA, mapping = aes(y = Yobs))
 gg.imp <- gg.imp + geom_boxplot(data = pred.B, mapping = aes(y = estimate))
 gg.imp <- gg.imp + scale_color_manual("MDD group",
-				      values = c("limegreen","darkgreen","orange","red"))
+                                      values = c("limegreen","darkgreen","orange","red"))
 gg.imp <- gg.imp + theme(text = element_text(size=15),
-			 axis.line = element_line(size = 1.25),
-			 axis.ticks = element_line(size = 2),
-			 axis.ticks.length=unit(.25, "cm"),
-			 legend.position="bottom",
-			 legend.direction = "horizontal")
+                         axis.line = element_line(size = 1.25),
+                         axis.ticks = element_line(size = 2),
+                         axis.ticks.length=unit(.25, "cm"),
+                         legend.position="bottom",
+                         legend.direction = "horizontal")
 gg.imp
 \end{lstlisting}
 
@@ -1137,13 +1508,13 @@ gg.impOracle <- gg.impOracle + geom_boxplot(data = dtL.BNNA, mapping = aes(y = Y
 gg.impOracle <- gg.impOracle + geom_boxplot(data = dtL.BNA, mapping = aes(y = Yobs))
 gg.impOracle <- gg.impOracle + geom_boxplot(data = predOracle.B, mapping = aes(y = estimate))
 gg.impOracle <- gg.impOracle + scale_color_manual("MDD group",
-				      values = c("limegreen","darkgreen","orange","red"))
+                                      values = c("limegreen","darkgreen","orange","red"))
 gg.impOracle <- gg.impOracle + theme(text = element_text(size=15),
-			 axis.line = element_line(size = 1.25),
-			 axis.ticks = element_line(size = 2),
-			 axis.ticks.length=unit(.25, "cm"),
-			 legend.position="bottom",
-			 legend.direction = "horizontal")
+                         axis.line = element_line(size = 1.25),
+                         axis.ticks = element_line(size = 2),
+                         axis.ticks.length=unit(.25, "cm"),
+                         legend.position="bottom",
+                         legend.direction = "horizontal")
 gg.impOracle
 \end{lstlisting}
 
