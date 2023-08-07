@@ -2,7 +2,7 @@
 layout: post
 title:  "Writing a statistical analysis paragraph"
 categories: jekyll update
-  usemathjax: true
+mathjax: true
 ---
 
 Here are some personal thoughs about how to write the statistical
