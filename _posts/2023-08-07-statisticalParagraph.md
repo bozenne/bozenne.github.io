@@ -80,6 +80,31 @@ a log-normal distribution, 1.54 and 2.12 can be interpreted as the
 median value in each group and 1.28 as the ratio between the median
 values.
 
+## Partial residuals
+
+Providing a graphical representation associated with the results of a
+statistical analysis is a common request. Displaying the raw data with
+the results of a statistical test (on the same graph or in the title
+or caption) can be misleading when adjusting for covariates. Indeed
+the raw data would correspond to an unadjusted analysis which may
+greatly differ from the adjusted analysis. The possible mismatch
+between the graphical representation and the estimated summary
+statistic(s) may confuse the reader.
+
+When working with a continuous outcome, one can instead display
+partial residuals. Consider the following two-arm trial:
+```r
+data(ckdW, package = "LMMstar")
+ggplot(ckdW, aes(x = allocation, y = pwv0)) + geom_boxplot()
+```
+
+[//]: # (ggsave(gg, filename = "2023-08-07-statisticalParagraph/boxplot_raw.pdf", width = 7, height = 7))
+
+<img src="_posts/2023-08-07-statisticalParagraph/boxplot_raw.pdf" style="display: block; margin: auto;" />
+<img src="2023-08-07-statisticalParagraph/boxplot_raw.pdf" style="display: block; margin: auto;" />
+
+
+
 ## Greek letters and notations
 
 There is no intrinsic meanning to $$ \beta $$, $$ \rho $$, ... One
