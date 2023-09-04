@@ -47,6 +47,7 @@ library(BuyseTest) ## wilcoxon-test with estimated effect size
 library(perm) ## permutation tests
 library(quantreg) ## quantile regression
 library(butils) ## partial residuals (butils::install_github("bozenne/butils"))
+library(TOSTER) ## equivalence testing
 
 ## diagnostics 
 library(gof) ## devtools::install_github("kkholst/gof")
@@ -61,6 +62,7 @@ library(lava)
 #+END_SRC
 
 #+RESULTS:
+: Fejl i library(gof) : der er ingen pakke med navn 'gof'
 
 \clearpage
 
@@ -1995,7 +1997,6 @@ sample estimates:
 probability of success 
              0.7894737
 #+end_example
-
 ** Compare proportions between groups
 
 Data:
@@ -2150,7 +2151,6 @@ sample estimates:
 odds ratio 
          1
 #+end_example
-
 ** Estimate Mann Whitney parameter
 
 Remove ties:
@@ -2632,6 +2632,121 @@ Cramer von Mises-test: p-value=0.006
 Based on 1000 realizations. Cumulated residuals ordered by size-variable.
 ---
 #+end_example
+** Equivalence testing
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+TOSTER::TOSTtwo.prop(prop1 = .65, prop2 = .70, n1 = 100, n2 = 100,
+                     low_eqbound = -0.1, high_eqbound = 0.1, alpha = .05)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+TOST results:
+Z-value lower bound: 0.756 	p-value lower bound: 0.225
+Z-value upper bound: -2.27 	p-value upper bound: 0.012
+
+Equivalence bounds:
+low eqbound: -0.1 
+high eqbound: 0.1
+
+TOST confidence interval:
+lower bound 90% CI: -0.159
+upper bound 90% CI:  0.059
+
+NHST confidence interval:
+lower bound 95% CI: -0.18
+upper bound 95% CI:  0.08
+
+Equivalence Test based on Fisher's exact z-test Result:
+The equivalence test was non-significant, Z = 0.756, p = 0.225, given equivalence bounds of -0.100 and 0.100 and an alpha of 0.05.
+
+Null-Hypothesis Fisher's exact z-test Result:
+The null hypothesis test was non-significant, Z = -0.756, p = 0.450, given an alpha of 0.05.
+
+NHST: don't reject null significance hypothesis that the effect is equal to 0 
+TOST: don't reject null equivalence hypothesis
+#+end_example
+
+Manually:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 65,
+                         x2 = 70,
+                         n1 = 100,
+                         n2 = 100, 
+                         conf.int = TRUE,
+                         nullparm = 0.1, midp = TRUE,
+                         parmtype = "difference",
+                         alternative = "less")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(65/100), sample 2:(70/100)
+proportion 1 = 0.65, proportion 2 = 0.7, p-value = 0.2225
+alternative hypothesis: true difference is less than 0.1
+95 percent confidence interval:
+ -1.0000000  0.1577933
+sample estimates:
+difference (p2-p1) 
+              0.05
+#+end_example
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 65,
+                         x2 = 70,
+                         n1 = 100,
+                         n2 = 100,
+                         conf.int = TRUE, midp = TRUE,
+                         nullparm = -0.1,
+                         parmtype = "difference",
+                         alternative = "greater")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(65/100), sample 2:(70/100)
+proportion 1 = 0.65, proportion 2 = 0.7, p-value = 0.01185
+alternative hypothesis: true difference is greater than -0.1
+95 percent confidence interval:
+ -0.05920183  1.00000000
+sample estimates:
+difference (p2-p1) 
+              0.05
+#+end_example
+
+Confidence interval:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 70,
+                         x2 = 65,
+                         n1 = 100,
+                         n2 = 100,
+                         conf.int = TRUE, midp = TRUE, conf.level = 0.90,
+                         parmtype = "difference",
+                         alternative = "two.sided")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(70/100), sample 2:(65/100)
+proportion 1 = 0.7, proportion 2 = 0.65, p-value = 0.453
+alternative hypothesis: true difference is not equal to 0
+90 percent confidence interval:
+ -0.15779333  0.05920183
+sample estimates:
+difference (p2-p1) 
+             -0.05
+#+end_example
+
+
 ** Compute and display partial residuals in a linear model
 
 For a given model:
@@ -4165,6 +4280,12 @@ wget -O - https://github.com/bozenne/BuyseTest/tarball/master | tar xz
 # https://nbviewer.jupyter.org/github/ericspod/ContainersForCollaboration/blob/master/ContainersForCollaboration.ipynb
 ** Regular expressions
 https://posit.co/wp-content/uploads/2022/10/regex.pdf
+** Source from Github
+# https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+source("https://raw.github.com/bozenne/butils/master/R/riskIDM.R")
+#+END_SRC
+
 ** Keywords in Rd files
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 RShowDoc("KEYWORDS")
