@@ -16,8 +16,8 @@ With Julie Forman, we have made a workshop on linear mixed models (LMMs) for the
 - practical part:  [single group](https://bozenne.github.io/doc/Teaching/2022-Workshop-LMMstar/gastricbypass.R), [two groups observational](https://bozenne.github.io/doc/Teaching/2022-Workshop-LMMstar/abeta.R), [two groups randomized](https://bozenne.github.io/doc/Teaching/2022-Workshop-LMMstar/ckd.R), [optimizer, statistical inference, predictions](https://bozenne.github.io/doc/Teaching/2022-Workshop-LMMstar/part3.R)
 
 For the Brain drug project, I am also creating a workshop on Time-to-event analysis for registry data:
-- theoretical part: [introduction](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/prez-workshopEpi.pdf).
-- practical part: [introduction](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/exercise-workshopEpi.R).
+- [theoretical part](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/prez-workshopEpi.pdf).
+- [practical part](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/exercise-workshopEpi.R).
 
 ## Useful and "pedagogical" references
 - Adjustment for multiple comparisons: [Dmitrienko, 2013](https://doi.org/10.1002/sim.5990)
@@ -25,12 +25,45 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
-- Immortal time bias: [Jensen, 2007](https://doi.org/10.1111/j.1365-3156.2006.01773.x), [Hanley, 2006](https://doi.org/10.1093/ije/dyl036), [Christensen, 2022](https://doi.org/10.1038/s41746-021-00522-4)
-- Mediation: continuous outcome [VamderWeele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [VamderWeele, 2010](https://doi.org/10.1093/aje/kwq332)
+- Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
+- Mediation: continuous outcome & hypotheses [VamderWeele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [VamderWeele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
 - Observed power: [Hoenig, 2001](http://www.jstor.org/stable/2685525)
 - Recurrent events: [Furberg, 2021](https://doi.org/10.1002/pst.2167)
 - Risk, rate, and competing risks:[Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
 - Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
+- Sample size calculation for existing databases: [Hernan, 2022](https://doi.org/10.1016/j.jclinepi.2021.08.028)
 - Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
+
+## Learning R
+
+Basics:
+- [Introduction tutorial](http://r.sund.ku.dk/) made by colleague from KU and covering installation, data management, and basic data visualisation
+- [Basic statistic course](http://paulblanche.com/files/BasicStat2020.html) made by a colleague from KU covering basic notions in statistics and corresponding R code
+- [basic R cheat sheed](https://posit.co/wp-content/uploads/2022/10/base-r.pdf) or [long](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf)
+- [R studio  cheat sheed](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rstudio-ide.pdf)
+
+Efficient data management using *data.table*:
+- [Introduction](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html)
+- [Update data table objects](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html)
+- [Wide and long format](https://rdatatable.gitlab.io/data.table/articles/datatable-reshape.html)
+- [Slide show](https://raw.githubusercontent.com/wiki/Rdatatable/data.table/talks/MontReal2018_Arun.pdf)
+- [cheat sheet](https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf)
+
+Efficient generation of graphical displays using *ggplot2*:
+- [tutorial](http://r4ds.had.co.nz/data-visualisation.html)
+- [cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+
+Specialized or advanced topics:
+- [R markdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html) and [R markdown cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) for generating documents mixing text, R code, R outputs, and graphical display generated in R.
+- [Linear models, diagnostics, and remedies](https://bozenne.github.io/doc/2020-09-17-linearModel/post-linearModel.pdf)
+- [Multiple imputation workshop](https://amices.org/Winnipeg/) and ["homemade" summary](https://bozenne.github.io/doc/2019-10-22-multipleImputation/post-multipleImputation.pdf) for using the mice package.
+- [Analyzing repeated measurements](http://publicifsv.sund.ku.dk/~jufo/courses/rm2019/gastricbypass_tutorial_R.pdf)
+- [formula in R (section 11.1)](https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf)
+- [If and do](https://adv-r.hadley.nz/control-flow.html)
+- [Functions](https://adv-r.hadley.nz/functions.html)
+- [Simulating data](https://publicifsv.sund.ku.dk/~tag/download/tagteam-lava-presentation.pdf)
+
+If you are using R and you think you’re in hell, [this](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) is for you.
+

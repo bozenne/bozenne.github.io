@@ -178,8 +178,6 @@ method).
   whether what you have been doing seems reasonable to me and I am not
   responsible for the validity of the statistical analysis.
 
-
-
 ## What I will expect from you
 
 - *to present me the person(s) involved in the project*. By default I
@@ -223,5 +221,5 @@ method).
 ## Other places where you can find help for data analysis
 
 - [statistical advisory services](https://publichealth.ku.dk/about-the-department/biostat/) with three types of services: [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/), [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/), and [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
-- [data analysis group at NRU](https://nru.dk/index.php/research-menu/78-data-analysis)
+- [data analysis group at NRU](https://nru.dk/index.php/research-menu/research-groups/78-data-analysis)
  
