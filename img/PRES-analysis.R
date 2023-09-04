@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: sep  4 2023 (16:10) 
 ## Version: 
-## Last-Updated: sep  4 2023 (16:40) 
+## Last-Updated: sep  4 2023 (16:42) 
 ##           By: Brice Ozenne
-##     Update #: 6
+##     Update #: 7
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -14,6 +14,8 @@
 ##----------------------------------------------------------------------
 ## 
 ### Code:
+
+## inspiration blog https://yongfu.name/2023/06/27/irt5/
 
 data(ckdW, package = "LMMstar")
 gg <- ggplot(ckdW, aes(x = allocation, y = pwv0)) + geom_boxplot()

@@ -2,8 +2,6 @@
 layout: post
 title:  "Writing a statistical analysis paragraph"
 categories: jekyll update
-date: '2023-09-04'
-katex: true
 ---
 
 Here are some personal thoughs about how to write the statistical
