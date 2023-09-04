@@ -2,7 +2,8 @@
 layout: post
 title:  "Writing a statistical analysis paragraph"
 categories: jekyll update
-mathjax: true
+date: '2023-09-04'
+katex: true
 ---
 
 Here are some personal thoughs about how to write the statistical
@@ -98,7 +99,7 @@ data(ckdW, package = "LMMstar")
 ggplot(ckdW, aes(x = allocation, y = pwv0)) + geom_boxplot()
 ```
 <br>
-![](https://bozenne.github.io/PRES-boxplot_raw.png)
+![](https://bozenne.github.io/img/PRES-boxplot_raw.png)
 <br>
 
 where the following statistical model was used to test the group
@@ -107,11 +108,11 @@ difference (allocation variable):
 e.lmm <- lmm(pwv0 ~ allocation + sex + age, data = ckdW)
 model.tables(e.lmm)
 ```
-  ##               estimate         se      df      lower    upper      p.value
-  ## (Intercept) -0.6701892 1.98683016 47.0094 -4.6671548 3.326776 7.373804e-01
-  ## allocationB  0.3269616 0.82004599 47.0094 -1.3227494 1.976673 6.919113e-01
-  ## sexmale      0.8474481 0.95876696 47.0094 -1.0813321 2.776228 3.812519e-01
-  ## age          0.1682865 0.03246632 47.0094  0.1029731 0.233600 4.510612e-06
+                  estimate         se      df      lower    upper      p.value
+    (Intercept) -0.6701892 1.98683016 47.0094 -4.6671548 3.326776 7.373804e-01
+    allocationB  0.3269616 0.82004599 47.0094 -1.3227494 1.976673 6.919113e-01
+    sexmale      0.8474481 0.95876696 47.0094 -1.0813321 2.776228 3.812519e-01
+    age          0.1682865 0.03246632 47.0094  0.1029731 0.233600 4.510612e-06
 <br>
 
 
@@ -122,18 +123,19 @@ residuals can be extracted with the residuals method:
 ckdW$pres <- residuals(e.lmm, type = "partial", var = "allocation")
 head(ckdW$pres)
 ```
-  ## [1] -2.7098727 -2.3524574 -1.6281556 -0.1672843 -0.5647286 -2.4024574
+
+    [1] -2.7098727 -2.3524574 -1.6281556 -0.1672843 -0.5647286 -2.4024574
 <br>
 
-One unintuitve feature of partial residuals is that there may not
-follow the original scale (they are typically centered around 0
+One counter-intuitive feature of partial residuals is that there may
+not follow the original scale (they are typically centered around 0
 wherease the outcome value was strictly positive). But they do exactly
 reflect the estimated difference:
 ```r
 tapply(ckdW$pres,ckdW$allocation,mean)
 ```
-  ##           A            B 
-  ## 1.064773e-16 3.269616e-01 
+               A            B 
+    1.064773e-16 3.269616e-01 
 <br>
 
 So the graphical display based on the partial residuals will match the
@@ -146,15 +148,27 @@ plot(e.lmm, type = "partial", var = "allocation")
 ![](https://bozenne.github.io/img/PRES-boxplot_partial0.png)
 <br>
 
-
 Assuming that the model holds, the display is to be understood as the
 outcome we would have observed had all individuals have had the same
-sex (here female) and same age (here age 0).
+sex (here female) and same age (here age 0). Another counter-intuitive
+feature is that continuous variables have by default reference level 0
+which in the case of age is un-realistic. The first issue can be fixed
+by keeping the intercept (argument var) and the second by specifying
+the reference levels:
+```r
+mytype <- "partial"
+attr(mytype, "reference") <- data.frame(sex = factor("female", levels(ckdW$sex)),
+                                        age = 58)
+plot(e.lmm, type = mytype, var = c("(Intercept)","allocation"))
+```
+<br>
+![](https://bozenne.github.io/img/PRES-boxplot_partial.png)
+<br>
 
 ## Greek letters and notations
 
-There is no intrinsic meanning to $$ \beta $$, $$ \rho $$, ... One
-should define what each refers to in the statistical analysis
+There is no intrinsic meanning to $\beta$, $\rho$, ... One should
+define what each refers to in the statistical analysis
 paragraph. Avoid to use the same letter to refer to two different
 things. It can be a good idea to use $$ p $$ to refer to p-values
 relative to a single test and $$ p_{adj} $$ to FWER adjusted

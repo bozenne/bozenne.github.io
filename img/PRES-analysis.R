@@ -3,9 +3,9 @@
 ## Author: Brice Ozenne
 ## Created: sep  4 2023 (16:10) 
 ## Version: 
-## Last-Updated: sep  4 2023 (16:21) 
+## Last-Updated: sep  4 2023 (16:40) 
 ##           By: Brice Ozenne
-##     Update #: 4
+##     Update #: 6
 ##----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -29,5 +29,14 @@ tapply(ckdW$pres,ckdW$allocation,mean)
 png(filename = "img/PRES-boxplot_partial0.png", width = 7, height = 7, units = "in", res = 300)
 plot(e.lmm, type = "partial", var = "allocation")
 dev.off()
+
+mytype <- "partial"
+attr(mytype, "reference") <- data.frame(sex = factor("female", levels(ckdW$sex)),
+                                        age = 58)
+
+png(filename = "img/PRES-boxplot_partial.png", width = 7, height = 7, units = "in", res = 300)
+plot(e.lmm, type = mytype, var = c("(Intercept)","allocation"))
+dev.off()
+
 ##----------------------------------------------------------------------
 ### analysis.R ends here
