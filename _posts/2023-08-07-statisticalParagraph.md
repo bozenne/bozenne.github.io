@@ -97,7 +97,9 @@ partial residuals. Consider the following two-arm trial:
 data(ckdW, package = "LMMstar")
 ggplot(ckdW, aes(x = allocation, y = pwv0)) + geom_boxplot()
 ```
-![](https://bozenne.github.io/_posts/2023-08-07-statisticalParagraph/boxplot_raw.png)
+<br>
+![](https://bozenne.github.io/PRES-boxplot_raw.png)
+<br>
 
 where the following statistical model was used to test the group
 difference (allocation variable):
@@ -110,6 +112,7 @@ model.tables(e.lmm)
   ## allocationB  0.3269616 0.82004599 47.0094 -1.3227494 1.976673 6.919113e-01
   ## sexmale      0.8474481 0.95876696 47.0094 -1.0813321 2.776228 3.812519e-01
   ## age          0.1682865 0.03246632 47.0094  0.1029731 0.233600 4.510612e-06
+<br>
 
 
 We obtain a mean group difference of 0.327 [-1.323;1.977] instead of
@@ -120,6 +123,7 @@ ckdW$pres <- residuals(e.lmm, type = "partial", var = "allocation")
 head(ckdW$pres)
 ```
   ## [1] -2.7098727 -2.3524574 -1.6281556 -0.1672843 -0.5647286 -2.4024574
+<br>
 
 One unintuitve feature of partial residuals is that there may not
 follow the original scale (they are typically centered around 0
@@ -130,7 +134,22 @@ tapply(ckdW$pres,ckdW$allocation,mean)
 ```
   ##           A            B 
   ## 1.064773e-16 3.269616e-01 
+<br>
 
+So the graphical display based on the partial residuals will match the
+result of the statistical test:
+```r
+plot(e.lmm, type = "partial", var = "allocation")
+```
+
+<br>
+![](https://bozenne.github.io/img/PRES-boxplot_partial0.png)
+<br>
+
+
+Assuming that the model holds, the display is to be understood as the
+outcome we would have observed had all individuals have had the same
+sex (here female) and same age (here age 0).
 
 ## Greek letters and notations
 
