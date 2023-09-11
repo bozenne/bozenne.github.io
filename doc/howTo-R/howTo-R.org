@@ -47,6 +47,7 @@ library(BuyseTest) ## wilcoxon-test with estimated effect size
 library(perm) ## permutation tests
 library(quantreg) ## quantile regression
 library(butils) ## partial residuals (butils::install_github("bozenne/butils"))
+library(TOSTER) ## equivalence testing
 
 ## diagnostics 
 library(gof) ## devtools::install_github("kkholst/gof")
@@ -61,6 +62,7 @@ library(lava)
 #+END_SRC
 
 #+RESULTS:
+: Fejl i library(gof) : der er ingen pakke med navn 'gof'
 
 \clearpage
 
@@ -1416,6 +1418,18 @@ head(dtL.data)
 : 5:  5 Female       Yes  42    1     52 52.86
 : 6:  6   Male       Yes  38    1     52 49.37
 
+*** Histogram plot with gaussian model
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtL.data[, density := dnorm(weight, mean = mean(weight), sd = sd(weight)), by = c("Gender","Treatment")]
+gg.hist <- ggplot(dtL.data,
+                  aes(x=weight)) + geom_histogram(aes(y = after_stat(density)), bins = 100) 
+gg.hist <- gg.hist + facet_grid(Gender~Treatment)
+gg.hist <- gg.hist + geom_line(aes(y = density), color = "red")
+gg.hist
+#+END_SRC
+
+
 *** Spaguetti plot 
 
 **** color by individual (first ten individuals)
@@ -1749,6 +1763,12 @@ List of 1
  - attr(*, "validate")= logi TRUE
 #+end_example
 
+*** Increase the number tick
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+gg.mean + scale_y_continuous(breaks = scales::pretty_breaks(n = 5))
+#+END_SRC
+
 *** Change tick mark labels
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -1813,7 +1833,6 @@ gg
 
 #+ATTR_LaTeX: :width 0.5\textwidth :options trim={0 0 0 0} :placement [!h]
 [[./figures/fig-symbolfacet.pdf]]
-
 
 *** Extract labels of the x/y thicks
 
@@ -1978,7 +1997,6 @@ sample estimates:
 probability of success 
              0.7894737
 #+end_example
-
 ** Compare proportions between groups
 
 Data:
@@ -2133,7 +2151,6 @@ sample estimates:
 odds ratio 
          1
 #+end_example
-
 ** Estimate Mann Whitney parameter
 
 Remove ties:
@@ -2615,6 +2632,121 @@ Cramer von Mises-test: p-value=0.006
 Based on 1000 realizations. Cumulated residuals ordered by size-variable.
 ---
 #+end_example
+** Equivalence testing
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+TOSTER::TOSTtwo.prop(prop1 = .65, prop2 = .70, n1 = 100, n2 = 100,
+                     low_eqbound = -0.1, high_eqbound = 0.1, alpha = .05)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+TOST results:
+Z-value lower bound: 0.756 	p-value lower bound: 0.225
+Z-value upper bound: -2.27 	p-value upper bound: 0.012
+
+Equivalence bounds:
+low eqbound: -0.1 
+high eqbound: 0.1
+
+TOST confidence interval:
+lower bound 90% CI: -0.159
+upper bound 90% CI:  0.059
+
+NHST confidence interval:
+lower bound 95% CI: -0.18
+upper bound 95% CI:  0.08
+
+Equivalence Test based on Fisher's exact z-test Result:
+The equivalence test was non-significant, Z = 0.756, p = 0.225, given equivalence bounds of -0.100 and 0.100 and an alpha of 0.05.
+
+Null-Hypothesis Fisher's exact z-test Result:
+The null hypothesis test was non-significant, Z = -0.756, p = 0.450, given an alpha of 0.05.
+
+NHST: don't reject null significance hypothesis that the effect is equal to 0 
+TOST: don't reject null equivalence hypothesis
+#+end_example
+
+Manually:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 65,
+                         x2 = 70,
+                         n1 = 100,
+                         n2 = 100, 
+                         conf.int = TRUE,
+                         nullparm = 0.1, midp = TRUE,
+                         parmtype = "difference",
+                         alternative = "less")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(65/100), sample 2:(70/100)
+proportion 1 = 0.65, proportion 2 = 0.7, p-value = 0.2225
+alternative hypothesis: true difference is less than 0.1
+95 percent confidence interval:
+ -1.0000000  0.1577933
+sample estimates:
+difference (p2-p1) 
+              0.05
+#+end_example
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 65,
+                         x2 = 70,
+                         n1 = 100,
+                         n2 = 100,
+                         conf.int = TRUE, midp = TRUE,
+                         nullparm = -0.1,
+                         parmtype = "difference",
+                         alternative = "greater")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(65/100), sample 2:(70/100)
+proportion 1 = 0.65, proportion 2 = 0.7, p-value = 0.01185
+alternative hypothesis: true difference is greater than -0.1
+95 percent confidence interval:
+ -0.05920183  1.00000000
+sample estimates:
+difference (p2-p1) 
+              0.05
+#+end_example
+
+Confidence interval:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+exact2x2::binomMeld.test(x1 = 70,
+                         x2 = 65,
+                         n1 = 100,
+                         n2 = 100,
+                         conf.int = TRUE, midp = TRUE, conf.level = 0.90,
+                         parmtype = "difference",
+                         alternative = "two.sided")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	melded binomial test for difference, mid-p version
+
+data:  sample 1:(70/100), sample 2:(65/100)
+proportion 1 = 0.7, proportion 2 = 0.65, p-value = 0.453
+alternative hypothesis: true difference is not equal to 0
+90 percent confidence interval:
+ -0.15779333  0.05920183
+sample estimates:
+difference (p2-p1) 
+             -0.05
+#+end_example
+
+
 ** Compute and display partial residuals in a linear model
 
 For a given model:
@@ -2933,7 +3065,6 @@ summary(e.pois2)$coef
 : interval.f1:trt  0.3547917  0.2806814   1.2640372 2.062167e-01
 : interval.f2:trt -0.1008188  0.2787496  -0.3616824 7.175894e-01
 : interval.f3:trt -0.7261015  0.4174235  -1.7394837 8.194972e-02
-
 
 ** Twin study
 *** Data
@@ -3523,28 +3654,65 @@ plot(e.KM)
 [[file:./figures/fig-delayedTreatmentEffect.pdf]]
 
 ** Tune optimization parameters
+** Interaction in lava (mean coefficients)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
 set.seed(10)
-dd <- sim(lvm(Y~X1+X2+X3), 100)
-ee <- estimate(lvm(Y~X1+X2+X3+eta), data = dd, control = list(trace = 1, iter.max = 200))
+data(mtcars, package = "datasets")
+mtcars$vs <- as.factor(mtcars$vs)
+
+e.lmI <- lm(mpg ~ vs*drat, data = mtcars)
+coef(e.lmI)
+
+e.lmI.bis <- lm(mpg ~ vs + drat:vs, data = mtcars)
+coef(e.lmI.bis)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-  0:     260.69531: -0.00392152  0.00000  0.00000  0.00000  0.00000  1.89517  1.19723 0.900000
-  1:     232.00124: -0.0200212 -0.0305115 0.473562 0.497905 0.592152  1.80796  1.17166 0.808180
-  2:     202.02739: -0.0397653 -0.0662080 0.941194 0.998447  1.03587  1.47069  1.05604 0.430261
-  3:     189.85429: -0.0476622 -0.0778219 0.942488 0.999840  1.03679  1.27746 0.902950 0.0991273
-  4:     188.92755: -0.0488980 -0.0794005 0.942488 0.999840  1.03679  1.26451 0.851417 0.0150308
-  5:     188.92730: -0.0489067 -0.0794116 0.942488 0.999840  1.03679  1.26448 0.850633 0.0137765
-  6:     188.92730: -0.0489067 -0.0794116 0.942488 0.999840  1.03679  1.26448 0.850633 0.0137765
-Warning messages:
-1: In estimate.lvm(lvm(Y ~ X1 + X2 + X3 + eta), data = dd, control = list(trace = 1)) :
-  Lack of convergence. Increase number of iteration or change starting values.
-2: In sqrt(diag(asVar)) : NaNs produced
-#+end_example
+: (Intercept)         vs1        drat    vs1:drat 
+:  -0.2127763   1.6821904   4.9611853   1.0211986
+: (Intercept)         vs1    vs0:drat    vs1:drat 
+:  -0.2127763   1.6821904   4.9611853   5.9823839
+
+With lava using a single latent variable model (LVM):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mtcars$vs0drat <- (mtcars$vs=="0")*mtcars$drat
+mtcars$vs1drat <- (mtcars$vs=="1")*mtcars$drat
+
+e.lvm <- estimate(lvm(mpg ~ vs + vs0drat+ vs1drat), data = mtcars)
+coef(e.lvm)
+estimate(e.lvm, function(p){
+  p["mpg~vs1drat"] - p["mpg~vs0drat"]
+})
+#+END_SRC
+
+#+RESULTS:
+:         mpg mpg~vs0drat mpg~vs1drat     mpg~vs1    mpg~~mpg 
+:  -0.2127763   4.9611853   5.9823839   1.6821904  13.0157822
+:             Estimate Std.Err  2.5% 97.5% P-value
+: mpg~vs1drat    1.021   2.169 -3.23 5.272  0.6378
+
+An alternative implementation uses two LVMs, one per group and where
+the variance coefficients are constrain to be the same between groups:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e2.lvm <- estimate(list(lvm(mpg[mu0:sigma] ~ beta0*drat),
+                        lvm(mpg[mu1:sigma] ~ beta1*drat)),
+                   data = split(mtcars,mtcars$vs))
+coef(e2.lvm)
+#+END_SRC
+
+#+RESULTS:
+:      mpg@1      mpg@2 mpg~drat@1 mpg~~mpg@1 mpg~drat@2 
+: -0.2127763  1.4694141  4.9611853 13.0157822  5.9823839
+
+Note that =stats::lm= and =lava::estimate= should return the same
+point estimate but will not quantify the uncertainty similarly. The
+standard error =stats::lm= is more precise as it uses restricted
+maximum likelihood (REML) instead of maximum likelihood
+(ML). =stats::lm= also uses a Student's t-distribution instead of a
+Gaussian distribution which provides better type 1 error control in
+finite samples. 
 
 ** Output correlation between two endogenous variables
 Simulate some data:
@@ -4112,6 +4280,108 @@ wget -O - https://github.com/bozenne/BuyseTest/tarball/master | tar xz
 # https://nbviewer.jupyter.org/github/ericspod/ContainersForCollaboration/blob/master/ContainersForCollaboration.ipynb
 ** Regular expressions
 https://posit.co/wp-content/uploads/2022/10/regex.pdf
+** Source from Github
+# https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+source("https://raw.github.com/bozenne/butils/master/R/riskIDM.R")
+#+END_SRC
+
+** Keywords in Rd files
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+RShowDoc("KEYWORDS")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+GROUPED Keywords
+----------------
+
+Graphics
+	aplot		&	Add to Existing Plot / internal plot
+	dplot		&	Computations Related to Plotting
+	hplot		&	High-Level Plots
+	iplot		&	Interacting with Plots
+	color		&	Color, Palettes etc
+	dynamic		&	Dynamic Graphics
+	device		&	Graphical Devices
+
+Basics
+	sysdata		&	Basic System Variables		[!= S]
+	datasets	&	Datasets available by data(.)	[!= S]
+	data		&	Environments, Scoping, Packages [~= S]
+	manip		&	Data Manipulation
+	attribute	&	Data Attributes
+	classes		&	Data Types (not OO)
+	    & character	&	Character Data ("String") Operations
+	    & complex	&	Complex Numbers
+	    & category	&	Categorical Data
+	    & NA	&	Missing Values			[!= S]
+	list		&	Lists
+	chron		&	Dates and Times
+	package		&	Package Summaries
+
+Mathematics
+	array		&	Matrices and Arrays
+	      & algebra &	Linear Algebra
+	arith		&	Basic Arithmetic and Sorting	[!= S]
+	math		&	Mathematical Calculus etc.	[!= S]
+	logic		&	Logical Operators
+	optimize	&	Optimization
+	symbolmath	&	"Symbolic Math", as polynomials, fractions
+	graphs		&	Graphs, (not graphics), e.g. dendrograms
+
+Programming, Input/Ouput, and Miscellaneous
+
+	programming	&	Programming
+	     & interface&	Interfaces to Other Languages
+	IO		&	Input/output
+	     & file	&	Files
+	     & connection&	Connections
+	     & database	&	Interfaces to databases
+	iteration	&	Looping and Iteration
+	methods		&	Methods and Generic Functions
+	print		&	Printing
+	error		&	Error Handling
+
+	environment	&	Session Environment
+	internal	&	Internal Objects (not part of API)
+	utilities	&	Utilities
+	misc		&	Miscellaneous
+	documentation	&	Documentation
+	debugging	&	Debugging Tools
+
+Statistics
+
+	datagen		&	Functions for generating data sets
+	distribution	&	Probability Distributions and Random Numbers
+	univar		&	simple univariate statistics  [!= S]
+	htest		&	Statistical Inference
+	models		&	Statistical Models
+	    & regression&	Regression
+	    & &nonlinear&	Non-linear Regression (only?)
+	robust		&	Robust/Resistant Techniques
+	design		&	Designed Experiments
+	multivariate	&	Multivariate Techniques
+	ts		&	Time Series
+	survival	&	Survival Analysis
+	nonparametric	&	Nonparametric Statistics [w/o 'smooth']
+	smooth		&	Curve (and Surface) Smoothing
+	     & loess	&	Loess Objects
+	cluster		&	Clustering
+	tree		&	Regression and Classification Trees
+	survey		&	Complex survey samples
+
+
+MASS (2, 1997)
+--------------
+
+add the following keywords :
+
+	classif		&	Classification	['class' package]
+	spatial		&	Spatial Statistics ['spatial' package]
+	neural		&	Neural Networks ['nnet'	 package]
+#+end_example
+
 
 * CONFIG :noexport:
 # #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}

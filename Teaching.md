@@ -25,7 +25,6 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
-- Immortal time bias: [Jensen, 2007](https://doi.org/10.1111/j.1365-3156.2006.01773.x), [Hanley, 2006](https://doi.org/10.1093/ije/dyl036)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
 - Mediation: continuous outcome & hypotheses [VamderWeele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [VamderWeele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
