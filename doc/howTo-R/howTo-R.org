@@ -1429,7 +1429,6 @@ gg.hist <- gg.hist + geom_line(aes(y = density), color = "red")
 gg.hist
 #+END_SRC
 
-
 *** Spaguetti plot 
 
 **** color by individual (first ten individuals)
@@ -1644,6 +1643,7 @@ See also:
 - https://en.wikipedia.org/wiki/List_of_Unicode_characters
 - https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts
 - https://stackoverflow.com/questions/5293715/how-to-use-greek-symbols-in-ggplot2
+- https://www.casualinferences.com/posts/adding-special-characters-ggplot-labels/
 
 \clearpage
 *** Change the name of the legend
@@ -4108,6 +4108,158 @@ as.data.frame(coef(eS, std = "xy", type = 9))[1,,drop=FALSE]
 : Y1~X 0.5858683 0.02003958 29.23556 6.852072e-188 0.5047583
 
 is though.
+
+** Probit model (binary outcome)
+
+A =lvm= fitted with a factor/character outcome:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(2)
+n <- 1000
+df <- data.frame(Y = rbinom(n, size = 1, prob = 0.25),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.bin <- as.factor(df$Y)
+
+m0.lvm <- lvm(Y.bin~1)
+e0.lvm <- estimate(m0.lvm, df)
+e0.lvm
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   Z-value  P-value
+: Intercepts:                                        
+:    Y.bin     -0.62496    0.04258 -14.67775   <1e-12
+
+differs from including the outcome as a numeric variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(lvm(Y~1), df)
+#+END_SRC
+
+#+RESULTS:
+:                     Estimate Std. Error  Z-value  P-value
+: Intercepts:                                              
+:    Y                 0.26600    0.01397 19.03675   <1e-12
+: Residual Variances:                                      
+:    Y                 0.19524    0.00873 22.36068
+
+When using =e0.lvm=, i.e. having a factor outcome lava uses as
+intercept the quantile of the normal distribution corresponding to the
+prevalence (after transformation with the inverse normal cdf):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(prevalence = mean(df$Y==1), lava = unname(pnorm(coef(e0.lvm)["Y.bin"])))
+#+END_SRC
+
+#+RESULTS:
+: prevalence       lava 
+:      0.266      0.266
+
+With a covariate:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m1.lvm <- lvm(Y.bin~X1)
+e1.lvm <- estimate(m1.lvm, df)
+#+END_SRC
+
+#+RESULTS:
+
+lava estimates the intercept as (as transformation of) the prevalence for the reference covariate level:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(ref.prevalence = mean(df$Y[df$X1==0]==1),
+  lava = unname(pnorm(coef(e1.lvm)["Y.bin"])))
+#+END_SRC
+
+#+RESULTS:
+: ref.prevalence           lava 
+:      0.2545090      0.2545088
+
+while the covariate effect is its effect on the quantile scale
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(qnorm(mean(df$Y[df$X1==1]==1))-qnorm(mean(df$Y[df$X1==0]==1)),
+  coef(e1.lvm)["Y.bin~X1"])
+#+END_SRC
+
+#+RESULTS:
+:              Y.bin~X1 
+: 0.06991930 0.06992068
+
+In this particular example we retrieve the prevalence in the other
+group by summing the coefficients and apply the inverse transform:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(mean(df$Y[df$X1==1]==1),
+  pnorm(sum(coef(e1.lvm))))
+
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.2774451 0.2774453
+
+
+** Probit model (categorical outcome)
+
+Now consider 3 possible outcomes:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(2)
+n <- 1000
+df <- data.frame(Y = rbinom(n, size = 2, prob = 0.5),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.cat <- as.factor(df$Y)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.cat <- as.factor(c(rep(0,499),1,1,rep(2,499)))
+m0.lvm <- lvm(Y.cat~1)
+e0.lvm <- estimate(m0.lvm, df)
+coef(e0.lvm)
+#+END_SRC
+
+#+RESULTS:
+:    Y.cat:0|1    Y.cat:1|2 
+: -0.002506403 -5.295670656
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.cat <- as.factor(c(0,0,rep(1,499),rep(2,499)))
+m0.lvm <- lvm(Y.cat~1)
+e0.lvm <- estimate(m0.lvm, df)
+coef(e0.lvm)
+#+END_SRC
+
+#+RESULTS:
+: Y.cat:0|1 Y.cat:1|2 
+: -2.878162  1.058022
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.cat <- as.factor(c(rep(0,499),rep(1,499),2,2))
+m0.lvm <- lvm(Y.cat~1)
+e0.lvm <- estimate(m0.lvm, df)
+coef(e0.lvm)
+#+END_SRC
+
+#+RESULTS:
+:    Y.cat:0|1    Y.cat:1|2 
+: -0.002506806  1.058022215
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
+                 X1 = rbinom(n, size = 1, prob = 0.5))
+df$Y.cat <- as.factor(c(rep(0,333),rep(1,333),rep(2,334)))
+m0.lvm <- lvm(Y.cat~1)
+e0.lvm <- estimate(m0.lvm, df)
+coef(e0.lvm)
+#+END_SRC
+
+#+RESULTS:
+:  Y.cat:0|1  Y.cat:1|2 
+: -0.4316412 -0.1502058
 
 * Miscellaneous
 ** Profile code R
