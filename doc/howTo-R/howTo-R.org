@@ -4194,72 +4194,43 @@ c(mean(df$Y[df$X1==1]==1),
 
 ** Probit model (categorical outcome)
 
-Now consider 3 possible outcomes:
+Now consider 3 possible outcomes, with relative frequency:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 set.seed(2)
 n <- 1000
 df <- data.frame(Y = rbinom(n, size = 2, prob = 0.5),
                  X1 = rbinom(n, size = 1, prob = 0.5))
 df$Y.cat <- as.factor(df$Y)
+prop.table(table(df$Y.cat))
 #+END_SRC
 
 #+RESULTS:
+: 
+:     0     1     2 
+: 0.267 0.467 0.266
 
+Lava will use the first threshold to model the frequency of the reference level:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-set.seed(10)
-df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
-                 X1 = rbinom(n, size = 1, prob = 0.5))
-df$Y.cat <- as.factor(c(rep(0,499),1,1,rep(2,499)))
 m0.lvm <- lvm(Y.cat~1)
 e0.lvm <- estimate(m0.lvm, df)
-coef(e0.lvm)
+pnorm(coef(e0.lvm)[1])
 #+END_SRC
 
 #+RESULTS:
-:    Y.cat:0|1    Y.cat:1|2 
-: -0.002506403 -5.295670656
+: Y.cat:0|1 
+: 0.2670003
 
+the following thresholds are the log-shift in quantiles of the normal
+distribution corresponding the frequency of the following levels:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-set.seed(10)
-df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
-                 X1 = rbinom(n, size = 1, prob = 0.5))
-df$Y.cat <- as.factor(c(0,0,rep(1,499),rep(2,499)))
-m0.lvm <- lvm(Y.cat~1)
-e0.lvm <- estimate(m0.lvm, df)
-coef(e0.lvm)
+pnorm(coef(e0.lvm)[1]+exp(coef(e0.lvm)[2])) - pnorm(coef(e0.lvm)[1])
 #+END_SRC
 
 #+RESULTS:
-: Y.cat:0|1 Y.cat:1|2 
-: -2.878162  1.058022
+: Y.cat:0|1 
+: 0.4669996
 
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-set.seed(10)
-df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
-                 X1 = rbinom(n, size = 1, prob = 0.5))
-df$Y.cat <- as.factor(c(rep(0,499),rep(1,499),2,2))
-m0.lvm <- lvm(Y.cat~1)
-e0.lvm <- estimate(m0.lvm, df)
-coef(e0.lvm)
-#+END_SRC
 
-#+RESULTS:
-:    Y.cat:0|1    Y.cat:1|2 
-: -0.002506806  1.058022215
-
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-set.seed(10)
-df <- data.frame(Y = rbinom(n, size = 1, prob = 0.5),
-                 X1 = rbinom(n, size = 1, prob = 0.5))
-df$Y.cat <- as.factor(c(rep(0,333),rep(1,333),rep(2,334)))
-m0.lvm <- lvm(Y.cat~1)
-e0.lvm <- estimate(m0.lvm, df)
-coef(e0.lvm)
-#+END_SRC
-
-#+RESULTS:
-:  Y.cat:0|1  Y.cat:1|2 
-: -0.4316412 -0.1502058
 
 * Miscellaneous
 ** Profile code R
