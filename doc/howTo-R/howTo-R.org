@@ -1683,17 +1683,14 @@ gg.mean3 <- gg.mean + theme(axis.title = element_text(size=10))
 \clearpage
 *** Increase size of the legend labels 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-    gg.mean + theme(text = element_text(size=15), 
-                    axis.line = element_line(linewidth = 1.25),
-                    axis.ticks = element_line(linewidth = 2),
-                    axis.ticks.length=unit(.25, "cm"),
-                    legend.key.size = unit(3,"line"))
+gg.mean + theme(text = element_text(size=15), 
+                axis.line = element_line(linewidth = 1.25),
+                axis.ticks = element_line(linewidth = 2),
+                axis.ticks.length=unit(.25, "cm"),
+                legend.key.size = unit(3,"line"))
 
-    gg.mean + theme(axis.title = element_text(size=10), 
-                    axis.line = element_line(linewidth = 1.25),
-                    axis.ticks = element_line(linewidth = 2),
-                    axis.ticks.length=unit(.25, "cm"),
-                    legend.key.size = unit(3,"line"))
+## guides(color = guide_legend(override.aes = list(size = 3) ) )
+## https://aosmith.rbind.io/2020/07/09/ggplot2-override-aes/
 #+END_SRC
 
 *** Put the legend at the bottom
