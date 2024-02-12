@@ -9,6 +9,8 @@ I am currently teaching in three Ph.D. courses for medical researchers at the Un
 - [Epidemiological methods in medical research](https://absalon.ku.dk/courses/58764). This is a 10 day course over 3 months (January-March) where I am the course director in collaboration with the epidemiology section of KU. 
 - [Statistical analysis of repeated measurements and clustered data](https://absalon.ku.dk/courses/47665). This is 6 day course over 3 weeks lead by Julie Forman, occuring every fall.
 - [Basic Statistics](http://paulblanche.com/files/BasicStat2022.html). This is 10 day course over 6 weeks lead by Paul Blanche, occuring twice a year (spring/fall).
+and one master course for MSc in Statistics and Mathematics-Economics  :
+- [Survival Analysis](https://kurser.ku.dk/course/nmak16019u/2023-2024). This is a 7 week with a 4 hours of lectures and 3 hours of exercise per week (December-January). 
 
 ## Workshops
 With Julie Forman, we have made a workshop on linear mixed models (LMMs) for the method week at Karolinska Institutet:
