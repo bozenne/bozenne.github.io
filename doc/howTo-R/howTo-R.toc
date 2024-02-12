@@ -49,83 +49,90 @@
 \contentsline {subsubsection}{\numberline {4.11.2}Multivariate}{42}{subsubsection.4.11.2}%
 \contentsline {section}{\numberline {5}Graphical display}{43}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Descriptive plots}{43}{subsection.5.1}%
-\contentsline {subsubsection}{\numberline {5.1.1}Spaguetti plot}{43}{subsubsection.5.1.1}%
-\contentsline {subsubsection}{\numberline {5.1.2}Display the mean over time}{47}{subsubsection.5.1.2}%
-\contentsline {subsubsection}{\numberline {5.1.3}Boxplot + points (non-overlapping)}{48}{subsubsection.5.1.3}%
-\contentsline {subsection}{\numberline {5.2}Diagnostic plots}{49}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}Histogram of the residuals}{49}{subsubsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2}Forest plot}{50}{subsubsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.3}Customize graphic}{51}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}Greek letter in facet}{51}{subsubsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.2}Modify the legend of a discrete scale (with greek letters)}{51}{subsubsection.5.3.2}%
-\contentsline {subsubsection}{\numberline {5.3.3}Change the name of the legend}{53}{subsubsection.5.3.3}%
-\contentsline {subsubsection}{\numberline {5.3.4}Increase the font size}{53}{subsubsection.5.3.4}%
-\contentsline {subsubsection}{\numberline {5.3.5}Increase size of the legend labels}{54}{subsubsection.5.3.5}%
-\contentsline {subsubsection}{\numberline {5.3.6}Put the legend at the bottom}{54}{subsubsection.5.3.6}%
-\contentsline {subsubsection}{\numberline {5.3.7}Number of lines in the legend}{55}{subsubsection.5.3.7}%
-\contentsline {subsubsection}{\numberline {5.3.8}Default ggplot color palette}{55}{subsubsection.5.3.8}%
-\contentsline {subsubsection}{\numberline {5.3.9}Color blind palette}{55}{subsubsection.5.3.9}%
-\contentsline {subsubsection}{\numberline {5.3.10}Rotate x-axis labels}{55}{subsubsection.5.3.10}%
-\contentsline {subsubsection}{\numberline {5.3.11}Change tick mark labels}{55}{subsubsection.5.3.11}%
-\contentsline {subsubsection}{\numberline {5.3.12}Combine ggplots}{57}{subsubsection.5.3.12}%
-\contentsline {subsubsection}{\numberline {5.3.13}Symbols in facet names}{58}{subsubsection.5.3.13}%
-\contentsline {subsubsection}{\numberline {5.3.14}Extract labels of the x/y thicks}{58}{subsubsection.5.3.14}%
-\contentsline {subsection}{\numberline {5.4}Path diagram}{59}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Lexis diagram}{60}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Font}{62}{subsection.5.6}%
-\contentsline {subsubsection}{\numberline {5.6.1}Display available fonts}{62}{subsubsection.5.6.1}%
-\contentsline {subsubsection}{\numberline {5.6.2}Add more fonts}{62}{subsubsection.5.6.2}%
-\contentsline {section}{\numberline {6}Modeling}{63}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Test proportions}{63}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{64}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{67}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{68}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{69}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Testing median}{70}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{72}{subsection.6.7}%
-\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{72}{subsubsection.6.7.1}%
-\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{74}{subsubsection.6.7.2}%
-\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{74}{subsubsection.6.7.3}%
-\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{76}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Compute and display partial residuals in a linear model}{77}{subsection.6.9}%
-\contentsline {subsection}{\numberline {6.10}Equivalence Poisson and Cox model}{78}{subsection.6.10}%
-\contentsline {subsection}{\numberline {6.11}Displaying incidence rates with confidence intervals}{81}{subsection.6.11}%
-\contentsline {subsection}{\numberline {6.12}Twin study}{84}{subsection.6.12}%
-\contentsline {subsubsection}{\numberline {6.12.1}Data}{84}{subsubsection.6.12.1}%
-\contentsline {subsubsection}{\numberline {6.12.2}REML solution}{84}{subsubsection.6.12.2}%
-\contentsline {subsubsection}{\numberline {6.12.3}ML solution}{87}{subsubsection.6.12.3}%
-\contentsline {section}{\numberline {7}Loops and parallel computations}{89}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{89}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Parallel computation}{90}{subsection.7.2}%
-\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{90}{subsubsection.7.2.1}%
-\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{90}{subsubsection.7.2.2}%
-\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{90}{subsubsection.7.2.3}%
-\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{90}{subsubsection.7.2.4}%
-\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{91}{subsubsection.7.2.5}%
-\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{91}{subsubsection.7.2.6}%
-\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{91}{subsubsection.7.2.7}%
-\contentsline {subsubsection}{\numberline {7.2.8}Parallel computation in C++}{91}{subsubsection.7.2.8}%
-\contentsline {section}{\numberline {8}\emph {lava} package}{93}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{93}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{94}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{95}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{97}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{99}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Interaction in lava (mean coefficients)}{99}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Output correlation between two endogenous variables}{100}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}Output correlation between two latent variables}{102}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}Handling left, right, and interval censored data}{104}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}LVM as a weighted mean}{105}{subsection.8.10}%
-\contentsline {subsection}{\numberline {8.11}Standardized coefficients}{107}{subsection.8.11}%
-\contentsline {section}{\numberline {9}Miscellaneous}{109}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Profile code R}{109}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Profile code C}{110}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Debug}{111}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Find all function names from a package}{112}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Install development version of R}{113}{subsection.9.5}%
-\contentsline {subsection}{\numberline {9.6}Install suggested packages}{114}{subsection.9.6}%
-\contentsline {subsection}{\numberline {9.7}R version}{115}{subsection.9.7}%
-\contentsline {subsection}{\numberline {9.8}Install a package from a zip file (windows)}{116}{subsection.9.8}%
-\contentsline {subsection}{\numberline {9.9}Install and load two version of the same package}{117}{subsection.9.9}%
-\contentsline {subsection}{\numberline {9.10}CRAN check rocker}{118}{subsection.9.10}%
-\contentsline {subsection}{\numberline {9.11}Regular expressions}{119}{subsection.9.11}%
+\contentsline {subsubsection}{\numberline {5.1.1}Histogram plot with gaussian model}{43}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Spaguetti plot}{43}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Display the mean over time}{48}{subsubsection.5.1.3}%
+\contentsline {subsubsection}{\numberline {5.1.4}Boxplot + points (non-overlapping)}{49}{subsubsection.5.1.4}%
+\contentsline {subsection}{\numberline {5.2}Diagnostic plots}{50}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Histogram of the residuals}{50}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Forest plot}{51}{subsubsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.3}Customize graphic}{52}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Greek letter in facet}{52}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Modify the legend of a discrete scale (with greek letters)}{52}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}Change the name of the legend}{54}{subsubsection.5.3.3}%
+\contentsline {subsubsection}{\numberline {5.3.4}Increase the font size}{54}{subsubsection.5.3.4}%
+\contentsline {subsubsection}{\numberline {5.3.5}Increase size of the legend labels}{55}{subsubsection.5.3.5}%
+\contentsline {subsubsection}{\numberline {5.3.6}Put the legend at the bottom}{55}{subsubsection.5.3.6}%
+\contentsline {subsubsection}{\numberline {5.3.7}Number of lines in the legend}{56}{subsubsection.5.3.7}%
+\contentsline {subsubsection}{\numberline {5.3.8}Default ggplot color palette}{56}{subsubsection.5.3.8}%
+\contentsline {subsubsection}{\numberline {5.3.9}Color blind palette}{56}{subsubsection.5.3.9}%
+\contentsline {subsubsection}{\numberline {5.3.10}Rotate x-axis labels}{56}{subsubsection.5.3.10}%
+\contentsline {subsubsection}{\numberline {5.3.11}Increase the number tick}{56}{subsubsection.5.3.11}%
+\contentsline {subsubsection}{\numberline {5.3.12}Change tick mark labels}{56}{subsubsection.5.3.12}%
+\contentsline {subsubsection}{\numberline {5.3.13}Combine ggplots}{58}{subsubsection.5.3.13}%
+\contentsline {subsubsection}{\numberline {5.3.14}Symbols in facet names}{59}{subsubsection.5.3.14}%
+\contentsline {subsubsection}{\numberline {5.3.15}Extract labels of the x/y thicks}{59}{subsubsection.5.3.15}%
+\contentsline {subsection}{\numberline {5.4}Path diagram}{60}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Lexis diagram}{61}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Font}{63}{subsection.5.6}%
+\contentsline {subsubsection}{\numberline {5.6.1}Display available fonts}{63}{subsubsection.5.6.1}%
+\contentsline {subsubsection}{\numberline {5.6.2}Add more fonts}{63}{subsubsection.5.6.2}%
+\contentsline {section}{\numberline {6}Modeling}{64}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Test proportions}{64}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Compare proportions between groups}{65}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Estimate Mann Whitney parameter}{68}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Permutation t-test: 2 group comparison}{69}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Permutation t-test: multiple group comparison}{70}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Testing median}{71}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Testing linear hypotheses}{73}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}Separate Wald tests of linear hypotheses}{73}{subsubsection.6.7.1}%
+\contentsline {subsubsection}{\numberline {6.7.2}Confidence intervals associated with linear hypotheses}{75}{subsubsection.6.7.2}%
+\contentsline {subsubsection}{\numberline {6.7.3}Joint test of linear hypotheses}{75}{subsubsection.6.7.3}%
+\contentsline {subsection}{\numberline {6.8}Testing linearity assumptions in a linear model}{77}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Equivalence testing}{78}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}Compute and display partial residuals in a linear model}{80}{subsection.6.10}%
+\contentsline {subsection}{\numberline {6.11}Equivalence Poisson and Cox model}{81}{subsection.6.11}%
+\contentsline {subsection}{\numberline {6.12}Displaying incidence rates with confidence intervals}{84}{subsection.6.12}%
+\contentsline {subsection}{\numberline {6.13}Twin study}{87}{subsection.6.13}%
+\contentsline {subsubsection}{\numberline {6.13.1}Data}{87}{subsubsection.6.13.1}%
+\contentsline {subsubsection}{\numberline {6.13.2}REML solution}{87}{subsubsection.6.13.2}%
+\contentsline {subsubsection}{\numberline {6.13.3}ML solution}{90}{subsubsection.6.13.3}%
+\contentsline {section}{\numberline {7}Loops and parallel computations}{92}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Apply with progress bar}{92}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Parallel computation}{93}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}Detect the number of cores}{93}{subsubsection.7.2.1}%
+\contentsline {subsubsection}{\numberline {7.2.2}Start a cluster}{93}{subsubsection.7.2.2}%
+\contentsline {subsubsection}{\numberline {7.2.3}Get the name of each core}{93}{subsubsection.7.2.3}%
+\contentsline {subsubsection}{\numberline {7.2.4}Export element to cluster}{93}{subsubsection.7.2.4}%
+\contentsline {subsubsection}{\numberline {7.2.5}Show progress bar (in console)}{94}{subsubsection.7.2.5}%
+\contentsline {subsubsection}{\numberline {7.2.6}Show progress bar (external)}{94}{subsubsection.7.2.6}%
+\contentsline {subsubsection}{\numberline {7.2.7}Stop a cluster}{94}{subsubsection.7.2.7}%
+\contentsline {subsubsection}{\numberline {7.2.8}Parallel computation in C++}{94}{subsubsection.7.2.8}%
+\contentsline {section}{\numberline {8}\emph {lava} package}{96}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Generate repeated measurements}{96}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Generate data with heteroschadasticity}{97}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Generate survival time under non proportional hazard (non-PH)}{98}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Generate survival time with delayed treatment effect}{100}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Tune optimization parameters}{102}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Interaction in lava (mean coefficients)}{102}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Output correlation between two endogenous variables}{103}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Output correlation between two latent variables}{105}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Handling left, right, and interval censored data}{107}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}LVM as a weighted mean}{108}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}Standardized coefficients}{110}{subsection.8.11}%
+\contentsline {subsection}{\numberline {8.12}Probit model (binary outcome)}{112}{subsection.8.12}%
+\contentsline {subsection}{\numberline {8.13}Probit model (categorical outcome)}{114}{subsection.8.13}%
+\contentsline {section}{\numberline {9}Miscellaneous}{115}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Profile code R}{115}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Profile code C}{116}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Debug}{117}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Find all function names from a package}{118}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Install development version of R}{119}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Install suggested packages}{120}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}R version}{121}{subsection.9.7}%
+\contentsline {subsection}{\numberline {9.8}Install a package from a zip file (windows)}{122}{subsection.9.8}%
+\contentsline {subsection}{\numberline {9.9}Install and load two version of the same package}{123}{subsection.9.9}%
+\contentsline {subsection}{\numberline {9.10}CRAN check rocker}{124}{subsection.9.10}%
+\contentsline {subsection}{\numberline {9.11}Regular expressions}{125}{subsection.9.11}%
+\contentsline {subsection}{\numberline {9.12}Source from Github}{126}{subsection.9.12}%
+\contentsline {subsection}{\numberline {9.13}Keywords in Rd files}{127}{subsection.9.13}%

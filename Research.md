@@ -37,26 +37,32 @@ and
 [BuyseTest](https://cran.r-project.org/web/packages/BuyseTest/index.html).
 
 I have been also been reading about:
-- **Causal inference** with *Causal Inference: What If* (Hernan MA,
-  Robins JM, 2020), *Causal Inference in Statistics - A Primer*
+- **Group sequential design** with *Group Sequential and Confirmatory
+    Adaptive Designs in Clinical Trials* (Wassmer, 2006) and *Group
+    Sequential Methods with Applications to Clinical Trials* (Jennison
+    and Turnbull, 1999)
+- **Causal inference** with *Causal Inference: What If* (Hernan,
+  Robins, 2020), *Causal Inference in Statistics - A Primer*
   (Pearl, 2016), and *Causality: Models, Reasoning and Inference*
   (Pearl, 2000)
 - **Semi parametric theory** with *Semiparametric Theory and Missing
   Data* (Tsiatis, 2006)
-- **Statistical inference** with *Multiple comparisons using R* (Bretz, 2011)
-- **GAM** with the excellent book *Generalized Additive Models: An
+- **Statistical inference**, especially multiple testing with *Multiple
+    comparisons using R* (Bretz, 2011) and non-parametric tests with
+    *Rank and Pseudo-Rank Procedures for Independent Observations in
+    Factorial* (Brunner 2018)
+- **Splines** with the excellent book *Generalized Additive Models: An
   Introduction with R* (Wood 2017)
 - **Asymptotic theory** with *Asymptotic statistics* (van der Vaart,
-  1998), *In all likelihood* (Yudi Pawitan, 2001), and *U-Statistics:
+  1998), *In all likelihood* (Pawitan, 2001), and *U-Statistics:
   theory and practice* (Lee, 1990). I have also read most of
-  *High-Dimensional Statistics: A Non-Asymptotic Viewpoint* (Martin
-  J. Wainwright., 2019) but would not claim to master the topic.
+  *High-Dimensional Statistics: A Non-Asymptotic Viewpoint* (Wainwright., 2019) but would not claim to master the topic.
 - **Epidemiology** with the classical reference *Statistical Methods
-  in Epidemiology* (David Clayton and Michael Hills, 1993), a nice and
+  in Epidemiology* (Clayton and Hills, 1993), a nice and
   concise book.
-- **Dynamic Regression Models** with the nice book *Dynamic Regression
-  Models for Survival Data* (Torben Martinussen and Thomas Scheike,
-  2006)
+- **Time to event analysis** with the nice book *Dynamic Regression
+  Models for Survival Data* (Martinussen and Scheike,
+  2006).
 - **Post-selection inference** with mostly papers like *Exact
   post-selection inference, with application to the lasso* (Lee et
   al., 2016) or *Optimal Inference After Model Selection* (Fithian et
@@ -65,9 +71,9 @@ I have been also been reading about:
     (Carter, 2021)
 
 I'm currently reading about:
-- **Group sequential design** with *Group Sequential and Confirmatory
-    Adaptive Designs in Clinical Trials* (Wassmer, 2006) and *Group
-    Sequential Methods with Applications to Clinical Trials* (Jennison
-    and Turnbull, 1999)
 - **Dynamic Treatment Regimes** with *Dynamic Treatment Regimes:
     Statistical Methods for Precision Medicine* (Tsiatis et al., 2019)
+- **Survival analys** with *Survival and event history analysis: a
+    process point of view* (Aalen, Borgan, and Gjessing, 2008) and
+    *Counting processes and Survival analysis* (Fleming and
+    Harrington, 2005)

@@ -28,15 +28,17 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
-- Mediation: continuous outcome & hypotheses [VamderWeele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [VamderWeele, 2010](https://doi.org/10.1093/aje/kwq332)
+- Mediation: continuous outcome & hypotheses [Vanderweele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [Vanderweele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
 - Observed power: [Hoenig, 2001](http://www.jstor.org/stable/2685525)
+- Per protocol analysis: DAGs showing the bias of naive methods [Hernán, 2012](https://doi.org//10.1177/1740774511420743) and recommandations [Hernán, 2017](https://doi.org//10.1056/NEJMsm1605385)
 - Recurrent events: [Furberg, 2021](https://doi.org/10.1002/pst.2167)
-- Risk, rate, and competing risks:[Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
+- Risk, rate, and competing risks: [Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
 - Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
 - Sample size calculation for existing databases: [Hernan, 2022](https://doi.org/10.1016/j.jclinepi.2021.08.028)
 - Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
+- DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 
 ## Learning R
 
