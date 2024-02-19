@@ -7,13 +7,11 @@ layout: home
 
 Hello and welcome to my website. <br> I (
 ![](https://bozenne.github.io/img/photoId.jpeg){:height="75px"
-width="75px"} ) am a biostatistician currently working at:
-  - the [neurobiology Research Unit](https://nru.dk/) at Rigshspitalet.
-  - the [section of Biostatistics](https://biostat.ku.dk/) of the
-    University of Copenhagen.
+width="75px"} ) am an associate professor in biostatistics with a
+shared position between:
+  - the [section of Biostatistics](https://biostat.ku.dk/) of the University of Copenhagen, Denmark.
+  - the [neurobiology Research Unit](https://nru.dk/) at Rigshspitalet, Copenhagen, Denmark.
 	 
-as a post-doc in Copenhagen, Denmark.
-
 <br>
 
 For information about the statistical consultations see the tab
