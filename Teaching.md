@@ -41,6 +41,11 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
 - DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 
+## Reporting guidelines (https://www.equator-network.org/)
+- Randomised trials: [CONSORT](https://doi.org/10.1016/j.jclinepi.2010.03.004)
+- Observational studies: [STROBE](https://doi.org/10.1016/S0140-6736(07)61602-X)
+- Diagnostic and prognostic studies: [TRIPOD](https://doi.org/10.1016/j.jclinepi.2014.11.010)
+
 ## Learning R
 
 Basics:
@@ -59,6 +64,10 @@ Efficient data management using *data.table*:
 Efficient generation of graphical displays using *ggplot2*:
 - [tutorial](http://r4ds.had.co.nz/data-visualisation.html)
 - [cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+
+Regular expressions:
+- [help page](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html)
+- [cheat sheet (page 2)](https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_strings.pdf)
 
 Specialized or advanced topics:
 - [R markdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html) and [R markdown cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) for generating documents mixing text, R code, R outputs, and graphical display generated in R.
