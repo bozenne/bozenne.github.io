@@ -5,7 +5,7 @@ permalink: /Teaching/
 ---
 
 ## Courses
-I am currently teaching in three Ph.D. courses for medical researchers at the University of Copenhagen (KU):
+I am currently teaching in four Ph.D. courses for medical researchers at the University of Copenhagen (KU):
 - [Epidemiological methods in medical research](https://absalon.ku.dk/courses/58764). This is a 10 day course over 3 months (January-March) where I am the course director in collaboration with the epidemiology section of KU. 
 - [Statistical analysis of repeated measurements and clustered data](https://absalon.ku.dk/courses/47665). This is 6 day course over 3 weeks lead by Julie Forman, occuring every fall.
 - [Basic Statistics](http://paulblanche.com/files/BasicStat2022.html). This is 10 day course over 6 weeks lead by Paul Blanche, occuring twice a year (spring/fall).
@@ -24,22 +24,23 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 ## Useful and "pedagogical" references
 - Adjustment for multiple comparisons: [Dmitrienko, 2013](https://doi.org/10.1002/sim.5990)
 - Causality: [Hernan, 2004](http://dx.doi.org/10.1136/jech.2002.006361), [Pearce 2020](https://doi.org/10.1093/ije/dyz229)
-- Non-collapsability of odds ratio: [Greenland, 2021](https://doi.org/10.1016/j.jclinepi.2021.06.004)
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
+- DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
-- Mediation: continuous outcome & hypotheses [Vanderweele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [Vanderweele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
+- Mediation: continuous outcome & hypotheses [Vanderweele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [Vanderweele, 2010](https://doi.org/10.1093/aje/kwq332)
+- Non-collapsability of odds ratio: [Greenland, 2021](https://doi.org/10.1016/j.jclinepi.2021.06.004)
 - Observed power: [Hoenig, 2001](http://www.jstor.org/stable/2685525)
 - Per protocol analysis: DAGs showing the bias of naive methods [Hernán, 2012](https://doi.org//10.1177/1740774511420743) and recommandations [Hernán, 2017](https://doi.org//10.1056/NEJMsm1605385)
 - Recurrent events: [Furberg, 2021](https://doi.org/10.1002/pst.2167)
 - Risk, rate, and competing risks: [Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
-- Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
 - Sample size calculation for existing databases: [Hernan, 2022](https://doi.org/10.1016/j.jclinepi.2021.08.028)
-- Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
+- Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
-- DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
+- Table 1 (no p-value): [STROBE, 2007](https://doi.org/10.1371/journal.pmed.0040297): "Inferential measures such as standard errors and confidence intervals should not be used to describe the variability of characteristics, and significance tests should be avoided in descriptive tables."
+- Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
 
 ## Reporting guidelines (https://www.equator-network.org/)
 - Randomised trials: [CONSORT](https://doi.org/10.1016/j.jclinepi.2010.03.004)

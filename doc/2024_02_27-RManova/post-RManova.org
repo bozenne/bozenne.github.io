@@ -1,0 +1,405 @@
+#+TITLE: Single group analysis with repeated measurements
+#+Author: 
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+options(width = 100)
+setwd("c:/Users/hpl802/Documents/Github/bozenne.github.io/doc/2024_02_27-RManova/")
+#+END_SRC
+
+#+RESULTS:
+
+Load packages
+#+BEGIN_SRC R :exports both :results silent :session *R* :cache no
+library(LMMstar)
+library(lme4)
+library(lmerTest)
+library(ggplot2)
+#+END_SRC
+
+Load data and add 'artificial' sex variable and remove some variables:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+data(gastricbypassW)
+gastricbypassW$weight2 <- NULL
+gastricbypassW$weight3 <- NULL
+gastricbypassW$weight4 <- NULL
+gastricbypassW$male <- as.numeric(gastricbypassW$id) %% 2
+head(gastricbypassW)
+#+END_SRC
+
+#+RESULTS:
+:   id weight1 glucagonAUC1 glucagonAUC2 glucagonAUC3 glucagonAUC4 male
+: 1  1   127.2      5032.50       4942.5      20421.0      9249.45    1
+: 2  2   165.2     12142.50      14083.5      10945.5      7612.50    0
+: 3  3   109.7     10321.35       6202.5      20121.0     17704.50    1
+: 4  4   146.2      6693.00       6631.5      13090.5      4551.00    0
+: 5  5   113.1      7090.50           NA      19155.0     12345.00    1
+: 6  6   158.8     10386.00       7609.5      11778.0      8014.80    0
+
+Reshape data to long format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(reshape2)
+gastricbypassL <- melt(gastricbypassW,
+                       id.vars = c("id","male","weight1"),
+                       measure.var = paste0("glucagonAUC",1:4),
+                       variable.name = "time", value.name = "glucagonAUC")
+gastricbypassL$time <- gsub("glucagonAUC","",gastricbypassL$time)
+gastricbypassL <- gastricbypassL[order(gastricbypassL$id),]
+head(gastricbypassL)
+#+END_SRC
+
+#+RESULTS:
+:    id male weight1 time glucagonAUC
+: 1   1    1   127.2    1     5032.50
+: 21  1    1   127.2    2     4942.50
+: 41  1    1   127.2    3    20421.00
+: 61  1    1   127.2    4     9249.45
+: 2   2    0   165.2    1    12142.50
+: 22  2    0   165.2    2    14083.50
+
+#+BEGIN_SRC R :exports both :results silent :session *R* :cache no
+ggSpa <- ggplot(gastricbypassL, aes(x=time, y=glucagonAUC, group=id))
+ggSpa <- ggSpa + geom_point() + geom_line()
+ggSpa
+#+END_SRC
+
+#+RESULTS:
+
+#+ATTR_LaTeX: :width 1\textwidth :options trim={0 0 0 0} :placement [!h]
+[[./figures/gg-spaghettiplot.pdf]]
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+ggsave(ggSpa, filename = "figures/gg-spaghettiplot.pdf", width = 5, height = 3)
+#+END_SRC
+
+#+RESULTS:
+: Advarselsbesked:
+: [1m[22mRemoved 2 rows containing missing values (`geom_point()`).
+
+
+\clearpage
+
+* My favorite approach
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eUN.lmm <- lmm(glucagonAUC ~ time + male + weight1,
+         repetition = ~time | id, structure = "CS",
+               data = gastricbypassL)
+anova(eUN.lmm) 
+#+END_SRC
+
+#+RESULTS:
+: 		Multivariate Wald test 
+: 
+:                  F-statistic       df p.value    
+:    mean: time         14.752 (3,18.0) 4.3e-05 ***
+:        : male          0.055 (1,11.6)   0.819    
+:        : weight1       1.308 (1, 7.7)   0.287
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eUN.lmmPairwiseTest <- anova(eUN.lmm,
+                effect = c("time2=0","time4=0","time4-time3=0"),
+                           multivariate = FALSE)
+summary(eUN.lmmPairwiseTest)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+		Univariate Wald test 
+
+                 estimate       se   df     lower     upper p.value    
+   time2         -749.334  485.886 18.9 -2014.107   515.439 0.33716    
+   time4         3202.583 1463.277   19  -606.366  7011.531 0.11308    
+   time4 - time3 -6007.57  1157.98 16.9 -9021.821 -2993.319 0.00021 ***
+   ------------------------------------------------------------------- 
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1.
+  Columns lower/upper/p.value adjusted for multiple comparisons -- max-test.
+  (1e+05 samples have been used)
+  Model-based standard errors are derived from the observed information (column se). 
+  Degrees of freedom were computed using a Satterthwaite approximation (column df).
+#+end_example
+
+\clearpage
+
+* Other approach: repeated measurement anova
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.ranova <- aov(formula = glucagonAUC ~ male + weight1 + time + Error(id),
+                 data = gastricbypassL)
+summary(e.ranova)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+Error: id
+          Df    Sum Sq   Mean Sq F value Pr(>F)  
+male       1   1894331   1894331   0.065 0.8029  
+weight1    1 115763362 115763362   3.943 0.0657 .
+time       2   7936921   3968460   0.135 0.8746  
+Residuals 15 440438932  29362595                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Error: Within
+          Df    Sum Sq   Mean Sq F value   Pr(>F)    
+time       3 1.145e+09 381688003   21.77 2.02e-09 ***
+Residuals 55 9.645e+08  17537102                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#+end_example
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+e.rmanova <- manova(cbind(glucagonAUC1,glucagonAUC2,glucagonAUC3,glucagonAUC4) ~ weight1 + male,
+                    data = gastricbypassW)
+summary(e.rmanova, test = "Wilks")
+#+END_SRC
+
+#+RESULTS:
+:           Df   Wilks approx F num Df den Df  Pr(>F)  
+: weight1    1 0.51418   2.8345      4     12 0.07235 .
+: male       1 0.74952   1.0026      4     12 0.44375  
+: Residuals 15                                         
+: ---
+: Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+\clearpage
+
+* Other approach: random intercept model
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lmer <- lmer(glucagonAUC ~ time + male + weight1 + (1 | id),
+              data = gastricbypassL)
+anova(e.lmer)
+#+END_SRC
+
+#+RESULTS:
+: Type III Analysis of Variance Table with Satterthwaite's method
+:             Sum Sq   Mean Sq NumDF  DenDF F value    Pr(>F)    
+: time    1148372460 382790820     3 56.107 21.9527 1.565e-09 ***
+: male        802158    802158     1 17.281  0.0460   0.83268    
+: weight1   77654552  77654552     1 17.045  4.4534   0.04991 *  
+: ---
+: Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Same as:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eCS.lmm <- lmm(glucagonAUC ~ time + male + weight1,
+               repetition = ~time | id, structure = "CS",
+               data = gastricbypassL)
+anova(eCS.lmm) 
+
+#+END_SRC
+
+#+RESULTS:
+: 		Multivariate Wald test 
+: 
+:                  F-statistic       df  p.value    
+:    mean: time          21.95 (3,56.1) 1.57e-09 ***
+:        : male          0.046 (1,17.3)   0.8327    
+:        : weight1       4.453 (1,17.1)   0.0499   *
+
+# @@latex:any arbitrary LaTeX code@@
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+LATEX_HEADER: %
+#+LATEX_HEADER: %%%% specifications %%%%
+#+LATEX_HEADER: %
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+** Notations
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+#+LATEX_HEADER:\geometry{top=1cm}
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+#+LATEX_HEADER: \RequirePackage{tikz}
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
+** List
+#+LATEX_HEADER: \RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+** Color
+#+LaTeX_HEADER: \definecolor{light}{rgb}{1, 1, 0.9}
+#+LaTeX_HEADER: \definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+#+LaTeX_HEADER: \definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+** Box
+#+LATEX_HEADER: \usepackage{mdframed}
+** Shortcut
+#+LATEX_HEADER: \newcommand{\first}{1\textsuperscript{st} }
+#+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
+#+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
+
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+*** Template for shortcut
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+*** Shortcuts
+**** Probability
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}

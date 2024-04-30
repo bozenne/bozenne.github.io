@@ -2743,7 +2743,6 @@ difference (p2-p1)
              -0.05
 #+end_example
 
-
 ** Compute and display partial residuals in a linear model
 
 For a given model:
@@ -3794,7 +3793,7 @@ estimate(e, function(x){
 : cov.gene2~expression     1.1486 0.10913 0.9347 1.3625 6.600e-26
 : cor.gene2~expression     0.5236 0.03115 0.4626 0.5847 2.024e-63
 
-** Output correlation between two latent variables
+** Output correlation between two latent variables (covariance)
 
 Simulate some data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3867,6 +3866,58 @@ total covariance      0 0.032900854
 direct correlation    0 0.000203386
 total correlation     0 0.000203386
 #+end_example
+
+** Output correlation between two latent variables (regression)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(lava)
+mSim <- lvm(TIS ~  etaINS,
+         BDI_Sleep ~  etaINS,
+         POMS_Fatigue ~  etaINS,
+         FS ~  etaINS,
+         P_A1 ~  etaVIG,
+         BL_slope_mean_Block1 ~ etaVIG,
+         Mean_median_vigilance_BL1 ~ etaVIG,
+         etaVIG ~ etaINS)
+latent(mSim) <- ~ etaVIG + etaINS
+
+set.seed(10)
+d <- sim(mSim, n = 10000, latent = TRUE)
+c(varVIG = var(d$etaVIG),varINS = var(d$etaINS), rho = cor(d$etaVIG,d$etaINS))
+d$etaVIG <- NULL
+d$etaINS <- NULL
+#+END_SRC
+
+#+RESULTS:
+:   varVIG   varINS      rho 
+: 2.063013 1.005601 0.710336
+
+Fit the lvm:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e <- estimate(mSim, d)
+coef(e)[c("etaVIG","etaVIG~~etaVIG","etaINS~~etaINS","etaVIG~etaINS")]
+#+END_SRC
+
+#+RESULTS:
+:         etaVIG etaVIG~~etaVIG etaINS~~etaINS  etaVIG~etaINS 
+:    -0.01461882     0.98989448     1.02460861     1.01591550
+
+and deduce the correlation
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(e, function(x){
+  iOut <- c(var.etaVIG = as.double(x["etaVIG~~etaVIG"] + x["etaVIG~etaINS"]*x["etaINS~~etaINS"]),
+            var.etaINS = as.double(x["etaINS~~etaINS"]),
+            cov = as.double(x["etaVIG~etaINS"]))
+  return(c(iOut, cor = iOut["cov"]/sqrt(iOut["var.etaVIG"]*iOut["var.etaINS"])))
+})
+#+END_SRC
+
+#+RESULTS:
+:            Estimate Std.Err   2.5%  97.5%    P-value
+: var.etaVIG   2.0308 0.03599 1.9603 2.1014  0.000e+00
+: var.etaINS   1.0246 0.02750 0.9707 1.0785 8.031e-304
+: cov          1.0159 0.01885 0.9790 1.0529  0.000e+00
+: cor.cov      0.7043 0.02161 0.6619 0.7466 4.691e-233
 
 ** Handling left, right, and interval censored data
 

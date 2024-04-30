@@ -237,6 +237,9 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 #+LaTeX: \begin{adjustwidth}{-3em}{-3em}
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 #+LaTeX: \end{adjustwidth}
+** strikethrough text
+
++help with reproducibility+
 
 ** Figure :noexport:
 #+BEGIN_EXPORT latex
