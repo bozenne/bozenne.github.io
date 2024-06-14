@@ -27,8 +27,8 @@ article previously did) but you need some help to carry it out.
   like to compare the mean recovery across three treatment groups, do
   you know a statistical test for doing that?_ <br> An example of
   non-specific question is: _What is the best statistical approach to
-  analyze my data?_ (what do you mean by 'analyze my data': compare
-  mean, correlation, variance, ...; best with respect to what: type 1
+  analyze my data?_ What do you mean by 'analyze my data' (compare
+  mean, correlation, variance, ...), best with respect to what (type 1
   error control, statistical power, unbiasedness, interpretability,
   ...)
 
@@ -46,11 +46,11 @@ statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
 statistical analysis myself (this is at my discretion).
 
-![](https://bozenne.github.io/img/warning.jpg){:height="35px"
-width="35px"} I cannot helping you with "Making sure my analysis is
-correct": this is typically a too broad and unspecific question. It
-would be like going to the doctor and ask him whether he can check
-that you are heatlhy.
+![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+width="30px"} I cannot help you with "Making sure my analysis is
+correct": this is typically a too broad question. It would be like
+going to the doctor and ask him whether he can check that you are
+heatlhy.
 
 ## How to get help?
 
@@ -213,11 +213,12 @@ method).
   me. You can ask the same from me if I decide to change the
   statistical approach.
 
-- *to be open-minded and willing to implement recommandations*. But
-   you should have time and willingness to give an honest try to what
-   I recommend to you. You are obviously welcome to disagree with me,
-   suggest classical approaches used in your field, and mention
-   practical constrains (time, programming skills). 
+- *to be open-minded and willing to implement recommandations*. You
+   are obviously welcome to disagree with me, suggest classical
+   approaches used in your field, and mention practical constrains
+   (time, programming skills). But you should also have time and
+   willingness to try what I recommend to you, otherwise our
+   discussion is not really worthwhile.
   
 - *before submitting an article* with my name on, you need to *have*
   had *my approval*. Send me your article and I will give you some
@@ -233,13 +234,13 @@ The section of biostatistics of the University of Copenhagen offers
 free [statistical
 advice](https://publichealth.ku.dk/about-the-department/biostat/statistical-advisory-services/)
 to faculty, staff, and students at the Faculty of Health and Medical
-Sciences (SUND):
+Sciences (SUND) and researchers at Rigshospitalet (including RH Glostrup):
 - [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/)
 - [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/)
 - [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
-
+g
 The [data analysis group at
 NRU](https://nru.dk/index.php/research-menu/research-groups/78-data-analysis)
-has a more specialized expertise into medical imaging data processing
+has a more specialized expertise in medical imaging data processing
 and analysis.
  
