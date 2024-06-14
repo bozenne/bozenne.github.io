@@ -21,7 +21,8 @@ common mistakes are summarized on a separate
 - **Group consultation**: this is the recommended format for Bachelor
 and Master students.
   + students should collect questions, ideally with real data example, and send them to me.
-  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br> <br>
+  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br> ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+width="30px"} Discuss with your supervisor when is the relevant time to have this discussion and who to include <br> <br> 
 
 
 - **Assistance for performing a statistical analysis**: <br> You would
@@ -31,11 +32,7 @@ perform a specific type of analysis (e.g. replicating what another
 article previously did) but you need some help to carry it out. <br>
 ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
 width="30px"} PhD students/new post-docs: invite your supervisor to
-the first consultation.  <br>
-![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} Should be somehow related to statistics, i.e., not pure
-data management or data visualization question. <br> <br>
-
+the first consultation.  <br> <br>
 
 - **Technical questions**: <br> You have a specific question, it could
   be a software question, e.g.  _which package to use in R for fitting
@@ -46,7 +43,10 @@ data management or data visualization question. <br> <br>
   analyze my data?_ What do you mean by 'analyze my data' (compare
   mean, correlation, variance, ...), best with respect to what (type 1
   error control, statistical power, unbiasedness, interpretability,
-  ...) <br> <br>
+  ...) <br>
+  ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+  width="30px"} Should be somehow related to statistics and not pure
+  data management or data visualization question. <br> <br>
 
 - **Externalizing the statistical analysis**: <br> You want a
 statistician to perform the statistical analysis for you. Don't expect
@@ -184,12 +184,10 @@ method).
   - identifying complications like confounding, missing values, ...
   - deciding on a model to estimate the parameters of interest despite the complications, e.g. a linear model adjusted for age, and expliciting the assumptions, e.g. linear age effect, no other confounder, ...
   - deciding on an appropriate testing procedure, e.g. Wald test, possible adjustment for multiple comparisons.
-  The definition of parameter of the interest is critical: it is not possible to evaluate the quality of a statistical analysis if we cannot explicit what we want to estimate. 
-  <br> ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} I cannot help you with "Making sure my analysis is
-correct": this is typically a too broad question. It would be like
-going to the doctor and ask him whether he can check that you are
-heatlhy. <br> <br>
+  The definition of parameter of the interest is critical: it is not possible to evaluate the quality of a statistical analysis if we cannot explicit what we want to estimate.
+  
+  ![](https://bozenne.github.io/img/warning.jpg){:height="30px" width="30px"} I cannot help you with "Making sure my analysis is correct": this is typically a too broad question.
+  It would be like going to the doctor and ask him whether he can check that you are heatlhy. <br> <br>
 
 - **Technical questions**: <br> I will try my best to indicate the
   appropriate software/package/function/statistical tool/criteria to
@@ -232,7 +230,7 @@ heatlhy. <br> <br>
 
 - *to be open-minded and willing to implement recommandations*. You
    are obviously welcome to disagree with me, suggest classical
-   approaches used in your field, and mention practical constrains
+   approaches used in your field, and mention practical constraints
    (time, programming skills). But you should also have time and
    willingness to try what I recommend to you, otherwise our
    discussion is not really worthwhile.
