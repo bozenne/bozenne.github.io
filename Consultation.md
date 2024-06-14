@@ -12,14 +12,25 @@ This page is meant for the NRU staff
  "statistical advisory service at Rigshospitalet", see the link at the
  end of the page.
 
+General recommendations for reporting results of statistical tests and
+common mistakes are summarized on a separate
+[webpage](https://bozenne.github.io/jekyll/update/2023/08/07/SIM.html)
 
 ## What can I help you with?
+
+- **Group consultation**: this is the recommended format for Bachelor
+and Master students.
+  + students should collect questions, ideally with real data example, and send them to me.
+  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions.
 
 - **Assistance for performing a statistical analysis**: <br> You would
 like to perform a statistical analysis but would like a statistician
 to supervise your work. It could also be that you would like to
 perform a specific type of analysis (e.g. replicating what another
-article previously did) but you need some help to carry it out.
+article previously did) but you need some help to carry it out. <br>
+![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+width="30px"} PhD students/new post-docs: invite your supervisor to
+the first consultation.
 
 - **Technical questions**: <br> You have a specific question, it could
   be a software question, e.g.  _which package to use in R for fitting
@@ -30,7 +41,7 @@ article previously did) but you need some help to carry it out.
   analyze my data?_ What do you mean by 'analyze my data' (compare
   mean, correlation, variance, ...), best with respect to what (type 1
   error control, statistical power, unbiasedness, interpretability,
-  ...)
+  ...) 
 
 - **Planning a study**: <br> You are planning a new study or
 experiment. You have one or few clearly defined hypotheses that you
@@ -44,7 +55,9 @@ calculation!
 - **Externalizing the statistical analysis**: <br> You want a
 statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
-statistical analysis myself (this is at my discretion).
+statistical analysis myself (this is at my discretion). <br>
+![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+width="30px"} Not for Bachelor/Master/PhD students.
 
 ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
 width="30px"} I cannot help you with "Making sure my analysis is
@@ -188,7 +201,7 @@ method).
 
 - *to present me the person(s) involved in the project*, especially
   for students it is nice for me to know who is your supervisor. By
-  default I will assume that you are the person in charge of the
+  default I will assume that you are the person coordinating the
   project. Also tell me if there is another statistician involved
   because it makes sense that the statisticians agree before telling
   you what to do.
