@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Consultations at NRU"
+title:  "Statistical consultations at NRU"
 categories: jekyll update
 ---
 
@@ -21,11 +21,6 @@ to supervise your work. It could also be that you would like to
 perform a specific type of analysis (e.g. replicating what another
 article previously did) but you need some help to carry it out.
 
-- **Externalizing the statistical analysis**: <br> You want a
-statistician to perform the statistical analysis for you. Don't expect
-much from me in this case, I will rarely accept to perform the
-statistical analysis myself (this is at my discretion).
-
 - **Technical questions**: <br> You have a specific question, it
   could be a software question, e.g.  _which package to use in R for
   fitting a linear mixed model?_ or a statistical question, e.g.  _I
@@ -45,6 +40,17 @@ my domain of expertise in statistics but I can give you some feedback
 and help you with simple power calculation. However do NOT come the
 day before your grant deadline asking me for an "emergency" power
 calculation!
+
+- **Externalizing the statistical analysis**: <br> You want a
+statistician to perform the statistical analysis for you. Don't expect
+much from me in this case, I will rarely accept to perform the
+statistical analysis myself (this is at my discretion).
+
+![](https://bozenne.github.io/img/warning.jpeg){:height="50px"
+width="50px"} I cannot helping you with "Making sure my analysis is
+correct": this is typically a too broad and unspecific question. It
+would be like going to the doctor and ask him whether he can check
+that you are heatlhy.
 
 ## How to get help?
 
@@ -106,8 +112,8 @@ we will figure out a solution.
 
 ## Response time 
 
-I usually answer to questions that I could not solve during the
-consultation within a week. If you haven't heard from me within a
+I usually answer to 'simple' questions that I could not solve during
+the consultation within a week. If you haven't heard from me within a
 week, please send me a reminder, I have probably forgotten (sorry!).
 
 If you ask me to review your article you should give me at least two
@@ -180,10 +186,12 @@ method).
 
 ## What I will expect from you
 
-- *to present me the person(s) involved in the project*. By default I
-  will assume that you are the person in charge of the project. Also
-  tell me if there is another statistician involved because it makes
-  sense that the statisticians agree before telling you what to do.
+- *to present me the person(s) involved in the project*, especially
+  for students it is nice for me to know who is your supervisor. By
+  default I will assume that you are the person in charge of the
+  project. Also tell me if there is another statistician involved
+  because it makes sense that the statisticians agree before telling
+  you what to do.
   
 - *to be responsible for organizing meetings*, their frequency, and
   choosing who should attend the meetings. Importantly, outside the
@@ -205,10 +213,11 @@ method).
   me. You can ask the same from me if I decide to change the
   statistical approach.
 
-- *to follow my recommendations*. You are also welcome to disagree and
-  to propose alternative approaches, for instance because they are more
-  classical in your fields. But at the end either we find an agreement
-  or I may withdraw from the project.
+- *to be open-minded and willing to implement recommandations*. But
+   you should have time and willingness to give an honest try to what
+   I recommend to you. You are obviously welcome to disagree with me,
+   suggest classical approaches used in your field, and mention
+   practical constrains (time, programming skills). 
   
 - *before submitting an article* with my name on, you need to *have*
   had *my approval*. Send me your article and I will give you some
@@ -220,6 +229,17 @@ method).
 
 ## Other places where you can find help for data analysis
 
-- [statistical advisory services](https://publichealth.ku.dk/about-the-department/biostat/) with three types of services: [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/), [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/), and [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
-- [data analysis group at NRU](https://nru.dk/index.php/research-menu/research-groups/78-data-analysis)
+The section of biostatistics of the University of Copenhagen offers
+free [statistical
+advice](https://publichealth.ku.dk/about-the-department/biostat/statistical-advisory-services/)
+to faculty, staff, and students at the Faculty of Health and Medical
+Sciences (SUND):
+- [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/)
+- [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/)
+- [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
+
+The [data analysis group at
+NRU](https://nru.dk/index.php/research-menu/research-groups/78-data-analysis)
+has a more specialized expertise into medical imaging data processing
+and analysis.
  

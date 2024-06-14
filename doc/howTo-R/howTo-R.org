@@ -1729,6 +1729,7 @@ gg_color_hue <- function(n) {
 *** Color blind palette
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 ggthemes::colorblind_pal()(8) ## also consider scale_color_colorblind
+unname(palette.colors())
 #+END_SRC
 
 #+RESULTS:
@@ -4284,7 +4285,6 @@ pnorm(coef(e0.lvm)[1]+exp(coef(e0.lvm)[2])) - pnorm(coef(e0.lvm)[1])
 #+RESULTS:
 : Y.cat:0|1 
 : 0.4669996
-
 
 
 * Miscellaneous

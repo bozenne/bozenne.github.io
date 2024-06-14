@@ -238,6 +238,9 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 #+LaTeX: \end{adjustwidth}
 ** strikethrough text
+:PROPERTIES:
+:ID:       07d02c00-99fe-472b-a523-8ae1c0b42dbc
+:END:
 
 +help with reproducibility+
 
