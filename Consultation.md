@@ -21,16 +21,16 @@ to supervise your work. It could also be that you would like to
 perform a specific type of analysis (e.g. replicating what another
 article previously did) but you need some help to carry it out.
 
-- **Technical questions**: <br> You have a specific question, it
-  could be a software question, e.g.  _which package to use in R for
-  fitting a linear mixed model?_ or a statistical question, e.g.  _I
-  would like to compare the mean recovery across three treatment
-  groups, do you know a statistical test for doing that?_ <br> An
-  example of non-specific question is: _Can you check that my
-  statistical analysis is correct_ (this is not specific because there
-  are many probably things to check).  A more appropriate question for
-  this format would be: _Looking at the qqplot of the residuals of my
-  model, do you think the normality assumption is reasonable?_
+- **Technical questions**: <br> You have a specific question, it could
+  be a software question, e.g.  _which package to use in R for fitting
+  a linear mixed model?_ or a statistical question, e.g.  _I would
+  like to compare the mean recovery across three treatment groups, do
+  you know a statistical test for doing that?_ <br> An example of
+  non-specific question is: _What is the best statistical approach to
+  analyze my data?_ (what do you mean by 'analyze my data': compare
+  mean, correlation, variance, ...; best with respect to what: type 1
+  error control, statistical power, unbiasedness, interpretability,
+  ...)
 
 - **Planning a study**: <br> You are planning a new study or
 experiment. You have one or few clearly defined hypotheses that you
@@ -46,8 +46,8 @@ statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
 statistical analysis myself (this is at my discretion).
 
-![](https://bozenne.github.io/img/warning.jpeg){:height="50px"
-width="50px"} I cannot helping you with "Making sure my analysis is
+![](https://bozenne.github.io/img/warning.jpg){:height="35px"
+width="35px"} I cannot helping you with "Making sure my analysis is
 correct": this is typically a too broad and unspecific question. It
 would be like going to the doctor and ask him whether he can check
 that you are heatlhy.

@@ -31,6 +31,8 @@ Copenhagen, Denmark
   Stockholm, Sweden.
 - [Benefit-risk assessment via Generalized Pairwise Comparisons](https://bozenne.github.io/doc/Talks/2022-CMStatistics-GPC.pdf), CMstatistics, 17-19 December 2022,
   London, England.
+- [Ordering the sample space for p-value and confidence interval computation in group sequential trials with delayed outcome](https://bozenne.github.io/doc/Talks/2024-ADMTP-GSD-pval.pdf), ADMTP Workshop, 25-26 April 2024,
+  Ibiza, Spain.
 
 And also some more pedagogical talks given at the Christmas symposium
 of NRU:
@@ -42,3 +44,4 @@ power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
 - about [multiple
 comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
 - about [pooling estimates](https://bozenne.github.io/doc/Talks/2022-XNRU-pooling.pdf) in 2022.
+- about [interaction](https://bozenne.github.io/doc/Talks/2024-IPSY-interaction.pdf) in 2024.
