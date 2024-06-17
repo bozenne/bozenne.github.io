@@ -21,8 +21,8 @@ common mistakes are summarized on a separate
 - **Group consultation**: this is the recommended format for Bachelor
 and Master students.
   + students should collect questions, ideally with real data example, and send them to me.
-  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br> ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
-width="30px"} Discuss with your supervisor when is the relevant time to have this discussion and who to include <br> <br> 
+  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br>
+  ![](https://bozenne.github.io/img/idea.jpg){:height="30px" width="30px"} Discuss with your supervisor when is the relevant time to have this discussion and who to include <br> <br> 
 
 
 - **Assistance for performing a statistical analysis**: <br> You would
@@ -174,7 +174,9 @@ method).
     you got when you wrote the article (you need to ask specifically
     for this).
   + answering the comments of the reviewers that are related to the
-    statistical analysis.
+    statistical analysis. <br>
+  ![](https://bozenne.github.io/img/warning.jpg){:height="30px" width="30px"} I cannot help you with "Making sure my analysis is correct": this is typically a too broad question.
+  It would be like going to the doctor and ask him whether he can check that you are heatlhy. <br> 
 
   This typically involves:
   - starting from a research question, e.g. is treatment A better than treatment B?
@@ -186,8 +188,6 @@ method).
   - deciding on an appropriate testing procedure, e.g. Wald test, possible adjustment for multiple comparisons.
   The definition of parameter of the interest is critical: it is not possible to evaluate the quality of a statistical analysis if we cannot explicit what we want to estimate.
   
-  ![](https://bozenne.github.io/img/warning.jpg){:height="30px" width="30px"} I cannot help you with "Making sure my analysis is correct": this is typically a too broad question.
-  It would be like going to the doctor and ask him whether he can check that you are heatlhy. <br> <br>
 
 - **Technical questions**: <br> I will try my best to indicate the
   appropriate software/package/function/statistical tool/criteria to
