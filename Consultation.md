@@ -249,10 +249,7 @@ The section of biostatistics of the University of Copenhagen offers
 free [statistical
 advice](https://publichealth.ku.dk/about-the-department/biostat/statistical-advisory-services/)
 to faculty, staff, and students at the Faculty of Health and Medical
-Sciences (SUND) and researchers at Rigshospitalet (including RH Glostrup):
-- [over-the-phone consultancy](https://publichealth.ku.dk/about-the-department/biostat/description_kopi/)
-- [20 minute meeting](https://publichealth.ku.dk/about-the-department/biostat/descriptionmeeting_kopi/)
-- [statistical cafe](https://publichealth.ku.dk/about-the-department/biostat/statistical-cafe/).
+Sciences (SUND) and researchers at Rigshospitalet (including RH Glostrup).
 
 The [data analysis group at
 NRU](https://nru.dk/index.php/research-menu/research-groups/78-data-analysis)
