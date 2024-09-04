@@ -43,7 +43,7 @@ the first consultation.  <br> <br>
   analyze my data?_ What do you mean by 'analyze my data' (compare
   mean, correlation, variance, ...), best with respect to what (type 1
   error control, statistical power, unbiasedness, interpretability,
-  ...) <br>
+  ...). <br>
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} Should be somehow related to statistics and not pure
   data management or data visualization question. <br> <br>
