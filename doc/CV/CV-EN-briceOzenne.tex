@@ -1,4 +1,4 @@
-% Created 2023-04-27 to 16:20
+% Created 2024-09-26 to 17:55
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -162,10 +162,12 @@ and (1.75,0.4) .. cycle;
 \begin{minipage}{0.75\linewidth}
 \begin{tabular*}{7in}{ll@{ }l}
 	Nationality&:& french  \\
-	Date of birth&:& February 8, 1990  \\
-	Personal email&:& \url{brice.mh.ozenne@gmail.com} \\ 
-	Personal phone number&:& (+45) 52 328 128 \\ 
-        Personal address&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhagen SV, Denmark \\
+	Age&:& 34  \\
+	Professional email&:& \url{broz@sund.ku.dk} \\ 
+%	Date of birth&:& February 8, 1990  \\
+%	Personal email&:& \url{brice.mh.ozenne@gmail.com} \\ 
+%	Personal phone number&:& (+45) 52 328 128 \\ 
+%       Personal address&:& Nordre Teglkaj 18, 5 t.h., 2450 Copenhagen SV, Denmark \\
         Personal Website&:& \url{https://bozenne.github.io/} \\
         Github&:& \url{https://github.com/bozenne/} \\
 \end{tabular*}
@@ -175,7 +177,7 @@ and (1.75,0.4) .. cycle;
 
 \resheading{Current position}
 \begin{tabular}{l@{ }l}
-	November 2020- Now:& \textbf{Assistant professor in biostatistics} with a shared position between \\ [2mm]
+	November 2023- Now:& \textbf{Associate professor in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen (KU) \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
@@ -197,8 +199,7 @@ methodological point of view, I study how to perform statistical
 \textbf{estimation and inference in small samples} \citep{ozenne2020small} as
 well as efficient corrections for \textbf{multiple testing}
 \citep{ozenne2022controlling}. These developments are available in the
-R packages \texttt{lavaSearch2} (LVM) and \texttt{LMMstar} (LMM). \newline
-\textbf{Collaborators}: Esben Budtz-Jørgensen \& Julie Forman (KU, Denmark)
+R packages \texttt{lavaSearch2} (LVM) and \texttt{LMMstar} (LMM).
 
 \item the analysis of registry data in presence of \textbf{right-censoring},
 \textbf{competing risks}, and \textbf{confounding} \textbf{competing risks}. A typical
@@ -209,32 +210,40 @@ on the \textbf{semi-parametric theory}, I have developped a robust
 estimator of the average treatment effect and derived its asymptotic
 distribution via its influence function
 \citep{ozenne2020estimation}. This has been implemented in the \texttt{ate}
-function of the \texttt{riskRegression} R package. \newline
-\textbf{Collaborators}: Thomas Alexander Gerds \& Thomas Scheike (KU, Denmark)
+function of the \texttt{riskRegression} R package.
 \end{itemize}
 
 \clearpage
 
 \begin{itemize}
 \item the extension of \textbf{generalized pairwise comparisons} (GPC), e.g. to
-handle right-censoring \citep{ozenne2021asymptotic} or perform
-reliable statistical inference with more than two groups. GPC is a
-method able to handle multiple and heterogeneous endpoints which is
-especially relevant to assess the benefit-risk balance of a
-treatment. A typical application is the evaluation of chemotherapies
-where jointly considering gains in survival and side effects is
-critical \citep{peron2016net,peron2016assessment}. \newline
-\textbf{Collaborators}: Julien Péron \& Max Piffoux (HCL, France), \newline
-\hphantom{*Collaborators*:} Michaël De Backer \& Marc Buyse (IDDI,
-Belgium)
+handle right-censoring \citep{ozenne2021asymptotic}, restriction time
+\citep{piffoux2024restricted}, or perform reliable statistical
+inference with more than two groups. GPC is a method able to handle
+multiple and heterogeneous endpoints which is especially relevant to
+assess the benefit-risk balance of a treatment. A typical
+application is the evaluation of chemotherapies where jointly
+considering gains in survival and side effects is critical
+\citep{peron2016net,peron2016assessment}. \newline
+
+\item Handling delayed endpoint when designing and analyzing \textbf{group
+sequential trials}. A typical application would be a trial on
+anti-depressant where the outcome is the depression score after 1
+month of treatment and one would like to have one or several interim
+analyzes to have the possibility to stop early for efficacy of
+futility. This work has lead to a tutorial paper
+\citep{baayen202Xdesign} and a companion software package called
+\texttt{delayedGSD} hosted on Github. It includes sample size
+calculation, determination of efficacy/futility/decision boundaries,
+p-values, confidence intervals, and median unbiased
+estimates. \newline
 \end{itemize}
 
-
 \section*{\emph{Other domains of interest in statistics:}}
-\label{sec:orgf867d7f}
+\label{sec:org4001ae0}
 \begin{minipage}{0.45\linewidth}
 \begin{itemize}
-\item Group sequential trials
+\item Mediation analysis
 \item Smoothing splines
 \end{itemize}
 \end{minipage}
@@ -243,35 +252,47 @@ Belgium)
 \begin{minipage}{0.45\linewidth}
 \begin{itemize}
 \item Causal inference
-\item Post-selection inference
+\item Multiple testing
 \end{itemize}
 \end{minipage}
+
+\bigskip
 \resheading{Skills}
-\vspace{-0.8cm}
 
 \section*{\emph{Language}}
-\label{sec:org0b8513e}
+\label{sec:org8145c65}
 French (native language), english (fluent), danish (intermediate),
 basics in italian.
 
 \section*{\emph{Software}}
-\label{sec:org112227f}
+\label{sec:org6882b10}
 Proficient in \Rlogo{}, \LaTeX{} and \href{https://orgmode.org/}{orgmode}. \\ 
 Basic knowledge but common use of \Cpp{}, lisp (for \href{https://www.gnu.org/software/emacs/}{GNU Emacs}) and
 git/github (via \href{https://magit.vc/}{magit}).
+
+\clearpage
 \resheading{Education and research carrier}
 \begin{tabular}{l@{ }l}
 2022 - 2023 : & Course in teaching and learning in higher education (Universitetspædagogikum) \\
+2020 - 2023 : & Assistant professor in biostatistics with a shared positive between: \\
+              & \emph{University of Copenhagen}: researcher and teacher at the Graduate School \\
+              & of Health and Medical Sciences \\ 
+              & \emph{Copenhagen University Hospital}: consultant \\
+              & Development of a 'user-friendly' mixed model package (\texttt{LMMstar} package), \\
+              & a package for designing and analyzing groups sequential trials (\texttt{DelayedGSD} package), \\
+              & and extension of the \texttt{BuyseTest} package (H-decomposition, restriction time) \\ [3mm]
 2020 - 2015 : & Post-doc in biostatistics with a shared positive between: \\
               & \emph{University of Copenhagen}: researcher and teacher at the Graduate School \\
               & of Health and Medical Sciences \\ 
               & \emph{Copenhagen University Hospital}: consultant and leader of the data analysis work package \\ 
               & of the \href{https://np.nru.dk/}{Neuropharm} project  \\ 
-              & Development of LVM for analysing brain data (\texttt{lavaSearch2} package) and \\
-              & robust estimators of treatment effect for registry data analysis (R package \texttt{riskRegression}) \\ [3mm]
+              & Development of small sample corrections and multiple testing adjustment for LVM \\
+              & and robust estimators of treatment effect for registry data analysis \\
+              & (respective R packages: \texttt{lavaSearch2} and \texttt{riskRegression}) \\ [3mm]
 2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
               & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
-              & Advisor: Pr. Delphine Maucort-Boulch and Pr. Norbert Nighoghossian \\ [3mm]
+              & Advisor: Pr. Delphine Maucort-Boulch and Pr. Norbert Nighoghossian \\
+              & Start of the \texttt{BuyseTest} package emulating a SAS macro. \\ [3mm]
 2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University lyon, Lyon, France. \\ 
               & Carried out in double degree with the École Centrale de Lyon. \\ [3mm]
 2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
@@ -282,7 +303,7 @@ git/github (via \href{https://magit.vc/}{magit}).
 
 Current teaching activity for Phd students in medical sciences:
 \begin{tabular}{l@{ }l}
-2015 - 2022 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
+2015 - 2023 : & \href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements} (course director Julie Forman). \\
               & 3 lectures of 3 hours and 6 practicals of 3 hours\\
               & Development of a dedicated \Rlogo package for the course (\href{https://cran.r-project.org/web/packages/LMMstar/index.html}{LMMstar}) \\
 2021 - 2023 : & \href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research} as course director. \\
@@ -293,7 +314,13 @@ Current teaching activity for Phd students in medical sciences:
 
 More in depth presentation of the present and past teaching activity
 as well as the pedagocial approach can be found in my \href{https://bozenne.github.io/doc/CV/TP-EN-briceOzenne.pdf}{teaching
-portofilio}.
+portofilio}. I now also teach Master students in statistics:
+\begin{tabular}{l@{ }l}
+2023 - 2024 : & \href{https://absalon.ku.dk/courses/47665}{Survival analysis} (course director Frank Eriksson). \\
+              & 6 lectures of 4 hours and 6 practicals of 1 or 2 hours\\
+\end{tabular}
+
+
 
 \bigskip
 
@@ -337,7 +364,7 @@ Christmas} (NRU Christmas Symposium 2022).
 
 \resheading{Publications in peer reviewed scientific journals \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
 \section*{\emph{Methodological} (selected publications - 8/14)}
-\label{sec:orgdfb6d7f}
+\label{sec:orga2759e6}
 \begin{enumerate}
    \item \bibentry{scheike2022efficient}
    \item \bibentry{ozenne2022controlling}
@@ -352,7 +379,7 @@ Christmas} (NRU Christmas Symposium 2022).
 \pagebreak[3]
 
 \section*{\emph{Clinical applications} (selected publications - 10/54)}
-\label{sec:org9dffc46}
+\label{sec:org88af75a}
 \begin{enumerate}[resume]
    \item \bibentry{kohler2023serotonin}
    \item \bibentry{nasser2022reliability}
