@@ -16,4 +16,4 @@ and [jekyll](http://jekyllrb.com/) to enable me to create a website
 without worrying about html code or learning how to deploy my
 site. 
 
-To my brother for showing me how to use them !
+To my brother for showing me how to use them!
