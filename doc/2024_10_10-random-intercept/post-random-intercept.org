@@ -1,0 +1,964 @@
+#+TITLE: Random intercept model with a balanced design
+#+Author: Brice Ozenne
+
+
+* Standard error in a random intercept model 
+
+** Notations
+
+Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
+occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
+the occasions by \(j \in \{1,\ldots,p\}\). During their follow-up each
+subject is subject to an active (\(T=1\)) and a control treatment
+(\(T=0\)) respectively \(p_1\) and \(p_0\) times. We will use the bold
+notation to denote vector of random variables, e.g.
+\(\VT_i=\{T_{i,1},\ldots,T_{i,p}\}\).
+
+\bigskip
+
+The (data-generating) variance of the outcome will be denoted
+\(\sigma^2\). The (data-generating) correlation between any two
+measurements from a subject will be denoted \(r_{j,j^{\prime}} = \Cor(Y_{i,j},Y_{i,j^{\prime}}|T_{i,j},T_{i,j^{\prime}})\)
+
+\bigskip
+
+As a working model we will consider the following random intercept
+model:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{i,j} = \alpha + \beta T_{i,j} + u_i + \Vvarepsilon_{i,j}
+\end{align*}
+#+END_EXPORT
+where \(u_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{i,j} \sim
+\Gaus[0,\delta]\). Introducing \(\rho = \frac{\tau}{\tau+\delta}\) and
+\(\sigma^2=\tau+\delta\), we can then express the residual
+variance-covariance matrix as:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[\VY_{i}|\VT_i] = \Var[u_{i} + \Vvarepsilon_{i}|T_i] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho \Ve\trans{\Ve})
+\end{align*}
+#+END_EXPORT
+where \(I\) denotes the \(p \times p\) identity matrix and \(\Ve\) a
+corresponding of size \(p\) containing only 1. \(\Theta =
+(\alpha,\beta,\delta,\tau)\) or equivalently
+\((\alpha,\beta,\rho,\sigma)\) will denote the vector of model
+parameters and \(\Vmu_{i}=\left(\alpha+\beta
+T_{i1},\ldots,\alpha+\beta T_{ip}\right)\) the vector of fitted
+values. Note that since we assume a balanced design and since
+\(\Omega\) is unchanged by re-ordering, we can re-order the data such
+that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\).
+
+** Estimates
+
+*** Theory
+
+*** Numerical example
+
+We will illustrate the previous result on an example. First we
+simulate some data in the long format:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(LMMstar)
+library(lava)
+library(Matrix)
+
+set.seed(1)
+dfL <- sampleRem(1e3, n.times = 4, format = "long",
+                 mu = c(1,0,0,0), sigma = 1:4, lambda = c(0.5,0.25,2,1))
+dfL <- dfL[order(dfL$id),c("id","visit","Y")]
+dfL$treatment <- as.numeric(dfL$visit) %% 2
+head(dfL)
+#+END_SRC
+
+#+RESULTS:
+:   id visit          Y treatment
+: 1  1     1  0.2551614         1
+: 2  1     2  0.7913185         0
+: 3  1     3 -2.1031314         1
+: 4  1     4 -0.4489691         0
+: 5  2     1  1.5637433         1
+: 6  2     2 -0.1637081         0
+
+Converting to the wide format facilitate the calculation of the time
+specific mean, variance, and correlation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dfW <- reshape(dfL[,c("id","visit","Y")],
+               direction = "wide", idvar = "id", timevar = "visit")
+rbind(mean = colMeans(dfW[,-1]),
+      var = apply(dfW[,-1],2,var))
+cor(dfW[,-1])
+#+END_SRC
+
+#+RESULTS:
+:           Y.1       Y.2       Y.3       Y.4
+: mean 1.534321 0.2534847  2.101116  1.040294
+: var  3.770008 1.6149499 47.740082 12.611689
+:           Y.1       Y.2       Y.3       Y.4
+: Y.1 1.0000000 0.5515201 0.8579057 0.8330143
+: Y.2 0.5515201 1.0000000 0.6468049 0.6131780
+: Y.3 0.8579057 0.6468049 1.0000000 0.9503735
+: Y.4 0.8330143 0.6131780 0.9503735 1.0000000
+
+A random intercept model estimated by Maximum Likelihood (ML) leads to
+the following results:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "ML")
+coef(eML.RI, effects = "all")
+#+END_SRC
+
+#+RESULTS:
+: (Intercept)   treatment       sigma     rho(id) 
+:   0.6468893   1.1708292   4.0663607   0.5049300
+
+We retrive the empirical means for the intercept and treatment effects:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+alphaHat <- mean(dfL$Y[dfL$treatment == 0])
+betaHat <- mean(dfL$Y[dfL$treatment == 1]) - alphaHat
+c(alphaHat, betaHat)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.6468893 1.1708292
+
+the empirical squared residuals for the variance:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dfL$res <- dfL$Y - alphaHat - dfL$treatment*+betaHat
+sqrt(mean(dfL$res^2))
+#+END_SRC
+
+#+RESULTS:
+: [1] 4.066361
+
+and the empirical residual correlation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dfL$res.normML <- dfL$res/sqrt(mean(dfL$res^2))
+dfWres.normML <- reshape(dfL[,c("id","visit","res.normML")],
+                         direction = "wide", idvar = "id", timevar = "visit")
+M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/NROW(dfWres.normML)
+mean(M.MLcor[lower.tri(M.MLcor)])
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.50493
+
+However when fitting a random intercept model estimated by Maximum
+Likelihood (REML):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eREML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "REML")
+coef(eREML.RI, effects = "all")
+#+END_SRC
+
+#+RESULTS:
+: (Intercept)   treatment       sigma     rho(id) 
+:   0.6468893   1.1708292   4.0678916   0.5051376
+
+while we do retrive the empirical means for the intercept and
+treatment effects, we do not retrieve (exactly) the standard deviation
+of the residuals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sd(dfL$res)
+#+END_SRC
+
+#+RESULTS:
+: [1] 4.066869
+
+nor the Pearson correlation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dfL$res.normREML <- dfL$res/coef(eREML.RI, effects = "variance")
+dfWres.normREML <- reshape(dfL[,c("id","visit","res.normREML")],
+                           direction = "wide", idvar = "id", timevar = "visit")
+M.REMLcor <- crossprod(as.matrix(dfWres.normREML[,-1]))/NROW(dfWres.normREML)
+mean(M.REMLcor[lower.tri(M.REMLcor)])
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.50455
+
+\clearpage
+
+\appendix
+
+* Inverse of a compound symmetry matrix
+:PROPERTIES:
+:CUSTOM_ID: sm:invCS
+:END:
+
+# https://math.stackexchange.com/questions/4435770/general-inverse-of-constant-correlation-matrix
+
+Consider the compound symmetry matrix:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R= (1-\rho) I + \rho \Ve\trans{\Ve}= \rho\left(\frac{1-\rho}{\rho} I + \Ve\trans{\Ve}\right) 
+\end{align*}
+#+END_EXPORT
+The Sherman-Morrison formula indicates that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} &= \rho^{-1} \left(\frac{\rho}{1-\rho} I - \frac{\rho^2}{(1-\rho)^2}\frac{\Ve\trans{\Ve}}{1+\frac{\rho}{1-\rho}\trans{\Ve}\Ve}\right) = \frac{1}{1-\rho} I - \frac{\rho}{(1-\rho)^2}\frac{\Ve\trans{\Ve}}{1+\frac{\rho}{1-\rho}p} \\
+&=  \frac{1}{1-\rho} I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)^2+\rho(1-\rho)p} =  \frac{1}{1-\rho} \left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right)
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+p <- 4
+rho <- 0.4
+R <- (1-rho) * diag(1, p, p) + rho
+R.M1 <- (1/(1-rho) * diag(1, p, p)  - rho/((1-rho)^2+rho*(1-rho)*p))
+range(R.M1 - solve(R))
+R.M1 <- 1/(1-rho) * (diag(1, p, p)  - rho/(1+rho*(p-1)))
+range(R.M1 - solve(R))
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.110223e-16  0.000000e+00
+: [1] -2.220446e-16  5.551115e-17
+
+
+* Estimates in a random intercept model
+:PROPERTIES:
+:CUSTOM_ID: sm:rhoML
+:END:
+
+The log-likelihood of a random intercept model can be written:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Likelihood(\Theta|\VY,\VT) =& \sum_{i=1}^{n} \left(-\frac{m}{2} \log(2\pi) - \frac{1}{2} \log\left|\Omega\right| - \frac{1}{2} \trans{(\VY_i-\Vmu_i)} \Omega^{-1} (\VY_i-\Vmu_i) \right)
+\end{align*}
+#+END_EXPORT
+and the corresponding restricted likelihood:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Likelihood^R(\Theta|\VY,\VT) = \Likelihood(\Theta|\VY,\VT) + \frac{p}{2} \log(2\pi)-\frac{1}{2} \log\left(\left|\sum_{i=1}^n \trans{\VZ}_i \Omega^{-1} \VZ_i \right|\right)
+\end{align*}
+#+END_EXPORT
+where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
+
+
+** Mean parameters
+
+The score equation w.r.t. the mean parameters is identical when
+considering the log-likelihood or the restricted log-likelihood. Using
+the expression of \(R^{-1}\) found in appendix [[#sm:rhoML]] we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+\sum_{i=1}^n \trans{e}\Omega^{-1} (\VY_i-\Vmu_i)) \\
+\sum_{i=1}^n \trans{\VT}\Omega^{-1} (\VY_i-\Vmu_i)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\frac{1}{\sigma^2(1-\rho)}\sum_{i=1}^n \trans{e}\left(I- \frac{\rho \Ve \trans{\Ve}}{1+\rho(p-1)}\right) (\VY_i-\Vmu_i) \\
+\frac{1}{\sigma^2(1-\rho)}\sum_{i=1}^n \trans{\VT}\left(I- \frac{\rho \Ve \trans{\Ve}}{1+\rho(p-1)}\right) (\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+
+which is equivalent to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+&=
+\begin{bmatrix}
+\sum_{i=1}^n \left(\trans{e}(\VY_i-\Vmu_i)- \frac{\rho p \trans{\Ve}(\VY_i-\Vmu_i)}{1+\rho(p-1)}\right) \\
+\sum_{i=1}^n \left(\trans{\VT}(\VY_i-\Vmu_i)- \frac{\rho p_1 \trans{\Ve}(\VY_i-\Vmu_i)}{1+\rho(p-1)}\right) 
+\end{bmatrix} \\ 
+& =
+\begin{bmatrix}
+\left(1 - \frac{\rho p}{1+\rho(p-1)}\right) \sum_{i=1}^n \trans{e}(\VY_i-\Vmu_i) \\
+\sum_{i=1}^n \trans{\VT}(\VY_i-\Vmu_i)- \frac{\rho p_1}{1+\rho(p-1)} \sum_{i=1}^n \trans{\Ve}(\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+Using that \(1 - \frac{\rho p}{1+\rho(p-1)} = 1 + \rho(p-1) - \rho p =
+1 - \rho > 0 \) and substracting \(p_1/p\) times equation 1 from equation 2 we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+& =
+\begin{bmatrix}
+\sum_{i=1}^n \trans{e}(\VY_i-\Vmu_i) \\
+\sum_{i=1}^n \trans{\VT}(\VY_i-\Vmu_i) - \frac{p_1}{p}\sum_{i=1}^n \trans{\Ve}(\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+Denoting the by \(\widehat{\alpha}= \frac{1}{np} \sum_{i=1}^n
+\sum_{t=1}^p (1-T_{it}) Y_{it}\) and \(\widehat{\beta}= \frac{1}{np}
+\sum_{i=1}^n \sum_{t=1}^p T_{it} Y_{it} - \widehat{\alpha}\) the
+empirical mean over timepoints and patients under control and under
+treatment. The former equations are equivalent to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+& =
+\begin{bmatrix}
+\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta) \\
+p_1 (\widehat{\alpha} + \widehat{\beta} - \alpha - \beta) - \frac{p_1}{p} (\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta))
+\end{bmatrix} \\
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} 
+& =
+\begin{bmatrix}
+\widehat{\alpha} - \alpha + (\widehat{\beta} - \beta) \\
+(\widehat{\alpha} - \alpha + \widehat{\beta} - \beta ) - \frac{1}{p} (\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta))
+\end{bmatrix} 
+\end{align*}
+#+END_EXPORT
+So \(\widehat{\beta} - \beta = -\frac{1}{p_1}(\widehat{\alpha} - \alpha)\) and:
+#+BEGIN_EXPORT latex
+\begin{align*}
+0 = (\widehat{\alpha} - \alpha)\left(1-\frac{1}{p_1}-\frac{1}{p}+1) \right)
+\end{align*}
+#+END_EXPORT
+Since design \(p_0 \geq 1\) and \(p \geq 2\) so \(2-\frac{1}{p_1}-\frac{1}{p} \geq 0.5\). It
+follows that \(\alpha = \widehat{\alpha}\) and therefore
+\(\beta=\widehat{\beta}\): the maximum likelihood (ML) and restricted
+maximum likelihood (REML) estimates of the mean parameters are the
+empirical means in the appropriate sub-groups.
+
+** Correlation parameter (ML)
+
+The ML score equation w.r.t the correlation parameter is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+0 =& -\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\rho}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \rho} \Omega^{-1} (\VY_i-\Vmu_i) \\
+  =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2\sigma^2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)}  (\VY_i-\Vmu_i)\right) \\
+  =& tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n \sigma^2}\sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} (\VY_i-\Vmu_i) \right) 
+\end{align*}
+#+END_EXPORT
+
+
+We first explicit the first term:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} &= \frac{1}{1-\rho} \left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right)\left(-I + \Ve\trans{\Ve}\right) \\
+&= \frac{1}{1-\rho} \left(-I + \Ve\trans{\Ve} + \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)} - \frac{\rho p \Ve\trans{\Ve}}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I + \Ve\trans{\Ve} \frac{1+\rho(p-1)+\rho-\rho p}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I +  \frac{\Ve\trans{\Ve}}{1+\rho(p-1)}\right)
+\end{align*}
+#+END_EXPORT
+
+Thus:
+#+BEGIN_EXPORT latex
+\begin{align*}
+tr \left( R^{-1} \frac{\partial R}{\partial\rho} \right) &= \frac{p}{1-\rho}\left(-1+\frac{1}{1+\rho(p-1)}\right) = -\frac{p\rho(p-1)}{(1-\rho)(1+\rho(p-1))}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+rho <- 0.4
+p <- 7
+R.test <- (1-rho) * diag(1,p,p) + rho
+dR.test <- - diag(1,p,p) + 1
+
+range(solve(R.test) %*% dR.test - 1/(1-rho) * (- diag(1,p,p) + 1/(1+rho*(p-1))))
+sum(diag(solve(R.test) %*% dR.test)) - (-p*rho*(p-1))/((1-rho)*(1+rho*(p-1)))
+#+END_SRC
+
+#+RESULTS:
+: [1] -6.661338e-16  7.771561e-16
+: [1] 0
+
+We now consider:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +  \frac{\Ve\trans{\Ve}}{1+\rho(p-1)}\right)\left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)} + \frac{\Ve\trans{\Ve}}{1+\rho(p-1)} - \frac{\rho p \Ve\trans{\Ve}}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho+\rho^2(p-1) + 1+ \rho(p-1) - \rho p}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+range(solve(R.test) %*% dR.test %*% solve(R.test) - 1/(1-rho)^2 * (- diag(1,p,p) + (rho^2*(p-1)+1)/(1+rho*(p-1))^2))
+#+END_SRC
+
+#+RESULTS:
+: [1] -2.220446e-15  1.332268e-15
+
+
+We now consider the matrix \(\frac{1}{n}\sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} (\VY_i-\Vmu_i)\) and denote by
+\(\left(\widehat{\sigma}^2_1,\ldots,\widehat{\sigma}^2_p\right)\) its
+diagonal elements and by
+\(\widehat{\sigma}^2_{j,j^{\prime}}=\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\) its off
+diagonal elements.
+#+BEGIN_EXPORT latex
+\begin{align*}
+& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \widehat{R}_0 \right) = \frac{1}{\sigma^2(1-\rho)^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{1}{\sigma^2(1-\rho)^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{1}{\sigma^2(1-\rho)^2(1+\rho(p-1))^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+rho <- 0.543
+p <- 7
+-1 + (rho^2*(p-1)+1)/(1+rho*(p-1))^2
+(-(1+rho*(p-1))^2 + rho^2*(p-1)+1)/(1+rho*(p-1))^2
+(-2*rho*(p-1)-rho^2*(p-1)^2 + rho^2*(p-1))/(1+rho*(p-1))^2
+rho*(p-1)*(-2-rho*(p-2))/(1+rho*(p-1))^2
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.8472693
+: [1] -0.8472693
+: [1] -0.8472693
+: [1] -0.8472693
+
+Then \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \) involves that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\sigma^2(\rho-1)(1+\rho(p-1)) + \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1}
+\end{align*}
+#+END_EXPORT
+Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho(p-2)-1\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\sigma^2 \rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2) + 2 \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2}{\rho^2(p-1) + 1} \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1) + 2 \frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1}{\rho^2(p-1) + 1}
+\end{align*}
+#+END_EXPORT
+
+Considering the solution \(\sigma^2=\frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we need to have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+\end{align*}
+#+END_EXPORT
+to solve the score equation.
+
+
+** Variance parameter (ML)
+
+The ML score equation w.r.t the variance parameter is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+0=&-\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\sigma^2}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \sigma^2} \Omega^{-1} (\VY_i-\Vmu_i) \\
+ =&-\frac{n}{2} tr\left(\sigma^{-2} R^{-1} R \right) + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} R R^{-1} (\VY_i-\Vmu_i) \\
+ =&-\frac{pn}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) \\ 
+\sigma^2 =& \frac{1}{n p} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) 
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+eML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "ML")
+
+epsilon <- eML.RI$residuals
+Omega <- sigma(eML.RI)
+R <- cov2cor(Omega)
+sigma2 <- coef(eML.RI, effects = "variance")^2
+rho <- coef(eML.RI, effects = "correlation")
+p <- NROW(Omega)
+
+sigma2 - sum(tapply(1:NROW(dfL), dfL$id, function(iIndex){
+  t(epsilon[iIndex]) %*% solve(R) %*% epsilon[iIndex]
+}))/NROW(dfL)
+#+END_SRC
+
+#+RESULTS:
+:        sigma 
+: 2.683365e-11
+
+
+
+
+Using the expression of \(R^{-1}\) found in appendix [[#sm:rhoML]] we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma^2 =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\Vmu_i)  \\
+ =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)}(\VY_i-\Vmu_i)  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{np} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Ve\trans{\Ve} (\VY_i-\Vmu_i)  \\
+ =& \frac{\widehat{\sigma}^2}{1- \rho}  - \frac{\rho p}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+sigma2 - sigma2/(1-rho) + rho*p/((1-rho)^2+rho*(1-rho)*p) * mean(tapply(epsilon, dfL$id, mean)^2)
+#+END_SRC
+
+#+RESULTS:
+:        sigma 
+: 2.682299e-11
+
+Since:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2=& \frac{1}{np^2} \sum_{i=1}^n \sum_{j=1}^p \sum_{j^{\prime}=1}^p \left(Y_{i,j}-\mu_j\right)\left(Y_{i,j^{\prime}}-\mu_{j^{\prime}}\right) \\
+=&  \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+M.resW <- reshape(dfL[,c("id","visit","res")],
+                  direction = "wide", idvar = "id", timevar = "visit")
+M.resVcov <- crossprod(as.matrix(M.resW[,-1]))/NROW(M.resW)
+mean(tapply(epsilon, dfL$id, mean)^2) - mean(M.resVcov)
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.776357e-15
+
+We have that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma^2 =& \frac{\widehat{\sigma}^2}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+sigma2 - sigma2/(1-rho) + (1/p)*rho/((1-rho)^2+rho*(1-rho)*p) * sum(M.resVcov)
+#+END_SRC
+
+#+RESULTS:
+:        sigma 
+: 2.682654e-11
+
+
+Using that \(\sigma^2=\widehat{\sigma}^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we obtain:
+#+BEGIN_EXPORT latex
+\begin{align*}
+1 =& \frac{1}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(p + p(p-1)\rho\right) \\
+  =& \frac{1}{(1- \rho)}  - \frac{\rho + (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p}  \\
+  =& \frac{1-\rho + \rho p  - \rho - (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p} \\
+  =& \frac{1-2\rho+\rho^2 + \rho (1 - \rho) p}{(1-\rho)^2+\rho(1-\rho)p} = 1
+\end{align*}
+#+END_EXPORT
+which is true. Thus the proposed solution satisfies the score equations.
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+1/(1-rho) - rho/p * (p+p*(p-1)*rho)/((1-rho)^2+rho*(1-rho)*p)
+1/(1-rho) - (rho + (p-1)*rho^2)/((1-rho)^2+rho*(1-rho)*p)
+(1-rho + rho*p - rho - (p-1)*rho^2)/((1-rho)^2+rho*(1-rho)*p)
+#+END_SRC
+
+#+RESULTS:
+: rho(id) 
+:       1
+: rho(id) 
+:       1
+: rho(id) 
+:       1
+
+\clearpage
+
+* Standard error of the treatment effect \newline in a balanced random intercept model
+:PROPERTIES:
+:CUSTOM_ID: sm:seRI
+:END:
+
+Consider a random intercept model including single binary covariate
+(called treatment):
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
+\end{align*}
+#+END_EXPORT
+where \(\alpha_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{it} \sim
+\Gaus[0,\delta]\). Denote \(\rho = \frac{\tau}{\tau+\delta}\) and
+\(\sigma^2=\tau+\delta\) such that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[Y_{it}] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho e\trans{e})
+\end{align*}
+#+END_EXPORT
+where \(I\) and \(e\) were defined in section [[#sm:invCS]]. The inverse
+of \(R\) was also explicit in section [[#sm:invCS]] and when multiplied
+the \(p \times 2\) matrix \(X=(1,T)\) where \(T\) is either \(0\) or
+\(1\), respectively \(p_0\) and \(p_1\) times, we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
+&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{1 + \rho (p-1)}\right)  \\
+&= \frac{1}{1-\rho} \left(\begin{bmatrix} p & p_1 \\ p_1 & p_1 \end{bmatrix} - \frac{\rho}{1+\rho(p-1)}  \begin{bmatrix} p^2 & p p_1 \\ p p_1 & p^2_1 \end{bmatrix}\right) \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p+p\rho(p-1) - \rho p^2
+                  & p_1+p_1\rho(p-1)- \rho p p_1
+                  \\ p_1+p_1\rho(p-1)- \rho p p_1
+                  & p_1+p_1\rho(p-1)- \rho p_1^2
+\end{bmatrix}   \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p(1-\rho)
+                  & p_1(1-\rho)
+                  \\ p_1(1-\rho)
+                  & p_1(1+\rho (p-p_1-1))
+\end{bmatrix}   
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- cbind(1, c(0,1,1,1))
+p1 <- sum(X[,2])
+
+t(X) %*% matrix(1,NROW(X),NROW(X)) %*% X
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]   16   12
+: [2,]   12    9
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X.RM1.X <- t(X) %*% solve(R) %*% X
+X.RM1.X - 1/((1-rho)*(1+rho*(p-1))) * matrix(c(p*(1-rho),p1*(1-rho),p1*(1-rho),p1*(1 + rho*(p-p1-1))),2,2)
+#+END_SRC
+
+#+RESULTS:
+:              [,1]         [,2]
+: [1,] 2.220446e-16 2.220446e-16
+: [2,] 4.440892e-16 8.881784e-16
+
+whose inverse is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\left(\trans{X} R^{-1} X\right)^{-1} &= \frac{(1-\rho)(1+\rho(p-1))}{p_1 p (1-\rho)(1+\rho (p-p_1-1)) - p^2_1(1-\rho)^2} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{p_1 p (1+\rho (p-p_1-1)) - p^2_1(1-\rho)} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{(p - p_1) + \rho (p^2-p p_1-p+p_1)} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix} \\
+&= \frac{1}{p-p_1} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix}   
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+solve(X.RM1.X)
+solve(X.RM1.X) - (1+rho*(p-1))/(p1*p*(1+rho*(p-p1-1)) - p1^2*(1-rho)) * matrix(c(p1*(1 + rho*(p-p1-1)),-p1*(1-rho),-p1*(1-rho),p*(1-rho)),2,2)
+solve(X.RM1.X) - 1/(p-p1) * matrix(c(1 + rho*(p-p1-1),-(1-rho),-(1-rho),p/p1*(1-rho)),2,2)
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]  1.0 -0.6
+: [2,] -0.6  0.8
+:               [,1]          [,2]
+: [1,] -1.110223e-16  1.110223e-16
+: [2,]  0.000000e+00 -2.220446e-16
+:               [,1]          [,2]
+: [1,] -1.110223e-16  2.220446e-16
+: [2,]  1.110223e-16 -2.220446e-16
+
+\clearpage
+
+So in the random intercept model, the standard error of the treatment
+estimator will be:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\sigma_0^2(1-\rho) \frac{p}{n p_1(p-p_1)}}=\sqrt{\frac{\delta}{n} \frac{p}{p_1(p-p_1)}}
+\end{align*}
+#+END_EXPORT
+
+In a design with as many observations under treatment as under control \(p_1=p/2\) and the expression simplifies into.
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{4\delta}{np}} = \sqrt{\frac{2\delta}{np_1}}
+\end{align*}
+#+END_EXPORT
+
+From section [[#sm:rhoML]] we deduce that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
+\end{align*}
+#+END_EXPORT
+which in a design with as many observations under treatment as under control simplifies to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
+\end{align*}
+#+END_EXPORT
+
+Note: when using a t-test on the change based only on the first
+observation under each treatment the variance is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2(1-\rho_{1,p+1}) \sigma^2}{n}}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+solve(X.RM1.X)[2,2]
+(1-rho)*p/(p1*(p-p1))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.8
+: [1] 0.8
+
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+n.obs <- 1e2
+block.1 <- matrix(c(1,0.999,0.999,1),2,2) ## correlation within treatment
+block.2 <- matrix(c(0.0,0.0,0.0,0.0),2,2) ## correlation across treatment
+
+set.seed(1)
+## Sigma.test <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+Sigma.test <- rbind(cbind(block.1, block.2, block.2), cbind(block.2, block.1, block.2), cbind(block.2, block.2, block.1))
+M.test <- rmvnorm(n.obs, mean = rep(0,NCOL(Sigma.test)), sigma = Sigma.test)
+dfL.test <- reshape(as.data.frame(M.test), direction = "long", varying = paste0("V",1:NCOL(M.test)), v.names = "V")
+dfL.test$treatment <- 1-dfL.test$time %in% 1:(NCOL(Sigma.test)/2)
+dfL.test$time.factor <- as.factor(dfL.test$time)
+dfL.test <- dfL.test[order(dfL.test$id),c("id","treatment","time","time.factor","V")]
+
+etest.lmer <- lmer(V ~ treatment + (1|id), data = dfL.test)
+etest.tau <- as.numeric(VarCorr(etest.lmer))
+etest.delta <- sigma(etest.lmer)^2
+etest.rho <- etest.tau/(etest.tau+etest.delta)
+
+
+etest.delta/n.obs * NCOL(Sigma.test)/(NCOL(Sigma.test)/2*(NCOL(Sigma.test)-NCOL(Sigma.test)/2))
+vcov(etest.lmer)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.005208493
+: 2 x 2 Matrix of class "dpoMatrix"
+:              (Intercept)    treatment
+: (Intercept)  0.004456045 -0.002604246
+: treatment   -0.002604246  0.005208493
+
+
+\clearpage
+
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+LATEX_HEADER: %
+#+LATEX_HEADER: %%%% specifications %%%%
+#+LATEX_HEADER: %
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+** Notations
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+#+LATEX_HEADER:\geometry{top=1cm}
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+#+LATEX_HEADER: \RequirePackage{tikz}
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
+** List
+#+LATEX_HEADER: \RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+** Color
+#+LaTeX_HEADER: \definecolor{light}{rgb}{1, 1, 0.9}
+#+LaTeX_HEADER: \definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+#+LaTeX_HEADER: \definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+** Box
+#+LATEX_HEADER: \usepackage{mdframed}
+** Shortcut
+#+LATEX_HEADER: \newcommand{\first}{1\textsuperscript{st} }
+#+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
+#+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+*** Template for shortcut
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+*** Shortcuts
+**** Probability
+#+LATEX_HEADER: \newcommandx\Cor[2][1=,2=]{\defOperator{#1}{#2}{C}{or}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+**** General math
+#+LATEX_HEADER: \newcommand\Ve{\mathbf{e}}
+#+LATEX_HEADER: \newcommand\VT{\mathbf{T}}
+#+LATEX_HEADER: \newcommand\VY{\mathbf{Y}}
+#+LATEX_HEADER: \newcommand\VZ{\mathbf{Z}}
+#+LATEX_HEADER: \newcommand\Vvarepsilon{\boldsymbol{\varepsilon}}
+#+LATEX_HEADER: \newcommand\Vmu{\boldsymbol{\mu}}
+
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}

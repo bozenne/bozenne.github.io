@@ -1,0 +1,751 @@
+% Created 2024-10-11 fr 17:38
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+
+%%%% settings when exporting code %%%% 
+
+\usepackage{listings}
+\lstdefinestyle{code-small}{
+backgroundcolor=\color{white}, % background color for the code block
+basicstyle=\ttfamily\small, % font used to display the code
+commentstyle=\color[rgb]{0.5,0,0.5}, % color used to display comments in the code
+keywordstyle=\color{black}, % color used to highlight certain words in the code
+numberstyle=\ttfamily\tiny\color{gray}, % color used to display the line numbers
+rulecolor=\color{black}, % color of the frame
+stringstyle=\color[rgb]{0,.5,0},  % color used to display strings in the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+columns=fullflexible,
+frame=single, % adds a frame around the code (non,leftline,topline,bottomline,lines,single,shadowbox)
+keepspaces=true, % % keeps spaces in text, useful for keeping indentation of code
+literate={~}{$\sim$}{1}, % symbol properly display via latex
+numbers=none, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=10pt, % how far the line-numbers are from the code
+showspaces=false,
+showstringspaces=false,
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+tabsize=1,
+xleftmargin=0cm,
+emph={anova,apply,class,coef,colnames,colNames,colSums,dim,dcast,for,ggplot,head,if,ifelse,is.na,lapply,list.files,library,logLik,melt,plot,require,rowSums,sapply,setcolorder,setkey,str,summary,tapply},
+aboveskip = \medskipamount, % define the space above displayed listings.
+belowskip = \medskipamount, % define the space above displayed listings.
+lineskip = 0pt} % specifies additional space between lines in listings
+\lstset{style=code-small}
+%%%% packages %%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{changes}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{natbib}
+%
+%%%% specifications %%%%
+%
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{xargs}
+\usepackage{xspace}
+\RequirePackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+\renewcommand{\baselinestretch}{1.1}
+\geometry{top=1cm}
+\RequirePackage{colortbl} % arrayrulecolor to mix colors
+\RequirePackage{pifont}
+\RequirePackage{relsize}
+\newcommand{\Cross}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+\newcommand{\Valid}{{\raisebox{-0.5ex}%
+{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+\newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+\newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+\usepackage{stackengine}
+\usepackage{scalerel}
+\newcommand\Warning[1][3ex]{%
+\renewcommand\stacktype{L}%
+\scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+\xspace
+}
+\hypersetup{
+citecolor=[rgb]{0,0.5,0},
+urlcolor=[rgb]{0,0,0.5},
+linkcolor=[rgb]{0,0,0.5},
+}
+\RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+\RequirePackage{capt-of} %
+\RequirePackage{caption} % newlines in graphics
+\RequirePackage{tikz}
+\definecolor{grayR}{HTML}{8A8990}
+\definecolor{grayL}{HTML}{C4C7C9}
+\definecolor{blueM}{HTML}{1F63B5}
+\newcommand{\Rlogo}[1][0.07]{
+\begin{tikzpicture}[scale=#1]
+\shade [right color=grayR,left color=grayL,shading angle=60]
+(-3.55,0.3) .. controls (-3.55,1.75)
+and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)
+and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2)
+and (1.55,-2) .. (0,-2) .. controls (-2.3,-2)
+and (-3.55,-0.75) .. cycle;
+
+\fill[white]
+(-2.15,0.2) .. controls (-2.15,1.2)
+and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8)
+and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75)
+and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45)
+and (-2.15,-0.7) .. cycle;
+
+\fill[blueM]
+(1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) --
+(0.95,-1.15)  .. controls (1.15,-1.15)
+and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1)
+and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9)
+and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7)
+and (2.5,1.2) .. cycle;
+
+\fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3)
+and (1.75,0.4) .. cycle;
+
+\end{tikzpicture}
+}
+\RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+\definecolor{light}{rgb}{1, 1, 0.9}
+\definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+\definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+\newcommand{\darkblue}{blue!80!black}
+\newcommand{\darkgreen}{green!50!black}
+\newcommand{\darkred}{red!50!black}
+\usepackage{mdframed}
+\newcommand{\first}{1\textsuperscript{st} }
+\newcommand{\second}{2\textsuperscript{nd} }
+\newcommand{\third}{3\textsuperscript{rd} }
+\RequirePackage{amsmath}
+\RequirePackage{algorithm}
+\RequirePackage[noend]{algpseudocode}
+\RequirePackage{dsfont}
+\RequirePackage{amsmath,stmaryrd,graphicx}
+\RequirePackage{prodint} % product integral symbol (\PRODI)
+\newcommand\defOperator[7]{%
+\ifthenelse{\isempty{#2}}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+}{
+\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+}
+}
+\newcommand\defUOperator[5]{%
+\ifthenelse{\isempty{#1}}{
+#5\left#3 #2 \right#4
+}{
+\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+}
+}
+\newcommand{\defBoldVar}[2]{
+\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+}
+\newcommandx\Cor[2][1=,2=]{\defOperator{#1}{#2}{C}{or}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+\newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+\newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+\newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+\newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+\newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+\newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+\newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+\newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+\newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+\newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+\newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+\newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+\newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+\newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+\newcommandx\Hypothesis[2][1=,2=]{
+\ifthenelse{\isempty{#1}}{
+\mathcal{H}
+}{
+\ifthenelse{\isempty{#2}}{
+\mathcal{H}_{#1}
+}{
+\mathcal{H}^{(#2)}_{#1}
+}
+}
+}
+\newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+\ifthenelse{\isempty{#3}}{
+\frac{#4 #1}{#4 #2}
+}{
+\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+}
+}
+\newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+\newcommandx\ddpartial[3][1=,2=,3=]{
+\ifthenelse{\isempty{#3}}{
+\frac{\partial^{2} #1}{\partial #2^2}
+}{
+\frac{\partial^2 #1}{\partial #2\partial #3}
+}
+}
+\newcommand\Ve{\mathbf{e}}
+\newcommand\VT{\mathbf{T}}
+\newcommand\VY{\mathbf{Y}}
+\newcommand\VZ{\mathbf{Z}}
+\newcommand\Vvarepsilon{\boldsymbol{\varepsilon}}
+\newcommand\Vmu{\boldsymbol{\mu}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Natural{\mathbb{N}}
+\newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+\newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+\newcommand\half{\frac{1}{2}}
+\newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+\newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
+\author{Brice Ozenne}
+\date{\today}
+\title{Random intercept model with a balanced design}
+\hypersetup{
+ colorlinks=true,
+ pdfauthor={Brice Ozenne},
+ pdftitle={Random intercept model with a balanced design},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
+ pdflang={English}
+ }
+\begin{document}
+
+\maketitle
+
+
+\section{Standard error in a random intercept model}
+\label{sec:org8252f37}
+
+\subsection{Notations}
+\label{sec:orgfa29173}
+
+Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
+occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
+the occasions by \(j \in \{1,\ldots,p\}\). During their follow-up each
+subject is subject to an active (\(T=1\)) and a control treatment
+(\(T=0\)) respectively \(p_1\) and \(p_0\) times. We will use the bold
+notation to denote vector of random variables, e.g.
+\(\VT_i=\{T_{i,1},\ldots,T_{i,p}\}\).
+
+\bigskip
+
+The (data-generating) variance of the outcome will be denoted
+\(\sigma^2\). The (data-generating) correlation between any two
+measurements from a subject will be denoted \(r_{j,j^{\prime}} = \Cor(Y_{i,j},Y_{i,j^{\prime}}|T_{i,j},T_{i,j^{\prime}})\)
+
+\bigskip
+
+As a working model we will consider the following random intercept
+model:
+\begin{align*}
+Y_{i,j} = \alpha + \beta T_{i,j} + u_i + \Vvarepsilon_{i,j}
+\end{align*}
+where \(u_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{i,j} \sim
+\Gaus[0,\delta]\). Introducing \(\rho = \frac{\tau}{\tau+\delta}\) and
+\(\sigma^2=\tau+\delta\), we can then express the residual
+variance-covariance matrix as:
+\begin{align*}
+\Var[\VY_{i}|\VT_i] = \Var[u_{i} + \Vvarepsilon_{i}|T_i] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho \Ve\trans{\Ve})
+\end{align*}
+where \(I\) denotes the \(p \times p\) identity matrix and \(\Ve\) a
+corresponding of size \(p\) containing only 1. \(\Theta =
+(\alpha,\beta,\delta,\tau)\) or equivalently
+\((\alpha,\beta,\rho,\sigma)\) will denote the vector of model
+parameters and \(\Vmu_{i}=\left(\alpha+\beta
+T_{i1},\ldots,\alpha+\beta T_{ip}\right)\) the vector of fitted
+values. Note that since we assume a balanced design and since
+\(\Omega\) is unchanged by re-ordering, we can re-order the data such
+that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\).
+
+\subsection{Estimates}
+\label{sec:org4e47957}
+
+\subsubsection{Theory}
+\label{sec:org7860577}
+
+\subsubsection{Numerical example}
+\label{sec:orga7f8378}
+
+We will illustrate the previous result on an example. First we
+simulate some data in the long format:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+library(LMMstar)
+library(lava)
+library(Matrix)
+
+set.seed(1)
+dfL <- sampleRem(1e3, n.times = 4, format = "long",
+                 mu = c(1,0,0,0), sigma = 1:4, lambda = c(0.5,0.25,2,1))
+dfL <- dfL[order(dfL$id),c("id","visit","Y")]
+dfL$treatment <- as.numeric(dfL$visit) %% 2
+head(dfL)
+\end{lstlisting}
+
+\begin{verbatim}
+  id visit          Y treatment
+1  1     1  0.2551614         1
+2  1     2  0.7913185         0
+3  1     3 -2.1031314         1
+4  1     4 -0.4489691         0
+5  2     1  1.5637433         1
+6  2     2 -0.1637081         0
+\end{verbatim}
+
+
+Converting to the wide format facilitate the calculation of the time
+specific mean, variance, and correlation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfW <- reshape(dfL[,c("id","visit","Y")],
+               direction = "wide", idvar = "id", timevar = "visit")
+rbind(mean = colMeans(dfW[,-1]),
+      var = apply(dfW[,-1],2,var))
+cor(dfW[,-1])
+\end{lstlisting}
+
+\begin{verbatim}
+          Y.1       Y.2       Y.3       Y.4
+mean 1.534321 0.2534847  2.101116  1.040294
+var  3.770008 1.6149499 47.740082 12.611689
+          Y.1       Y.2       Y.3       Y.4
+Y.1 1.0000000 0.5515201 0.8579057 0.8330143
+Y.2 0.5515201 1.0000000 0.6468049 0.6131780
+Y.3 0.8579057 0.6468049 1.0000000 0.9503735
+Y.4 0.8330143 0.6131780 0.9503735 1.0000000
+\end{verbatim}
+
+
+A random intercept model estimated by Maximum Likelihood (ML) leads to
+the following results:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+eML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "ML")
+coef(eML.RI, effects = "all")
+\end{lstlisting}
+
+\begin{verbatim}
+(Intercept)   treatment       sigma     rho(id) 
+  0.6468893   1.1708292   4.0663607   0.5049300
+\end{verbatim}
+
+
+We retrive the empirical means for the intercept and treatment effects:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+alphaHat <- mean(dfL$Y[dfL$treatment == 0])
+betaHat <- mean(dfL$Y[dfL$treatment == 1]) - alphaHat
+c(alphaHat, betaHat)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.6468893 1.1708292
+\end{verbatim}
+
+
+the empirical squared residuals for the variance:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfL$res <- dfL$Y - alphaHat - dfL$treatment*+betaHat
+sqrt(mean(dfL$res^2))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 4.066361
+\end{verbatim}
+
+
+and the empirical residual correlation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfL$res.normML <- dfL$res/sqrt(mean(dfL$res^2))
+dfWres.normML <- reshape(dfL[,c("id","visit","res.normML")],
+                         direction = "wide", idvar = "id", timevar = "visit")
+M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/NROW(dfWres.normML)
+mean(M.MLcor[lower.tri(M.MLcor)])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.50493
+\end{verbatim}
+
+
+However when fitting a random intercept model estimated by Maximum
+Likelihood (REML):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+eREML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "REML")
+coef(eREML.RI, effects = "all")
+\end{lstlisting}
+
+\begin{verbatim}
+(Intercept)   treatment       sigma     rho(id) 
+  0.6468893   1.1708292   4.0678916   0.5051376
+\end{verbatim}
+
+
+while we do retrive the empirical means for the intercept and
+treatment effects, we do not retrieve (exactly) the standard deviation
+of the residuals:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sd(dfL$res)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 4.066869
+\end{verbatim}
+
+
+nor the Pearson correlation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfL$res.normREML <- dfL$res/coef(eREML.RI, effects = "variance")
+dfWres.normREML <- reshape(dfL[,c("id","visit","res.normREML")],
+                           direction = "wide", idvar = "id", timevar = "visit")
+M.REMLcor <- crossprod(as.matrix(dfWres.normREML[,-1]))/NROW(dfWres.normREML)
+mean(M.REMLcor[lower.tri(M.REMLcor)])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.50455
+\end{verbatim}
+
+
+\clearpage
+
+\appendix
+
+\section{Inverse of a compound symmetry matrix}
+\label{sm:invCS}
+Consider the compound symmetry matrix:
+\begin{align*}
+R= (1-\rho) I + \rho \Ve\trans{\Ve}= \rho\left(\frac{1-\rho}{\rho} I + \Ve\trans{\Ve}\right) 
+\end{align*}
+The Sherman-Morrison formula indicates that:
+\begin{align*}
+R^{-1} &= \rho^{-1} \left(\frac{\rho}{1-\rho} I - \frac{\rho^2}{(1-\rho)^2}\frac{\Ve\trans{\Ve}}{1+\frac{\rho}{1-\rho}\trans{\Ve}\Ve}\right) = \frac{1}{1-\rho} I - \frac{\rho}{(1-\rho)^2}\frac{\Ve\trans{\Ve}}{1+\frac{\rho}{1-\rho}p} \\
+&=  \frac{1}{1-\rho} I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)^2+\rho(1-\rho)p} =  \frac{1}{1-\rho} \left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right)
+\end{align*}
+
+\section{Estimates in a random intercept model}
+\label{sm:rhoML}
+The log-likelihood of a random intercept model can be written:
+\begin{align*}
+\Likelihood(\Theta|\VY,\VT) =& \sum_{i=1}^{n} \left(-\frac{m}{2} \log(2\pi) - \frac{1}{2} \log\left|\Omega\right| - \frac{1}{2} \trans{(\VY_i-\Vmu_i)} \Omega^{-1} (\VY_i-\Vmu_i) \right)
+\end{align*}
+and the corresponding restricted likelihood:
+\begin{align*}
+\Likelihood^R(\Theta|\VY,\VT) = \Likelihood(\Theta|\VY,\VT) + \frac{p}{2} \log(2\pi)-\frac{1}{2} \log\left(\left|\sum_{i=1}^n \trans{\VZ}_i \Omega^{-1} \VZ_i \right|\right)
+\end{align*}
+where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
+
+
+\subsection{Mean parameters}
+\label{sec:orgb31c9b4}
+
+The score equation w.r.t. the mean parameters is identical when
+considering the log-likelihood or the restricted log-likelihood. Using
+the expression of \(R^{-1}\) found in appendix \ref{sm:rhoML} we get:
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+\sum_{i=1}^n \trans{e}\Omega^{-1} (\VY_i-\Vmu_i)) \\
+\sum_{i=1}^n \trans{\VT}\Omega^{-1} (\VY_i-\Vmu_i)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\frac{1}{\sigma^2(1-\rho)}\sum_{i=1}^n \trans{e}\left(I- \frac{\rho \Ve \trans{\Ve}}{1+\rho(p-1)}\right) (\VY_i-\Vmu_i) \\
+\frac{1}{\sigma^2(1-\rho)}\sum_{i=1}^n \trans{\VT}\left(I- \frac{\rho \Ve \trans{\Ve}}{1+\rho(p-1)}\right) (\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+
+which is equivalent to:
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+&=
+\begin{bmatrix}
+\sum_{i=1}^n \left(\trans{e}(\VY_i-\Vmu_i)- \frac{\rho p \trans{\Ve}(\VY_i-\Vmu_i)}{1+\rho(p-1)}\right) \\
+\sum_{i=1}^n \left(\trans{\VT}(\VY_i-\Vmu_i)- \frac{\rho p_1 \trans{\Ve}(\VY_i-\Vmu_i)}{1+\rho(p-1)}\right) 
+\end{bmatrix} \\ 
+& =
+\begin{bmatrix}
+\left(1 - \frac{\rho p}{1+\rho(p-1)}\right) \sum_{i=1}^n \trans{e}(\VY_i-\Vmu_i) \\
+\sum_{i=1}^n \trans{\VT}(\VY_i-\Vmu_i)- \frac{\rho p_1}{1+\rho(p-1)} \sum_{i=1}^n \trans{\Ve}(\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+Using that \(1 - \frac{\rho p}{1+\rho(p-1)} = 1 + \rho(p-1) - \rho p =
+1 - \rho > 0\) and substracting \(p_1/p\) times equation 1 from equation 2 we get:
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+& =
+\begin{bmatrix}
+\sum_{i=1}^n \trans{e}(\VY_i-\Vmu_i) \\
+\sum_{i=1}^n \trans{\VT}(\VY_i-\Vmu_i) - \frac{p_1}{p}\sum_{i=1}^n \trans{\Ve}(\VY_i-\Vmu_i)
+\end{bmatrix}
+\end{align*}
+Denoting the by \(\widehat{\alpha}= \frac{1}{np} \sum_{i=1}^n
+\sum_{t=1}^p (1-T_{it}) Y_{it}\) and \(\widehat{\beta}= \frac{1}{np}
+\sum_{i=1}^n \sum_{t=1}^p T_{it} Y_{it} - \widehat{\alpha}\) the
+empirical mean over timepoints and patients under control and under
+treatment. The former equations are equivalent to:
+\begin{align*}
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+& =
+\begin{bmatrix}
+\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta) \\
+p_1 (\widehat{\alpha} + \widehat{\beta} - \alpha - \beta) - \frac{p_1}{p} (\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta))
+\end{bmatrix} \\
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} 
+& =
+\begin{bmatrix}
+\widehat{\alpha} - \alpha + (\widehat{\beta} - \beta) \\
+(\widehat{\alpha} - \alpha + \widehat{\beta} - \beta ) - \frac{1}{p} (\widehat{\alpha} - \alpha + p_1 (\widehat{\beta} - \beta))
+\end{bmatrix} 
+\end{align*}
+So \(\widehat{\beta} - \beta = -\frac{1}{p_1}(\widehat{\alpha} - \alpha)\) and:
+\begin{align*}
+0 = (\widehat{\alpha} - \alpha)\left(1-\frac{1}{p_1}-\frac{1}{p}+1) \right)
+\end{align*}
+Since design \(p_0 \geq 1\) and \(p \geq 2\) so \(2-\frac{1}{p_1}-\frac{1}{p} \geq 0.5\). It
+follows that \(\alpha = \widehat{\alpha}\) and therefore
+\(\beta=\widehat{\beta}\): the maximum likelihood (ML) and restricted
+maximum likelihood (REML) estimates of the mean parameters are the
+empirical means in the appropriate sub-groups.
+
+\subsection{Correlation parameter (ML)}
+\label{sec:org8cebfd6}
+
+The ML score equation w.r.t the correlation parameter is:
+\begin{align*}
+0 =& -\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\rho}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \rho} \Omega^{-1} (\VY_i-\Vmu_i) \\
+  =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2\sigma^2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)}  (\VY_i-\Vmu_i)\right) \\
+  =& tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n \sigma^2}\sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} (\VY_i-\Vmu_i) \right) 
+\end{align*}
+
+
+We first explicit the first term:
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} &= \frac{1}{1-\rho} \left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right)\left(-I + \Ve\trans{\Ve}\right) \\
+&= \frac{1}{1-\rho} \left(-I + \Ve\trans{\Ve} + \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)} - \frac{\rho p \Ve\trans{\Ve}}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I + \Ve\trans{\Ve} \frac{1+\rho(p-1)+\rho-\rho p}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I +  \frac{\Ve\trans{\Ve}}{1+\rho(p-1)}\right)
+\end{align*}
+
+Thus:
+\begin{align*}
+tr \left( R^{-1} \frac{\partial R}{\partial\rho} \right) &= \frac{p}{1-\rho}\left(-1+\frac{1}{1+\rho(p-1)}\right) = -\frac{p\rho(p-1)}{(1-\rho)(1+\rho(p-1))}
+\end{align*}
+
+We now consider:
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +  \frac{\Ve\trans{\Ve}}{1+\rho(p-1)}\right)\left(I - \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \frac{\rho \Ve\trans{\Ve}}{1+\rho(p-1)} + \frac{\Ve\trans{\Ve}}{1+\rho(p-1)} - \frac{\rho p \Ve\trans{\Ve}}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho+\rho^2(p-1) + 1+ \rho(p-1) - \rho p}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
+\end{align*}
+
+We now consider the matrix \(\frac{1}{n}\sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} (\VY_i-\Vmu_i)\) and denote by
+\(\left(\widehat{\sigma}^2_1,\ldots,\widehat{\sigma}^2_p\right)\) its
+diagonal elements and by
+\(\widehat{\sigma}^2_{j,j^{\prime}}=\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\) its off
+diagonal elements.
+\begin{align*}
+& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \widehat{R}_0 \right) = \frac{1}{\sigma^2(1-\rho)^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{1}{\sigma^2(1-\rho)^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{1}{\sigma^2(1-\rho)^2(1+\rho(p-1))^2}\left(\sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
+
+Then \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right)\) involves that:
+\begin{align*}
+\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\sigma^2(\rho-1)(1+\rho(p-1)) + \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1}
+\end{align*}
+Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho(p-2)-1\):
+\begin{align*}
+\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \sum_{j=1}^p \widehat{\sigma}^2_j \rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\sigma}_j
+\widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\sigma^2 \rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2) + 2 \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2}{\rho^2(p-1) + 1} \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1) + 2 \frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1}{\rho^2(p-1) + 1}
+\end{align*}
+
+Considering the solution \(\sigma^2=\frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we need to have:
+\begin{align*}
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+\end{align*}
+to solve the score equation.
+
+
+\subsection{Variance parameter (ML)}
+\label{sec:org5722c70}
+
+The ML score equation w.r.t the variance parameter is:
+\begin{align*}
+0=&-\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\sigma^2}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \sigma^2} \Omega^{-1} (\VY_i-\Vmu_i) \\
+ =&-\frac{n}{2} tr\left(\sigma^{-2} R^{-1} R \right) + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} R R^{-1} (\VY_i-\Vmu_i) \\
+ =&-\frac{pn}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) \\ 
+\sigma^2 =& \frac{1}{n p} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) 
+\end{align*}
+
+Using the expression of \(R^{-1}\) found in appendix \ref{sm:rhoML} we get:
+\begin{align*}
+\sigma^2 =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\Vmu_i)  \\
+ =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)}(\VY_i-\Vmu_i)  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{np} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Ve\trans{\Ve} (\VY_i-\Vmu_i)  \\
+ =& \frac{\widehat{\sigma}^2}{1- \rho}  - \frac{\rho p}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2
+\end{align*}
+
+Since:
+\begin{align*}
+\frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2=& \frac{1}{np^2} \sum_{i=1}^n \sum_{j=1}^p \sum_{j^{\prime}=1}^p \left(Y_{i,j}-\mu_j\right)\left(Y_{i,j^{\prime}}-\mu_{j^{\prime}}\right) \\
+=&  \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
+\end{align*}
+
+We have that:
+\begin{align*}
+\sigma^2 =& \frac{\widehat{\sigma}^2}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
+
+Using that \(\sigma^2=\widehat{\sigma}^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we obtain:
+\begin{align*}
+1 =& \frac{1}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(p + p(p-1)\rho\right) \\
+  =& \frac{1}{(1- \rho)}  - \frac{\rho + (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p}  \\
+  =& \frac{1-\rho + \rho p  - \rho - (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p} \\
+  =& \frac{1-2\rho+\rho^2 + \rho (1 - \rho) p}{(1-\rho)^2+\rho(1-\rho)p} = 1
+\end{align*}
+which is true. Thus the proposed solution satisfies the score equations.
+
+\clearpage
+
+\section{Standard error of the treatment effect \newline in a balanced random intercept model}
+\label{sm:seRI}
+Consider a random intercept model including single binary covariate
+(called treatment):
+\begin{align*}
+Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
+\end{align*}
+where \(\alpha_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{it} \sim
+\Gaus[0,\delta]\). Denote \(\rho = \frac{\tau}{\tau+\delta}\) and
+\(\sigma^2=\tau+\delta\) such that:
+\begin{align*}
+\Var[Y_{it}] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho e\trans{e})
+\end{align*}
+where \(I\) and \(e\) were defined in section \ref{sm:invCS}. The inverse
+of \(R\) was also explicit in section \ref{sm:invCS} and when multiplied
+the \(p \times 2\) matrix \(X=(1,T)\) where \(T\) is either \(0\) or
+\(1\), respectively \(p_0\) and \(p_1\) times, we get:
+\begin{align*}
+\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
+&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{1 + \rho (p-1)}\right)  \\
+&= \frac{1}{1-\rho} \left(\begin{bmatrix} p & p_1 \\ p_1 & p_1 \end{bmatrix} - \frac{\rho}{1+\rho(p-1)}  \begin{bmatrix} p^2 & p p_1 \\ p p_1 & p^2_1 \end{bmatrix}\right) \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p+p\rho(p-1) - \rho p^2
+                  & p_1+p_1\rho(p-1)- \rho p p_1
+                  \\ p_1+p_1\rho(p-1)- \rho p p_1
+                  & p_1+p_1\rho(p-1)- \rho p_1^2
+\end{bmatrix}   \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p(1-\rho)
+                  & p_1(1-\rho)
+                  \\ p_1(1-\rho)
+                  & p_1(1+\rho (p-p_1-1))
+\end{bmatrix}   
+\end{align*}
+
+whose inverse is:
+\begin{align*}
+\left(\trans{X} R^{-1} X\right)^{-1} &= \frac{(1-\rho)(1+\rho(p-1))}{p_1 p (1-\rho)(1+\rho (p-p_1-1)) - p^2_1(1-\rho)^2} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{p_1 p (1+\rho (p-p_1-1)) - p^2_1(1-\rho)} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{(p - p_1) + \rho (p^2-p p_1-p+p_1)} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix} \\
+&= \frac{1}{p-p_1} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix}   
+\end{align*}
+
+\clearpage
+
+So in the random intercept model, the standard error of the treatment
+estimator will be:
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\sigma_0^2(1-\rho) \frac{p}{n p_1(p-p_1)}}=\sqrt{\frac{\delta}{n} \frac{p}{p_1(p-p_1)}}
+\end{align*}
+
+In a design with as many observations under treatment as under control \(p_1=p/2\) and the expression simplifies into.
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{4\delta}{np}} = \sqrt{\frac{2\delta}{np_1}}
+\end{align*}
+
+From section \ref{sm:rhoML} we deduce that:
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
+\end{align*}
+which in a design with as many observations under treatment as under control simplifies to:
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
+\end{align*}
+
+Note: when using a t-test on the change based only on the first
+observation under each treatment the variance is:
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2(1-\rho_{1,p+1}) \sigma^2}{n}}
+\end{align*}
+
+\clearpage
+\end{document}

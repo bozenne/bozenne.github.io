@@ -1,0 +1,1224 @@
+#+TITLE: Random intercept model in repeated cross-over design
+#+Author: Brice Ozenne
+
+This document argument for the lack of type 1 error control of a
+random intercept model in a cross over design when a subject has
+repeated measurment under each drug. To simplify we will assume no
+period, sequence, confounding, nor carry-over effect.
+
+\bigskip
+
+
+We will also need the following \Rlogo packages:
+#+BEGIN_SRC R :exports both :results silent :session *R* :cache no
+library(lmerTest)
+library(lme4)
+library(LMMstar)
+library(mvtnorm)
+library(pbapply)
+library(data.table)
+#+END_SRC
+
+#+RESULTS:
+
+\clearpage
+
+* Standard cross-over study
+
+Consider a standard cross-over study where each patient is measured
+once under each treatment. A possible data generating mechanism would
+be the following:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.obs <- 1e3
+set.seed(1)
+M.CO <- rmvnorm(n.obs, mean = c(0,0), sigma = matrix(c(1,0.5,0.5,2),2,2))
+dfL.CO <- reshape(as.data.frame(M.CO), direction = "long", varying = paste0("V",1:2), v.names = "V")
+dfL.CO$time.factor <- as.factor(dfL.CO$time)
+dfL.CO <- dfL.CO[order(dfL.CO$id),c("id","time","time.factor","V")]
+head(dfL.CO)
+#+END_SRC
+
+#+RESULTS:
+:     id time time.factor          V
+: 1.1  1    1           1 -0.5737825
+: 1.2  1    2           2  0.1249946
+: 2.1  2    1           1 -0.4812218
+: 2.2  2    2           2  2.0551107
+: 3.1  3    1           1  0.1494779
+: 3.2  3    2           2 -1.0780620
+
+Since we have complete data we could test a possible treatment effect
+using a paired t-test:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+t.test(M.CO[,1],M.CO[,2],paired = TRUE)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Paired t-test
+
+data:  M.CO[, 1] and M.CO[, 2]
+t = -1.2277, df = 999, p-value = 0.2198
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -0.14621720  0.03367055
+sample estimates:
+mean difference 
+    -0.05627333
+#+end_example
+
+or using a linear mixed model with unstructured covariance matrix:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eCO.lmm <- lmm(V ~ time.factor, repetition = ~time|id, structure = "UN", data = dfL.CO)
+model.tables(eCO.lmm)
+#+END_SRC
+
+#+RESULTS:
+:                 estimate         se       df       lower      upper   p.value
+: (Intercept)  -0.04096383 0.03364179 999.2183 -0.10698048 0.02505283 0.2236455
+: time.factor2  0.05627333 0.04583498 998.9588 -0.03367055 0.14621720 0.2198347
+
+The two approach give identical results. It turns out that a random
+intercept model lead to the same treatment estimates (but not the same
+uncertainty about the intercept as it assumes equal variance of time):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eCO.lmer <- lmer(V ~ time.factor + (1|id), data = dfL.CO)
+summary(eCO.lmer)$coef
+#+END_SRC
+
+#+RESULTS:
+:                 Estimate Std. Error       df   t value  Pr(>|t|)
+: (Intercept)  -0.04096383 0.03976630 1795.591 -1.030114 0.3030952
+: time.factor2  0.05627333 0.04583498  999.000  1.227738 0.2198347
+
+\clearpage
+
+* Cross-over study with 2 repetitions
+
+Consider now cross-over study where each patient is measured twice
+under each treatment. A possible data generating mechanism would be
+the following:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.obs <- 1e3
+block.1 <- matrix(c(1,0.8,0.8,1),2,2) ## correlation within treatment
+block.2 <- matrix(c(0.6,0.4,0.4,0.6),2,2) ## correlation across treatment
+
+set.seed(1)
+Sigma.CO2 <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+M.CO2 <- rmvnorm(n.obs, mean = c(0,0,0,0), sigma = Sigma.CO2)
+dfL.CO2 <- reshape(as.data.frame(M.CO2), direction = "long", varying = paste0("V",1:NCOL(M.CO2)), v.names = "V")
+dfL.CO2$treatment <- 1-dfL.CO2$time %in% 1:2
+dfL.CO2$time.factor <- as.factor(dfL.CO2$time)
+dfL.CO2 <- dfL.CO2[order(dfL.CO2$id),c("id","treatment","time","time.factor","V")]
+head(dfL.CO2)
+#+END_SRC
+
+#+RESULTS:
+:     id treatment time time.factor           V
+: 1.1  1         0    1           1 -0.64878256
+: 1.2  1         0    2           2  0.37611369
+: 1.3  1         1    3           3 -0.11102491
+: 1.4  1         1    4           4  0.91387136
+: 2.1  2         0    1           1  0.06567414
+: 2.2  2         0    2           2 -0.21864009
+
+Here we simulated data under the null hypothesis so it was an
+arbitrary choice to attribute treatment 1 to the last two
+timepoints. We will denote by
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Omega_0 = \sigma^2_0\begin{bmatrix}
+1 & \rho_0(W) & \rho_0(B) & \rho_0(L) \\
+\rho_0(W) & 1 & \rho_0(L) & \rho_0(B) \\
+\rho_0(B) & \rho_0(L) & 1 & \rho_0(W) \\
+\rho_0(L) & \rho_0(B) & \rho_0(W) & 1 \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+the variance-covariance matrix between measurements from the same
+individual on which we impose some structure for ease of exposition:
+- \(\rho_0(W)\): correlation between observations from the same
+  individual and treatment.
+- \(\rho_0(B)\): correlation between observations from the same
+  individual with the different treatment at the same 'time'
+  (e.g. \first-\first experience with treatment)
+- \(\rho_0(L)\): correlation between observations from the same
+  individual with the different treatment at different 'time'
+
+\clearpage
+
+** Correlation structure between treatment contrast
+
+The are 4 pairs we can form with one observation under each treatment,
+and, due to the chosen variance covariance structure used to simulate
+the data, all the corresponding differences are correlated:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pair.contrast <- rbind(c(-1,0,1,0), c(0,-1,1,0), c(-1,0,0,1), c(0,-1,0,1))
+cov(M.CO2 %*% t(pair.contrast))
+#+END_SRC
+
+#+RESULTS:
+:           [,1]      [,2]      [,3]      [,4]
+: [1,] 0.8890885 0.9026652 0.8755117 0.8890885
+: [2,] 0.9026652 1.3420634 0.4632669 0.9026652
+: [3,] 0.8755117 0.4632669 1.2877565 0.8755117
+: [4,] 0.8890885 0.9026652 0.8755117 0.8890885
+
+The corresponding theoretical values are:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pair.contrast %*% Sigma.CO2 %*% t(pair.contrast)
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2] [,3] [,4]
+: [1,]  0.8  0.8  0.8  0.8
+: [2,]  0.8  1.2  0.4  0.8
+: [3,]  0.8  0.4  1.2  0.8
+: [4,]  0.8  0.8  0.8  0.8
+
+This contrast with the random intercept model:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
+\end{align*}
+#+END_EXPORT
+where \(i\in\{1,\ldots,n\}\) indexes the patient (here \(n=1000\)) and
+\(t \in \{1,\ldots,T\}\) indexes the timepoint (here \(T=4\)). In the
+present example: \(T_{i}=(T_{i1},T_{i2},T_{i3},T_{i4})=(0,0,1,1)\) and
+\(\alpha_i\sim\Gaus[0,\tau]\) which is independent of
+\(\varepsilon_{it}\sim\Gaus[0,\delta]\). Taking \(t\in\{0,1\}\) and
+\(t^{\prime}\in\{3,4\}\) this leads to the following model for the treatment contrasts:
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{it^{\prime}} - Y_{it} = \beta + \varepsilon_{it^{\prime}}  - \varepsilon_{it}  = \beta + \varepsilon^*_{i,t^{\prime},t}
+\end{align*}
+#+END_EXPORT
+which are modeled to be independent across and between patients. 
+
+\bigskip
+
+Note that considering the natural contrast (1 vs 3 and 2 vs 4) would lead to:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pair.contrast[c(1,4),] %*% Sigma.CO2 %*% t(pair.contrast[c(1,4),])
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]  0.8  0.8
+: [2,]  0.8  0.8
+
+i.e. a variance of
+\(\Var[\varepsilon_{it}-\varepsilon_{it^{\prime}}]=2(1-\rho_0(B))\sigma_0^2=2(1-0.6)=0.8\). Thus
+a one sample t-test on all contrast, ignoring the within-individual
+correlations between the contrasts, would have a variance estimator of
+\(\frac{2(1-\rho_0(B))\sigma_0^2}{2 n}\)
+
+
+
+\clearpage
+
+** Uncertainty about the treatment estimate in a random intercept model
+
+Consider the following random intercept model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eCO2.lmer <- lmer(V ~ treatment + (1|id), data = dfL.CO2)
+summary(eCO2.lmer)$coef
+#+END_SRC
+
+#+RESULTS:
+:                 Estimate Std. Error       df    t value  Pr(>|t|)
+: (Intercept) -0.007953608 0.02917880 1306.185 -0.2725817 0.7852178
+: treatment    0.019355283 0.02092871 2999.000  0.9248195 0.3551342
+
+We can extract its design matrix:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+X <- model.matrix(V ~ treatment, data = dfL.CO2)
+X[dfL.CO2$id==1,]
+#+END_SRC
+
+#+RESULTS:
+:     (Intercept) treatment
+: 1.1           1         0
+: 1.2           1         0
+: 1.3           1         1
+: 1.4           1         1
+
+Its residual variance-covariance matrix is modeled to be:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Omega = \begin{bmatrix}
+\delta+\tau & \tau & \tau & \tau \\
+\tau & \delta+\tau & \tau & \tau \\
+\tau & \tau & \delta+\tau & \tau \\
+\tau & \tau & \tau & \delta+\tau \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+delta <- sigma(eCO2.lmer)^2
+tau <- as.double(VarCorr(eCO2.lmer)$id)
+Omega <- diag(delta,4,4) + tau
+Omega
+#+END_SRC
+
+#+RESULTS:
+:           [,1]      [,2]      [,3]      [,4]
+: [1,] 1.0704080 0.6323969 0.6323969 0.6323969
+: [2,] 0.6323969 1.0704080 0.6323969 0.6323969
+: [3,] 0.6323969 0.6323969 1.0704080 0.6323969
+: [4,] 0.6323969 0.6323969 0.6323969 1.0704080
+
+whose inverse is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Omega^{-1} = \frac{1}{\delta^4+4\delta\tau} \begin{bmatrix}
+\delta+3\tau & -\tau & -\tau & -\tau \\
+-\tau & \delta+3\tau & -\tau & -\tau \\
+-\tau & -\tau & \delta+3\tau & -\tau \\
+-\tau & -\tau & -\tau & \delta+3\tau \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+OmegaM1 <- (diag(delta + 4*tau,4,4)- tau)/(delta^2+4*delta*tau)
+range(OmegaM1 - solve(Omega))
+#+END_SRC
+
+#+RESULTS:
+: [1] -8.881784e-16  2.775558e-16
+
+Its product with design matrix can be shown to be equal to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\trans{X} \Omega^{-1} X = \frac{2 n}{\delta^4+4\delta\tau} \begin{bmatrix}
+2\delta & \delta \\ 
+\delta & \delta+2\tau \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+X.OmegaM1.X <- 2 * n.obs * matrix(c(2*delta, delta, delta, delta+2*tau), 2,2)/(delta^2+4*delta*tau)
+range(X.OmegaM1.X - n.obs * (t(X[1:4,]) %*% OmegaM1 %*% X[1:4,]))
+#+END_SRC
+
+#+RESULTS:
+: [1] 4.547474e-13 9.094947e-13
+
+whose inverse is the variance-covariance matrix of the estimated model parameters:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\left(\trans{X} \Omega^{-1} X\right)^{-1} = \begin{bmatrix}
+\frac{\delta+2\tau}{2n} & -\frac{\delta}{2n} \\ 
+\frac{\delta}{2n} & \frac{\delta}{n} \\
+\end{bmatrix}
+\end{align*}
+#+END_EXPORT
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+X.OmegaM1.X.M1 <- matrix(c((delta+2*tau)/(2*n.obs), -delta/(2*n.obs), -delta/(2*n.obs), delta/n.obs), 2,2)
+range(X.OmegaM1.X.M1 - vcov(eCO2.lmer))
+#+END_SRC
+
+#+RESULTS:
+: [1] -5.421011e-20  3.881444e-17
+
+The last element of the matrix \(\frac{\delta}{n}\) is the
+uncertainty about the treatment effect. The mixed model rescale the
+residual variance (after exclusion of the within individual variance)
+by the number of subjects.  
+
+\clearpage
+
+** Special case 1: independence
+
+Had there be no correlation within individual (\(\rho_0(B)=\rho_0(W)=\rho_0(L)=0\))
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(2)
+M.Ind <- rmvnorm(n.obs, mean = c(0,0,0,0), sigma = diag(1,4,4))
+dfL.Ind <- reshape(as.data.frame(M.Ind), direction = "long", varying = paste0("V",1:NCOL(M.Ind)), v.names = "V")
+dfL.Ind$treatment <- 1- dfL.Ind$time %in% 1:2
+dfL.Ind$time.factor <- as.factor(dfL.Ind$time)
+#+END_SRC
+
+#+RESULTS:
+
+we would have, assuming homoschedasticity,
+  \(\varepsilon^*_{i,t^{\prime},t} \sim \Gaus[0,2\sigma_0^2]\) and the
+  standard error of a two-sample t-test performed on all data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ttInd <- t.test(c(M.Ind[,1],M.Ind[,2]),c(M.Ind[,3],M.Ind[,4]))
+c(estimate = as.double(diff(ttInd$estimate)),
+  se = ttInd$stderr, p.value = ttInd$p.value)
+#+END_SRC
+
+#+RESULTS:
+:   estimate         se    p.value 
+: 0.04649090 0.03175442 0.14325167
+
+is \(\sqrt{\frac{2\sigma_0^2}{2n}}=\sqrt{\frac{\sigma_0^2}{n}}\):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(1/n.obs)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.03162278
+
+This is what we retrieve with the random intercept model
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eInd.lmer <- lmer(V ~ treatment + (1|id), data = dfL.Ind)
+summary(eInd.lmer)$coef
+#+END_SRC
+#+RESULTS:
+:               Estimate Std. Error       df   t value  Pr(>|t|)
+: (Intercept) 0.01999208 0.02257208 2934.845 0.8856996 0.3758520
+: treatment   0.04649090 0.03158638 2999.000 1.4718655 0.1411621
+
+since \(\tau\approx 0\) so \(\frac{\delta}{n}\approx\frac{\sigma^2_0}{n}\)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(sigma(eInd.lmer)^2/n.obs)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.03158638
+
+Nearly the same (up to the non-precisely 0 estimate of the correlation
+in the random intercept model)
+
+\clearpage
+
+** Special case 2: nearly perfect correlation
+
+We now consider the case where \(\rho_0(W)\approx 1\):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+block.1 <- matrix(c(1,0.999,0.999,1),2,2) ## correlation within treatment
+block.2 <- matrix(c(0.6,0.6,0.6,0.6),2,2) ## correlation across treatment
+
+set.seed(1)
+Sigma.rho1 <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+M.rho1 <- rmvnorm(n.obs, mean = c(0,0,0,0), sigma = Sigma.rho1)
+dfL.rho1 <- reshape(as.data.frame(M.rho1), direction = "long", varying = paste0("V",1:NCOL(M.rho1)), v.names = "V")
+dfL.rho1$treatment <- 1-dfL.rho1$time %in% 1:2
+dfL.rho1$time.factor <- as.factor(dfL.rho1$time)
+dfL.rho1 <- dfL.rho1[order(dfL.rho1$id),c("id","treatment","time","time.factor","V")]
+head(dfL.rho1)
+#+END_SRC
+
+#+RESULTS:
+:     id treatment time time.factor           V
+: 1.1  1         0    1           1 -0.13984571
+: 1.2  1         0    2           2 -0.11422819
+: 1.3  1         1    3           3  0.37194845
+: 1.4  1         1    4           4  0.44882055
+: 2.1  2         0    1           1 -0.03688816
+: 2.2  2         0    2           2 -0.07325359
+
+Since the two treatment contrasts are highly correlated:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cor(M.rho1[,1]-M.rho1[,3],M.rho1[,2]-M.rho1[,4])
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.9976197
+
+the repetition under each treatment is not useful and a paired t-test
+  on one of the treatment contrast per subject has nearly optimal
+  power:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ttrho1 <- t.test(M.rho1[,1], M.rho1[,3], paired = TRUE)
+c(estimate = as.double(ttrho1$estimate),
+  se = ttrho1$stderr, p.value = ttrho1$p.value)
+#+END_SRC
+
+#+RESULTS:
+:    estimate          se     p.value 
+: -0.01999468  0.02984413  0.50303170
+
+This corresponds to a standard error of
+  \(\sqrt{\frac{2(1-\rho_0(B))\sigma_0^2}{n}}\):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(2*(1-0.6)/n.obs)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.02828427
+
+Very similar to a linear mixed model with an unstructured covariance
+pattern:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eRho1.GS <- lmm(V ~ treatment, repetition = ~time|id, data = dfL.rho1)
+round(model.tables(eRho1.GS, effects = c("mean","variance")),4)
+#+END_SRC
+
+#+RESULTS:
+:             estimate     se        df   lower  upper p.value
+: (Intercept)  -0.0072 0.0325 1007.9057 -0.0711 0.0566  0.8239
+: treatment     0.0188 0.0298  887.8809 -0.0396 0.0773  0.5274
+: sigma         1.0298 0.0230   26.8573  0.9836 1.0782      NA
+: k.2           0.9995 0.0014    1.0234  0.9826 1.0167  0.7808
+: k.3           1.0094 0.0259 1277.1671  0.9598 1.0616  0.7145
+: k.4           1.0093 0.0259 1276.7378  0.9598 1.0614  0.7178
+
+
+In contrast the random intercept model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eRho1.lmer <- lmer(V ~ treatment + (1|id), data = dfL.rho1)
+summary(eRho1.lmer)$coef
+#+END_SRC
+
+#+RESULTS:
+:                Estimate Std. Error       df    t value  Pr(>|t|)
+: (Intercept) -0.00782881 0.03036028 1178.365 -0.2578636 0.7965572
+: treatment    0.01934318 0.01721924 2999.000  1.1233467 0.2613802
+
+\noindent estimates a standard error of
+\(\sqrt{\frac{\delta}{n}}=\sqrt{\left(1-\frac{\rho_0(W)+\rho_0(B)+\rho_0(L)}{3}\right)\frac{\sigma^2_0}{n}}\)
+(see appendix [[#sm:rhoML]]):
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(delta = sigma(eRho1.lmer)^2, tau = as.numeric(VarCorr(eRho1.lmer)),
+  se = sqrt(sigma(eRho1.lmer)^2/n.obs))
+#+END_SRC
+
+#+RESULTS:
+:      delta        tau         se 
+: 0.29650240 0.77349513 0.01721924
+
+Here \(\rho_0(B)=\rho_0(L)\) and \(\rho_0(W)\approx 1\) leading to
+\(\sqrt{\frac{\delta}{n}}=\sqrt{\left(\frac{2(1-\rho_0(B))}{3}\right)\frac{\sigma^2_0}{n}}\)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(2*(1-0.6)/(3*n.obs))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.01632993
+
+So the random intercept estimator underestimate the variance by a
+factor \(\sqrt{3}\) (unless \(\rho_0(B)\) is also 1). Having more
+repetitions will not affect the (correct) t-test approach (as only the
+first one is used) but will make decrease the estimated standard error
+in the random intercept model, amplifying the bias. For instance with
+10 measurements under each condition:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.obs <- 1e4
+n.rep <- 10
+block.1 <- 0.999 + diag(0.001,n.rep,n.rep) ## correlation within treatment
+block.2 <- 0.2 * matrix(1,n.rep,n.rep) ## correlation across treatment
+Sigma.test <- rbind(cbind(block.1,block.2),
+                    cbind(block.2,block.1))
+
+set.seed(1)
+M.test <- rmvnorm(n.obs, mean = rep(0,NCOL(Sigma.test)), sigma = Sigma.test)
+dfL.test <- reshape(as.data.frame(M.test), direction = "long", varying = paste0("V",1:NCOL(M.test)), v.names = "V")
+dfL.test$treatment <- 1-dfL.test$time %in% 1:2
+dfL.test$time.factor <- as.factor(dfL.test$time)
+dfL.test <- dfL.test[order(dfL.test$id),c("id","treatment","time","time.factor","V")]
+#+END_SRC
+
+The ratio between the variance becomes:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+etest.lmer <- lmer(V ~ treatment + (1|id), data = dfL.test)
+ett <- t.test(M.test[,n.rep+1]-M.test[,1])
+summary(etest.lmer)$coef["treatment","Std. Error"]/ett$stderr
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.3825643
+
+Note: as previously shown, a paired t-test on all treatment differences:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ttWrho1 <- t.test(c(M.rho1[,1] - M.rho1[,3], M.rho1[,2] - M.rho1[,4]))
+c(estimate = as.double(ttWrho1$estimate),
+  se = ttWrho1$stderr, p.value = ttWrho1$p.value)
+#+END_SRC
+
+#+RESULTS:
+:    estimate          se     p.value 
+: -0.01934318  0.02107833  0.35889651
+
+would compute the variance using \(\frac{2(1-\rho_0(B))\sigma_0^2}{2 n}\)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(2*(1-0.6)/(2*n.obs))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.006324555
+
+
+\clearpage
+
+
+* Cross-over study with p repetitions
+
+Consider now cross-over study where each patient is measured many
+times (say \(p=10\)) under each treatment. A possible data generating
+mechanism would be the following:
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+n.obs <- 1e3
+n.rep <- 10
+block.1 <- matrix(c(1,0.8,0.8,1),2,2) ## correlation within treatment
+block.2 <- matrix(c(0.5,0.4,0.4,0.5),2,2) ## correlation across treatment
+ls.block2 <- lapply(1:n.rep, function(i){block.2})
+
+set.seed(1)
+Sigma.BCS <- do.call(rbind,lapply(1:n.rep, function(iRep){
+  iLS <- ls.block2
+  iLS[[iRep]] <- block.1
+  do.call(cbind,iLS)
+}))
+M.BCS <- rmvnorm(n.obs, mean = rep(0,n.rep*2), sigma = Sigma.BCS)
+dfL.BCS <- reshape(as.data.frame(M.BCS), direction = "long", varying = paste0("V",1:NCOL(M.BCS)), v.names = "V")
+dfL.BCS$treatment <- 1-dfL.BCS$time %in% 1:10
+dfL.BCS$time.factor <- as.factor(dfL.BCS$time)
+dfL.BCS <- dfL.BCS[order(dfL.BCS$id),c("id","treatment","time","time.factor","V")]
+head(dfL.BCS)
+#+END_SRC
+
+#+RESULTS:
+:     id treatment time time.factor           V
+: 1.1  1         0    1           1  0.14256049
+: 1.2  1         0    2           2  0.27479772
+: 1.3  1         0    3           3  0.45666570
+: 1.4  1         0    4           4  1.10144877
+: 1.5  1         0    5           5  0.42963568
+: 1.6  1         0    6           6 -0.05795669
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+eRhoP.lmer <- lmer(V ~ treatment + (1|id), data = dfL.BCS)
+summary(eRhoP.lmer)$coef
+#+END_SRC
+
+#+RESULTS:
+:                Estimate Std. Error        df   t value  Pr(>|t|)
+: (Intercept) -0.02331579 0.02205366  1118.449 -1.057230 0.2906350
+: treatment    0.01287953 0.01034323 18999.000  1.245213 0.2130687
+
+'Manual' computation of the variance
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+c(delta = sigma(eRhoP.lmer)^2,
+  tau = as.numeric(VarCorr(eRhoP.lmer)),
+  se = sqrt(2*sigma(eRhoP.lmer)^2/(n.rep*n.obs)))
+#+END_SRC
+
+#+RESULTS:
+:     delta        tau         se 
+: 0.53491170 0.43287265 0.01034323
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+ttRhoP <- t.test(as.double(M.BCS[,1:10]-M.BCS[,11:20]))
+c(estimate = as.double(ttRhoP$estimate),
+  se = ttRhoP$stderr, p.value = ttRhoP$p.value)
+#+END_SRC
+
+#+RESULTS:
+:     estimate           se      p.value 
+: -0.012879525  0.009979346  0.196865970
+
+\clearpage
+
+\appendix
+
+* Inverse of a compound symmetry matrix
+:PROPERTIES:
+:CUSTOM_ID: sm:invCS
+:END:
+
+# https://math.stackexchange.com/questions/4435770/general-inverse-of-constant-correlation-matrix
+
+Consider the compound symmetry matrix:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R= (1-\rho) I + \rho e\trans{e}= \rho\left(\frac{1-\rho}{\rho} I + e\trans{e}\right) 
+\end{align*}
+#+END_EXPORT
+where \(I\) denotes the identity matrix (say \(p \times
+p\)) and \(e\) a corresponding of corresponding size (say \(p\))
+containing only 1. The Sherman-Morrison formula indicates that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} &= \rho^{-1} \left(\frac{\rho}{1-\rho} I - \frac{\rho^2}{(1-\rho)^2}\frac{e\trans{e}}{1+\frac{\rho}{1-\rho}\trans{e}e}\right) = \frac{1}{1-\rho} I - \frac{\rho}{(1-\rho)^2}\frac{e\trans{e}}{1+\frac{\rho}{1-\rho}p} \\
+&=  \frac{1}{1-\rho} I - \frac{\rho e\trans{e}}{(1-\rho)^2+\rho(1-\rho)p} =  \frac{1}{1-\rho} \left(I - \frac{\rho e\trans{e}}{1+\rho(p-1)}\right)
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+p <- 4
+rho <- 0.4
+R <- (1-rho) * diag(1, p, p) + rho
+R.M1 <- (1/(1-rho) * diag(1, p, p)  - rho/((1-rho)^2+rho*(1-rho)*p))
+range(R.M1 - solve(R))
+R.M1 <- 1/(1-rho) * (diag(1, p, p)  - rho/(1+rho*(p-1)))
+range(R.M1 - solve(R))
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.110223e-16  0.000000e+00
+: [1] -2.220446e-16  5.551115e-17
+
+
+* Random effect variance in a random intercept model
+:PROPERTIES:
+:CUSTOM_ID: sm:rhoML
+:END:
+
+To simplify we will consider the case where the outcome has been
+centered (substract \(\mu\) and scaled (divide by \(\sigma^2\)) such
+that it has mean 0 and variance 1. The random intercept model becomes
+\(Y^*_{it} = \zeta_{it}\). Denoting
+\(\zeta_{i}=\left(\zeta_{i1},\ldots,\zeta_{ip}\right)\),
+\(\Var[\zeta_i]=R = (1-\rho) I + \rho e\trans{e}\) using the same
+notations as in section [[#sm:invCS]]. Restricted maximum likelihood
+(REML) and maximum likelihood (ML) are known to be asymptotically
+equivalent so we will focus on the likelihood from now. The
+corresponding score equation is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+0 =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2} \sum_{i=1}^n \zeta_i R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \trans{\zeta}_i \\
+  =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \\
+  =& tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) 
+\end{align*}
+#+END_EXPORT
+
+We first explicit the first term:
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} &= \frac{1}{1-\rho} \left(I - \frac{\rho e\trans{e}}{1+\rho(p-1)}\right)\left(-I + e\trans{e}\right) \\
+&= \frac{1}{1-\rho} \left(-I + e\trans{e} + \frac{\rho e\trans{e}}{1+\rho(p-1)} - \frac{\rho p e\trans{e}}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I + e\trans{e} \frac{1+\rho(p-1)+\rho-\rho p}{1+\rho(p-1)}\right)\\
+&= \frac{1}{1-\rho} \left(-I +  \frac{e\trans{e}}{1+\rho(p-1)}\right)
+\end{align*}
+#+END_EXPORT
+
+\clearpage
+
+#+BEGIN_EXPORT latex
+\begin{align*}
+tr \left( R^{-1} \frac{\partial R}{\partial\rho} \right) &= \frac{p}{1-\rho}\left(-1+\frac{1}{1+\rho(p-1)}\right) = -\frac{p\rho(p-1)}{(1-\rho)(1+\rho(p-1))}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+rho <- 0.4
+p <- 7
+R.test <- (1-rho) * diag(1,p,p) + rho
+dR.test <- - diag(1,p,p) + 1
+
+range(solve(R.test) %*% dR.test - 1/(1-rho) * (- diag(1,p,p) + 1/(1+rho*(p-1))))
+sum(diag(solve(R.test) %*% dR.test)) - (-p*rho*(p-1))/((1-rho)*(1+rho*(p-1)))
+#+END_SRC
+
+#+RESULTS:
+: [1] -6.661338e-16  7.771561e-16
+: [1] 0
+
+#+BEGIN_EXPORT latex
+\begin{align*}
+R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +  \frac{e\trans{e}}{1+\rho(p-1)}\right)\left(I - \frac{\rho e\trans{e}}{1+\rho(p-1)}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + \frac{\rho e\trans{e}}{1+\rho(p-1)} + \frac{e\trans{e}}{1+\rho(p-1)} - \frac{\rho p e\trans{e}}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + e\trans{e} \frac{\rho+\rho^2(p-1) + 1+ \rho(p-1) - \rho p}{(1+\rho(p-1))^2}\right) \\
+&= \frac{1}{(1-\rho)^2} \left(-I + e\trans{e} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+range(solve(R.test) %*% dR.test %*% solve(R.test) - 1/(1-rho)^2 * (- diag(1,p,p) + (rho^2*(p-1)+1)/(1+rho*(p-1))^2))
+#+END_SRC
+
+#+RESULTS:
+: [1] -2.220446e-15  1.332268e-15
+
+Denote the off-diagonal elements of \(\widehat{R}_0=\sum_{i=1}^n \zeta_i
+\trans{\zeta}_i\) by \(\widehat{\rho}_{t,t^{\prime}}\) (Pearson
+correlation estimates). Given that its diagonal elements are 1, we have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \widehat{R}_0 \right) = \frac{1}{(1-\rho)^2}\left(-p+\frac{p\rho^2(p-1) + p}{(1+\rho(p-1))^2} + \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2} tr \left(\left(e\trans{e}-I\right)\widehat{R}_0\right)\right) \\
+&= \frac{1}{(1-\rho)^2}\left(\frac{-p - 2p \rho(p-1) - p\rho^2(p-1)^2+p\rho^2(p-1) + p}{(1+\rho(p-1))^2} + \frac{2 \rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}} \right)  \\
+&= \frac{1}{(1-\rho)^2}\left(\frac{p \rho(p-1)(- 2 - \rho(p-1)+\rho)}{(1+\rho(p-1))^2} + \frac{2 \rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}} \right)  \\
+&= \frac{1}{(1-\rho)^2}\left(\frac{p \rho(p-1)(- 2 - \rho(p-2))}{(1+\rho(p-1))^2} + \frac{2 \rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}} \right) 
+\end{align*}
+#+END_EXPORT
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+sum(diag(solve(R.test) %*% dR.test %*% solve(R.test))) - 1/(1-rho)^2 * (-p+(p*rho^2*(p-1)+p)/(1+rho*(p-1))^2)
+sum(diag(solve(R.test) %*% dR.test %*% solve(R.test))) - 1/(1-rho)^2 * ((-p-2*p*rho*(p-1)-p*rho^2*(p-1)^2+p*rho^2*(p-1)+p)/(1+rho*(p-1))^2)
+sum(diag(solve(R.test) %*% dR.test %*% solve(R.test))) - 1/(1-rho)^2 * ((p*rho*(p-1)*(-2-rho*(p-1)+rho))/(1+rho*(p-1))^2)
+sum(diag(solve(R.test) %*% dR.test %*% solve(R.test))) - 1/(1-rho)^2 * ((p*rho*(p-1)*(-2-rho*(p-2)))/(1+rho*(p-1))^2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -3.552714e-15
+: [1] -3.552714e-15
+: [1] -7.105427e-15
+: [1] -7.105427e-15
+
+Then \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \) involves that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+p\rho(p-1) &= \frac{1}{(\rho-1)}\left(\frac{p \rho(p-1)(- 2 - \rho(p-2))}{(1+\rho(p-1))} + \frac{2 \rho^2(p-1) + 2}{(1+\rho(p-1))} \sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}} \right)  \\
+p\rho(p-1)(\rho-1)(1+\rho(p-1)) &= p \rho(p-1)(- 2 - \rho(p-2)) + (2 \rho^2(p-1) + 2) \sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}}   \\
+\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \widehat{\rho}_{t,t^{\prime}} &= \rho\frac{\left((\rho-1)(1+\rho(p-1)) + 2 + \rho(p-2)\right)}{\rho^2(p-1) + 1} \\
+&= \rho\frac{\left(\rho-1 + \rho^2(p-1)- \rho(p-1)+2+\rho(p-2)\right)}{\rho^2(p-1) + 1} \\
+&= \rho\frac{\left(1 + \rho^2(p-1)\right)}{\rho^2(p-1) + 1} = \rho
+\end{align*}
+#+END_EXPORT
+
+So \(\widehat{\tau}= \frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}}
+\widehat{\rho}_{t,t^{\prime}}\widehat{\sigma}^2 \) and
+\(\widehat{\delta}= \left(1-\frac{1}{p(p-1)/2}\sum_{t \neq
+t^{\prime}} \widehat{\rho}_{t,t^{\prime}}\right)\widehat{\sigma}^2 \).
+
+# where \(I_4\) is the identity matrix of dimension 4 and \(J_4\) is a 4
+# by 4 matrix full of ones. Restricted maximum likelihood (REML) and
+# maximum likelihood (ML) are known to be asymptotically equivalent so
+# we will focus on the likelihood from now. The corresponding score
+# equation is:
+# #+BEGIN_EXPORT latex
+# \begin{align*}
+# 0 =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2} \sum_{i=1}^n \zeta_i R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \trans{\zeta}_i \\
+#   =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \\
+#   =&  tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) -  tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \\
+#   =&  \frac{1}{(\rho-1)(3\rho+1)} tr\left(3\rho I_4 - 1(J_4-I_4)\right) \\ 
+#   &-  \frac{1}{(\rho-1)^2(3\rho+1)^2} tr\left(\left\{-6\rho(\rho+1) I_4 + (3\rho^2+1)(J_4-I_4))\right\} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \\
+#   =&  12\rho + \frac{24\rho(\rho+1)}{(\rho-1)(3\rho+1)} - \frac{3\rho^2+1}{(\rho-1)(3\rho+1)} tr\left( (J_4-I_4)\frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \\
+#   =&  12\rho + \frac{24\rho(\rho+1)}{(\rho-1)(3\rho+1)} - \frac{6\rho^2+2}{(\rho-1)(3\rho+1)} \sum_{j=1}^6\widehat{\rho}_j
+# \end{align*}
+# #+END_EXPORT
+# where \(\widehat{\rho}_j\) denotes the empirical estimates of the
+# correlation between any two pairs, i.e., \(\rho_1=
+# \Cor(\zeta_{i1},\zeta_{i2})\), \(\rho_2= \Cor(\zeta_{i1},\zeta_{i3})\)
+# \ldots). So:
+# #+BEGIN_EXPORT latex
+# \begin{align*}
+# \frac{1}{6}\sum_{j=1}^6\widehat{\rho}_j =& 2\rho \frac{(\rho-1)(3\rho+1)}{6\rho^2+2} + \frac{4\rho(\rho+1)}{6\rho^2+2}  \\
+# & = \frac{6\rho^3 + 2\rho^2 - 6 \rho^2 - 2 \rho + 4 \rho^2 + 4 \rho}{6\rho^2+2}\\
+# & = \frac{6\rho^3 + 2 \rho}{6\rho^2+2} = \rho
+# \end{align*}
+# #+END_EXPORT
+# So the variance of the random intercept can be estimated by the variance of the outcome times the 'average' pearson correlation.
+
+# # https://www.wolframalpha.com/input?i=Inverse%28%7B%7B1%2Cr%2Cr%2Cr%7D%2C%7Br%2C1%2Cr%2Cr%7D%2C%7Br%2Cr%2C1%2Cr%7D%2C%7Br%2Cr%2Cr%2C1%7D%7D%29+%7B%7B0%2C1%2C1%2C1%7D%2C%7B1%2C0%2C1%2C1%7D%2C%7B1%2C1%2C0%2C1%7D%2C%7B1%2C1%2C1%2C0%7D%7D
+# # https://www.wolframalpha.com/input?i=Inverse%28%7B%7B1%2Cr%2Cr%2Cr%7D%2C%7Br%2C1%2Cr%2Cr%7D%2C%7Br%2Cr%2C1%2Cr%7D%2C%7Br%2Cr%2Cr%2C1%7D%7D%29+%7B%7B0%2C1%2C1%2C1%7D%2C%7B1%2C0%2C1%2C1%7D%2C%7B1%2C1%2C0%2C1%7D%2C%7B1%2C1%2C1%2C0%7D%7D+Inverse%28%7B%7B1%2Cr%2Cr%2Cr%7D%2C%7Br%2C1%2Cr%2Cr%7D%2C%7Br%2Cr%2C1%2Cr%7D%2C%7Br%2Cr%2Cr%2C1%7D%7D%29
+# # https://www.wolframalpha.com/input?i=%7B%7B0%2C1%2C1%2C1%7D%2C%7B1%2C0%2C1%2C1%7D%2C%7B1%2C1%2C0%2C1%7D%2C%7B1%2C1%2C1%2C0%7D%7D+%7B%7B1%2Ca%2Cb%2Cc%7D%2C%7Ba%2C1%2Ce%2Cf%7D%2C%7Bb%2Ce%2C0%2Cg%7D%2C%7Bc%2Cf%2Cg%2C0%7D%7D
+
+
+# #+BEGIN_SRC R :exports none :results output :session *R* :cache no
+# n.obs <- 1e4
+# block.1 <- matrix(c(1,0.8,0.8,1),2,2) ## correlation within treatment
+# block.2 <- matrix(c(0.5,0.3,0.3,0.5),2,2) ## correlation across treatment
+
+# set.seed(1)
+# Sigma.test <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+# M.test <- rmvnorm(n.obs, mean = c(0,0,0,0), sigma = Sigma.test)
+# dfL.test <- reshape(as.data.frame(M.test), direction = "long", varying = paste0("V",1:NCOL(M.test)), v.names = "V")
+# dfL.test$treatment <- 1-dfL.test$time %in% 1:2
+# dfL.test$time.factor <- as.factor(dfL.test$time)
+# dfL.test <- dfL.test[order(dfL.test$id),c("id","treatment","time","time.factor","V")]
+
+# etest.lmer0 <- lmer(V ~ (1|id), data = dfL.test)
+# as.numeric(VarCorr(etest.lmer0))
+# mean(cor(M.test)[lower.tri(cor(M.test))])*var(dfL.test$V)
+# #+END_SRC
+
+# #+RESULTS:
+# : [1] 0.5395563
+# : [1] 0.5395435
+
+
+\clearpage
+
+* Standard error of the treatment effect \newline in a balanced random intercept model
+:PROPERTIES:
+:CUSTOM_ID: sm:seRI
+:END:
+
+Consider a random intercept model including single binary covariate
+(called treatment):
+#+BEGIN_EXPORT latex
+\begin{align*}
+Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
+\end{align*}
+#+END_EXPORT
+where \(\alpha_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{it} \sim
+\Gaus[0,\delta]\). Denote \(\rho = \frac{\tau}{\tau+\delta}\) and
+\(\sigma^2=\tau+\delta\) such that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\Var[Y_{it}] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho e\trans{e})
+\end{align*}
+#+END_EXPORT
+where \(I\) and \(e\) were defined in section [[#sm:invCS]]. The inverse
+of \(R\) was also explicit in section [[#sm:invCS]] and when multiplied
+the \(p \times 2\) matrix \(X=(1,T)\) where \(T\) is either \(0\) or
+\(1\), respectively \(p_0\) and \(p_1\) times, we get:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
+&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{1 + \rho (p-1)}\right)  \\
+&= \frac{1}{1-\rho} \left(\begin{bmatrix} p & p_1 \\ p_1 & p_1 \end{bmatrix} - \frac{\rho}{1+\rho(p-1)}  \begin{bmatrix} p^2 & p p_1 \\ p p_1 & p^2_1 \end{bmatrix}\right) \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p+p\rho(p-1) - \rho p^2
+                  & p_1+p_1\rho(p-1)- \rho p p_1
+                  \\ p_1+p_1\rho(p-1)- \rho p p_1
+                  & p_1+p_1\rho(p-1)- \rho p_1^2
+\end{bmatrix}   \\
+&= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p(1-\rho)
+                  & p_1(1-\rho)
+                  \\ p_1(1-\rho)
+                  & p_1(1+\rho (p-p_1-1))
+\end{bmatrix}   
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X <- cbind(1, c(0,1,1,1))
+p1 <- sum(X[,2])
+
+t(X) %*% matrix(1,NROW(X),NROW(X)) %*% X
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]   16   12
+: [2,]   12    9
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+X.RM1.X <- t(X) %*% solve(R) %*% X
+X.RM1.X - 1/((1-rho)*(1+rho*(p-1))) * matrix(c(p*(1-rho),p1*(1-rho),p1*(1-rho),p1*(1 + rho*(p-p1-1))),2,2)
+#+END_SRC
+
+#+RESULTS:
+:              [,1]         [,2]
+: [1,] 2.220446e-16 2.220446e-16
+: [2,] 4.440892e-16 8.881784e-16
+
+whose inverse is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\left(\trans{X} R^{-1} X\right)^{-1} &= \frac{(1-\rho)(1+\rho(p-1))}{p_1 p (1-\rho)(1+\rho (p-p_1-1)) - p^2_1(1-\rho)^2} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{p_1 p (1+\rho (p-p_1-1)) - p^2_1(1-\rho)} \begin{bmatrix} p_1(1+\rho (p-p_1-1))
+                  & -p_1(1-\rho)
+                  \\ -p_1(1-\rho)
+                  & p(1-\rho)
+\end{bmatrix} \\
+&= \frac{1+\rho(p-1)}{(p - p_1) + \rho (p^2-p p_1-p+p_1)} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix} \\
+&= \frac{1}{p-p_1} \begin{bmatrix} 1+\rho (p-p_1-1)
+                  & -(1-\rho)
+                  \\ -(1-\rho)
+                  & \frac{p}{p_1}(1-\rho)
+\end{bmatrix}   
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+solve(X.RM1.X)
+solve(X.RM1.X) - (1+rho*(p-1))/(p1*p*(1+rho*(p-p1-1)) - p1^2*(1-rho)) * matrix(c(p1*(1 + rho*(p-p1-1)),-p1*(1-rho),-p1*(1-rho),p*(1-rho)),2,2)
+solve(X.RM1.X) - 1/(p-p1) * matrix(c(1 + rho*(p-p1-1),-(1-rho),-(1-rho),p/p1*(1-rho)),2,2)
+#+END_SRC
+
+#+RESULTS:
+:      [,1] [,2]
+: [1,]  1.0 -0.6
+: [2,] -0.6  0.8
+:               [,1]          [,2]
+: [1,] -1.110223e-16  1.110223e-16
+: [2,]  0.000000e+00 -2.220446e-16
+:               [,1]          [,2]
+: [1,] -1.110223e-16  2.220446e-16
+: [2,]  1.110223e-16 -2.220446e-16
+
+\clearpage
+
+So in the random intercept model, the standard error of the treatment
+estimator will be:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\sigma_0^2(1-\rho) \frac{p}{n p_1(p-p_1)}}=\sqrt{\frac{\delta}{n} \frac{p}{p_1(p-p_1)}}
+\end{align*}
+#+END_EXPORT
+
+In a design with as many observations under treatment as under control \(p_1=p/2\) and the expression simplifies into.
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{4\delta}{np}} = \sqrt{\frac{2\delta}{np_1}}
+\end{align*}
+#+END_EXPORT
+
+From section [[#sm:rhoML]] we deduce that:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
+\end{align*}
+#+END_EXPORT
+which in a design with as many observations under treatment as under control simplifies to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
+\end{align*}
+#+END_EXPORT
+
+Note: when using a t-test on the change based only on the first
+observation under each treatment the variance is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2(1-\rho_{1,p+1}) \sigma^2}{n}}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+solve(X.RM1.X)[2,2]
+(1-rho)*p/(p1*(p-p1))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.8
+: [1] 0.8
+
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+n.obs <- 1e2
+block.1 <- matrix(c(1,0.999,0.999,1),2,2) ## correlation within treatment
+block.2 <- matrix(c(0.0,0.0,0.0,0.0),2,2) ## correlation across treatment
+
+set.seed(1)
+## Sigma.test <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+Sigma.test <- rbind(cbind(block.1, block.2, block.2), cbind(block.2, block.1, block.2), cbind(block.2, block.2, block.1))
+M.test <- rmvnorm(n.obs, mean = rep(0,NCOL(Sigma.test)), sigma = Sigma.test)
+dfL.test <- reshape(as.data.frame(M.test), direction = "long", varying = paste0("V",1:NCOL(M.test)), v.names = "V")
+dfL.test$treatment <- 1-dfL.test$time %in% 1:(NCOL(Sigma.test)/2)
+dfL.test$time.factor <- as.factor(dfL.test$time)
+dfL.test <- dfL.test[order(dfL.test$id),c("id","treatment","time","time.factor","V")]
+
+etest.lmer <- lmer(V ~ treatment + (1|id), data = dfL.test)
+etest.tau <- as.numeric(VarCorr(etest.lmer))
+etest.delta <- sigma(etest.lmer)^2
+etest.rho <- etest.tau/(etest.tau+etest.delta)
+
+
+etest.delta/n.obs * NCOL(Sigma.test)/(NCOL(Sigma.test)/2*(NCOL(Sigma.test)-NCOL(Sigma.test)/2))
+vcov(etest.lmer)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.005208493
+: 2 x 2 Matrix of class "dpoMatrix"
+:              (Intercept)    treatment
+: (Intercept)  0.004456045 -0.002604246
+: treatment   -0.002604246  0.005208493
+
+
+\clearpage
+
+
+* CONFIG :noexport:
+# #+LaTeX_HEADER:\affil{Department of Biostatistics, University of Copenhagen, Copenhagen, Denmark}
+#+LANGUAGE:  en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:t author:t toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+LATEX_HEADER: %
+#+LATEX_HEADER: %%%% specifications %%%%
+#+LATEX_HEADER: %
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+** Notations
+** Code
+# Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
+# :tangle (yes/no/filename) extract source code with org-babel-tangle-file, see http://orgmode.org/manual/Extracting-source-code.html 
+# :cache (yes/no)
+# :eval (yes/no/never)
+# :results (value/output/silent/graphics/raw/latex)
+# :export (code/results/none/both)
+#+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
+# Code display:
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+# ## change font size output
+# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+** Display 
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER:\renewcommand{\baselinestretch}{1.1}
+#+LATEX_HEADER:\geometry{top=1cm}
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+** Image
+#+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
+#+LATEX_HEADER: \RequirePackage{capt-of} % 
+#+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
+#+LATEX_HEADER: \RequirePackage{tikz}
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
+** List
+#+LATEX_HEADER: \RequirePackage{enumitem} % to be able to convert .eps to .pdf image files
+** Color
+#+LaTeX_HEADER: \definecolor{light}{rgb}{1, 1, 0.9}
+#+LaTeX_HEADER: \definecolor{lightred}{rgb}{1.0, 0.7, 0.7}
+#+LaTeX_HEADER: \definecolor{lightblue}{rgb}{0.0, 0.8, 0.8}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
+#+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+** Box
+#+LATEX_HEADER: \usepackage{mdframed}
+** Shortcut
+#+LATEX_HEADER: \newcommand{\first}{1\textsuperscript{st} }
+#+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
+#+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
+** Algorithm
+#+LATEX_HEADER: \RequirePackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{algorithm}
+#+LATEX_HEADER: \RequirePackage[noend]{algpseudocode}
+** Math
+#+LATEX_HEADER: \RequirePackage{dsfont}
+#+LATEX_HEADER: \RequirePackage{amsmath,stmaryrd,graphicx}
+#+LATEX_HEADER: \RequirePackage{prodint} % product integral symbol (\PRODI)
+# ## lemma
+# #+LaTeX_HEADER: \RequirePackage{amsthm}
+# #+LaTeX_HEADER: \newtheorem{theorem}{Theorem}
+# #+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+*** Template for shortcut
+#+LATEX_HEADER: \newcommand\defOperator[7]{%
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER:		\ifthenelse{\isempty{#1}}{#7{#3}#4}{#7{#3}#4 \left#5 #1 \right#6}
+#+LATEX_HEADER:	}{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#1}}{#7{#3}#4_{#2}}{#7{#3}#4_{#1}\left#5 #2 \right#6}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand\defUOperator[5]{%
+#+LATEX_HEADER: \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:		#5\left#3 #2 \right#4
+#+LATEX_HEADER: }{
+#+LATEX_HEADER:	\ifthenelse{\isempty{#2}}{\underset{#1}{\operatornamewithlimits{#5}}}{
+#+LATEX_HEADER:		\underset{#1}{\operatornamewithlimits{#5}}\left#3 #2 \right#4}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand{\defBoldVar}[2]{	
+#+LATEX_HEADER:	\ifthenelse{\equal{#2}{T}}{\boldsymbol{#1}}{\mathbf{#1}}
+#+LATEX_HEADER: }
+*** Shortcuts
+**** Probability
+#+LATEX_HEADER: \newcommandx\Cor[2][1=,2=]{\defOperator{#1}{#2}{C}{or}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Cov[2][1=,2=]{\defOperator{#1}{#2}{C}{ov}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Esp[2][1=,2=]{\defOperator{#1}{#2}{E}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Prob[2][1=,2=]{\defOperator{#1}{#2}{P}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Qrob[2][1=,2=]{\defOperator{#1}{#2}{Q}{}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Var[2][1=,2=]{\defOperator{#1}{#2}{V}{ar}{\lbrack}{\rbrack}{\mathbb}}
+#+LATEX_HEADER: \newcommandx\Binom[2][1=,2=]{\defOperator{#1}{#2}{B}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Gaus[2][1=,2=]{\defOperator{#1}{#2}{N}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Wishart[2][1=,2=]{\defOperator{#1}{#2}{W}{ishart}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Likelihood[2][1=,2=]{\defOperator{#1}{#2}{L}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Information[2][1=,2=]{\defOperator{#1}{#2}{I}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Score[2][1=,2=]{\defOperator{#1}{#2}{S}{}{(}{)}{\mathcal}}
+**** Operators
+#+LATEX_HEADER: \newcommandx\Vois[2][1=,2=]{\defOperator{#1}{#2}{V}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\IF[2][1=,2=]{\defOperator{#1}{#2}{IF}{}{(}{)}{\mathcal}}
+#+LATEX_HEADER: \newcommandx\Ind[1][1=]{\defOperator{}{#1}{1}{}{(}{)}{\mathds}}
+#+LATEX_HEADER: \newcommandx\Max[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{min}}
+#+LATEX_HEADER: \newcommandx\Min[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{max}}
+#+LATEX_HEADER: \newcommandx\argMax[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmax}}
+#+LATEX_HEADER: \newcommandx\argMin[2][1=,2=]{\defUOperator{#1}{#2}{(}{)}{argmin}}
+#+LATEX_HEADER: \newcommandx\cvD[2][1=D,2=n \rightarrow \infty]{\xrightarrow[#2]{#1}}
+#+LATEX_HEADER: \newcommandx\Hypothesis[2][1=,2=]{
+#+LATEX_HEADER:         \ifthenelse{\isempty{#1}}{
+#+LATEX_HEADER:         \mathcal{H}
+#+LATEX_HEADER:         }{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#2}}{
+#+LATEX_HEADER: 		\mathcal{H}_{#1}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\mathcal{H}^{(#2)}_{#1}
+#+LATEX_HEADER:         }
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dpartial[4][1=,2=,3=,4=\partial]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{#4 #1}{#4 #2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\left.\frac{#4 #1}{#4 #2}\right\rvert_{#3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommandx\dTpartial[3][1=,2=,3=]{\dpartial[#1][#2][#3][d]}
+#+LATEX_HEADER: \newcommandx\ddpartial[3][1=,2=,3=]{
+#+LATEX_HEADER: 	\ifthenelse{\isempty{#3}}{
+#+LATEX_HEADER: 		\frac{\partial^{2} #1}{\partial #2^2}
+#+LATEX_HEADER: 	}{
+#+LATEX_HEADER: 	\frac{\partial^2 #1}{\partial #2\partial #3}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: } 
+**** General math
+#+LATEX_HEADER: \newcommand\Real{\mathbb{R}}
+#+LATEX_HEADER: \newcommand\Rational{\mathbb{Q}}
+#+LATEX_HEADER: \newcommand\Natural{\mathbb{N}}
+#+LATEX_HEADER: \newcommand\trans[1]{{#1}^\intercal}%\newcommand\trans[1]{{\vphantom{#1}}^\top{#1}}
+#+LATEX_HEADER: \newcommand{\independent}{\mathrel{\text{\scalebox{1.5}{$\perp\mkern-10mu\perp$}}}}
+#+LaTeX_HEADER: \newcommand\half{\frac{1}{2}}
+#+LaTeX_HEADER: \newcommand\normMax[1]{\left|\left|#1\right|\right|_{max}}
+#+LaTeX_HEADER: \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}

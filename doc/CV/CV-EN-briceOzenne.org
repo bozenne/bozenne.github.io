@@ -29,7 +29,7 @@
 #+LaTeX: \resheading{Current position}
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-	November 2023- Now:& \textbf{Associate professor in biostatistics} with a shared position between \\ [2mm]
+	October 2023- Now:& \textbf{Associate professor in biostatistics} with a shared position between \\ [2mm]
 	& - a research unit in biostatistics \\
 	& \href{https://biostat.ku.dk/staff_/?pure=en/persons/540231}{Section of Biostatistics}, University of Copenhagen (KU) \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
@@ -180,7 +180,7 @@ portofilio]].
 I now also teach Master students in statistics:
 #+BEGIN_EXPORT latex
 \begin{tabular}{l@{ }l}
-2023 - 2024 : & Survival analysis (course director Frank Eriksson). \\
+2023 - 2024 : & \href{https://absalon.ku.dk/courses/68009}{Survival analysis} (course director Frank Eriksson). \\
               & 6 lectures of 4 hours and 6 practicals of 1 or 2 hours\\
 \end{tabular}
 #+END_EXPORT

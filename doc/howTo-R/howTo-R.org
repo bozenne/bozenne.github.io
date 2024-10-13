@@ -1621,6 +1621,10 @@ gg + facet_wrap(~lambda, nrow = 1, labeller = label_parsed)
 
 #+RESULTS:
 
+For more about expression:
+https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html
+
+
 *** Modify the legend of a discrete scale (with greek letters)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
