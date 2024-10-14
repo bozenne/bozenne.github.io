@@ -1,4 +1,4 @@
-% Created 2024-10-11 fr 16:21
+% Created 2024-10-14 ma 18:20
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -240,10 +240,10 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Standard error in a random intercept model}
-\label{sec:orgb91703e}
+\label{sec:org316544d}
 
 \subsection{Notations}
-\label{sec:org3c1c31a}
+\label{sec:orgbc39ee7}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -284,13 +284,13 @@ values. Note that since we assume a balanced design and since
 that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\).
 
 \subsection{Estimates}
-\label{sec:orgd9b2f70}
+\label{sec:org7ddeec4}
 
 \subsubsection{Theory}
-\label{sec:org188e280}
+\label{sec:org0fa2a83}
 
 \subsubsection{Numerical example}
-\label{sec:org7e64d65}
+\label{sec:orgc954a9e}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -384,15 +384,57 @@ sqrt(mean(dfL$res^2))
 and the empirical residual correlation:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
-dfL$res.norm <- dfL$res/sqrt(mean(dfL$res^2))
-dfWres.norm <- reshape(dfL[,c("id","visit","res.norm")],
-                  direction = "wide", idvar = "id", timevar = "visit")
-M.MLcor <- crossprod(as.matrix(dfWres.norm[,-1]))/NROW(dfWres.norm)
+dfL$res.normML <- dfL$res/sqrt(mean(dfL$res^2))
+dfWres.normML <- reshape(dfL[,c("id","visit","res.normML")],
+                         direction = "wide", idvar = "id", timevar = "visit")
+M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/NROW(dfWres.normML)
 mean(M.MLcor[lower.tri(M.MLcor)])
 \end{lstlisting}
 
 \begin{verbatim}
 [1] 0.50493
+\end{verbatim}
+
+
+However when fitting a random intercept model estimated by Maximum
+Likelihood (REML):
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+eREML.RI <- lmm(Y~treatment+(1|id), data = dfL, method.fit = "REML")
+coef(eREML.RI, effects = "all")
+\end{lstlisting}
+
+\begin{verbatim}
+(Intercept)   treatment       sigma     rho(id) 
+  0.6468893   1.1708292   4.0678916   0.5051376
+\end{verbatim}
+
+
+while we do retrive the empirical means for the intercept and
+treatment effects, we do not retrieve (exactly) the standard deviation
+of the residuals:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sd(dfL$res)
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 4.066869
+\end{verbatim}
+
+
+nor the Pearson correlation:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+dfL$res.normREML <- dfL$res/coef(eREML.RI, effects = "variance")
+dfWres.normREML <- reshape(dfL[,c("id","visit","res.normREML")],
+                           direction = "wide", idvar = "id", timevar = "visit")
+M.REMLcor <- crossprod(as.matrix(dfWres.normREML[,-1]))/NROW(dfWres.normREML)
+mean(M.REMLcor[lower.tri(M.REMLcor)])
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.50455
 \end{verbatim}
 
 
@@ -426,7 +468,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:org4c7e6d2}
+\label{sec:orgfad1049}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -509,7 +551,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:orgae1bd53}
+\label{sec:org822fdc7}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -569,17 +611,12 @@ Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho
 \frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
 \frac{\sigma^2 \rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2) + 2 \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j - \sigma^2}{\rho^2(p-1) + 1} \\
 \frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1) + 2 \frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1}{\rho^2(p-1) + 1}
-\end{align*}
-
-Using that \(\sigma^2=\frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we obtain:
-\begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\sigma^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+\frac{\rho^2(p-1) + \rho(p-2) (\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1) + 2 \frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1}{\rho^2(p-1) + 1} \\
+&= \rho + \rho \left(\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1\right) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1}
 \end{align*}
 
 \subsection{Variance parameter (ML)}
-\label{sec:orga833536}
+\label{sec:org8057e5a}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
@@ -595,55 +632,70 @@ Using the expression of \(R^{-1}\) found in appendix \ref{sm:rhoML} we get:
  =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)}(\VY_i-\Vmu_i)  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{np} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} \Ve\trans{\Ve} (\VY_i-\Vmu_i)  \\
  =& \frac{\widehat{\sigma}^2}{1- \rho}  - \frac{\rho p}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2
 \end{align*}
-where \(\widehat{\sigma}^2=\frac{1}{np}\sum_{i=1}^n \sum_{j=1}^p
-\left(Y_{i,j}-\mu_{i,j}\right)^2\). Denoting
-\(\mu_{i,.}=\frac{1}{p}\sum_{j=1}^p Y_{i,j}\) and \(\mu_{.,.}=\alpha +
-\frac{p_1}{p} \beta\), we can re-use ANOVA-style decomposition for the
-sum of squares:
+
+Since:
 \begin{align*}
-\widehat{\sigma}^2 = \frac{1}{np} \sum_{i=1}^n \sum_{j=1}^p \left(Y_{i,j} - \mu_{.,.} \right)^2
-=& \frac{1}{np} \sum_{i=1}^n \sum_{j=1}^p \left(Y_{i,j} - \mu_{i,.}\right)^2 + \frac{1}{np} \sum_{i=1}^n \sum_{j=1}^p \left(\mu_{i,.} - \mu_{.,.}\right)^2 \\
-& + \frac{2}{np} \sum_{i=1}^n \sum_{j=1}^p \left(Y_{i,j} - \mu_{i,.}\right)\left(\mu_{i,.} - \mu_{.,.}\right)
-\end{align*}
-The later terms is 0 because \(\sum_{j=1}^p Y_{i,j} - \mu_{i,.} = p
-\mu_{i,.} - p\mu_{i,.} =0\). So:
-\begin{align*}
-\frac{1}{np}\sum_{i=1}^n \sum_{t=1}^t \left(Y_{it}-Y_{i.}\right)^2  =& \widehat{\sigma}^2 - \frac{1}{n} \sum_{i=1}^n \left(\mu_{i,.} - \mu_{.,.}\right)^2 \\
-=& \widehat{\sigma}^2 - \frac{1}{np^2} \sum_{i=1}^n \sum_{j=1}^p \sum_{j^{\prime}=1}^p \left(Y_{i,j}-\mu_j\right)\left(Y_{i,j^{\prime}}-\mu_{j^{\prime}}\right) \\
-=& \widehat{\sigma}^2 - \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
-\end{align*}
-Therefore:
-\begin{align*}
-\sigma^2 =& \frac{\widehat{\sigma}^2}{(1- \rho)}  - \frac{\rho p^2}{(1-\rho)^2+\rho(1-\rho)p} \left(\widehat{\sigma}^2 + \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \right)
-%1- \rho  =& \widehat{\sigma}^2/\sigma^2 \left(1  - \frac{\rho}{1-\rho+\rho} \left(\widehat{\sigma}^2 + \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \right)
+\frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\mu_{i,j}\right)^2=& \frac{1}{np^2} \sum_{i=1}^n \sum_{j=1}^p \sum_{j^{\prime}=1}^p \left(Y_{i,j}-\mu_j\right)\left(Y_{i,j^{\prime}}-\mu_{j^{\prime}}\right) \\
+=&  \frac{1}{p^2} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
 \end{align*}
 
+We have that:
+\begin{align*}
+\sigma^2 =& \frac{\widehat{\sigma}^2}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(\sum_{j=1}^p \widehat{\sigma}^2_j + 2\sum_{j < j^{\prime}}\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
 
+Using that \(\sigma^2=\widehat{\sigma}^2=\frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\) we obtain:
+\begin{align*}
+1 =& \frac{1}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(p + p(p-1)\rho\right) \\
+  =& \frac{1}{(1- \rho)}  - \frac{\rho + (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p}  \\
+  =& \frac{1-\rho + \rho p  - \rho - (p-1)\rho^2}{(1-\rho)^2+\rho(1-\rho)p} \\
+  =& \frac{1-2\rho+\rho^2 + \rho (1 - \rho) p}{(1-\rho)^2+\rho(1-\rho)p} = 1
+\end{align*}
+which is true. Thus the proposed solution satisfies the score equations.
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dfRes <- reshape(dfL[,c("id","visit","res")],
-                 direction = "wide", idvar = "id", timevar = "visit")
-mean(crossprod(as.matrix(dfRes[,-1])))/n
-\end{lstlisting}
+\begin{align*}
+1- \rho =& \frac{\widehat{\sigma}^2}{\sigma^2}  - \frac{1}{p}\frac{\rho}{1-\rho+\rho p} \left(\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} + \rho p (p-1) + \rho p (p-1) \left(\frac{1}{p}\sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1\right) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1}\right) \\
+ =& \frac{\widehat{\sigma}^2}{\sigma^2}  - \frac{\rho^2(p-1)}{\rho(p-1)+1} \left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) - \frac{\rho}{1-\rho+\rho p} \left(1 + \rho (p-1) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} 
+\end{align*}
 
-\begin{verbatim}
- cluster 
-10.39569
-\end{verbatim}
+We first simplify the second term, adding substracting \(\rho\) in the first numerator:
+\begin{align*}
+& \frac{\rho^2(p-1)}{\rho(p-1)+1} \left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \\
+&=  \left(\rho - \frac{\rho}{\rho(p-1)+1}\right)\left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \\
+&=  \rho - \frac{\rho}{\rho(p-1)+1} -  \frac{\rho^2(p-2)  + 2\rho}{\rho^2(p-1) + 1} +  \frac{\rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)} \\
+&=  \rho - 1 - \frac{\rho}{\rho(p-1)+1} -  \frac{-\rho^2 + 2\rho - 1}{\rho^2(p-1) + 1} +  \frac{\rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
+&=  \rho - 1 + \frac{- \rho^3 (p-1) - \rho + \rho^3(p-1) - 2\rho^2(p-1)+\rho(p-1)+\rho^2-2\rho-1 + \rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
+&=  \rho - 1 + \frac{-2\rho^2(p-1)+\rho^2 + \rho^2(p-2)- \rho +\rho(p-1)-2\rho  + 2\rho +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
+&=  \rho - 1 + \frac{\rho^2(-p+1) + \rho(p-2) +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)} =  \rho - 1 + \frac{-\rho(\rho (p-1) +1) + \rho(p-1) +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)} \\
+&=  \rho - 1 + \frac{1-\rho}{\rho^2(p-1) + 1} 
+\end{align*}
 
+We then simplify the third term, adding substracting \(\rho\) in the first numerator:
+\begin{align*}
+& \frac{\rho}{1-\rho+\rho p} \left(1 + \rho (p-1) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \\
+=& \frac{\rho^3(p-1) + \rho + \rho^2 (p-1)(\rho(p-2)+2) }{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
+=& \frac{\rho^3(p-1)^2 + 2\rho^2(p-1) + \rho}{\rho^3(p-1)^2 + \rho^2(p-1) + \rho(p-1) + 1}  \\
+=& 1 + \frac{\rho^2(p-1) - \rho (p-2) - 1}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
+=& 1 - \frac{1-\rho}{\rho^2(p-1) + 1} 
+\end{align*}
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-mean((dfL$meanRes.id)^2)
-
-\end{lstlisting}
-
-\begin{verbatim}
-[1] 10.39569
-\end{verbatim}
-
-
+Collecting the terms we get:
+\begin{align*}
+1- \rho =& \frac{\widehat{\sigma}^2}{\sigma^2}  - \left(\rho - 1 + \frac{1-\rho}{\rho^2(p-1) + 1}\right)  - \left(1 - \frac{1-\rho}{\rho^2(p-1) + 1} \right)\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2}  \\
+0 =& \frac{\widehat{\sigma}^2}{\sigma^2} -\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} + \frac{1-\rho}{\rho^2(p-1) + 1} \left(\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1\right) \\
+\end{align*}
+Using that \(\widehat{\sigma}^2 = \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2 = \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\), we finally obtain:
+\begin{align*}
+0 =& \frac{1-\rho}{\rho^2(p-1) + 1} \left(\frace{\widehat{\sigma}^2}{\sigma^2}-1\right) \\
+\end{align*}
+Since \(\frac{1-\rho}{\rho^2(p-1) + 1}\neq 0\) for acceptable \(\rho\)
+(i.e. \(\rho \in ]-1,1[\)) then we must have \(\sigma^2 =
+\widehat{\sigma}^2\). Plugging this value in the score equation for
+the correlation parameter leads to:
+\begin{align*}
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\widehat{\sigma}^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+\end{align*}
 
 \clearpage
 
