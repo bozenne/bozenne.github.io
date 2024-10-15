@@ -32,7 +32,11 @@ perform a specific type of analysis (e.g. replicating what another
 article previously did) but you need some help to carry it out. <br>
 ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
 width="30px"} PhD students/new post-docs: invite your supervisor to
-the first consultation.  <br> <br>
+the first consultation.  <br> ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+  width="30px"} I cannot help you with "Making sure my analysis is
+  correct" or "Can you check my analysis is correct": those are too
+  broad questions. It would be like going to the doctor and ask him
+  whether he can check that you are heatlhy. <br> <br>
 
 - **Technical questions**: <br> You have a specific question, it could
   be a software question, e.g.  _which package to use in R for fitting
@@ -47,13 +51,18 @@ the first consultation.  <br> <br>
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} Should be somehow related to statistics and not pure
   data management or data visualization question. <br> <br>
+  ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+  width="30px"} I cannot help you with "Making sure my analysis is
+  correct" or "Can you check my analysis is correct": those are too
+  broad questions. It would be like going to the doctor and ask him
+  whether he can check that you are heatlhy.  <br> <br>
 
 - **Externalizing the statistical analysis**: <br> You want a
 statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
 statistical analysis myself (this is at my discretion). <br>
 ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} Not for Bachelor/Master/PhD students.
+width="30px"} Not for Bachelor/Master/PhD students.  <br> <br>
 
 
 - **Planning a study**: <br> You are planning a new study or
@@ -61,9 +70,10 @@ experiment. You have one or few clearly defined hypotheses that you
 would like to test but you are wondering how to appropriately design
 your experiment / study to be able to carry out the tests. This is not
 my domain of expertise in statistics but I can give you some feedback
-and help you with simple power calculation. However do NOT come the
-day before your grant deadline asking me for an "emergency" power
-calculation!
+and help you with simple power calculation. <br>
+![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+width="30px"} I cannot help you with "emergency" power calculation
+<br> <br>
 
 ## How to get help?
 
@@ -174,10 +184,8 @@ method).
     you got when you wrote the article (you need to ask specifically
     for this).
   + answering the comments of the reviewers that are related to the
-    statistical analysis. <br>
-  ![](https://bozenne.github.io/img/warning.jpg){:height="30px" width="30px"} I cannot help you with "Making sure my analysis is correct": this is typically a too broad question.
-  It would be like going to the doctor and ask him whether he can check that you are heatlhy. <br> 
-
+    statistical analysis.
+  
   This typically involves:
   - starting from a research question, e.g. is treatment A better than treatment B?
   - defining parameter(s) of interest that can be used to answer the research question,
