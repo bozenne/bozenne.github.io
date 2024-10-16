@@ -1,4 +1,4 @@
-% Created 2024-10-15 ti 19:48
+% Created 2024-10-16 on 13:58
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:org8cde870}
+\label{sec:org36117c2}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -284,10 +284,10 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:org2bc3643}
+\label{sec:org2844b06}
 
-\subsection{Theory (single random effect)}
-\label{sec:orgfdbb73e}
+\subsection{Theory}
+\label{sec:org4251830}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
@@ -308,7 +308,7 @@ i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:orgb208955}
+\label{sec:org5c55a9e}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -362,8 +362,8 @@ Y.3 0.8579057 0.6468049 1.0000000 0.9503735
 Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
-\subsubsection{Maximum likelihood (single random effect)}
-\label{sec:org5f99ea6}
+\subsubsection{Maximum likelihood}
+\label{sec:org56fb217}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -420,8 +420,8 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 [1] 0.50493
 \end{verbatim}
 
-\subsubsection{Restricted maximum likelihood (single random effect)}
-\label{sec:org0bbf0fd}
+\subsubsection{Restricted maximum likelihood}
+\label{sec:orga13c32a}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -450,8 +450,7 @@ sd(dfL$res)
 \end{verbatim}
 
 
-To get closer, we could use 3 degrees of freedom (even though 2 would
-be better match the intuition):
+To closer we can get would be using 3 degrees of freedom:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
 \begin{lstlisting}
 NROW(dfL)-sum(tapply(dfL$res^2, dfL$visit, sum))/(coef(eREML.RI, effects = "variance"))^2
@@ -478,38 +477,6 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 \begin{verbatim}
 [1] 0.505055
 \end{verbatim}
-
-\subsubsection{Maximum likelihood (nested random effects)}
-\label{sec:org8c5efc6}
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dfL$baseline <- dfL$visit %in% 1:2
-eML.RI2 <- lmm(Y~treatment+(1|id/baseline), repetition = ~visit|id, data = dfL, method.fit = "ML")
-coef(eML.RI2, effects = "all")
-\end{lstlisting}
-
-\begin{verbatim}
-(Intercept)        treatment            sigma rho(id/baseline) 
-  0.6468893        1.1708292        4.0663607        0.7522951 
-    rho(id) 
-  0.3812474
-\end{verbatim}
-
-
-We retrive again the same estimates for the mean and variance
-parameters as in the random intercept model with a single random
-effect. The ML estimate of the correlation also match the average
-empirical residual correlation at the appropriate pairs of timepoints:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-c(mean(c(M.MLcor[1,2],M.MLcor[3,4])), mean(M.MLcor[1:2,3:4]))
-\end{lstlisting}
-
-\begin{verbatim}
-[1] 0.7522951 0.3812474
-\end{verbatim}
-
 
 
 \clearpage
@@ -542,7 +509,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:org37a9caf}
+\label{sec:org4d07d48}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -625,7 +592,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:org9ae704b}
+\label{sec:org72e871c}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -696,7 +663,7 @@ score equation for the correlation parameter can be simplified into:
 \end{align*}
 
 \subsection{Variance parameter (ML)}
-\label{sec:orgfc83723}
+\label{sec:org93218f4}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
@@ -769,23 +736,8 @@ the correlation parameter leads to:
 \frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
 \end{align*}
 
-
-\subsection{Variance parameter (REML)}
-\label{sec:orgd581d8c}
-
-The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
-\begin{align*}
-&\frac{1}{2} tr\left(\left(\trans{X}\Omega^{-1}X\right)^{-1} \left(\trans{X}\Omega^{-1}\frac{\partial \Omega}{\partial\sigma^2}\Omega^{-1}X \right) \right) \\
-&= \frac{1}{2\sigma^2} tr\left(\left(\trans{X}\Omega^{-1}X\right)^{-1} \left(\trans{X}\Omega^{-1}X \right) \right) = \frac{2}{2\sigma^2}
-\end{align*}
-leading to
-\begin{align*}
-\sigma^2 =& \frac{1}{n p - 2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) 
-\end{align*}
-
-
 \subsection{Correlation parameter (REML)}
-\label{sec:org9d1ee10}
+\label{sec:orgeee3df8}
 
 The REML score equation w.r.t the correlation parameter is the same as the ML score equation with the additional term:
 \begin{align*}
@@ -804,7 +756,7 @@ Using from appendix \ref{sm:seRI} that:
 and that:
 We now consider:
 \begin{align*}
-R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right)  \\
+R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
 \trans{X}R^{-1} \frac{\partial R}{\partial\rho} R^{-1} X &= \frac{1}{(1-\rho)^2} \left(-\trans{X}X + \trans{X}\Ve\trans{\Ve}X \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right)  \\
 &= \frac{1}{(1-\rho)^2} \left(-\begin{bmatrix} p
                   & p_1
@@ -817,13 +769,19 @@ R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +
                   & p_1^2
                   \end{bmatrix} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
 \end{align*}
-which does not seems to simplify, i.e. the trace has a complicated expression:
+which does not seems to simplify, i.e. the trace has a complicated expression.
 
+\subsection{Variance parameter (REML)}
+\label{sec:orgc951edd}
+
+The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
 \begin{align*}
-&\frac{1}{2 \sigma^4} tr\left(\left(\trans{X}R^{-1}X\right)^{-1} \left(\trans{X}R^{-1}\frac{\partial R}{\partial\rho}R^{-1}X \right) \right) = \ldots \\
-=&\frac{p p_1^2 ((p-1)\rho^2+1)}{2 \sigma^4 p_1(p-p_1)(1-\rho)((p-1)\rho+1)^2} - \frac{p^2}{2 \sigma^4 p_1(p-p_1)(1-\rho)} + \frac{(p-1)p(\rho(p-p_1-1)+1)}{2\sigma^4(p-p_1)((p-1)\rho+1)^2} \\
-=& \frac{p}{2\sigma^4(p-p_1)} \left(\frac{p_1^2 ((p-1)\rho^2+1)}{p_1(1-\rho)((p-1)\rho+1)^2} - \frac{p}{p_1(1-\rho)} + \frac{(p-1)(\rho(p-p_1-1)+1)}{((p-1)\rho+1)^2}\right) = \ldots \\
-=& \frac{p}{2\sigma^4(p-p_1)} \left(\frac{p^2-p_1^2}{p p_1 (\rho-1)} + \frac{p^2 - p p_1 - p - p_1}{p (p\rho - \rho + 1)} + \frac{2p_1}{p \rho - \rho +1 }\right)
+&\frac{1}{2} tr\left(\left(\trans{X}\Omega^{-1}X\right)^{-1} \left(\trans{X}\Omega^{-1}\frac{\partial \Omega}{\partial\sigma^2}\Omega^{-1}X \right) \right) \\
+&= \frac{1}{2\sigma^2} tr\left(\left(\trans{X}\Omega^{-1}X\right)^{-1} \left(\trans{X}\Omega^{-1}X \right) \right) = \frac{2}{2\sigma^2}
+\end{align*}
+leading to
+\begin{align*}
+\sigma^2 =& \frac{1}{n p - 2} \sum_{i=1}^n \trans{(\VY_i-\Vmu_i)} R^{-1} (\VY_i-\Vmu_i) 
 \end{align*}
 
 
