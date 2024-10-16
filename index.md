@@ -9,7 +9,7 @@ Hello and welcome to my website. <br> I (
 ![](https://bozenne.github.io/img/photoId.jpeg){:height="75px"
 width="75px"} ) am an associate professor in biostatistics with a
 shared position between:
-  - the [section of Biostatistics](https://biostat.ku.dk/) of the University of Copenhagen, Denmark.
+  - the [section of Biostatistics](https://biostat.ku.dk/) of the University of Copenhagen, Denmark. My office is at the second floor of building 10 of CSS, number 10.2.03.
   - the [neurobiology Research Unit](https://nru.dk/) at Rigshspitalet, Copenhagen, Denmark.
 	 
 <br>
