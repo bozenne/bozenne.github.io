@@ -1,4 +1,4 @@
-% Created 2024-10-17 to 16:32
+% Created 2024-10-18 fr 15:33
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:orgfb9f4f5}
+\label{sec:orge1369ec}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -284,31 +284,32 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:orgaf6adbd}
+\label{sec:orgb6bde5d}
 
 \subsection{Theory}
-\label{sec:org6bfc4e0}
+\label{sec:org992d230}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
 \item \textbf{mean parameters}: \(\widehat{\alpha}= \frac{1}{np} \sum_{i=1}^n
   \sum_{j=1}^p (1-T_{i,j}) Y_{i,j}\) \newline
 \hphantom{\textbf{mean parameters:} } \(\widehat{\beta}=
-  \frac{1}{np} \sum_{i=1}^n \sum_{t=1}^p (2 T_{i,j}-1) Y_{i,j}\)
+  \frac{1}{np} \sum_{i=1}^n \sum_{t=1}^p (2 T_{i,j}-1) Y_{i,j}\) \newline
+\hphantom{\textbf{mean parameters:} } \(\widehat{\mu}_{i,j} = \widehat{\alpha} - T_{i,j}\widehat{\beta}\)
 \item \textbf{variance parameter}: \(\widehat{\sigma}^2 =
-  \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2\)
+  \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\widehat{\mu}_{i,j})^2\)
 \item \textbf{correlation parameter}: \(\widehat{\rho} =
   \frac{1}{p(p-1)/2}\sum_{j=1}^p \sum_{j^{\prime} \in
   \{1,\ldots,j-1\}}\widehat{\rho}_{j,j^{\prime}}\) \newline where for
 \(j \in \{1,\ldots,p\}\), \(j^{\prime} \in \{1,\ldots,j-1\}\),
 \(\widehat{\rho}_{j,j^{\prime}} = \frac{1}{n}\sum_{i=1}^n
-  \frac{(Y_{i,j}-\mu_{i,j})}{\widehat{\sigma}}\frac{(Y_{i,j^{\prime}}-\mu_{i,j^{\prime}})}{\widehat{\sigma}}\)
+  \frac{(Y_{i,j}-\widehat{\mu}_{i,j})}{\widehat{\sigma}}\frac{(Y_{i,j^{\prime}}-\widehat{\mu}_{i,j^{\prime}})}{\widehat{\sigma}}\)
 \end{itemize}
 i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:org81f1e8e}
+\label{sec:orgabefcad}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -363,7 +364,7 @@ Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
 \subsubsection{Maximum likelihood}
-\label{sec:orge967836}
+\label{sec:org4af1c49}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -421,7 +422,7 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 \end{verbatim}
 
 \subsubsection{Restricted maximum likelihood}
-\label{sec:org76076a8}
+\label{sec:org34b9995}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -509,7 +510,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:orgb69b724}
+\label{sec:orgc407db9}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -592,18 +593,13 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:orgc8c5850}
+\label{sec:orgaf41c63}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
 0 =& -\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\rho}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \rho} \Omega^{-1} (\VY_i-\widehat{\Vmu}_i) \\
   =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2\sigma^2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)}\right) 
 \end{align*}
-which is equivalent to:
-\begin{align*}
-0 =& tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n \sigma^2}\sum_{i=1}^n (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right)  
-\end{align*}
-
 
 We first explicit the first term:
 \begin{align*}
@@ -653,7 +649,12 @@ Then:
 &= \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2(1+\rho(p-1))^2}\left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
 
-Then \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right)\) involves that:
+The score equation \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right)\) becomes:
+\begin{align*}
+&= \frac{1}{(1-\rho)(1+\rho(p-1))}\left(p\rho(p-1)  \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)(1+\rho(p-1))} p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\end{align*}
+
+
 \begin{align*}
 \sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \widehat{\sigma}^2 \left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \right) \\
 \frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
@@ -667,7 +668,7 @@ Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho
 \end{align*}
 
 \subsection{Variance parameter (ML)}
-\label{sec:orga5b819f}
+\label{sec:org57b48ee}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
@@ -687,60 +688,45 @@ Using the expression of \(R^{-1}\) found in appendix \ref{sm:rhoML} we get:
 Since:
 \begin{align*}
 \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\widehat{\mu}_{i,j}\right)^2=& \frac{1}{np^2} \sum_{i=1}^n \sum_{j=1}^p \sum_{j^{\prime}=1}^p \left(Y_{i,j}-\widehat{\mu}_j\right)\left(Y_{i,j^{\prime}}-\widehat{\mu}_{j^{\prime}}\right) \\
-=&  \frac{\widehat{\sigma}^2}{p^2} \left(p + 2\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
+=&  \frac{\widehat{\sigma}^2}{p^2} \left(p + 2\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)  = \frac{\widehat{\sigma}^2}{p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
 \end{align*}
 
 we obtain:
 \begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} =& \frac{1}{(1- \rho)}  - \frac{1}{p}\frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(p + 2\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+\frac{\sigma^2}{\widehat{\sigma}^2} =& \frac{1}{(1- \rho)}  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+                                    =&  \frac{1}{(1- \rho)}\left(1  - \frac{\rho}{1+\rho(p-1)} - \frac{\rho(p-1)}{1+\rho(p-1)}\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+                                    =&  \frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-1)-\rho-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \\                                   
+\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}                                   
 \end{align*}
+
 Using the score equation w.r.t to the correlation parameter:
 \begin{align*}
-(1 - \rho)\frac{\sigma^2}{\widehat{\sigma}^2} =& 1 - \frac{1}{p}\frac{\rho}{1-\rho+\rho p} \left(p + \rho p (p-1) + \rho p (p-1) \left(1- \frac{\widehat{\sigma}^2}{\sigma^2}\right) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1}\right) \\
- =& \frac{\widehat{\sigma}^2}{\sigma^2}  - \frac{\rho^2(p-1)}{\rho(p-1)+1} \left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) - \frac{\rho}{1-\rho+\rho p} \left(1 + \rho (p-1) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} 
+\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho^2(p-1)  p - \rho^2(p-1)\left(1- \frac{\sigma^2}{\widehat{\sigma}^2}\right) \frac{2+\rho(p-2)}{1+\rho(p-1)} 
+\end{align*}
+Therefore
+\begin{align*}
+\frac{\sigma^2}{\widehat{\sigma}^2} \left(1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)\right) =& 1 + \rho (p-2) - \rho^2(p-1)  \left(1 - \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)
+\end{align*}
+Because
+\begin{align*}
+1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right) &= 1+\rho(p-2)-\rho^2(p-1)\frac{1+\rho(p-1)-2-\rho(p-2)}{1+\rho(p-1)} \\
+&= 1+\rho(p-2)+\rho^2(p-1)\frac{1-\rho}{1+\rho(p-1)}>0
 \end{align*}
 
-
-We first simplify the second term, adding substracting \(\rho\) in the first numerator:
+All terms are strictly positive when \(p>2\). When \(p=2\) the
+first and last terms are strictly positive and the second null. When
+\(p=1\) then it is equal to \(1-\rho\) which is also strictly
+positive. So we must have \(\sigma^2 = \widehat{\sigma}^2\). Plugging
+this value in the score equation for the correlation parameter leads
+to:
 \begin{align*}
-& \frac{\rho^2(p-1)}{\rho(p-1)+1} \left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right)
-=  \left(\rho - \frac{\rho}{\rho(p-1)+1}\right)\left(1 - \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) \\
-&=  \rho - \frac{\rho}{\rho(p-1)+1} -  \frac{\rho^2(p-2)  + 2\rho}{\rho^2(p-1) + 1} +  \frac{\rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)} \\
-&=  \rho - 1 - \frac{\rho}{\rho(p-1)+1} -  \frac{-\rho^2 + 2\rho - 1}{\rho^2(p-1) + 1} +  \frac{\rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
-&=  \rho - 1 + \frac{- \rho^3 (p-1) - \rho + \rho^3(p-1) - 2\rho^2(p-1)+\rho(p-1)+\rho^2-2\rho-1 + \rho^2(p-2)  + 2\rho}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
-&=  \rho - 1 + \frac{-2\rho^2(p-1)+\rho^2 + \rho^2(p-2)- \rho +\rho(p-1)-2\rho  + 2\rho +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
-&=  \rho - 1 + \frac{\rho^2(-p+1) + \rho(p-2) +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)} =  \rho - 1 + \frac{-\rho(\rho (p-1) +1) + \rho(p-1) +1 }{(\rho^2(p-1) + 1)(\rho(p-1)+1)} \\
-&=  \rho - 1 + \frac{1-\rho}{\rho^2(p-1) + 1} 
-\end{align*}
-
-We then simplify the third term, adding substracting \(\rho\) in the first numerator:
-\begin{align*}
-\frac{\rho}{1-\rho+\rho p} \left(1 + \rho (p-1) \frac{\rho(p-2)  + 2}{\rho^2(p-1) + 1} \right) =& \frac{\rho^3(p-1) + \rho + \rho^2 (p-1)(\rho(p-2)+2) }{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
-=& \frac{\rho^3(p-1)^2 + 2\rho^2(p-1) + \rho}{\rho^3(p-1)^2 + \rho^2(p-1) + \rho(p-1) + 1}  \\
-=& 1 + \frac{\rho^2(p-1) - \rho (p-2) - 1}{(\rho^2(p-1) + 1)(\rho(p-1)+1)}  \\
-=& 1 - \frac{1-\rho}{\rho^2(p-1) + 1} 
-\end{align*}
-
-Collecting the terms we get:
-\begin{align*}
-1- \rho =& \frac{\widehat{\sigma}^2}{\sigma^2}  - \left(\rho - 1 + \frac{1-\rho}{\rho^2(p-1) + 1}\right)  - \left(1 - \frac{1-\rho}{\rho^2(p-1) + 1} \right)\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2}  \\
-0 =& \frac{\widehat{\sigma}^2}{\sigma^2} -\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} + \frac{1-\rho}{\rho^2(p-1) + 1} \left(\frac{1}{p} \sum_{j=1}^p \frac{\widehat{\sigma}^2_j}{\sigma^2} - 1\right)
-\end{align*}
-Using that \(\widehat{\sigma}^2 = \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\mu_{i,j})^2 = \frac{1}{p}\sum_{j=1}^p \widehat{\sigma}^2_j\), we finally obtain:
-\begin{align*}
-0 =& \frac{1-\rho}{\rho^2(p-1) + 1} \left(\frac{\widehat{\sigma}^2}{\sigma^2}-1\right) 
-\end{align*}
-Since \(\frac{1-\rho}{\rho^2(p-1) + 1}\neq 0\) for acceptable \(\rho\)
-(i.e. \(\rho \in ]-1,1[\)) then we must have \(\sigma^2 =
-\widehat{\sigma}^2\). Plugging this value in the score equation for
-the correlation parameter leads to:
-\begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\frac{\widehat{\sigma}_j \widehat{\sigma}_{j^{\prime}}}{\widehat{\sigma}^2}\widehat{\rho}_{j,j^{\prime}} &= \rho
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
 \frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
 \end{align*}
 
 \subsection{Correlation parameter (REML)}
-\label{sec:org1b98f19}
+\label{sec:org0b2762b}
 
 The REML score equation w.r.t the correlation parameter is the same as the ML score equation with the additional term:
 \begin{align*}
@@ -756,10 +742,11 @@ Using from appendix \ref{sm:seRI} that:
                   & \frac{p}{p_1}(1-\rho)
                   \end{bmatrix}
 \end{align*}
+
 and that:
-We now consider:
+
 \begin{align*}
-R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) 
+R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I + \Ve\trans{\Ve} \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) \\
 \trans{X}R^{-1} \frac{\partial R}{\partial\rho} R^{-1} X &= \frac{1}{(1-\rho)^2} \left(-\trans{X}X + \trans{X}\Ve\trans{\Ve}X \frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right)  \\
 &= \frac{1}{(1-\rho)^2} \left(-\begin{bmatrix} p
                   & p_1
@@ -775,7 +762,7 @@ R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +
 which does not seems to simplify, i.e. the trace has a complicated expression.
 
 \subsection{Variance parameter (REML)}
-\label{sec:org9439f34}
+\label{sec:orgdcd7693}
 
 The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
 \begin{align*}

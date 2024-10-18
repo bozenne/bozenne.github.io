@@ -371,13 +371,6 @@ The ML score equation w.r.t the correlation parameter is:
   =& -\frac{n}{2} tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) + \frac{1}{2\sigma^2} tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \sum_{i=1}^n (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)}\right) 
 \end{align*}
 #+END_EXPORT
-which is equivalent to:
-#+BEGIN_EXPORT latex
-\begin{align*}
-0 =& tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n \sigma^2}\sum_{i=1}^n (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right)  
-\end{align*}
-#+END_EXPORT
-
 
 We first explicit the first term:
 #+BEGIN_EXPORT latex
@@ -448,10 +441,10 @@ We now consider the matrix \(\frac{1}{n}\sum_{i=1}^n (\VY_i-\widehat{\Vmu}_i)\tr
 Then:  
 #+BEGIN_EXPORT latex
 \begin{align*}
-& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \frac{1}{n\sigma^2}\sum_{i=1}^n  (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right) \\
-& = \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2}\left(p\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-&= \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2}\left(p\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-&= \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2(1+\rho(p-1))^2}\left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \sum_{i=1}^n  (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right) \\
+& = \frac{n\widehat{\sigma}^2}{(1-\rho)^2}\left(p\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{n\widehat{\sigma}^2}{(1-\rho)^2}\left(p\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{n\widehat{\sigma}^2}{(1-\rho)^2(1+\rho(p-1))^2}\left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
 #+END_EXPORT
 
@@ -470,21 +463,43 @@ rho*(p-1)*(-2-rho*(p-2))/(1+rho*(p-1))^2
 : [1] -0.8472693
 : [1] -0.8472693
 
-Then \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right) \) involves that:
+The score equation becomes:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \widehat{\sigma}^2 \left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \right) \\
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\frac{\sigma^2}{\widehat{\sigma}^2}(\rho-1)(1+\rho(p-1)) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1}
+0 &= \frac{n p (p-1)}{2(1-\rho)^2(1+\rho(p-1))^2}\left(\rho(1-\rho)(1+\rho(p-1)) - \frac{\widehat{\sigma}^2}{\sigma^2}  \rho\left(2+\rho (p-2)\right) + \frac{\rho^2(p-1) + 1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+  &= \frac{n p (p-1)(\rho^2(p-1) + 1)}{2(1-\rho)^2(1+\rho(p-1))^2}\left(\rho\frac{(1-\rho)(1+\rho(p-1))- \frac{\widehat{\sigma}^2}{\sigma^2}  \left(2 + \rho (p-2)\right))}{\rho^2(p-1) + 1} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
 #+END_EXPORT
-Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho(p-2)-1\):
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+rho * (1-rho)*(1+rho*(p-1)) - rho*(2 + rho*(p-2)) + (rho^2*(p-1)+1)*rho
+rho * ((1-rho)*(1+rho*(p-1)) - (2 + rho*(p-2)))/(rho^2*(p-1) + 1) + rho
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.110223e-16
+: [1] 5.551115e-17
+
+Using that \((1-\rho)(1+\rho(p-1))=1-\rho+\rho(p-1)-\rho^2(p-1)=-\rho^2(p-1)+\rho(p-2)+1=-(\rho^2(p-1)+1)+\rho(p-2)+2\), it follows that:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  &= \rho \frac{\frac{\sigma^2}{\widehat{\sigma}^2}  \left(\rho^2(p-1)-\rho(p-2)-1\right) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1} \\
-&= \rho + \rho \frac{\frac{\sigma^2}{\widehat{\sigma}^2} \left(-\rho(p-2)-2\right) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1} \\
-&= \rho + \rho \left(1-\frac{\sigma^2}{\widehat{\sigma}^2}\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)} 
+0 &= \frac{n p (p-1) \rho^2(p-1) + 1}{2(1-\rho)^2(1+\rho(p-1))^2}\left(- \rho + \rho \frac{  \rho(p-2)+2 - \frac{\widehat{\sigma}^2}{\sigma^2}  \left(2 + \rho (p-2)\right))}{\rho^2(p-1) + 1} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+  &= \frac{n p (p-1) \rho^2(p-1) + 1}{2(1-\rho)^2(1+\rho(p-1))^2}\left(- \rho - \rho \left(\frac{\widehat{\sigma}^2}{\sigma^2}-1\right) \frac{2+\rho(p-2)}{1+\rho^2(p-1)} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
+#+END_EXPORT
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+- rho + rho *(1-1)*(rho*(p-2)+2)/(rho^2*(p-1)+1) + rho
+#+END_SRC
+
+#+RESULTS:
+: [1] 0
+
+
+Since the first term is strictly positive (\(0<\rho<1\) and \(p>1\)) we can simplify and get that:
+#+BEGIN_EXPORT latex
+\begin{align}
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  &= \rho + \rho \left(\frac{\sigma^2}{\widehat{\sigma}^2}-1\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}   \label{eq:scoreRho:simplified2}
+\end{align}
 #+END_EXPORT
 
 ** Variance parameter (ML)
@@ -494,8 +509,7 @@ The ML score equation w.r.t the variance parameter is:
 \begin{align*}
 0=&-\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\sigma^2}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \sigma^2} \Omega^{-1} (\VY_i-\widehat{\Vmu}_i) \\
  =&-\frac{n}{2} tr\left(\sigma^{-2} R^{-1} R \right) + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} R R^{-1} (\VY_i-\widehat{\Vmu}_i) \\
- =&-\frac{pn}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) \\ 
-\sigma^2 =& \frac{1}{n p} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) 
+ =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) 
 \end{align*}
 #+END_EXPORT
 
@@ -521,9 +535,9 @@ sigma2 - sum(tapply(1:NROW(dfL), dfL$id, function(iIndex){
 Using the expression of \(R^{-1}\) found in appendix [[#sm:rhoML]] we get:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\sigma^2 =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\widehat{\Vmu}_i)  \\
- =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}(\VY_i-\widehat{\Vmu}_i)  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{np} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \Ve\trans{\Ve} (\VY_i-\widehat{\Vmu}_i)  \\
- =& \frac{\widehat{\sigma}^2}{1- \rho}  - \frac{\rho p}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\widehat{\mu}_{i,j}\right)^2
+0 =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4(1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\widehat{\Vmu}_i) \\ 
+  =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4(1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}(\VY_i-\widehat{\Vmu}_i) \\ & - \frac{\rho}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}\Ve\trans{\Ve}(\VY_i-\widehat{\Vmu}_i)  \\ 
+  =&-\frac{np}{2 \sigma^2} + \frac{np\widehat{\sigma}^2}{2 \sigma^4(1- \rho)} - \frac{\rho n p^2}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \frac{1}{n}\sum_{i=1}^n \left(\frac{1}{p} \sum_{i=1}^n Y_{i,j} - \widehat{\mu}_{i,j} \right)^2 
 \end{align*}
 #+END_EXPORT
 
@@ -556,57 +570,43 @@ mean(tapply(epsilon, dfL$id, mean)^2) - mean(M.resVcov)
 we obtain:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} =& \frac{1}{(1- \rho)}  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-                                    =&  \frac{1}{(1- \rho)}\left(1  - \frac{\rho}{1+\rho(p-1)} - \frac{\rho(p-1)}{1+\rho(p-1)}\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-                                    =&  \frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-1)-\rho-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \\                                   
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}                                   
+0 =&-\frac{np}{2 \sigma^2} + \frac{np\widehat{\sigma}^2}{2 \sigma^4(1- \rho)} - \frac{\rho n p \widehat{\sigma}^2}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+0 =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} - \frac{1}{(1- \rho)} + \frac{\rho }{(1- \rho)((1-\rho)+\rho p)} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right)  
+\end{align*}
+#+END_EXPORT
+Since
+#+BEGIN_EXPORT latex
+\begin{align*}
+& - \frac{1}{(1- \rho)}  + \frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+=& - \frac{1}{(1- \rho)}\left(1  - \frac{\rho}{1+\rho(p-1)} - \frac{\rho(p-1)}{1+\rho(p-1)}\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+=&  -\frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
 \end{align*}
 #+END_EXPORT
 
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-rho <- 0.45
-p <- 7
-(1-rho + rho * p) - (1 + rho*(p-1))
-
-1 - rho/(1-rho + rho * p) - (1 + rho*(p-2)) /(1-rho + rho * p)
-#+END_SRC
-
-#+RESULTS:
-: [1] 0
-: [1] 1.110223e-16
-
-
-Using the score equation w.r.t to the correlation parameter:
+We get:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho^2(p-1)  p - \rho^2(p-1)\left(1- \frac{\sigma^2}{\widehat{\sigma}^2}\right) \frac{2+\rho(p-2)}{1+\rho(p-1)} 
-\end{align*}
-#+END_EXPORT
-Therefore
-#+BEGIN_EXPORT latex
-\begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} \left(1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)\right) =& 1 + \rho (p-2) - \rho^2(p-1)  \left(1 - \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)
-\end{align*}
-#+END_EXPORT
-Because
-#+BEGIN_EXPORT latex
-\begin{align*}
-1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right) &= 1+\rho(p-2)-\rho^2(p-1)\frac{1+\rho(p-1)-2-\rho(p-2)}{1+\rho(p-1)} \\
-&= 1+\rho(p-2)+\rho^2(p-1)\frac{1-\rho}{1+\rho(p-1)}>0
+0 =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} -\frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right)   \\
+  =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} -\frac{1}{1 + \rho(p-2)  - \rho^2(p-1)}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right) \\
+  =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} - 1  - \frac{\rho(p-1)\left(\rho-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)}{1 + \rho(p-2)  - \rho^2(p-1)}\right) 
 \end{align*}
 #+END_EXPORT
 
-All terms are strictly positive when \(p>2\). When \(p=2\) the
-first and last terms are strictly positive and the second null. When
-\(p=1\) then it is equal to \(1-\rho\) which is also strictly
-positive. So we must have \(\sigma^2 = \widehat{\sigma}^2\). Plugging
-this value in the score equation for the correlation parameter leads
-to:
+Since \(\frac{np \widehat{\sigma}^2}{2 \sigma^4}\neq 0\) and using equation autoref:eq:scoreRho:simplified2, we obtain:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+0 &= \frac{\sigma^2}{\widehat{\sigma}^2} - 1 + \frac{\rho^2(p-1)\left(\frac{\sigma^2}{\widehat{\sigma}^2}-1\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}}{1 + \rho(p-2)  - \rho^2(p-1)} 
+= \left(\frac{\sigma^2}{\widehat{\sigma}^2} - 1\right) \left(1 + \frac{\rho^2(p-1)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}}{(1- \rho)(1+\rho(p-1))}\right) 
+\end{align*}
+#+END_EXPORT
+The second term is strictly positive: it is clear when \(p>2\) because
+all terms are positive or null and one is added. When \(p=1\) then \(2+\rho
+(p-2)=2-\rho>0\) because \(\rho<1\). So we must have \(\sigma^2 =
+\widehat{\sigma}^2\). Plugging this value in the score equation for
+the correlation parameter leads to:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\rho &= \frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} 
 \end{align*}
 #+END_EXPORT
 
