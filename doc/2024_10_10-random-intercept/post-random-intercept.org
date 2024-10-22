@@ -14,13 +14,7 @@ notation to denote vector of random variables, e.g.
 
 \bigskip
 
-The (data-generating) variance of the outcome will be denoted
-\(\sigma^2\). The (data-generating) correlation between any two
-measurements from a subject will be denoted \(r_{j,j^{\prime}} = \Cor(Y_{i,j},Y_{i,j^{\prime}}|T_{i,j},T_{i,j^{\prime}})\)
-
-\bigskip
-
-As a working model we will consider the following random intercept
+\noindent As a working model we will consider the following random intercept
 model:
 #+BEGIN_EXPORT latex
 \begin{align*}
@@ -231,9 +225,20 @@ estimation with as many observations under treatment as under control
 (\(p_1=p/2\)) it simplifies to:
 #+BEGIN_EXPORT latex
 \begin{align}
-\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}} \label{eq:seML}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}} \rho_{j,j^{\prime}}\right) \sigma^2}{n p_1}} \label{eq:seML}
 \end{align}
 #+END_EXPORT
+where for \(j \in \{1,\ldots,p\}\), \(j^{\prime} \in
+  \{1,\ldots,j-1\}\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+\rho_{j,j^{\prime}} &= \Esp\left[\frac{(Y_{.,j}-\mu_{.,j})}{\sigma}\frac{(Y_{.,j^{\prime}}-\mu_{.,j^{\prime}})}{\sigma}\right] \\
+                  &\approx \frac{1}{n}\sum_{i=1}^n \frac{(Y_{i,j}-\mu_{i,j})}{\sigma}\frac{(Y_{i,j^{\prime}}-\mu_{i,j^{\prime}})}{\sigma}
+\end{align*}
+#+END_EXPORT
+which can be understood as the data generating within-subject
+correlation between observation \(j\) and \(j^{\prime}\), provided
+that the mean and variance structure of the model are correctly specified. 
 
 ** Comparison to a t-test on the first change
 
@@ -256,7 +261,7 @@ correlated i.e. \(\rho_{j,j^{\prime}} \approx 1\) if
 definite. We thus have:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}} &= \frac{2(p/2)(p/2-1)/2 \rho_{1,1} +(p/2)^2 \rho_{1,p_1+1}}{p(p-1)/2} \\
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}} \rho_{j,j^{\prime}} &= \frac{2(p/2)(p/2-1)/2 \rho_{1,1} +(p/2)^2 \rho_{1,p_1+1}}{p(p-1)/2} \\
 &= \frac{(p/2-1)\rho_{1,1}+p/2 \rho_{1,p_1+1}}{p-1} = \frac{p\frac{\rho_{1,p_1+1}+\rho_{1,1}}{2} - \rho_{1,1}}{p-1} \\
 &= \rho_{1,1} - \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1}) \approx 1 - \frac{p}{2(p-1)}(1-\rho_{1,p_1+1})
 \end{align*}
@@ -295,7 +300,7 @@ rhoW - p*(rhoW-rhoB)/((p-1)*2)
 whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
 #+BEGIN_EXPORT latex
 \begin{align*}
-1-\rho_{1,p_1+1} &> \frac{1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}}{p_1} = \frac{1}{p-1}(1-\rho_{1,p_1+1})
+1-\rho_{1,p_1+1} &> \frac{1-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}} \rho_{j,j^{\prime}}}{p_1} = \frac{1}{p-1}(1-\rho_{1,p_1+1})
 \end{align*}
 #+END_EXPORT
 which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
@@ -439,7 +444,6 @@ range(R.M1 - solve(R))
 #+RESULTS:
 : [1] -1.110223e-16  0.000000e+00
 : [1] -2.220446e-16  5.551115e-17
-
 
 * Estimates in a random intercept model
 :PROPERTIES:
@@ -801,7 +805,7 @@ the correlation parameter leads to:
 \end{align*}
 #+END_EXPORT
 
-** Correlation parameter (REML)
+** Correlation parameter (REML) :noexport:
 
 The REML score equation w.r.t the correlation parameter is the same as the ML score equation with the additional term:
 #+BEGIN_EXPORT latex
@@ -859,7 +863,7 @@ sum(diag(solve(t(X) %*% solve(Omega) %*% X) %*% t(X) %*% solve(Omega) %*% (1 - d
 : [1] 0.5714286
 
 
-** Variance parameter (REML)
+** Variance parameter (REML)  :noexport:
 
 The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
 #+BEGIN_EXPORT latex
@@ -1023,13 +1027,13 @@ From appendix [[#sm:rhoML]] we deduce that in a balanced design the
 standard error of the Maximum Likelihood estimator is:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}} \rho_{j,j^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
 \end{align*}
 #+END_EXPORT
 which in a design with as many observations under treatment as under control simplifies to:
 #+BEGIN_EXPORT latex
 \begin{align*}
-\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}} \rho_{j,j^{\prime}}\right) \sigma^2}{n p_1}}
 \end{align*}
 #+END_EXPORT
 
