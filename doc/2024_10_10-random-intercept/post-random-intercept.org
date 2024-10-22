@@ -300,7 +300,7 @@ whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
 #+END_EXPORT
 which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
 
-** Comparison to a t-test on all changes
+** Comparison to a t-test on changes in a paired design
 
 Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
 vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
@@ -345,7 +345,6 @@ var(c(M.data[,4]-M.data[,1]))
 [1] 1.380534
 [1] 1.4
 #+end_example
-
 
 Assuming constant within (no necessarily close to one) and constant
 cross-correlation we can compare this variance with the mixed model

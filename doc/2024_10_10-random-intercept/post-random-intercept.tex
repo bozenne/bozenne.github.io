@@ -1,4 +1,4 @@
-% Created 2024-10-22 ti 10:55
+% Created 2024-10-22 ti 11:16
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:org0eb866b}
+\label{sec:org6123f97}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -284,10 +284,10 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:orgffc34b2}
+\label{sec:orgf12ec79}
 
 \subsection{Theory}
-\label{sec:org6b9f19f}
+\label{sec:orgede02f4}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
@@ -309,7 +309,7 @@ i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:org553c8bb}
+\label{sec:org4b5b0e7}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -366,7 +366,7 @@ Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
 \subsubsection{Maximum likelihood}
-\label{sec:orgc246a45}
+\label{sec:orgfce7fa5}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -424,7 +424,7 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 \end{verbatim}
 
 \subsubsection{Restricted maximum likelihood}
-\label{sec:org71ca9fc}
+\label{sec:org7bf59aa}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -485,10 +485,10 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 \clearpage
 
 \section{Standard error in a random intercept model}
-\label{sec:org2740393}
+\label{sec:org230c5c7}
 
 \subsection{Theory}
-\label{sec:orga5fb5ed}
+\label{sec:org0b1b3c6}
 
 Appendix \ref{sm:seRI} shows that the standard error of the treatment
 effect estimator can be expressed as:
@@ -504,7 +504,7 @@ estimation with as many observations under treatment as under control
 \end{align}
 
 \subsection{Comparison to a t-test on the first change}
-\label{sec:orge899ec4}
+\label{sec:orgff095d9}
 
 When using a t-test on the change based \textbf{only on the first observation
 under each treatment}, the variance is:
@@ -535,8 +535,8 @@ whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
 \end{align*}
 which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
 
-\subsection{Comparison to a t-test on all changes}
-\label{sec:orgea21d77}
+\subsection{Comparison to a t-test on changes in a paired design}
+\label{sec:org2a56329}
 
 Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
 vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
@@ -566,7 +566,7 @@ Therefore if \(\rho_{1,1}>\rho_{1,p_1+1}\) the mixed model will be
 less liberal otherwise it will be more liberal.
 
 \subsection{Numerical example}
-\label{sec:org014ceaa}
+\label{sec:org99fc257}
 
 We can retrieve the standard error estimated by the linear mixed model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -624,7 +624,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:org2c9f087}
+\label{sec:org12a5994}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -707,7 +707,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:org617d8d9}
+\label{sec:org5df2a27}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -780,7 +780,7 @@ Since the first term is strictly positive (\(0<\rho<1\) and \(p>1\)) we can simp
 \end{align}
 
 \subsection{Variance parameter (ML)}
-\label{sec:org3d23338}
+\label{sec:orgb3175d4}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
@@ -836,7 +836,7 @@ the correlation parameter leads to:
 \end{align*}
 
 \subsection{Correlation parameter (REML)}
-\label{sec:org32a6450}
+\label{sec:orgc7bb418}
 
 The REML score equation w.r.t the correlation parameter is the same as the ML score equation with the additional term:
 \begin{align*}
@@ -872,7 +872,7 @@ R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +
 which does not seems to simplify, i.e. the trace has a complicated expression.
 
 \subsection{Variance parameter (REML)}
-\label{sec:orgabe1d79}
+\label{sec:orgf5e449b}
 
 The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
 \begin{align*}
