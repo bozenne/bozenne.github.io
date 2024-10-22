@@ -1,4 +1,4 @@
-#+TITLE: Random intercept model with a balanced design
+#+TITLE: Random intercept model in a balanced design
 #+Author: Brice Ozenne
 
 
@@ -79,7 +79,9 @@ library(lava)
 library(Matrix)
 
 set.seed(1)
-dfL <- sampleRem(1e3, n.times = 4, format = "long",
+n.obs <- 1e3
+n.times <- 4
+dfL <- sampleRem(n.obs, n.times = n.times, format = "long",
                  mu = c(1,0,0,0), sigma = 1:4, lambda = c(0.5,0.25,2,1))
 dfL <- dfL[order(dfL$id),c("id","visit","Y")]
 dfL$treatment <- as.numeric(dfL$visit) %% 2
@@ -157,7 +159,7 @@ and the empirical residual correlation:
 dfL$res.normML <- dfL$res/sqrt(mean(dfL$res^2))
 dfWres.normML <- reshape(dfL[,c("id","visit","res.normML")],
                          direction = "wide", idvar = "id", timevar = "visit")
-M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/NROW(dfWres.normML)
+M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/n.obs
 mean(M.MLcor[lower.tri(M.MLcor)])
 #+END_SRC
 
@@ -209,6 +211,196 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 
 #+RESULTS:
 : [1] 0.505055
+
+\clearpage
+
+* Standard error in a random intercept model
+
+** Theory
+
+Appendix [[#sm:seRI]] shows that the standard error of the treatment
+effect estimator can be expressed as:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} =\sqrt{\frac{\delta}{n} \frac{p}{p_1(p-p_1)}}
+\end{align*}
+#+END_EXPORT
+
+It also shows that in the special case of Maximum Likelihood
+estimation with as many observations under treatment as under control
+(\(p_1=p/2\)) it simplifies to:
+#+BEGIN_EXPORT latex
+\begin{align}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}} \label{eq:seML}
+\end{align}
+#+END_EXPORT
+
+** Comparison to a t-test on the first change
+
+When using a t-test on the change based *only on the first observation
+under each treatment*, the variance is:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\Delta}(1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{n}}
+\end{align*}
+#+END_EXPORT
+
+where for convenience the first \(p_1\) observations are under one
+treatment condition and the last \(p_1\) observations under the other
+treatment condition. This strategy controls the type 1 error and is
+optimal if observations from the same treatment are (nearly) perfectly
+correlated i.e. \(\rho_{j,j^{\prime}} \approx 1\) if
+\((j,j^{\prime})\in \{1,\ldots,p_1\}^2\) or if \((j,j^{\prime})\in
+\{p_1+1,\ldots,p_1^2\}\). In such a case the cross-correlation must be
+(nearly) constant for the correlation matrix to be positive
+definite. We thus have:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}} &= \frac{2(p/2)(p/2-1)/2 \rho_{1,1} +(p/2)^2 \rho_{1,p_1+1}}{p(p-1)/2} \\
+&= \frac{(p/2-1)\rho_{1,1}+p/2 \rho_{1,p_1+1}}{p-1} = \frac{p\frac{\rho_{1,p_1+1}+\rho_{1,1}}{2} - \rho_{1,1}}{p-1} \\
+&= \rho_{1,1} - \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1}) \approx 1 - \frac{p}{2(p-1)}(1-\rho_{1,p_1+1})
+\end{align*}
+#+END_EXPORT
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+p1 <- 2
+p <- 2*p1
+rhoW <- 0.7
+rhoB <- 0.5
+block.1 <- rhoW + diag(1-rhoW,p1,p1) ## correlation within treatment
+block.2 <- matrix(rhoB,p1,p1) ## correlation across treatment
+Sigma.CO <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+range(eigen(Sigma.CO)$values)
+
+table(Sigma.CO[lower.tri(Sigma.CO)])
+(2*p/2*(p/2-1)/2*rhoW + (p/2)^2 * rhoB)/(p*(p-1)/2)
+((p/2-1)*rhoW + p/2 * rhoB)/(p-1)
+(p/2*(rhoW+rhoB) - rhoW)/(p-1)
+rhoW - p*(rhoW-rhoB)/((p-1)*2)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.3 2.7
+: 
+: 0.5 0.7 
+:   4   2
+: [1] 0.5666667
+: [1] 0.5666667
+: [1] 0.5666667
+: [1] 0.5666667
+
+
+\noindent The random intercept model will not control the type 1 error
+whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
+#+BEGIN_EXPORT latex
+\begin{align*}
+1-\rho_{1,p_1+1} &> \frac{1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}}{p_1} = \frac{1}{p-1}(1-\rho_{1,p_1+1})
+\end{align*}
+#+END_EXPORT
+which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
+
+** Comparison to a t-test on all changes
+
+Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
+vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
+observations (no observation is used twice when computing changes),
+and stacking all changes into a t-test. This strategy will generally
+not control the type 1 error (as it disregard within-individual
+correlation). The variance of the corresponding estimator can be
+expressed as:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\Delta}(p_1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{np_1}}
+\end{align*}
+#+END_EXPORT
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+p1 <- 3
+p <- 2*p1
+rhoW <- 0.7
+rhoB <- 0.3
+block.1 <- rhoW + diag(1-rhoW,p1,p1) ## correlation within treatment
+block.2 <- matrix(rhoB,p1,p1) ## correlation across treatment
+Sigma.CO <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
+Sigma.CO
+
+library(mvtnorm)
+M.data <- rmvnorm(1e4, mean = rep(0,p), Sigma.CO)
+var(c(M.data[,4]-M.data[,1],M.data[,5]-M.data[,2],M.data[,6]-M.data[,3]))
+var(c(M.data[,4]-M.data[,1]))
+2*(1-rhoB)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]  1.0  0.7  0.7  0.3  0.3  0.3
+[2,]  0.7  1.0  0.7  0.3  0.3  0.3
+[3,]  0.7  0.7  1.0  0.3  0.3  0.3
+[4,]  0.3  0.3  0.3  1.0  0.7  0.7
+[5,]  0.3  0.3  0.3  0.7  1.0  0.7
+[6,]  0.3  0.3  0.3  0.7  0.7  1.0
+[1] 1.379934
+[1] 1.380534
+[1] 1.4
+#+end_example
+
+
+Assuming constant within (no necessarily close to one) and constant
+cross-correlation we can compare this variance with the mixed model
+variance:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\sigma_{\widehat{\beta}} - \sigma_{\widehat{\Delta}(p)} = \sqrt{\frac{4\left(1-\rho_{1,1} + \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1})\right) \sigma^2}{n p}} -  \sqrt{\frac{4(1-\rho_{1,p_1+1}) \sigma^2}{np}}
+\end{align*}
+#+END_EXPORT
+which has the same sign as:
+#+BEGIN_EXPORT latex
+\begin{align*}
+\left(1-\rho_{1,1} + \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1})\right) - (1-\rho_{1,p_1+1})
+& = (\rho_{1,1}-\rho_{1,p_1+1}) \left(\frac{p}{2(p-1)} - 1 \right) \\
+& = (\rho_{1,1}-\rho_{1,p_1+1}) \frac{2-p}{2(p-1)} 
+\end{align*}
+#+END_EXPORT
+
+Therefore if \(\rho_{1,1}>\rho_{1,p_1+1}\) the mixed model will be
+less liberal otherwise it will be more liberal.
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+p <- 5
+p/(2*(p-1)) - 1
+(2-p)/(2*(p-1))
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.375
+: [1] -0.375
+
+
+
+
+** Numerical example
+
+We can retrieve the standard error estimated by the linear mixed model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+model.tables(eML.RI)["treatment",]
+#+END_SRC
+
+#+RESULTS:
+:           estimate         se       df     lower    upper p.value
+: treatment 1.170829 0.09047721 2999.845 0.9934256 1.348233       0
+
+pluging in formula autoref:eq:seML the variance and correlation
+estimates based on the residuals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+sqrt(2*(1-mean(M.MLcor[lower.tri(M.MLcor)]))*mean(dfL$res^2)/(n.obs*n.times/2))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.09047721
+
+
 
 \clearpage
 
@@ -719,29 +911,21 @@ coef(eREML.RI, effects = "variance")^2
 :CUSTOM_ID: sm:seRI
 :END:
 
-Consider a random intercept model including single binary covariate
-(called treatment):
+The standard error of the treatment effect based on the expected
+information is the last element (i.e. second row, second column) of
+the variance-covariance matrix \(\left(\trans{X} \Omega^{-1}
+X\right)^{-1}\).
+
+\bigskip
+
+Using the expression of the inverse of \(R\) given in appendix
+[[#sm:invCS]], we get that its matrix product with the \(p \times 2\)
+matrix \(X=(1,T)\) where \(T\) is either \(0\) or \(1\) (respectively
+\(p_0\) and \(p_1\) times) is:
 #+BEGIN_EXPORT latex
 \begin{align*}
-Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
-\end{align*}
-#+END_EXPORT
-where \(\alpha_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{it} \sim
-\Gaus[0,\delta]\). Denote \(\rho = \frac{\tau}{\tau+\delta}\) and
-\(\sigma^2=\tau+\delta\) such that:
-#+BEGIN_EXPORT latex
-\begin{align*}
-\Var[Y_{it}] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho e\trans{e})
-\end{align*}
-#+END_EXPORT
-where \(I\) and \(e\) were defined in section [[#sm:invCS]]. The inverse
-of \(R\) was also explicit in section [[#sm:invCS]] and when multiplied
-the \(p \times 2\) matrix \(X=(1,T)\) where \(T\) is either \(0\) or
-\(1\), respectively \(p_0\) and \(p_1\) times, we get:
-#+BEGIN_EXPORT latex
-\begin{align*}
-\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
-&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{1 + \rho (p-1)}\right)  \\
+\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} \Ve\trans{\Ve} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
+&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} \Ve\trans{\Ve} X}{1 + \rho (p-1)}\right)  \\
 &= \frac{1}{1-\rho} \left(\begin{bmatrix} p & p_1 \\ p_1 & p_1 \end{bmatrix} - \frac{\rho}{1+\rho(p-1)}  \begin{bmatrix} p^2 & p p_1 \\ p p_1 & p^2_1 \end{bmatrix}\right) \\
 &= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p+p\rho(p-1) - \rho p^2
                   & p_1+p_1\rho(p-1)- \rho p p_1
@@ -821,8 +1005,6 @@ solve(X.RM1.X) - 1/(p-p1) * matrix(c(1 + rho*(p-p1-1),-(1-rho),-(1-rho),p/p1*(1-
 : [1,] -1.110223e-16  2.220446e-16
 : [2,]  1.110223e-16 -2.220446e-16
 
-\clearpage
-
 So in the random intercept model, the standard error of the treatment
 estimator will be:
 #+BEGIN_EXPORT latex
@@ -838,7 +1020,8 @@ In a design with as many observations under treatment as under control \(p_1=p/2
 \end{align*}
 #+END_EXPORT
 
-From section [[#sm:rhoML]] we deduce that:
+From appendix [[#sm:rhoML]] we deduce that in a balanced design the
+standard error of the Maximum Likelihood estimator is:
 #+BEGIN_EXPORT latex
 \begin{align*}
 \sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
@@ -850,56 +1033,6 @@ which in a design with as many observations under treatment as under control sim
 \sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
 \end{align*}
 #+END_EXPORT
-
-Note: when using a t-test on the change based only on the first
-observation under each treatment the variance is:
-#+BEGIN_EXPORT latex
-\begin{align*}
-\sigma_{\widehat{\beta}} = \sqrt{\frac{2(1-\rho_{1,p+1}) \sigma^2}{n}}
-\end{align*}
-#+END_EXPORT
-
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-solve(X.RM1.X)[2,2]
-(1-rho)*p/(p1*(p-p1))
-#+END_SRC
-
-#+RESULTS:
-: [1] 0.8
-: [1] 0.8
-
-
-
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-n.obs <- 1e2
-block.1 <- matrix(c(1,0.999,0.999,1),2,2) ## correlation within treatment
-block.2 <- matrix(c(0.0,0.0,0.0,0.0),2,2) ## correlation across treatment
-
-set.seed(1)
-## Sigma.test <- rbind(cbind(block.1, block.2), cbind(block.2, block.1))
-Sigma.test <- rbind(cbind(block.1, block.2, block.2), cbind(block.2, block.1, block.2), cbind(block.2, block.2, block.1))
-M.test <- rmvnorm(n.obs, mean = rep(0,NCOL(Sigma.test)), sigma = Sigma.test)
-dfL.test <- reshape(as.data.frame(M.test), direction = "long", varying = paste0("V",1:NCOL(M.test)), v.names = "V")
-dfL.test$treatment <- 1-dfL.test$time %in% 1:(NCOL(Sigma.test)/2)
-dfL.test$time.factor <- as.factor(dfL.test$time)
-dfL.test <- dfL.test[order(dfL.test$id),c("id","treatment","time","time.factor","V")]
-
-etest.lmer <- lmer(V ~ treatment + (1|id), data = dfL.test)
-etest.tau <- as.numeric(VarCorr(etest.lmer))
-etest.delta <- sigma(etest.lmer)^2
-etest.rho <- etest.tau/(etest.tau+etest.delta)
-
-
-etest.delta/n.obs * NCOL(Sigma.test)/(NCOL(Sigma.test)/2*(NCOL(Sigma.test)-NCOL(Sigma.test)/2))
-vcov(etest.lmer)
-#+END_SRC
-
-#+RESULTS:
-: [1] 0.005208493
-: 2 x 2 Matrix of class "dpoMatrix"
-:              (Intercept)    treatment
-: (Intercept)  0.004456045 -0.002604246
-: treatment   -0.002604246  0.005208493
 
 
 \clearpage

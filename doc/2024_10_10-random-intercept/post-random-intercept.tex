@@ -1,4 +1,4 @@
-% Created 2024-10-18 fr 15:33
+% Created 2024-10-22 ti 10:55
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -225,11 +225,11 @@ and (1.75,0.4) .. cycle;
 \newcommand\normTwo[1]{\left|\left|#1\right|\right|_{2}}
 \author{Brice Ozenne}
 \date{\today}
-\title{Random intercept model with a balanced design}
+\title{Random intercept model in a balanced design}
 \hypersetup{
  colorlinks=true,
  pdfauthor={Brice Ozenne},
- pdftitle={Random intercept model with a balanced design},
+ pdftitle={Random intercept model in a balanced design},
  pdfkeywords={},
  pdfsubject={},
  pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:orge1369ec}
+\label{sec:org0eb866b}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -284,10 +284,10 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:orgb6bde5d}
+\label{sec:orgffc34b2}
 
 \subsection{Theory}
-\label{sec:org992d230}
+\label{sec:org6b9f19f}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
@@ -309,7 +309,7 @@ i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:orgabefcad}
+\label{sec:org553c8bb}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -320,7 +320,9 @@ library(lava)
 library(Matrix)
 
 set.seed(1)
-dfL <- sampleRem(1e3, n.times = 4, format = "long",
+n.obs <- 1e3
+n.times <- 4
+dfL <- sampleRem(n.obs, n.times = n.times, format = "long",
                  mu = c(1,0,0,0), sigma = 1:4, lambda = c(0.5,0.25,2,1))
 dfL <- dfL[order(dfL$id),c("id","visit","Y")]
 dfL$treatment <- as.numeric(dfL$visit) %% 2
@@ -364,7 +366,7 @@ Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
 \subsubsection{Maximum likelihood}
-\label{sec:org4af1c49}
+\label{sec:orgc246a45}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -413,7 +415,7 @@ and the empirical residual correlation:
 dfL$res.normML <- dfL$res/sqrt(mean(dfL$res^2))
 dfWres.normML <- reshape(dfL[,c("id","visit","res.normML")],
                          direction = "wide", idvar = "id", timevar = "visit")
-M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/NROW(dfWres.normML)
+M.MLcor <- crossprod(as.matrix(dfWres.normML[,-1]))/n.obs
 mean(M.MLcor[lower.tri(M.MLcor)])
 \end{lstlisting}
 
@@ -422,7 +424,7 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 \end{verbatim}
 
 \subsubsection{Restricted maximum likelihood}
-\label{sec:org34b9995}
+\label{sec:org71ca9fc}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -482,6 +484,118 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 
 \clearpage
 
+\section{Standard error in a random intercept model}
+\label{sec:org2740393}
+
+\subsection{Theory}
+\label{sec:orga5fb5ed}
+
+Appendix \ref{sm:seRI} shows that the standard error of the treatment
+effect estimator can be expressed as:
+\begin{align*}
+\sigma_{\widehat{\beta}} =\sqrt{\frac{\delta}{n} \frac{p}{p_1(p-p_1)}}
+\end{align*}
+
+It also shows that in the special case of Maximum Likelihood
+estimation with as many observations under treatment as under control
+(\(p_1=p/2\)) it simplifies to:
+\begin{align}
+\sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}} \label{eq:seML}
+\end{align}
+
+\subsection{Comparison to a t-test on the first change}
+\label{sec:orge899ec4}
+
+When using a t-test on the change based \textbf{only on the first observation
+under each treatment}, the variance is:
+\begin{align*}
+\sigma_{\widehat{\Delta}(1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{n}}
+\end{align*}
+
+where for convenience the first \(p_1\) observations are under one
+treatment condition and the last \(p_1\) observations under the other
+treatment condition. This strategy controls the type 1 error and is
+optimal if observations from the same treatment are (nearly) perfectly
+correlated i.e. \(\rho_{j,j^{\prime}} \approx 1\) if
+\((j,j^{\prime})\in \{1,\ldots,p_1\}^2\) or if \((j,j^{\prime})\in
+\{p_1+1,\ldots,p_1^2\}\). In such a case the cross-correlation must be
+(nearly) constant for the correlation matrix to be positive
+definite. We thus have:
+\begin{align*}
+\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}} &= \frac{2(p/2)(p/2-1)/2 \rho_{1,1} +(p/2)^2 \rho_{1,p_1+1}}{p(p-1)/2} \\
+&= \frac{(p/2-1)\rho_{1,1}+p/2 \rho_{1,p_1+1}}{p-1} = \frac{p\frac{\rho_{1,p_1+1}+\rho_{1,1}}{2} - \rho_{1,1}}{p-1} \\
+&= \rho_{1,1} - \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1}) \approx 1 - \frac{p}{2(p-1)}(1-\rho_{1,p_1+1})
+\end{align*}
+
+
+\noindent The random intercept model will not control the type 1 error
+whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
+\begin{align*}
+1-\rho_{1,p_1+1} &> \frac{1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}}{p_1} = \frac{1}{p-1}(1-\rho_{1,p_1+1})
+\end{align*}
+which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
+
+\subsection{Comparison to a t-test on all changes}
+\label{sec:orgea21d77}
+
+Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
+vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
+observations (no observation is used twice when computing changes),
+and stacking all changes into a t-test. This strategy will generally
+not control the type 1 error (as it disregard within-individual
+correlation). The variance of the corresponding estimator can be
+expressed as:
+\begin{align*}
+\sigma_{\widehat{\Delta}(p_1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{np_1}}
+\end{align*}
+
+Assuming constant within (no necessarily close to one) and constant
+cross-correlation we can compare this variance with the mixed model
+variance:
+\begin{align*}
+\sigma_{\widehat{\beta}} - \sigma_{\widehat{\Delta}(p)} = \sqrt{\frac{4\left(1-\rho_{1,1} + \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1})\right) \sigma^2}{n p}} -  \sqrt{\frac{4(1-\rho_{1,p_1+1}) \sigma^2}{np}}
+\end{align*}
+which has the same sign as:
+\begin{align*}
+\left(1-\rho_{1,1} + \frac{p}{2(p-1)}(\rho_{1,1}-\rho_{1,p_1+1})\right) - (1-\rho_{1,p_1+1})
+& = (\rho_{1,1}-\rho_{1,p_1+1}) \left(\frac{p}{2(p-1)} - 1 \right) \\
+& = (\rho_{1,1}-\rho_{1,p_1+1}) \frac{2-p}{2(p-1)} 
+\end{align*}
+
+Therefore if \(\rho_{1,1}>\rho_{1,p_1+1}\) the mixed model will be
+less liberal otherwise it will be more liberal.
+
+\subsection{Numerical example}
+\label{sec:org014ceaa}
+
+We can retrieve the standard error estimated by the linear mixed model:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+model.tables(eML.RI)["treatment",]
+\end{lstlisting}
+
+\begin{verbatim}
+          estimate         se       df     lower    upper p.value
+treatment 1.170829 0.09047721 2999.845 0.9934256 1.348233       0
+\end{verbatim}
+
+
+pluging in formula \autoref{eq:seML} the variance and correlation
+estimates based on the residuals:
+\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
+\begin{lstlisting}
+sqrt(2*(1-mean(M.MLcor[lower.tri(M.MLcor)]))*mean(dfL$res^2)/(n.obs*n.times/2))
+\end{lstlisting}
+
+\begin{verbatim}
+[1] 0.09047721
+\end{verbatim}
+
+
+
+
+\clearpage
+
 \appendix
 
 \section{Inverse of a compound symmetry matrix}
@@ -510,7 +624,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:orgc407db9}
+\label{sec:org2c9f087}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -593,7 +707,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:orgaf41c63}
+\label{sec:org617d8d9}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -643,46 +757,43 @@ off diagonal elements.
 \end{itemize}
 Then:  
 \begin{align*}
-& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \frac{1}{n\sigma^2}\sum_{i=1}^n  (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right) \\
-& = \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2}\left(p\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-&= \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2}\left(p\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-&= \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)^2(1+\rho(p-1))^2}\left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+& tr \left( R^{-1} \frac{\partial R}{\partial\rho} R^{-1} \sum_{i=1}^n  (\VY_i-\widehat{\Vmu}_i)\trans{(\VY_i-\widehat{\Vmu}_i)} \right) \\
+& = \frac{n\widehat{\sigma}^2}{(1-\rho)^2}\left(p\left(-1+\frac{\rho^2(p-1) + 1}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{n\widehat{\sigma}^2}{(1-\rho)^2}\left(p\left(\frac{-2\rho(p-1)-\rho^2(p-1)^2+\rho^2(p-1)}{(1+\rho(p-1))^2}\right) + \frac{2\rho^2(p-1) + 2}{(1+\rho(p-1))^2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+&= \frac{n\widehat{\sigma}^2}{(1-\rho)^2(1+\rho(p-1))^2}\left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
 
-The score equation \(0 = tr\left(R^{-1} \frac{\partial R}{\partial\rho}\right) - tr\left(R^{-1} \frac{\partial R}{\partial \rho} R^{-1} \frac{1}{n}\sum_{i=1}^n \zeta_i  \trans{\zeta}_i\right)\) becomes:
+The score equation becomes:
 \begin{align*}
-&= \frac{1}{(1-\rho)(1+\rho(p-1))}\left(p\rho(p-1)  \frac{\widehat{\sigma}^2/\sigma^2}{(1-\rho)(1+\rho(p-1))} p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
+0 &= \frac{n p (p-1)}{2(1-\rho)^2(1+\rho(p-1))^2}\left(\rho(1-\rho)(1+\rho(p-1)) - \frac{\widehat{\sigma}^2}{\sigma^2}  \rho\left(2+\rho (p-2)\right) + \frac{\rho^2(p-1) + 1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+  &= \frac{n p (p-1)(\rho^2(p-1) + 1)}{2(1-\rho)^2(1+\rho(p-1))^2}\left(\rho\frac{(1-\rho)(1+\rho(p-1))- \frac{\widehat{\sigma}^2}{\sigma^2}  \left(2 + \rho (p-2)\right))}{\rho^2(p-1) + 1} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
 
-
+Using that \((1-\rho)(1+\rho(p-1))=1-\rho+\rho(p-1)-\rho^2(p-1)=-\rho^2(p-1)+\rho(p-2)+1=-(\rho^2(p-1)+1)+\rho(p-2)+2\), it follows that:
 \begin{align*}
-\sigma^2(\rho-1)(1+\rho(p-1)) p\rho(p-1) &= \widehat{\sigma}^2 \left(p\rho(p-1)\left(-2-\rho (p-2)\right) + \left(2\rho^2(p-1) + 2\right) \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \right) \\
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\frac{\sigma^2}{\widehat{\sigma}^2}(\rho-1)(1+\rho(p-1)) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1}
+0 &= \frac{n p (p-1) \rho^2(p-1) + 1}{2(1-\rho)^2(1+\rho(p-1))^2}\left(- \rho + \rho \frac{  \rho(p-2)+2 - \frac{\widehat{\sigma}^2}{\sigma^2}  \left(2 + \rho (p-2)\right))}{\rho^2(p-1) + 1} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+  &= \frac{n p (p-1) \rho^2(p-1) + 1}{2(1-\rho)^2(1+\rho(p-1))^2}\left(- \rho - \rho \left(\frac{\widehat{\sigma}^2}{\sigma^2}-1\right) \frac{2+\rho(p-2)}{1+\rho^2(p-1)} + \frac{1}{p(p-1)/2} \sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)
 \end{align*}
-Using that \((\rho-1)(1+\rho(p-1))=\rho-1+\rho^2(p-1)-\rho(p-1)=\rho^2(p-1)-\rho(p-2)-1\):
-\begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  &= \rho \frac{\frac{\sigma^2}{\widehat{\sigma}^2}  \left(\rho^2(p-1)-\rho(p-2)-1\right) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1} \\
-&= \rho + \rho \frac{\frac{\sigma^2}{\widehat{\sigma}^2} \left(-\rho(p-2)-2\right) + \left(2+\rho (p-2)\right)}{\rho^2(p-1) + 1} \\
-&= \rho + \rho \left(1-\frac{\sigma^2}{\widehat{\sigma}^2}\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)} 
-\end{align*}
+Since the first term is strictly positive (\(0<\rho<1\) and \(p>1\)) we can simplify and get that:
+\begin{align}
+\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}  &= \rho + \rho \left(\frac{\sigma^2}{\widehat{\sigma}^2}-1\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}   \label{eq:scoreRho:simplified2}
+\end{align}
 
 \subsection{Variance parameter (ML)}
-\label{sec:org57b48ee}
+\label{sec:org3d23338}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
 0=&-\frac{n}{2} tr\left(\Omega^{-1} \frac{\partial \Omega}{\partial\sigma^2}\right) + \frac{1}{2} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \Omega^{-1} \frac{\partial \Omega}{\partial \sigma^2} \Omega^{-1} (\VY_i-\widehat{\Vmu}_i) \\
  =&-\frac{n}{2} tr\left(\sigma^{-2} R^{-1} R \right) + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} R R^{-1} (\VY_i-\widehat{\Vmu}_i) \\
- =&-\frac{pn}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) \\ 
-\sigma^2 =& \frac{1}{n p} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) 
+ =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} R^{-1} (\VY_i-\widehat{\Vmu}_i) 
 \end{align*}
 
 Using the expression of \(R^{-1}\) found in appendix \ref{sm:rhoML} we get:
 \begin{align*}
-\sigma^2 =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\widehat{\Vmu}_i)  \\
- =& \frac{1}{n p (1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}(\VY_i-\widehat{\Vmu}_i)  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{np} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \Ve\trans{\Ve} (\VY_i-\widehat{\Vmu}_i)  \\
- =& \frac{\widehat{\sigma}^2}{1- \rho}  - \frac{\rho p}{(1-\rho)^2+\rho(1-\rho) p} \frac{1}{n} \sum_{i=1}^n \left(\frac{1}{p}\sum_{j=1}^p Y_{i,j}-\widehat{\mu}_{i,j}\right)^2
+0 =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4(1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)} \left(I - \frac{\rho \Ve\trans{\Ve}}{(1-\rho)+\rho p} \right) (\VY_i-\widehat{\Vmu}_i) \\ 
+  =&-\frac{np}{2 \sigma^2} + \frac{1}{2 \sigma^4(1- \rho)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}(\VY_i-\widehat{\Vmu}_i) \\ & - \frac{\rho}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \sum_{i=1}^n \trans{(\VY_i-\widehat{\Vmu}_i)}\Ve\trans{\Ve}(\VY_i-\widehat{\Vmu}_i)  \\ 
+  =&-\frac{np}{2 \sigma^2} + \frac{np\widehat{\sigma}^2}{2 \sigma^4(1- \rho)} - \frac{\rho n p^2}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \frac{1}{n}\sum_{i=1}^n \left(\frac{1}{p} \sum_{i=1}^n Y_{i,j} - \widehat{\mu}_{i,j} \right)^2 
 \end{align*}
 
 Since:
@@ -693,40 +804,39 @@ Since:
 
 we obtain:
 \begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} =& \frac{1}{(1- \rho)}  - \frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-                                    =&  \frac{1}{(1- \rho)}\left(1  - \frac{\rho}{1+\rho(p-1)} - \frac{\rho(p-1)}{1+\rho(p-1)}\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-                                    =&  \frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-1)-\rho-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} \\                                   
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}                                   
+0 =&-\frac{np}{2 \sigma^2} + \frac{np\widehat{\sigma}^2}{2 \sigma^4(1- \rho)} - \frac{\rho n p \widehat{\sigma}^2}{2 \sigma^4(1- \rho)((1-\rho)+\rho p)} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+0 =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} - \frac{1}{(1- \rho)} + \frac{\rho }{(1- \rho)((1-\rho)+\rho p)} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right)  
+\end{align*}
+Since
+\begin{align*}
+& - \frac{1}{(1- \rho)}  + \frac{\rho}{(1-\rho)^2+\rho(1-\rho)p} \left(1 + (p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+=& - \frac{1}{(1- \rho)}\left(1  - \frac{\rho}{1+\rho(p-1)} - \frac{\rho(p-1)}{1+\rho(p-1)}\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) \\
+=&  -\frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right) 
 \end{align*}
 
-Using the score equation w.r.t to the correlation parameter:
+We get:
 \begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} (1+\rho(p-2)-\rho^2(p-1)) =& 1 + \rho (p-2) - \rho^2(p-1)  p - \rho^2(p-1)\left(1- \frac{\sigma^2}{\widehat{\sigma}^2}\right) \frac{2+\rho(p-2)}{1+\rho(p-1)} 
-\end{align*}
-Therefore
-\begin{align*}
-\frac{\sigma^2}{\widehat{\sigma}^2} \left(1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)\right) =& 1 + \rho (p-2) - \rho^2(p-1)  \left(1 - \frac{2+\rho(p-2)}{1+\rho(p-1)}\right)
-\end{align*}
-Because
-\begin{align*}
-1+\rho(p-2)-\rho^2(p-1)\left(1- \frac{2+\rho(p-2)}{1+\rho(p-1)}\right) &= 1+\rho(p-2)-\rho^2(p-1)\frac{1+\rho(p-1)-2-\rho(p-2)}{1+\rho(p-1)} \\
-&= 1+\rho(p-2)+\rho^2(p-1)\frac{1-\rho}{1+\rho(p-1)}>0
+0 =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} -\frac{1}{(1- \rho)(1+\rho(p-1))}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right)   \\
+  =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} -\frac{1}{1 + \rho(p-2)  - \rho^2(p-1)}\left(1 + \rho (p-2) - \rho(p-1)\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)\right) \\
+  =&-\frac{np \widehat{\sigma}^2}{2 \sigma^4}\left(\frac{\sigma^2}{\widehat{\sigma}^2} - 1  - \frac{\rho(p-1)\left(\rho-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}}\right)}{1 + \rho(p-2)  - \rho^2(p-1)}\right) 
 \end{align*}
 
-All terms are strictly positive when \(p>2\). When \(p=2\) the
-first and last terms are strictly positive and the second null. When
-\(p=1\) then it is equal to \(1-\rho\) which is also strictly
-positive. So we must have \(\sigma^2 = \widehat{\sigma}^2\). Plugging
-this value in the score equation for the correlation parameter leads
-to:
+Since \(\frac{np \widehat{\sigma}^2}{2 \sigma^4}\neq 0\) and using equation \autoref{eq:scoreRho:simplified2}, we obtain:
 \begin{align*}
-\frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} &= \rho
-\frac{\rho^2(p-1) + 1}{\rho^2(p-1) + 1} = \rho
+0 &= \frac{\sigma^2}{\widehat{\sigma}^2} - 1 + \frac{\rho^2(p-1)\left(\frac{\sigma^2}{\widehat{\sigma}^2}-1\right)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}}{1 + \rho(p-2)  - \rho^2(p-1)} 
+= \left(\frac{\sigma^2}{\widehat{\sigma}^2} - 1\right) \left(1 + \frac{\rho^2(p-1)\frac{2+\rho (p-2)}{1 + \rho^2(p-1)}}{(1- \rho)(1+\rho(p-1))}\right) 
+\end{align*}
+The second term is strictly positive: it is clear when \(p>2\) because
+all terms are positive or null and one is added. When \(p=1\) then \(2+\rho
+(p-2)=2-\rho>0\) because \(\rho<1\). So we must have \(\sigma^2 =
+\widehat{\sigma}^2\). Plugging this value in the score equation for
+the correlation parameter leads to:
+\begin{align*}
+\rho &= \frac{1}{p(p-1)/2}\sum_{j < j^{\prime}}\widehat{\rho}_{j,j^{\prime}} 
 \end{align*}
 
 \subsection{Correlation parameter (REML)}
-\label{sec:org0b2762b}
+\label{sec:org32a6450}
 
 The REML score equation w.r.t the correlation parameter is the same as the ML score equation with the additional term:
 \begin{align*}
@@ -762,7 +872,7 @@ R^{-1} \frac{\partial R}{\partial\rho} R^{-1} &= \frac{1}{(1-\rho)^2} \left(-I +
 which does not seems to simplify, i.e. the trace has a complicated expression.
 
 \subsection{Variance parameter (REML)}
-\label{sec:orgdcd7693}
+\label{sec:orgabe1d79}
 
 The REML score equation w.r.t the variance parameter is the same as the ML score equation with the additional term:
 \begin{align*}
@@ -779,24 +889,20 @@ leading to
 
 \section{Standard error of the treatment effect \newline in a balanced random intercept model}
 \label{sm:seRI}
-Consider a random intercept model including single binary covariate
-(called treatment):
+The standard error of the treatment effect based on the expected
+information is the last element (i.e. second row, second column) of
+the variance-covariance matrix \(\left(\trans{X} \Omega^{-1}
+X\right)^{-1}\).
+
+\bigskip
+
+Using the expression of the inverse of \(R\) given in appendix
+\ref{sm:invCS}, we get that its matrix product with the \(p \times 2\)
+matrix \(X=(1,T)\) where \(T\) is either \(0\) or \(1\) (respectively
+\(p_0\) and \(p_1\) times) is:
 \begin{align*}
-Y_{it} = \mu + \beta T_{it} + \alpha_i + \varepsilon_{it}
-\end{align*}
-where \(\alpha_i \sim \Gaus[0,\tau]\) and \(\varepsilon_{it} \sim
-\Gaus[0,\delta]\). Denote \(\rho = \frac{\tau}{\tau+\delta}\) and
-\(\sigma^2=\tau+\delta\) such that:
-\begin{align*}
-\Var[Y_{it}] = \Omega = \sigma^2 R = \sigma^2 ((1-\rho) I + \rho e\trans{e})
-\end{align*}
-where \(I\) and \(e\) were defined in section \ref{sm:invCS}. The inverse
-of \(R\) was also explicit in section \ref{sm:invCS} and when multiplied
-the \(p \times 2\) matrix \(X=(1,T)\) where \(T\) is either \(0\) or
-\(1\), respectively \(p_0\) and \(p_1\) times, we get:
-\begin{align*}
-\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
-&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} e\trans{e} X}{1 + \rho (p-1)}\right)  \\
+\trans{X} R^{-1} X &= \frac{1}{1-\rho} \trans{X}X - \frac{\rho\trans{X} \Ve\trans{\Ve} X}{(1-\rho)^2+\rho(1-\rho)p}  \\
+&= \frac{1}{1-\rho} \left(\trans{X}X - \frac{\rho\trans{X} \Ve\trans{\Ve} X}{1 + \rho (p-1)}\right)  \\
 &= \frac{1}{1-\rho} \left(\begin{bmatrix} p & p_1 \\ p_1 & p_1 \end{bmatrix} - \frac{\rho}{1+\rho(p-1)}  \begin{bmatrix} p^2 & p p_1 \\ p p_1 & p^2_1 \end{bmatrix}\right) \\
 &= \frac{1}{(1-\rho)(1+\rho(p-1))} \begin{bmatrix} p+p\rho(p-1) - \rho p^2
                   & p_1+p_1\rho(p-1)- \rho p p_1
@@ -834,8 +940,6 @@ whose inverse is:
 \end{bmatrix}   
 \end{align*}
 
-\clearpage
-
 So in the random intercept model, the standard error of the treatment
 estimator will be:
 \begin{align*}
@@ -847,7 +951,8 @@ In a design with as many observations under treatment as under control \(p_1=p/2
 \sigma_{\widehat{\beta}} = \sqrt{\frac{4\delta}{np}} = \sqrt{\frac{2\delta}{np_1}}
 \end{align*}
 
-From section \ref{sm:rhoML} we deduce that:
+From appendix \ref{sm:rhoML} we deduce that in a balanced design the
+standard error of the Maximum Likelihood estimator is:
 \begin{align*}
 \sigma_{\widehat{\beta}} = \sqrt{\frac{\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n}\frac{p}{p_1(p-p_1)}}
 \end{align*}
@@ -856,11 +961,6 @@ which in a design with as many observations under treatment as under control sim
 \sigma_{\widehat{\beta}} = \sqrt{\frac{2\left(1-\frac{1}{p(p-1)/2}\sum_{t \neq t^{\prime}} \rho_{t,t^{\prime}}\right) \sigma^2}{n p_1}}
 \end{align*}
 
-Note: when using a t-test on the change based only on the first
-observation under each treatment the variance is:
-\begin{align*}
-\sigma_{\widehat{\beta}} = \sqrt{\frac{2(1-\rho_{1,p+1}) \sigma^2}{n}}
-\end{align*}
 
 \clearpage
 \end{document}
