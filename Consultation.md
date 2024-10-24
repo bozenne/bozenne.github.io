@@ -50,7 +50,7 @@ the first consultation.  <br> ![](https://bozenne.github.io/img/warning.jpg){:he
   ...). <br>
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} Should be somehow related to statistics and not pure
-  data management or data visualization question. <br> <br>
+  data management or data visualization question. <br> 
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} I cannot help you with "Making sure my analysis is
   correct" or "Can you check my analysis is correct": those are too
@@ -71,9 +71,10 @@ would like to test but you are wondering how to appropriately design
 your experiment / study to be able to carry out the tests. This is not
 my domain of expertise in statistics but I can give you some feedback
 and help you with simple power calculation. <br>
-![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} I cannot help you with "emergency" power calculation
-<br> <br>
+![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+width="30px"} Make sure to plan sufficient time (> 1 week) for the
+power calculation: I do not help you with "emergency" power
+calculation. <br> <br>
 
 ## How to get help?
 
