@@ -19,10 +19,14 @@ common mistakes are summarized on a separate
 ## What can I help you with?
 
 - **Group consultation**: this is the recommended format for Bachelor
-and Master students.
-  + students should collect questions, ideally with real data example, and send them to me.
-  + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br>
-  ![](https://bozenne.github.io/img/idea.jpg){:height="30px" width="30px"} Discuss with your supervisor when is the relevant time to have this discussion and who to include <br> <br> 
+and Master students.  + students should collect questions, ideally
+with real data example, and send them to me.  + we arrange a meeting
+where I will discuss one or a few common questions in a 15-30 min,
+interactive, presentation. The rest of the time is Q & A, leaving time
+to adress more specialized questions. <br>
+![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+width="30px"} Discuss with your supervisor when is the relevant time
+and who to include.
 
 - **Assistance for performing a statistical analysis**: <br> You would
     help from a statistician to decide upon and carry a statistical
@@ -43,16 +47,15 @@ and Master students.
   error control, statistical power, unbiasedness, interpretability,
   ...). <br>
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-  width="30px"} Should be somehow related to statistics and not pure
-  data management or data visualization question. <br> 
+  width="30px"} Should be related to statistics and not pure data
+  management or visualization question.
 
 - **Externalizing the statistical analysis**: <br> You want a
 statistician to perform the statistical analysis for you. Don't expect
 much from me in this case, I will rarely accept to perform the
 statistical analysis myself (this is at my discretion). <br>
 ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} Not for Bachelor/Master/PhD students.  <br> <br>
-
+width="30px"} Not for Bachelor/Master/PhD students.
 
 - **Planning a study**: <br> You are planning a new study or
 experiment. You have one or few clearly defined hypotheses that you
@@ -63,43 +66,46 @@ and help you with simple power calculation. <br>
 ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
 width="30px"} Make sure to plan sufficient time (> 1 week) for the
 power calculation as I will generally not be able to help you with
-"emergency" power calculation. <br> <br>
+"emergency" power calculation. 
 
 ## What can I cannot help you with?
 
-"How should I analyze my data?" It is not possible for me to assess
+- "How should I analyze my data?" It is not possible for me to assess
 the statistical properties of a procedure if I do not precisely
-understand what hypothesis you want to test or what quantity you want
-to estimate. You should reflect, with your collaborators, to one or
-several research questions before I can be of any use. <br>
+understand what hypothesis you want to test nor what quantity you want
+to estimate. <br>
+![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+width="30px"} You should reflect, with your collaborators, to one or
+several research questions before reaching to me. <br>
 ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} for the integrety of subsequent data analysis, you
+width="30px"} For the integrety of subsequent data analysis, you
 should stay blinded to the data, especially the exposure-outcome
-relationship. Univariate descriptive statistics can be ok.  <br> <br>
+relationship. Univariate descriptive statistics can be ok.
 
-"How is the best statistical approach to answer my research question?"
-Best with respect to what: type 1 error control, statistical power,
-bias, interpretability, feasibility, tradition? Those are often
-conflicting objectives: to achieve optimal type 1 error control one
-could use permutation tests at the expense of interpretability due to
-the lack of corresponding confidence intervals. Double robust
-estimators can be used to minimize bias at the cost of complex
-statistical procedures.
+- "How is the best statistical approach to answer my research
+question?"  Best with respect to what: type 1 error control,
+statistical power, bias, interpretability, feasibility, tradition?
+Those are often conflicting objectives: to achieve optimal type 1
+error control one could use permutation tests at the expense of
+interpretability due to the lack of corresponding confidence
+intervals. Double robust estimators can be used to minimize bias at
+the cost of complex statistical procedures. <br>
 ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
 width="30px"} I can help you with expliciting the pros- and cons- of
 different statistical procedures. Sometimes there is an obvious better
 procedure, sometimes several procedures are all reasonnable with
 different trade-off. You can choose one for the main analysis
 (typically the most interpretable) and keep the others for sensitivity
-analyses. <br> <br>
+analyses. 
 
-"Making sure my analysis is correct" or "Can you check my analysis is
-  correct": those are too broad questions. It would be like going to
-  the doctor and ask him whether he can check that you are
+- "Making sure my analysis is correct" or "Can you check my analysis
+  is correct": those are too broad questions. It would be like going
+  to the doctor and ask him whether he can check that you are
   heatlhy. Yes with infinite time and ressources the doctor could do
-  many examinations & tests but this is not common practice. Instead
-  you should point out what your concern is and what you
-  attempted to mitigate it.
+  many examinations & tests but this is not common practice. <br>
+  ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+  width="30px"} Explicit what your concern is and what you attempted
+  to mitigate it.
 
 ## How to get help?
 
