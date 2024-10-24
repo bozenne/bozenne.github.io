@@ -24,19 +24,13 @@ and Master students.
   + we arrange a meeting where I will discuss one or a few common questions in a 15-30 min, interactive, presentation. The rest of the time is Q & A, leaving time to adress more specialized questions. <br>
   ![](https://bozenne.github.io/img/idea.jpg){:height="30px" width="30px"} Discuss with your supervisor when is the relevant time to have this discussion and who to include <br> <br> 
 
-
 - **Assistance for performing a statistical analysis**: <br> You would
-like to perform a statistical analysis but would like a statistician
-to supervise your work. It could also be that you would like to
-perform a specific type of analysis (e.g. replicating what another
-article previously did) but you need some help to carry it out. <br>
-![](https://bozenne.github.io/img/idea.jpg){:height="30px"
-width="30px"} PhD students/new post-docs: invite your supervisor to
-the first consultation.  <br> ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-  width="30px"} I cannot help you with "Making sure my analysis is
-  correct" or "Can you check my analysis is correct": those are too
-  broad questions. It would be like going to the doctor and ask him
-  whether he can check that you are heatlhy. <br> <br>
+    help from a statistician to decide upon and carry a statistical
+    analysis to answer a research question. Or you would like help to
+    replicate the statistical methodology from a published paper. <br>
+    ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+    width="30px"} PhD students/new post-docs: invite your supervisor
+    to the first consultation.
 
 - **Technical questions**: <br> You have a specific question, it could
   be a software question, e.g.  _which package to use in R for fitting
@@ -51,11 +45,6 @@ the first consultation.  <br> ![](https://bozenne.github.io/img/warning.jpg){:he
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} Should be somehow related to statistics and not pure
   data management or data visualization question. <br> 
-  ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-  width="30px"} I cannot help you with "Making sure my analysis is
-  correct" or "Can you check my analysis is correct": those are too
-  broad questions. It would be like going to the doctor and ask him
-  whether he can check that you are heatlhy.  <br> <br>
 
 - **Externalizing the statistical analysis**: <br> You want a
 statistician to perform the statistical analysis for you. Don't expect
@@ -73,8 +62,44 @@ my domain of expertise in statistics but I can give you some feedback
 and help you with simple power calculation. <br>
 ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
 width="30px"} Make sure to plan sufficient time (> 1 week) for the
-power calculation: I do not help you with "emergency" power
-calculation. <br> <br>
+power calculation as I will generally not be able to help you with
+"emergency" power calculation. <br> <br>
+
+## What can I cannot help you with?
+
+"How should I analyze my data?" It is not possible for me to assess
+the statistical properties of a procedure if I do not precisely
+understand what hypothesis you want to test or what quantity you want
+to estimate. You should reflect, with your collaborators, to one or
+several research questions before I can be of any use. <br>
+![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+width="30px"} for the integrety of subsequent data analysis, you
+should stay blinded to the data, especially the exposure-outcome
+relationship. Univariate descriptive statistics can be ok.  <br> <br>
+
+"How is the best statistical approach to answer my research question?"
+Best with respect to what: type 1 error control, statistical power,
+bias, interpretability, feasibility, tradition? Those are often
+conflicting objectives: to achieve optimal type 1 error control one
+could use permutation tests at the expense of interpretability due to
+the lack of corresponding confidence intervals. Double robust
+estimators can be used to minimize bias at the cost of complex
+statistical procedures.
+![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+width="30px"} I can help you with expliciting the pros- and cons- of
+different statistical procedures. Sometimes there is an obvious better
+procedure, sometimes several procedures are all reasonnable with
+different trade-off. You can choose one for the main analysis
+(typically the most interpretable) and keep the others for sensitivity
+analyses. <br> <br>
+
+"Making sure my analysis is correct" or "Can you check my analysis is
+  correct": those are too broad questions. It would be like going to
+  the doctor and ask him whether he can check that you are
+  heatlhy. Yes with infinite time and ressources the doctor could do
+  many examinations & tests but this is not common practice. Instead
+  you should point out what your concern is and what you
+  attempted to mitigate it.
 
 ## How to get help?
 
