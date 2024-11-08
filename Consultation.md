@@ -19,14 +19,15 @@ common mistakes are summarized on a separate
 ## What can I help you with?
 
 - **Group consultation**: this is the recommended format for Bachelor
-and Master students.  + students should collect questions, ideally
-with real data example, and send them to me.  + we arrange a meeting
-where I will discuss one or a few common questions in a 15-30 min,
-interactive, presentation. The rest of the time is Q & A, leaving time
-to adress more specialized questions. <br>
-![](https://bozenne.github.io/img/idea.jpg){:height="30px"
-width="30px"} Discuss with your supervisor when is the relevant time
-and who to include.
+and Master students.
+    + students should collect questions, ideally with real data
+    example, and send them to me.
+    + we arrange a meeting where I will discuss one or a few common
+    questions in a 15-30 min, interactive, presentation. The rest of
+    the time is Q & A, leaving time to adress more specialized
+    questions. <br>![](https://bozenne.github.io/img/idea.jpg){:height="30px"width="30px"}
+    Discuss with your supervisor when is the relevant time and who to
+    include.
 
 - **Assistance for performing a statistical analysis**: <br> You would
     help from a statistician to decide upon and carry a statistical
@@ -78,7 +79,7 @@ to estimate. <br>
 width="30px"} You should reflect, with your collaborators, to one or
 several research questions before reaching to me. <br>
 ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-width="30px"} For the integrety of subsequent data analysis, you
+width="30px"} For the integrity of subsequent data analysis, you
 should stay blinded to the data, especially the exposure-outcome
 relationship. Univariate descriptive statistics can be ok.
 
