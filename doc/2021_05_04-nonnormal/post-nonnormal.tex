@@ -1,4 +1,4 @@
-% Created 2021-05-04 Tue 23:43
+% Created 2024-12-09 ma 11:41
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -203,7 +203,7 @@ linkcolor=[rgb]{0,0,0.5},
  pdftitle={Handling deviation from normality},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 26.3 (Org mode 9.4.5)},
+ pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
  pdflang={English}
  }
 \begin{document}
@@ -213,7 +213,7 @@ linkcolor=[rgb]{0,0,0.5},
 "My data is not normally distributed. What should I do?" \newline In
 my views, this is a very vague question. It is a bit like going to the
 doctor and asking him: \newline "My body temperature is outside of the
-36-37\textdegree C normal range. What should I do?"  In many cases
+36-37\textdegree C normal range. What should I do?" In many cases
 statistical methods are robust (i.e. ensure approximate type 1 error
 control and give nearly efficient estimators) to "small" deviations
 from normality. So while it is a good idea to check for normality, it
@@ -267,7 +267,7 @@ groups it is normally distributed.
 \clearpage
 
 \section{Statistical properites}
-\label{sec:org84b8645}
+\label{sec:orgb4dfed2}
 
 When we use a statistical procedure to estimate a parameter of
 interest (say \(\theta\)), we generally want to report an estimate of
@@ -310,7 +310,7 @@ correctly).
 \clearpage
 
 \section{Should we worry about normality?}
-\label{sec:orge958418}
+\label{sec:org608019c}
 
 Most statistical procedures do not require any normality assumption to
 provide consistent estimates with asymptotically valid confidence
@@ -318,12 +318,13 @@ intervals and p-values. For instance t-tests and linear regressions
 can be shown to provide consistent and asymptotically normally
 distributed estimates in large iid \footnote{independent and identically
 distributed} samples, regardless to whether they are normally
-distributed as soon as their first two moments are finite. Here it is
-important to distringuish between the distribution of the outcome (say
-\(Y\)) and the distribution of the parameter of interest, often the
-mean of \(Y\). Averaging "normalizes" the distribution, which is
-formalized in the central limit theorem, and illustrated on
-\autoref{fig:distAverage}:
+distributed as soon as their first two moments are finite\footnote{For some
+statistical tests, this requires to use robust instead of model-based
+standard error}. Here it is important to distringuish between the
+distribution of the outcome (say \(Y\)) and the distribution of the
+parameter of interest, often the mean of \(Y\). Averaging "normalizes"
+the distribution, which is formalized in the central limit theorem,
+and illustrated on \autoref{fig:distAverage}:
 
 \begin{figure}[!h]
 \centering
@@ -345,7 +346,7 @@ though the normality assumption is not fullfilled
 
 \clearpage
 
-Does that mean we should not worry about normality? No:
+\noindent Does that mean we should not worry about normality? No:
 \begin{enumerate}
 \item we may have a valid test / consistent estimate of a meaningless
 parameter.
@@ -353,14 +354,8 @@ parameter.
 \item our estimator may not be efficient. This is usually not a problem,
 except when we loose so much efficiency that the estimate becomes
 very variable. This typically happen in presence of outliers.
-\item no assuming normality complicates the understanding the group
-effect, as the normal distribution is one of the few distribution
-that can be summarized by two, easily interpretable, independent,
-parameters (mean and variance).
-\item no assuming normality complicates other diagnostic tests, e.g.
-correlation is not independence and mean
 \end{enumerate}
-In the following we will focus on issue 1-3.
+In the following we will discuss issues 1 to 3.
 
 \begin{figure}[!h]
 \centering
@@ -368,17 +363,20 @@ In the following we will focus on issue 1-3.
 \caption{\label{fig:coverage}Coverage of the t-test.}
 \end{figure}
 
-
+\uline{Note:} not assuming normality complicates the understanding the group
+  effect: the normal distribution is one of the few distribution that
+  can be summarized by two, easily interpretable, independent,
+  parameters (mean and variance).
 
 \clearpage
 
-\section{Issue 1: parameter of interest with non-normal data}
-\label{sec:org6ae3e82}
+\section{Issue 1: parameter of interest}
+\label{sec:orgd553f52}
 
 By default, we generally use the mean to define our parameter of
 interest. In our example the difference in mean between the two groups
 meaning that we summarize the distribution of the outcome for each
-group by its mean (or expected value) and then take the difference
+group by its mean (also refered to as 'expected value') and then take the difference
 between groups. This is somehow arbitrary, we could have used another
 summary statistic like the standard deviation, the median (or any
 other quantile), the mode, \ldots. However it is not completely arbitrary:
@@ -400,68 +398,119 @@ be true. While they approximately hold if the distribution is unimodal
 and symmetric, they are not valid for asymetric or bimodal
 distribution. For instance, the mean of a binary variable will
 correspond to a value that is never observed! If we look at
-\autoref{fig:mmm}, we can see that the mean is far from being the most
-likely value (i.e. the mode). The median is slightly closer to the
-mode but does not really provide a satisfactory improvement. 
-
-\clearpage
+\autoref{fig:mmm}, we can see that the mean is not the most likely value
+(i.e. the mode). The median is slightly closer to the mode but does
+not really provide a satisfactory improvement.
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=\textwidth]{./figures/meanMedianMode.pdf}
+\includegraphics[width=0.85\textwidth]{./figures/meanMedianMode.pdf}
 \caption{\label{fig:mmm}Mean, median, and mode two asymetric distributions.}
 \end{figure}
 
+\clearpage
 
  In such a case, it can be a good idea to define a new parameter of
 interest. One could for instance apply a transformation that
-normalizes the distribution (e.g. log-transformation, see \autoref{fig:logmean}), estimate the
-mean of the transformed data (here 1.1 vs 1.8), and compare them
-across groups (here 0.7). In the case of a log-transformation, the
-back-transformed difference and get a nice interpretation has a nice
+normalizes the distribution (e.g. log-transformation, see
+\autoref{fig:logmean}), estimate the mean of the transformed data (here
+1.1 vs 1.8), and compare them across groups (here 0.7). In the case of
+a \textbf{log-transformation}, the back-transformed difference has a nice
 interpration: it is a multiplicative effect (exp(0.7)=2, i.e. the mean
 in the treatment is twice larger than in the control group). So,
-instead of studying an additive group effect (on the mean), the parameter of
-interest is a multiplicative group effect (on the mean).
+instead of studying an additive group effect (on the mean), \textbf{the
+parameter of interest is a multiplicative group effect} (on the
+mean). Technically this requires additional assumptions, such as
+homoschedasticity, that are not discussed here.
 
-
-\clearpage
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=\textwidth]{./figures/logmean.pdf}
+\includegraphics[width=0.85\textwidth]{./figures/logmean.pdf}
 \caption{\label{fig:logmean}Mean, median, and mode on the log-transformed data}
 \end{figure}
 
+\noindent There are other possible parameter of interest, e.g.:
+\begin{itemize}
+\item The \textbf{Mann-Whitney parameter} \(\Prob[X\geq Y] +
+  \frac{1}{2}\Prob[X=Y]\): this is the probability that a randomly
+chosen individual from the active group has a larger value than a
+randomly individual from the control group. 
+\begin{description}
+\item[{\(\rightarrow\)}] it is closely related to the
+Wilcoxon-Mann-Whitney test and the AUC
+\item[{\(\rightarrow\)}] not (completely) straightforward causal
+interpretation \citep{fay2018causal}.
+\item[{\(\rightarrow\)}] implementation: see the function \texttt{wmwTest} from
+the asht package \newline \Warning in presence of
+heteroschedasticity (variance that differs between groups) one
+should use another tool (see the BuyseTest package)
+\end{description}
 
-TODO: Mann-Whitney parameter (e.g. if one cannot find a good transformation), Zero inflated model (example 4)
+\item One could dichotomize the outcome to \textbf{compare the probability of a
+high outcome value} between the two groups. This can be relevant in
+presence of a important ceiling effect.
+\begin{description}
+\item[{\(\rightarrow\)}] implementation: see the function
+\texttt{uncondExact2x2} from the exact2x2 package for comparing
+proportions.
+\end{description}
+\end{itemize}
 
 \clearpage
 
-\section{Issue 2: handling small samples with non-normal data}
-\label{sec:orgb081a90}
+\section{Issue 2: handling small samples}
+\label{sec:org2adbf1f}
 
-Bias correction
-
-Permutation tests
-
-Robust standard error
-
-
-
-
-\clearpage
+In small samples, traditional methods will not provide a very accurate
+type 1 error control or coverage as illustrated in
+\autoref{fig:coverage}.
+\begin{itemize}
+\item \textbf{permutation methods} can be used to obtain exact type 1 error control
+under exchangeability. Exchangeability is violated when
+testing a mean difference between the groups while there is a
+difference in variance. In such a case studentized permutation
+should be used instead \citep{chung2016asymptotically}. \newline
+\(\rightarrow\) this will produce valid p-values but no confidence
+intervals
+\item \textbf{bootstrap resampling methods} can be used to reduce the coverage
+error error in small samples. This includes studentized
+non-parametric bootstrap where the bootstrap test statistic is used
+to estimate the quantiles used in the confidence intervals (instead
++/- 1.96) or bias-corrected and accelerated (BCa) bootstrap interval
+(see the boot package). \newline \Warning Not all bootstrap methods
+have good sample properties, e.g. the 'standard' non-parametric
+bootstrap using the quantiles of the boostrap distribution of the
+parameter of interest does not have very attractive small sample
+properties.
+\end{itemize}
+There are also analytic correction for improving the small sample
+properties but there typically are specific to a statistical
+model/test and are not discussed here.
 
 \section{Issue 3: handling outliers}
-\label{sec:org8cb9ab4}
+\label{sec:org78080f1}
 
-No good solution here.
-Check the influence of each observation. Median more robust than mean.
+Most of the statistics will quantify some kind of average difference
+between groups. One observation with a very large value may have large
+influence on this average. If that is a concern, rank-based statistics
+(e.g. median, Mann-Whitney parameter, probability of a high-value) may
+be seen as more fair statistics in the sense that all observations
+have the same weight on the summary statistic.
+\begin{description}
+\item[{\Warning}] Artificially reducing the outcome value (e.g. to be at
+most the mean plus 2 standard deviation) is generally a bad idea: it
+will induce a downward bias in the estimated mean and can lead to
+inflated type 1 error (if the probability of a large value is group
+dependent)
+\end{description}
+
+\clearpage
 
 
 
 \section{References}
-\label{sec:org0cd96a4}
+\label{sec:org5860ce6}
 \begingroup
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}

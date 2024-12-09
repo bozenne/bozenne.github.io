@@ -3655,6 +3655,16 @@ plot(e.KM)
 [[file:./figures/fig-delayedTreatmentEffect.pdf]]
 
 ** Tune optimization parameters
+# control and lava.options
+# method Optimization method (NR, nlminb1,. . . )
+# iter.max (=300)
+# tol (=1e-9)
+# gamma Reduction in step-size NR (default 1 + back-tracing)
+# start starting values (named vector, see coef)
+# param (=’relative’)
+# constrain (=FALSE)
+# silent (=FALSE)
+# trace (=0)
 ** Interaction in lava (mean coefficients)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
