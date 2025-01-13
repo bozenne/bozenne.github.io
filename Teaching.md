@@ -5,13 +5,13 @@ permalink: /Teaching/
 ---
 
 ## Courses
-I am currently teaching in three courses at the University of Copenhagen (KU):
+I am currently teaching three courses at the University of Copenhagen (KU):
 - [Epidemiological methods in medical
   research](https://absalon.ku.dk/courses/58764). This is a 10 day
   Ph.D. course for medical researchers, starting in January and ending
   in March . I am the course director in collaboration with the
   epidemiology section of KU.
-  + general information: [planning]((https://bozenne.github.io/doc/Teaching/2025-Epi/General/Skema2025-provisional.pdf), [Project description](https://bozenne.github.io/doc/Teaching/2025-Epi/General/Project-Description.pdf), [R refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/R-refresher.pdf), [stat refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/stat-refresher.pdf).
+  + general information: [planning](https://bozenne.github.io/doc/Teaching/2025-Epi/General/Skema2025-provisional.pdf), [Project description](https://bozenne.github.io/doc/Teaching/2025-Epi/General/Project-Description.docx), [R refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/R-refresher.pdf), [stat refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/stat-refresher.pdf).
   + material for day 1: [Introduction](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_0_-_Welcome.pdf), [lecture 1](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lektion 1 - Introduction to Epidemiology_absalon-1.pdf), [lecture 2](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_2_-_Measure_of_disease_frequency_FINAL.pdf), [R demo](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_2_-_R_demo.pdf).
   + material for day 2: [practical 1](https://bozenne.github.io/doc/Teaching/2025-Epi/Day2/P1-association.pdf).
 
