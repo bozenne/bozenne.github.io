@@ -6,95 +6,65 @@ library(lava)
 library(ggplot2)
 library(data.table)
 library(truncnorm)
-path <- "~/Documents/GitHub/bozenne.github.io/doc/2021_05_04-nonnormal/"
+path <- "~/Documents/Github/bozenne.github.io/doc/2021_05_04-nonnormal/"
 setwd(path)
 #+END_SRC
 
 #+RESULTS:
 : Fejl i setwd(path) : cannot change working directory
 
-\noindent A question that often arise in consultations is: \newline
-"My data is not normally distributed. What should I do?" \newline In
-my views, this is a very vague question. It is a bit like going to the
-doctor and asking him: \newline "My body temperature is outside of the
-36-37\textdegree C normal range. What should I do?" In many cases
-statistical methods are robust (i.e. ensure approximate type 1 error
-control and give nearly efficient estimators) to "small" deviations
-from normality. So while it is a good idea to check for normality, it
-is not a good idea to change statistical tool just because you get a
-significant p-value out of a Shapiro test. If I follow the analogy,
-medicine can be harmful and one should not take medicine every time
-ones body temperature is outside the normal range. It is however a
-good idea to check what is going on when your temperature is high to
-make sure it does not hide something bad.
+\noindent A question that often arise in consultations is:
 
-\bigskip
+#+BEGIN_CENTER
+"My data is not normally distributed. What should I do?"
+#+END_CENTER
 
-To ease the discussion, we will consider a simple example where we
-want to compare the outcome distribution between two groups. We assume
-to have no missing data and no measurement error, and that no external
-covariate is relevant. In that case, we can visualize the distribution
-of the outcome per group and perform the comparison "visually". We
-will consider four examples (autoref:fig:examples):
-- Normally distributed outcomes: no problem here.
-- Student distributed outcomes: symetric and unimodal distribution but with outliers.
-- Gamma distributed outcomes: asymetric distribution.
-- Normally distributed outcomes with ceilling effect: many observations have exactly the same value.
+\noindent I find it difficult to answer as it is vague. It is a bit
+like going to the doctor and asking him:
 
+#+BEGIN_CENTER
+ "My body temperature is outside of
+the 36-37\textdegree C normal range. What should I do?"
+#+END_CENTER
 
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-set.seed(10)
+\noindent In some cases statistical methods are robust (i.e. ensure
+approximate type 1 error control and give nearly efficient estimators)
+to "small" deviations from normality. So while it is a good idea to
+check for normality, it is not a good idea to change statistical tool
+just because you get a significant p-value out of a Shapiro test. If I
+follow the analogy, medicine can be harmful and one should not take
+medicine every time ones body temperature is outside the normal
+range. It is however a good idea to check what is going on when your
+temperature is high to make sure it does not hide something bad. First
+thing to consider is the type of variable for which the concern about
+normality arised:
+  - *outcome*: non-normality can be a threat to the interpretability
+    of the estimate and the validity of subsquent hypothesis
+    test. Example of non-normality are shown in autoref:fig:examples
+    and corresponding solution are discussed section [[#sec:outcome]].
+  - *exposure*: generally not a problem. One notable exception is in
+    presence of outliers when assuming a linear exposure effect as the
+    outliers may have an unacceptable influence on the exposure effect
+    (see autoref:fig:leverage for example). This will be discussed in
+    section [[#sec:exposure]].
+  - *covariate*: generally not a problem. One notable exception is in
+    presence of outliers when assuming a linear exposure effect as the
+    outliers may have an unacceptable influence on the exposure
+    effect. Possible solutions relaxing the linearity assumption
+    (using splines or categorizing the covariate). If the covariate is
+    not strongly related to the outcome one can also consider
+    excluding it from the model. It is not further discussed in this
+    document.
 
-n <- 1e5
-dt <- rbind(data.table(Y = rnorm(n, mean = 0, sd = 1), group = "C", example = "1. Gaussian"),
-            data.table(Y = rnorm(n, mean = 1, sd = 1), group = "T", example = "1. Gaussian"),
-            data.table(Y = rt(n, df = 4), group = "C", example = "2. Student"),
-            data.table(Y = rt(n, df = 4) + 1, group = "T", example = "2. Student"),
-            data.table(Y = rgamma(n, shape = 2, rate = 1/2), group = "C", example = "3. Gamma"),
-            data.table(Y = 2*rgamma(n, shape = 2, rate = 1/2), group = "T", example = "3. Gamma"),
-            data.table(Y = pmin(rnorm(n, mean = 0, sd = 1),2.5), group = "C", example = "4. Ceilling effect"),
-            data.table(Y = pmin(rnorm(n, mean = 1, sd = 1),2.5), group = "T", example = "4. Ceilling effect"))
-ggDens <- ggplot(dt, aes(x=Y,fill=group))
-ggDens <- ggDens + geom_histogram(breaks = seq(-3,10, by = 0.1), position = "dodge") + facet_wrap(~example)
-ggDens <- ggDens + coord_cartesian(xlim = c(-3,7)) + ylab("Number of observations")
-ggDens <- ggDens + theme(text = element_text(size=20), 
-                          axis.line = element_line(size = 1.25),
-                          axis.ticks = element_line(size = 2),
-                          axis.ticks.length=unit(.25, "cm"))
-ggsave(ggDens, filename = file.path("figures","examples-hist.pdf"))
-#+END_SRC
-
-#+RESULTS:
-: Saving 7 x 7 in image
+\noindent Before discussing any solution, the next section what is understood as
+a 'good' or a 'valid' statistical procedure.
 
 \clearpage
 
-\vfill
-
-#+name: fig:examples
-#+ATTR_LaTeX: :width \textwidth :placement [!h]
-#+CAPTION: Example datasets.
-[[./figures/examples-hist.pdf]]
-
-\Warning if any, distributional assumptions are usually made on the resiudal terms, e.g:
-#+begin_export latex
-\begin{align*}
-Y = X \beta + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
-\end{align*}
-#+end_export
-
-
-and not on the outcome \(Y\). Concretely, we don't assume that the
-outcome is normally distributed but that within groups (or once we
-remove the group effect) it is normally distributed. In example 1, the
-outcome is clearly not normally distributed (it is bimodal) but within
-groups it is normally distributed.
-
-\vfill
-
-\clearpage
-
-* Statistical properites
+* Statistical properties
+:PROPERTIES:
+:CUSTOM_ID: sec:properties
+:END:
 
 When we use a statistical procedure to estimate a parameter of
 interest (say \(\theta\)), we generally want to report an estimate of
@@ -108,12 +78,15 @@ therefore distinguish three properties for a statistical procedure:
 - *validity of the estimate*: the estimate should tend to the true
   value as we increase the sample size (consistency) or the average
   estimate should tend to the true value as repeat the
-  experiment (unbiasedness).
+  experiment (unbiasedness). 
 - *validity of the uncertainty*: the confidence interval should have
   proper coverage, typically they should contain the true value with
   probablity 95%. The p-value should have a uniform distribution under
   the null meaning that the type 1 error is controlled at its nominal
   level, typically 5%.
+- *robustness*: means that the validity of the estimate and
+  uncertainty is not (dramatically) altered when the sample is altered
+  by a fixed proportion of extreme values (say 1% of outliers).
 - *efficiency*: the procedure is optimal in the sense that it makes
   the best use of the data at hand. \newline For instance we expect
   the estimates to be as precise as possible, i.e. to have the
@@ -130,11 +103,406 @@ therefore distinguish three properties for a statistical procedure:
   replicating studies and performing a meta-analysis. A non-efficient
   estimator can still give useful and valid results - it will "just"
   waste ressources but not be misleading (if used and interpreted
-  correctly).
+  correctly). Typically robustness can be acquired at the expense of
+  efficiency (and interpretability).
 
 \clearpage
 
-* Should we worry about normality? 
+* Non-normal exposure
+:PROPERTIES:
+:CUSTOM_ID: sec:exposure
+:END:
+
+Consider the following example shown in autoref:fig:leverage (example 5.1 in cite:maronna2019robust) evaluating the association between the
+contents of Western Australian rocks. Consider first a *linear
+relationship*:
+- one point has a significant impact on the regression slope: 0.135
+  (p<0.001) vs 0.030 (p=0.18) when exluded. The 'red' regression line
+  does not seems to be a reasonnable summary of the association.
+- even after removal of observation 15, the exposure is still far from
+  following a normal distribution as it seems very
+  right-skewed. Nevertheless the 'blue' regression line seems to be a
+  reasonnable summary of the association.
+- modeling the median instead of the mean only partially solves the
+  issue: observation 15 has still a noticeable influence on the slope
+  (0.080 vs. 0.056). In fact in a more extreme example shown in the
+  right panel of As shown in autoref:fig:leverageExtreme one could
+  construct example where a small fraction of outliers would still be
+  very influencial.
+
+\noindent Consider instead a *non-linear* relationship:
+- using thin plate regression splines seems to provide a reasonnable
+  summary of the association with a different slope for small copper
+  value compared to high copper content. The later slope is probably
+  estimated with a lot of uncertainty due to only few observations
+  with high copper content: this could be seen from the width of the
+  confidence intervals of the regression line.
+
+#+LaTeX: \vspace{-1cm}
+
+#+LaTeX: \begin{minipage}{0.475\linewidth} 
+#+name: fig:leverage
+#+ATTR_LaTeX: :width \textwidth :placement [H]
+#+CAPTION: Real data with non-normal exposure.
+[[./figures/examples-leverage.pdf]]
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.475\linewidth} 
+#+name: fig:leverageExtreme
+#+ATTR_LaTeX: :width \textwidth :placement [H]
+#+CAPTION: Simulated data with non-normal exposure.
+[[./figures/examplesExtreme-leverage.pdf]]
+
+#+LaTeX: \end{minipage}
+
+\clearpage
+
+\noindent This example illustrate several key considerations:
+- the exposure does not need to be normally distributed for
+  statistical methods to apply BUT parametric assumptions, such as
+  linearity, make common statistical tools sensitive to extreme
+  values.
+- it can be a good idea to restrict the study of the exposure to
+  commonly observed values. This is similar to an inclusion criteria in
+  a clinical trial on the disease severity (e.g. not including
+  terminally ill patients).
+- some methods sometimes refered as 'robust', like median or quantile
+  regression, have been developped to handle extreme values in the
+  outcome not in the exposure and thus may not lead to a satisfactory
+  solution. For instance, median regression minimizes the average of
+  the absolute residuals and can therefore be greatly influenced by a
+  single leverage point.
+- solutions include relaxing parametric assumptions or using more
+  specialized 'robust' technics, e.g. estimators based on a robust
+  summary of the residual (e.g. median of the absolute
+  residuals). They typically make the interpretation more challenging
+  either because there is no more a single number describing the
+  association or the single number is no more 'just' a mean or median
+  difference in the population of interest.
+
+
+** \Rlogo code
+
+*** No covariate
+
+Load data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(RobStatTM) 
+data(mineral)
+mineral <- mineral[order(mineral$copper),]
+head(mineral)
+#+END_SRC
+
+#+RESULTS:
+:    copper zinc
+: 41      4    4
+: 48     12    3
+: 49     14   10
+: 36     17   15
+: 42     18   10
+: 26     19   17
+
+Quick assessment of normality of the exposure:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+shapiro.test(mineral$copper)
+#+END_SRC
+
+#+RESULTS:
+: 
+: 	Shapiro-Wilk normality test
+: 
+: data:  mineral$copper
+: W = 0.67314, p-value = 1.374e-09
+
+Analysis:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(quantreg)
+library(mgcv)
+library(robust)
+library(RobStatTM)
+
+set.seed(1)
+e.mean <- lm(zinc ~ copper, data = mineral)
+e15.mean <- lm(zinc ~ copper, data = mineral[-NROW(mineral),])
+e.median <- rq(zinc ~ copper, data = mineral)
+e15.median <- rq(zinc ~ copper, data = mineral[-NROW(mineral),])
+e.lmRob <- lmRob(zinc ~ copper, data = mineral)
+e.lmRob2 <- lmrobdetMM(zinc ~ copper, data = mineral,
+                       control = lmrobdet.control(family = "bisquare"))
+e.gam <- gam(zinc ~ s(copper), data = mineral)
+
+rbind(mean.all = summary(e.mean)$coef["copper",],
+      median.all = summary(e.median, se = "boot")$coef["copper",],
+      rob.all = summary(e.lmRob)$coef["copper",],
+      rob2.all = summary(e.lmRob2)$coef["copper",],
+      mean.red = summary(e15.mean)$coef["copper",],
+      median.red = summary(e15.median, se = "boot")$coef["copper",])
+#+END_SRC
+
+#+RESULTS:
+:              Estimate Std. Error   t value     Pr(>|t|)
+: mean.all   0.13456951 0.01982765 6.7869632 1.181421e-08
+: median.all 0.08024691 0.05326053 1.5066864 1.380606e-01
+: rob.all    0.01471517 0.02424047 0.6070496 5.465113e-01
+: rob2.all   0.03118872 0.02082673 1.4975332 1.404186e-01
+: mean.red   0.02974749 0.02205388 1.3488551 1.834611e-01
+: median.red 0.05590062 0.04380294 1.2761843 2.077867e-01
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("figures/examples-leverage.pdf", width = 6, height = 6)
+plot(mineral$copper,mineral$zinc, xlab = "Copper", ylab = "Zinc")
+points(mineral$copper,fitted(e.mean), col = "red", type = "l", lwd = 2)
+points(mineral$copper,fitted(e.median), col = "orange", type = "l", lwd = 2)
+points(mineral$copper[-NROW(mineral)],fitted(e15.mean), col = "blue", type = "l", lwd = 2)
+points(mineral$copper,fitted(e.lmRob2), col = "green", type = "l", lwd = 2)
+points(mineral$copper,fitted(e.gam), col = "lightblue", type = "l", lwd = 2)
+legend("topleft", pch = 19, col = c("red","orange","blue","lightblue","green"), legend = c("lm()","rq()","lm() without the last observation","gam()","lmrobdetMM (bisquare family)"))
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+: windows 
+:       2
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+n <- 100
+set.seed(1)
+
+df.signal <- data.frame(X = rnorm(n),
+                        Y = rnorm(n))
+df.signal <- df.signal[order(df.signal$X),]
+df.extreme <- data.frame(X = rnorm(n/25, mean = 10),
+                         Y = rnorm(n/25, mean = 7))
+df.all <- rbind(df.signal, df.extreme)
+
+e.mean <- lm(Y ~ X, data = df.all)
+e.median <- rq(Y ~ X, data = df.all)
+e15.mean <- lm(Y ~ X, data = df.signal)
+e15.median <- rq(Y ~ X, data = df.signal)
+e.lmRob <- lmRob(Y ~ X, data = df.all)
+e.lmRob2 <- lmrobdetMM(Y ~ X, data = df.all, control = lmrobdet.control(family = "bisquare"))
+
+rbind(mean.all = summary(e.mean)$coef["X",],
+      median.all = summary(e.median, se = "boot")$coef["X",],
+      rob.all = summary(e.lmRob)$coef["X",],
+      rob2.all = summary(e.lmRob2)$coef["X",],
+      mean.red = summary(e15.mean)$coef["X",],
+      median.red = summary(e15.median, se = "boot")$coef["X",])
+
+pdf("figures/examplesExtreme-leverage.pdf", width = 6, height = 6)
+plot(x = df.all$X, y = df.all$Y)
+points(df.all$X,fitted(e.mean), col = "red", type = "l", lwd = 2)
+points(df.all$X,fitted(e.median), col = "orange", type = "l", lwd = 2)
+points(df.signal$X,fitted(e15.mean), col = "blue", type = "l", lty = "dashed", lwd = 2)
+points(df.signal$X,fitted(e15.median), col = "lightblue", type = "l", lty = "dashed", lwd = 2)
+points(df.all$X,fitted(e.lmRob2), col = "green", type = "l", lwd = 2)
+legend("topleft", pch = 19, col = c("red","orange","blue","lightblue","green"), legend = c("lm()","rq()","lm() without 4 outliers","rq() without 4 outliers","lmrobdetMM (bisquare family)"))
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+:                Estimate Std. Error      t value     Pr(>|t|)
+: mean.all    0.586078870 0.04967204 11.798968789 8.889013e-21
+: median.all  0.474072290 0.18334652  2.585662925 1.113167e-02
+: rob.all    -0.011424431 0.13750542 -0.083083498 9.339480e-01
+: rob2.all    0.013981341 0.10995733  0.127152428 8.990701e-01
+: mean.red   -0.001060386 0.10772703 -0.009843269 9.921663e-01
+: median.red  0.094752411 0.10607825  0.893231304 3.739216e-01
+: windows 
+:       2
+
+\clearpage
+
+*** With covariates
+
+We now consider a more complex example (example 5.2 in
+cite:maronna2019robust) involving multiple covariates:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(robustbase) 
+data(wood, package = "robustbase")
+head(wood)
+#+END_SRC
+
+#+RESULTS:
+:      x1     x2    x3    x4    x5     y
+: 1 0.573 0.1059 0.465 0.538 0.841 0.534
+: 2 0.651 0.1356 0.527 0.545 0.887 0.535
+: 3 0.606 0.1273 0.494 0.521 0.920 0.570
+: 4 0.437 0.1591 0.446 0.423 0.992 0.450
+: 5 0.547 0.1135 0.531 0.519 0.915 0.548
+: 6 0.444 0.1628 0.429 0.411 0.984 0.431
+
+\noindent We fit each model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm <- lm(y ~ x1 + x2 + x3 + x4 + x5, data = wood)
+e.lmRob2 <- lmrobdetMM(y ~ x1 + x2 + x3 + x4 + x5, data = wood,
+                       control = lmrobdet.control(family = "bisquare"))
+#+END_SRC
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+e.lmRob <- lmRob(y ~ x1 + x2 + x3 + x4 + x5, data = wood)
+coef(e.lmRob)-coef(e.lmRob2) ## very similar
+#+END_SRC
+
+#+RESULTS:
+:   (Intercept)            x1            x2            x3            x4            x5 
+: -0.0010528610  0.0008666411 -0.0042322187 -0.0004069150 -0.0021614313  0.0028035266
+
+\noindent  And extract the partial residuals
+- either adding the intercept and the contribution to the variable of
+  interest to the residuals:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pres.lm <-  residuals(e.lm) + coef(e.lm)["(Intercept)"] + wood$x1 * coef(e.lm)["x1"]
+pres.robust <- residuals(e.lmRob2) + coef(e.lmRob2)["(Intercept)"] + wood$x1 * coef(e.lmRob2)["x1"]
+#+END_SRC
+
+#+RESULTS:
+
+- or using the =residuals= method  and re-centering the result (to
+  match the original mean instead of 0):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+Mpres.lm2 <- residuals(e.lm, type = "partial")
+centerX.lm <- sum(coef(e.lm)[paste0("x",2:5)] * colMeans(wood)[paste0("x",2:5)])
+pres.lm2 <- Mpres.lm2[,"x1"] + attr(Mpres.lm2, "constant") - centerX.lm
+#+END_SRC
+
+#+RESULTS:
+
+Both approaches give the same up to a constant:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+range(pres.lm - pres.lm2)
+#+END_SRC
+
+#+RESULTS:
+: [1] -1.110223e-16  1.110223e-16
+
+\noindent  We can then combine the partial residuals in a single data.frame:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+df.pres <- rbind(data.frame(method = "lm", x1 = wood2$x1, res = Mpres.lm),
+                 data.frame(method = "robust", x1 = wood2$x1,
+                            res = Mpres.robust))
+#+END_SRC
+#+RESULTS:
+
+and evaluate the model fit along x1 value, keep the other covariates at their reference level (here 0):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+grid.data <- data.frame(x1 = seq(min(wood2$x1),max(wood2$x1),by=0.01),
+                        x2 = 0, x3 = 0, x4 = 0, x5 = 0)
+df.pfit <- rbind(data.frame(method = "lm", x1 = grid.data$x1,
+                            fit = predict(e.lm, newdata = grid.data)),
+                 data.frame(method = "robust", x1 = grid.data$x1,
+                            fit = predict(e.lmRob2, newdata = grid.data))
+                 )
+#+END_SRC
+
+#+RESULTS:
+
+to obtain the following graphical display:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(ggplot2)
+ggP <- ggplot(mapping = aes(x=x1))
+ggP <- ggP + geom_point(data = df.pres,
+                        mapping = aes(y = res, color = method))
+ggP <- ggP + geom_line(data = df.pfit,
+                       mapping = aes(y = fit, color = method))
+ggP <- ggP + labs(x = "x1", y = "Y (partial residuals w.r.t. x1)")
+ggP
+#+END_SRC
+
+#+name: fig:example-covariate
+#+ATTR_LaTeX: :width 1\textwidth :options trim={0 0 0 0} :placement [!h]
+[[./figures/examples-covariates.pdf]]
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+ggsave(ggP, filename = file.path("figures","examples-covariates.pdf"), width = 8, height = 4)
+#+END_SRC
+
+#+RESULTS:
+
+#+LaTeX:\vspace{-1cm}
+
+\noindent This dataset was created to have 4 unusual observations (those with
+ \(x_1<0.45\)). The ordinary linear regression has the better overall
+ fit (smaller variability of the residuals) whereas the robust
+ approach has a better fit on the subset of 'usual' observations
+ (smaller variability of the residuals when excluding the 4 unusual
+ observations).
+
+\clearpage
+
+* Non-normal outcome
+:PROPERTIES:
+:CUSTOM_ID: sec:outcome
+:END:
+
+To ease the discussion, we will consider a simple example where we
+want to compare the outcome distribution between two groups. We assume
+to have no missing data and no measurement error, and that no external
+covariate is relevant. In that case, we can visualize the distribution
+of the outcome per group and perform the comparison "visually". We
+will consider four examples (autoref:fig:examples):
+- Normally distributed outcomes: no problem here.
+- Student distributed outcomes: symetric and unimodal but with outliers.
+- Gamma distributed outcomes: asymetric distribution. 
+- Normally distributed outcomes with ceilling effect: many
+  observations have exactly the same value.
+
+#+name: fig:examples
+#+ATTR_LaTeX: :width 0.9\textwidth :placement [H]
+#+CAPTION: Example of simulated non-normal outcome.
+[[./figures/examples-hist.pdf]]
+
+\noindent \Warning if any, distributional assumptions are usually made on the
+residual terms, e.g:
+#+begin_export latex
+\begin{align*}
+Y = X \beta + \varepsilon \text{ where } \varepsilon \sim \Gaus[0,\sigma^2]
+\end{align*}
+#+end_export
+
+
+and not on the outcome \(Y\). Concretely, we don't assume that the
+outcome is normally distributed but that within groups (or once we
+remove the group effect) it is normally distributed. In example 1, the
+outcome is clearly not normally distributed (it is bimodal) but within
+groups it is normally distributed.
+
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+library(data.table)
+set.seed(10)
+n <- 1e5
+dt <- rbind(data.table(Y = rnorm(n, mean = 0, sd = 1), group = "C", example = "1. Gaussian"),
+            data.table(Y = rnorm(n, mean = 1, sd = 1), group = "T", example = "1. Gaussian"),
+            data.table(Y = rt(n, df = 4), group = "C", example = "2. Student"),
+            data.table(Y = rt(n, df = 4) + 1, group = "T", example = "2. Student"),
+            data.table(Y = rgamma(n, shape = 2, rate = 1/2), group = "C", example = "3. Gamma"),
+            data.table(Y = 2*rgamma(n, shape = 2, rate = 1/2), group = "T", example = "3. Gamma"),
+            data.table(Y = pmin(rnorm(n, mean = 0, sd = 1),2.5), group = "C", example = "4. Ceilling effect"),
+            data.table(Y = pmin(rnorm(n, mean = 1, sd = 1),2.5), group = "T", example = "4. Ceilling effect"))
+ggDens <- ggplot(dt, aes(x=Y,fill=group))
+ggDens <- ggDens + geom_histogram(breaks = seq(-3,10, by = 0.1), position = "dodge") + facet_wrap(~example)
+ggDens <- ggDens + coord_cartesian(xlim = c(-3,7)) + ylab("Number of observations")
+ggDens <- ggDens + theme(text = element_text(size=15), 
+                          axis.line = element_line(size = 1.25),
+                          axis.ticks = element_line(size = 2),
+                          axis.ticks.length=unit(.25, "cm"))
+ggsave(ggDens, filename = file.path("figures","examples-hist.pdf"), width = 9, height = 6)
+#+END_SRC
+
+#+RESULTS:
+: data.table 1.15.4 using 4 threads (see ?getDTthreads).  Latest news: r-datatable.com
+: Advarselsbesked:
+: pakke 'data.table' blev bygget under R version 4.2.3
+: Advarselsbesked:
+: [1m[22mThe `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
+: [36mℹ[39m Please use the `linewidth` argument instead.
+: [90mThis warning is displayed once every 8 hours.[39m
+: [90mCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.[39m
+
+
+** Should we worry about normality? 
 
 Most statistical procedures do not require any normality assumption to
 provide consistent estimates with asymptotically valid confidence
@@ -193,6 +561,11 @@ though the normality assumption is not fullfilled
 
 \clearpage
 
+#+name: fig:coverage
+#+ATTR_LaTeX: :width \textwidth :placement [!h]
+#+CAPTION: Coverage of the t-test.
+[[./figures/examples-coverage.pdf]]
+
 \noindent Does that mean we should not worry about normality? No:
 1. we may have a valid test / consistent estimate of a meaningless
    parameter.
@@ -231,722 +604,6 @@ for(iIndex in 1:length(seqN)){
 }
 #+end_src
 
-#+RESULTS:
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~11s          
-  |+                                                 | 2 % ~11s          
-  |++                                                | 3 % ~11s          
-  |++                                                | 4 % ~10s          
-  |+++                                               | 5 % ~10s          
-  |+++                                               | 6 % ~10s          
-  |++++                                              | 7 % ~10s          
-  |++++                                              | 8 % ~10s          
-  |+++++                                             | 9 % ~10s          
-  |+++++                                             | 10% ~10s          
-  |++++++                                            | 11% ~10s          
-  |++++++                                            | 12% ~10s          
-  |+++++++                                           | 13% ~10s          
-  |+++++++                                           | 14% ~10s          
-  |++++++++                                          | 15% ~09s          
-  |++++++++                                          | 16% ~09s          
-  |+++++++++                                         | 17% ~09s          
-  |+++++++++                                         | 18% ~09s          
-  |++++++++++                                        | 19% ~09s          
-  |++++++++++                                        | 20% ~09s          
-  |+++++++++++                                       | 21% ~09s          
-  |+++++++++++                                       | 22% ~09s          
-  |++++++++++++                                      | 23% ~09s          
-  |++++++++++++                                      | 24% ~09s          
-  |+++++++++++++                                     | 25% ~08s          
-  |+++++++++++++                                     | 26% ~08s          
-  |++++++++++++++                                    | 27% ~08s          
-  |++++++++++++++                                    | 28% ~08s          
-  |+++++++++++++++                                   | 29% ~08s          
-  |+++++++++++++++                                   | 30% ~08s          
-  |++++++++++++++++                                  | 31% ~08s          
-  |++++++++++++++++                                  | 32% ~08s          
-  |+++++++++++++++++                                 | 33% ~08s          
-  |+++++++++++++++++                                 | 34% ~08s          
-  |++++++++++++++++++                                | 35% ~07s          
-  |++++++++++++++++++                                | 36% ~07s          
-  |+++++++++++++++++++                               | 37% ~07s          
-  |+++++++++++++++++++                               | 38% ~07s          
-  |++++++++++++++++++++                              | 39% ~07s          
-  |++++++++++++++++++++                              | 40% ~07s          
-  |+++++++++++++++++++++                             | 41% ~07s          
-  |+++++++++++++++++++++                             | 42% ~07s          
-  |++++++++++++++++++++++                            | 43% ~06s          
-  |++++++++++++++++++++++                            | 44% ~06s          
-  |+++++++++++++++++++++++                           | 45% ~06s          
-  |+++++++++++++++++++++++                           | 46% ~06s          
-  |++++++++++++++++++++++++                          | 47% ~06s          
-  |++++++++++++++++++++++++                          | 48% ~06s          
-  |+++++++++++++++++++++++++                         | 49% ~06s          
-  |+++++++++++++++++++++++++                         | 50% ~06s          
-  |++++++++++++++++++++++++++                        | 51% ~06s          
-  |++++++++++++++++++++++++++                        | 52% ~06s          
-  |+++++++++++++++++++++++++++                       | 53% ~05s          
-  |+++++++++++++++++++++++++++                       | 54% ~05s          
-  |++++++++++++++++++++++++++++                      | 55% ~05s          
-  |++++++++++++++++++++++++++++                      | 56% ~05s          
-  |+++++++++++++++++++++++++++++                     | 57% ~05s          
-  |+++++++++++++++++++++++++++++                     | 58% ~05s          
-  |++++++++++++++++++++++++++++++                    | 59% ~05s          
-  |++++++++++++++++++++++++++++++                    | 60% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~04s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~04s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~03s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~03s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=13s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~11s          
-  |+                                                 | 2 % ~12s          
-  |++                                                | 3 % ~12s          
-  |++                                                | 4 % ~12s          
-  |+++                                               | 5 % ~11s          
-  |+++                                               | 6 % ~11s          
-  |++++                                              | 7 % ~11s          
-  |++++                                              | 8 % ~11s          
-  |+++++                                             | 9 % ~11s          
-  |+++++                                             | 10% ~11s          
-  |++++++                                            | 11% ~10s          
-  |++++++                                            | 12% ~10s          
-  |+++++++                                           | 13% ~10s          
-  |+++++++                                           | 14% ~10s          
-  |++++++++                                          | 15% ~10s          
-  |++++++++                                          | 16% ~10s          
-  |+++++++++                                         | 17% ~10s          
-  |+++++++++                                         | 18% ~09s          
-  |++++++++++                                        | 19% ~09s          
-  |++++++++++                                        | 20% ~09s          
-  |+++++++++++                                       | 21% ~09s          
-  |+++++++++++                                       | 22% ~09s          
-  |++++++++++++                                      | 23% ~09s          
-  |++++++++++++                                      | 24% ~09s          
-  |+++++++++++++                                     | 25% ~09s          
-  |+++++++++++++                                     | 26% ~08s          
-  |++++++++++++++                                    | 27% ~08s          
-  |++++++++++++++                                    | 28% ~08s          
-  |+++++++++++++++                                   | 29% ~08s          
-  |+++++++++++++++                                   | 30% ~08s          
-  |++++++++++++++++                                  | 31% ~08s          
-  |++++++++++++++++                                  | 32% ~08s          
-  |+++++++++++++++++                                 | 33% ~08s          
-  |+++++++++++++++++                                 | 34% ~08s          
-  |++++++++++++++++++                                | 35% ~08s          
-  |++++++++++++++++++                                | 36% ~08s          
-  |+++++++++++++++++++                               | 37% ~08s          
-  |+++++++++++++++++++                               | 38% ~07s          
-  |++++++++++++++++++++                              | 39% ~07s          
-  |++++++++++++++++++++                              | 40% ~07s          
-  |+++++++++++++++++++++                             | 41% ~07s          
-  |+++++++++++++++++++++                             | 42% ~07s          
-  |++++++++++++++++++++++                            | 43% ~07s          
-  |++++++++++++++++++++++                            | 44% ~07s          
-  |+++++++++++++++++++++++                           | 45% ~07s          
-  |+++++++++++++++++++++++                           | 46% ~07s          
-  |++++++++++++++++++++++++                          | 47% ~06s          
-  |++++++++++++++++++++++++                          | 48% ~06s          
-  |+++++++++++++++++++++++++                         | 49% ~06s          
-  |+++++++++++++++++++++++++                         | 50% ~06s          
-  |++++++++++++++++++++++++++                        | 51% ~06s          
-  |++++++++++++++++++++++++++                        | 52% ~06s          
-  |+++++++++++++++++++++++++++                       | 53% ~06s          
-  |+++++++++++++++++++++++++++                       | 54% ~06s          
-  |++++++++++++++++++++++++++++                      | 55% ~06s          
-  |++++++++++++++++++++++++++++                      | 56% ~05s          
-  |+++++++++++++++++++++++++++++                     | 57% ~05s          
-  |+++++++++++++++++++++++++++++                     | 58% ~05s          
-  |++++++++++++++++++++++++++++++                    | 59% ~05s          
-  |++++++++++++++++++++++++++++++                    | 60% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~03s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~12s          
-  |+                                                 | 2 % ~12s          
-  |++                                                | 3 % ~12s          
-  |++                                                | 4 % ~12s          
-  |+++                                               | 5 % ~12s          
-  |+++                                               | 6 % ~12s          
-  |++++                                              | 7 % ~12s          
-  |++++                                              | 8 % ~11s          
-  |+++++                                             | 9 % ~11s          
-  |+++++                                             | 10% ~11s          
-  |++++++                                            | 11% ~11s          
-  |++++++                                            | 12% ~11s          
-  |+++++++                                           | 13% ~11s          
-  |+++++++                                           | 14% ~11s          
-  |++++++++                                          | 15% ~11s          
-  |++++++++                                          | 16% ~10s          
-  |+++++++++                                         | 17% ~10s          
-  |+++++++++                                         | 18% ~10s          
-  |++++++++++                                        | 19% ~10s          
-  |++++++++++                                        | 20% ~10s          
-  |+++++++++++                                       | 21% ~10s          
-  |+++++++++++                                       | 22% ~10s          
-  |++++++++++++                                      | 23% ~10s          
-  |++++++++++++                                      | 24% ~10s          
-  |+++++++++++++                                     | 25% ~09s          
-  |+++++++++++++                                     | 26% ~09s          
-  |++++++++++++++                                    | 27% ~09s          
-  |++++++++++++++                                    | 28% ~09s          
-  |+++++++++++++++                                   | 29% ~09s          
-  |+++++++++++++++                                   | 30% ~09s          
-  |++++++++++++++++                                  | 31% ~09s          
-  |++++++++++++++++                                  | 32% ~08s          
-  |+++++++++++++++++                                 | 33% ~08s          
-  |+++++++++++++++++                                 | 34% ~08s          
-  |++++++++++++++++++                                | 35% ~08s          
-  |++++++++++++++++++                                | 36% ~08s          
-  |+++++++++++++++++++                               | 37% ~08s          
-  |+++++++++++++++++++                               | 38% ~08s          
-  |++++++++++++++++++++                              | 39% ~08s          
-  |++++++++++++++++++++                              | 40% ~08s          
-  |+++++++++++++++++++++                             | 41% ~07s          
-  |+++++++++++++++++++++                             | 42% ~07s          
-  |++++++++++++++++++++++                            | 43% ~07s          
-  |++++++++++++++++++++++                            | 44% ~07s          
-  |+++++++++++++++++++++++                           | 45% ~07s          
-  |+++++++++++++++++++++++                           | 46% ~07s          
-  |++++++++++++++++++++++++                          | 47% ~07s          
-  |++++++++++++++++++++++++                          | 48% ~07s          
-  |+++++++++++++++++++++++++                         | 49% ~06s          
-  |+++++++++++++++++++++++++                         | 50% ~06s          
-  |++++++++++++++++++++++++++                        | 51% ~06s          
-  |++++++++++++++++++++++++++                        | 52% ~06s          
-  |+++++++++++++++++++++++++++                       | 53% ~06s          
-  |+++++++++++++++++++++++++++                       | 54% ~06s          
-  |++++++++++++++++++++++++++++                      | 55% ~06s          
-  |++++++++++++++++++++++++++++                      | 56% ~06s          
-  |+++++++++++++++++++++++++++++                     | 57% ~05s          
-  |+++++++++++++++++++++++++++++                     | 58% ~05s          
-  |++++++++++++++++++++++++++++++                    | 59% ~05s          
-  |++++++++++++++++++++++++++++++                    | 60% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~03s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~12s          
-  |+                                                 | 2 % ~13s          
-  |++                                                | 3 % ~12s          
-  |++                                                | 4 % ~13s          
-  |+++                                               | 5 % ~13s          
-  |+++                                               | 6 % ~12s          
-  |++++                                              | 7 % ~12s          
-  |++++                                              | 8 % ~12s          
-  |+++++                                             | 9 % ~12s          
-  |+++++                                             | 10% ~11s          
-  |++++++                                            | 11% ~11s          
-  |++++++                                            | 12% ~11s          
-  |+++++++                                           | 13% ~11s          
-  |+++++++                                           | 14% ~11s          
-  |++++++++                                          | 15% ~11s          
-  |++++++++                                          | 16% ~11s          
-  |+++++++++                                         | 17% ~11s          
-  |+++++++++                                         | 18% ~10s          
-  |++++++++++                                        | 19% ~10s          
-  |++++++++++                                        | 20% ~10s          
-  |+++++++++++                                       | 21% ~10s          
-  |+++++++++++                                       | 22% ~10s          
-  |++++++++++++                                      | 23% ~10s          
-  |++++++++++++                                      | 24% ~10s          
-  |+++++++++++++                                     | 25% ~09s          
-  |+++++++++++++                                     | 26% ~09s          
-  |++++++++++++++                                    | 27% ~09s          
-  |++++++++++++++                                    | 28% ~09s          
-  |+++++++++++++++                                   | 29% ~09s          
-  |+++++++++++++++                                   | 30% ~09s          
-  |++++++++++++++++                                  | 31% ~09s          
-  |++++++++++++++++                                  | 32% ~08s          
-  |+++++++++++++++++                                 | 33% ~08s          
-  |+++++++++++++++++                                 | 34% ~08s          
-  |++++++++++++++++++                                | 35% ~08s          
-  |++++++++++++++++++                                | 36% ~08s          
-  |+++++++++++++++++++                               | 37% ~08s          
-  |+++++++++++++++++++                               | 38% ~08s          
-  |++++++++++++++++++++                              | 39% ~08s          
-  |++++++++++++++++++++                              | 40% ~07s          
-  |+++++++++++++++++++++                             | 41% ~07s          
-  |+++++++++++++++++++++                             | 42% ~07s          
-  |++++++++++++++++++++++                            | 43% ~07s          
-  |++++++++++++++++++++++                            | 44% ~07s          
-  |+++++++++++++++++++++++                           | 45% ~07s          
-  |+++++++++++++++++++++++                           | 46% ~07s          
-  |++++++++++++++++++++++++                          | 47% ~07s          
-  |++++++++++++++++++++++++                          | 48% ~06s          
-  |+++++++++++++++++++++++++                         | 49% ~06s          
-  |+++++++++++++++++++++++++                         | 50% ~06s          
-  |++++++++++++++++++++++++++                        | 51% ~06s          
-  |++++++++++++++++++++++++++                        | 52% ~06s          
-  |+++++++++++++++++++++++++++                       | 53% ~06s          
-  |+++++++++++++++++++++++++++                       | 54% ~06s          
-  |++++++++++++++++++++++++++++                      | 55% ~06s          
-  |++++++++++++++++++++++++++++                      | 56% ~05s          
-  |+++++++++++++++++++++++++++++                     | 57% ~05s          
-  |+++++++++++++++++++++++++++++                     | 58% ~05s          
-  |++++++++++++++++++++++++++++++                    | 59% ~05s          
-  |++++++++++++++++++++++++++++++                    | 60% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~05s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~04s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~04s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~03s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~12s          
-  |+                                                 | 2 % ~12s          
-  |++                                                | 3 % ~12s          
-  |++                                                | 4 % ~12s          
-  |+++                                               | 5 % ~12s          
-  |+++                                               | 6 % ~12s          
-  |++++                                              | 7 % ~12s          
-  |++++                                              | 8 % ~12s          
-  |+++++                                             | 9 % ~18s          
-  |+++++                                             | 10% ~23s          
-  |++++++                                            | 11% ~27s          
-  |++++++                                            | 12% ~30s          
-  |+++++++                                           | 13% ~32s          
-  |+++++++                                           | 14% ~34s          
-  |++++++++                                          | 15% ~36s          
-  |++++++++                                          | 16% ~37s          
-  |+++++++++                                         | 17% ~38s          
-  |+++++++++                                         | 18% ~39s          
-  |++++++++++                                        | 19% ~40s          
-  |++++++++++                                        | 20% ~40s          
-  |+++++++++++                                       | 21% ~41s          
-  |+++++++++++                                       | 22% ~41s          
-  |++++++++++++                                      | 23% ~41s          
-  |++++++++++++                                      | 24% ~42s          
-  |+++++++++++++                                     | 25% ~42s          
-  |+++++++++++++                                     | 26% ~41s          
-  |++++++++++++++                                    | 27% ~41s          
-  |++++++++++++++                                    | 28% ~41s          
-  |+++++++++++++++                                   | 29% ~41s          
-  |+++++++++++++++                                   | 30% ~41s          
-  |++++++++++++++++                                  | 31% ~41s          
-  |++++++++++++++++                                  | 32% ~41s          
-  |+++++++++++++++++                                 | 33% ~41s          
-  |+++++++++++++++++                                 | 34% ~41s          
-  |++++++++++++++++++                                | 35% ~40s          
-  |++++++++++++++++++                                | 36% ~40s          
-  |+++++++++++++++++++                               | 37% ~39s          
-  |+++++++++++++++++++                               | 38% ~37s          
-  |++++++++++++++++++++                              | 39% ~36s          
-  |++++++++++++++++++++                              | 40% ~35s          
-  |+++++++++++++++++++++                             | 41% ~33s          
-  |+++++++++++++++++++++                             | 42% ~32s          
-  |++++++++++++++++++++++                            | 43% ~31s          
-  |++++++++++++++++++++++                            | 44% ~30s          
-  |+++++++++++++++++++++++                           | 45% ~29s          
-  |+++++++++++++++++++++++                           | 46% ~28s          
-  |++++++++++++++++++++++++                          | 47% ~27s          
-  |++++++++++++++++++++++++                          | 48% ~26s          
-  |+++++++++++++++++++++++++                         | 49% ~25s          
-  |+++++++++++++++++++++++++                         | 50% ~24s          
-  |++++++++++++++++++++++++++                        | 51% ~23s          
-  |++++++++++++++++++++++++++                        | 52% ~23s          
-  |+++++++++++++++++++++++++++                       | 53% ~22s          
-  |+++++++++++++++++++++++++++                       | 54% ~21s          
-  |++++++++++++++++++++++++++++                      | 55% ~20s          
-  |++++++++++++++++++++++++++++                      | 56% ~20s          
-  |+++++++++++++++++++++++++++++                     | 57% ~19s          
-  |+++++++++++++++++++++++++++++                     | 58% ~18s          
-  |++++++++++++++++++++++++++++++                    | 59% ~18s          
-  |++++++++++++++++++++++++++++++                    | 60% ~17s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~16s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~16s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~15s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~15s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~14s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~14s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~13s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~12s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~12s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~11s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~11s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~11s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~10s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~10s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~09s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~09s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~08s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~08s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~07s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~07s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~07s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~06s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~06s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~05s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~05s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~05s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~04s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~04s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~04s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=31s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~12s          
-  |+                                                 | 2 % ~12s          
-  |++                                                | 3 % ~13s          
-  |++                                                | 4 % ~12s          
-  |+++                                               | 5 % ~12s          
-  |+++                                               | 6 % ~12s          
-  |++++                                              | 7 % ~12s          
-  |++++                                              | 8 % ~12s          
-  |+++++                                             | 9 % ~12s          
-  |+++++                                             | 10% ~12s          
-  |++++++                                            | 11% ~11s          
-  |++++++                                            | 12% ~11s          
-  |+++++++                                           | 13% ~11s          
-  |+++++++                                           | 14% ~11s          
-  |++++++++                                          | 15% ~11s          
-  |++++++++                                          | 16% ~11s          
-  |+++++++++                                         | 17% ~11s          
-  |+++++++++                                         | 18% ~10s          
-  |++++++++++                                        | 19% ~10s          
-  |++++++++++                                        | 20% ~10s          
-  |+++++++++++                                       | 21% ~10s          
-  |+++++++++++                                       | 22% ~10s          
-  |++++++++++++                                      | 23% ~10s          
-  |++++++++++++                                      | 24% ~10s          
-  |+++++++++++++                                     | 25% ~10s          
-  |+++++++++++++                                     | 26% ~10s          
-  |++++++++++++++                                    | 27% ~10s          
-  |++++++++++++++                                    | 28% ~10s          
-  |+++++++++++++++                                   | 29% ~10s          
-  |+++++++++++++++                                   | 30% ~10s          
-  |++++++++++++++++                                  | 31% ~10s          
-  |++++++++++++++++                                  | 32% ~10s          
-  |+++++++++++++++++                                 | 33% ~09s          
-  |+++++++++++++++++                                 | 34% ~09s          
-  |++++++++++++++++++                                | 35% ~09s          
-  |++++++++++++++++++                                | 36% ~09s          
-  |+++++++++++++++++++                               | 37% ~09s          
-  |+++++++++++++++++++                               | 38% ~09s          
-  |++++++++++++++++++++                              | 39% ~09s          
-  |++++++++++++++++++++                              | 40% ~09s          
-  |+++++++++++++++++++++                             | 41% ~09s          
-  |+++++++++++++++++++++                             | 42% ~08s          
-  |++++++++++++++++++++++                            | 43% ~08s          
-  |++++++++++++++++++++++                            | 44% ~08s          
-  |+++++++++++++++++++++++                           | 45% ~08s          
-  |+++++++++++++++++++++++                           | 46% ~08s          
-  |++++++++++++++++++++++++                          | 47% ~08s          
-  |++++++++++++++++++++++++                          | 48% ~08s          
-  |+++++++++++++++++++++++++                         | 49% ~07s          
-  |+++++++++++++++++++++++++                         | 50% ~07s          
-  |++++++++++++++++++++++++++                        | 51% ~07s          
-  |++++++++++++++++++++++++++                        | 52% ~07s          
-  |+++++++++++++++++++++++++++                       | 53% ~07s          
-  |+++++++++++++++++++++++++++                       | 54% ~07s          
-  |++++++++++++++++++++++++++++                      | 55% ~07s          
-  |++++++++++++++++++++++++++++                      | 56% ~07s          
-  |+++++++++++++++++++++++++++++                     | 57% ~06s          
-  |+++++++++++++++++++++++++++++                     | 58% ~06s          
-  |++++++++++++++++++++++++++++++                    | 59% ~06s          
-  |++++++++++++++++++++++++++++++                    | 60% ~06s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~06s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~06s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~05s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~05s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~05s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~04s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~04s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~04s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=14s  
-: 
-  |                                                  | 0 % ~calculating  
-  |+                                                 | 1 % ~12s          
-  |+                                                 | 2 % ~12s          
-  |++                                                | 3 % ~12s          
-  |++                                                | 4 % ~12s          
-  |+++                                               | 5 % ~12s          
-  |+++                                               | 6 % ~12s          
-  |++++                                              | 7 % ~12s          
-  |++++                                              | 8 % ~12s          
-  |+++++                                             | 9 % ~11s          
-  |+++++                                             | 10% ~11s          
-  |++++++                                            | 11% ~11s          
-  |++++++                                            | 12% ~11s          
-  |+++++++                                           | 13% ~11s          
-  |+++++++                                           | 14% ~11s          
-  |++++++++                                          | 15% ~11s          
-  |++++++++                                          | 16% ~11s          
-  |+++++++++                                         | 17% ~11s          
-  |+++++++++                                         | 18% ~10s          
-  |++++++++++                                        | 19% ~10s          
-  |++++++++++                                        | 20% ~10s          
-  |+++++++++++                                       | 21% ~10s          
-  |+++++++++++                                       | 22% ~10s          
-  |++++++++++++                                      | 23% ~10s          
-  |++++++++++++                                      | 24% ~10s          
-  |+++++++++++++                                     | 25% ~10s          
-  |+++++++++++++                                     | 26% ~09s          
-  |++++++++++++++                                    | 27% ~09s          
-  |++++++++++++++                                    | 28% ~09s          
-  |+++++++++++++++                                   | 29% ~09s          
-  |+++++++++++++++                                   | 30% ~09s          
-  |++++++++++++++++                                  | 31% ~09s          
-  |++++++++++++++++                                  | 32% ~09s          
-  |+++++++++++++++++                                 | 33% ~09s          
-  |+++++++++++++++++                                 | 34% ~09s          
-  |++++++++++++++++++                                | 35% ~09s          
-  |++++++++++++++++++                                | 36% ~09s          
-  |+++++++++++++++++++                               | 37% ~08s          
-  |+++++++++++++++++++                               | 38% ~08s          
-  |++++++++++++++++++++                              | 39% ~08s          
-  |++++++++++++++++++++                              | 40% ~08s          
-  |+++++++++++++++++++++                             | 41% ~08s          
-  |+++++++++++++++++++++                             | 42% ~08s          
-  |++++++++++++++++++++++                            | 43% ~08s          
-  |++++++++++++++++++++++                            | 44% ~08s          
-  |+++++++++++++++++++++++                           | 45% ~08s          
-  |+++++++++++++++++++++++                           | 46% ~08s          
-  |++++++++++++++++++++++++                          | 47% ~07s          
-  |++++++++++++++++++++++++                          | 48% ~07s          
-  |+++++++++++++++++++++++++                         | 49% ~07s          
-  |+++++++++++++++++++++++++                         | 50% ~07s          
-  |++++++++++++++++++++++++++                        | 51% ~07s          
-  |++++++++++++++++++++++++++                        | 52% ~07s          
-  |+++++++++++++++++++++++++++                       | 53% ~07s          
-  |+++++++++++++++++++++++++++                       | 54% ~07s          
-  |++++++++++++++++++++++++++++                      | 55% ~07s          
-  |++++++++++++++++++++++++++++                      | 56% ~06s          
-  |+++++++++++++++++++++++++++++                     | 57% ~06s          
-  |+++++++++++++++++++++++++++++                     | 58% ~06s          
-  |++++++++++++++++++++++++++++++                    | 59% ~06s          
-  |++++++++++++++++++++++++++++++                    | 60% ~06s          
-  |+++++++++++++++++++++++++++++++                   | 61% ~06s          
-  |+++++++++++++++++++++++++++++++                   | 62% ~06s          
-  |++++++++++++++++++++++++++++++++                  | 63% ~05s          
-  |++++++++++++++++++++++++++++++++                  | 64% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 65% ~05s          
-  |+++++++++++++++++++++++++++++++++                 | 66% ~05s          
-  |++++++++++++++++++++++++++++++++++                | 67% ~05s          
-  |++++++++++++++++++++++++++++++++++                | 68% ~05s          
-  |+++++++++++++++++++++++++++++++++++               | 69% ~05s          
-  |+++++++++++++++++++++++++++++++++++               | 70% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 71% ~04s          
-  |++++++++++++++++++++++++++++++++++++              | 72% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 73% ~04s          
-  |+++++++++++++++++++++++++++++++++++++             | 74% ~04s          
-  |++++++++++++++++++++++++++++++++++++++            | 75% ~04s          
-  |++++++++++++++++++++++++++++++++++++++            | 76% ~04s          
-  |+++++++++++++++++++++++++++++++++++++++           | 77% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++           | 78% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 79% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++          | 80% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 81% ~03s          
-  |+++++++++++++++++++++++++++++++++++++++++         | 82% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 83% ~03s          
-  |++++++++++++++++++++++++++++++++++++++++++        | 84% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 85% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~02s          
-  |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 89% ~02s          
-  |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 91% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 95% ~01s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~01s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s          
-  |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 99% ~00s          
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=15s
-
 #+begin_src R :exports none :results output :session *R* :cache no
 dt.gg <- out[,.(rep = .N, type1=mean(p.value<=0.05)),by=c("n","example")]
 ggCov <- ggplot(dt.gg, aes(x=n,y=type1,group=example,color=example))
@@ -963,19 +620,9 @@ ggsave(ggCov, filename = "figures/examples-coverage.pdf", height = 5)
 #+RESULTS:
 : Saving 7 x 5 in image
 
-#+name: fig:coverage
-#+ATTR_LaTeX: :width \textwidth :placement [!h]
-#+CAPTION: Coverage of the t-test.
-[[./figures/examples-coverage.pdf]]
-
-_Note:_ not assuming normality complicates the understanding the group
-  effect: the normal distribution is one of the few distribution that
-  can be summarized by two, easily interpretable, independent,
-  parameters (mean and variance).
-
 \clearpage
 
-* Issue 1: parameter of interest
+** Issue 1: parameter of interest
 
 By default, we generally use the mean to define our parameter of
 interest. In our example the difference in mean between the two groups
@@ -1114,7 +761,7 @@ ggsave(ggLMean, filename = "figures/logmean.pdf", height = 4)
 
 \clearpage
 
-* Issue 2: handling small samples
+** Issue 2: handling small samples
 
 In small samples, traditional methods will not provide a very accurate
 type 1 error control or coverage as illustrated in
@@ -1140,7 +787,7 @@ There are also analytic correction for improving the small sample
 properties but there typically are specific to a statistical
 model/test and are not discussed here.
 
-* Issue 3: handling outliers
+** Issue 3: handling outliers
 
 Most of the statistics will quantify some kind of average difference
 between groups. One observation with a very large value may have large
@@ -1267,8 +914,39 @@ bibliographystyle:apalike
 #+LaTeX_HEADER:   \xspace
 #+LaTeX_HEADER: }
 
-# # R Software
-#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
 
 ** Code
 # Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
@@ -1297,6 +975,7 @@ bibliographystyle:apalike
 #+LATEX_HEADER: \RequirePackage{enumitem} % better than enumerate
 
 ** Image and graphs
+#+LATEX_HEADER: \usepackage{float} %figure inside minipage
 #+LATEX_HEADER: \RequirePackage{epstopdf} % to be able to convert .eps to .pdf image files
 #+LATEX_HEADER: \RequirePackage{capt-of} % 
 #+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
