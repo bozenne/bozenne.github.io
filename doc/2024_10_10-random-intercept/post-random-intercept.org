@@ -368,8 +368,9 @@ which has the same sign as:
 \end{align*}
 #+END_EXPORT
 
-Therefore if \(\rho_{1,1}>\rho_{1,p_1+1}\) the mixed model will be
-less liberal otherwise it will be more liberal.
+Because \(\frac{2-p}{2(p-1)}<0\) the mixed model will be more liberal
+(i.e. provide a worse type 1 error control) if
+\(\rho_{1,1}>\rho_{1,p_1+1}\) otherwise it will be less liberal.
 
 #+BEGIN_SRC R :exports none :results output :session *R* :cache no
 p <- 5
@@ -380,9 +381,6 @@ p/(2*(p-1)) - 1
 #+RESULTS:
 : [1] -0.375
 : [1] -0.375
-
-
-
 
 ** Numerical example
 

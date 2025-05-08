@@ -10,4 +10,3 @@ document](https://bozenne.github.io/doc/2021_05_04-nonnormal/post-nonnormal.pdf)
 elements about why and when should we worry about deviation from
 normality and a few possible remedies.
 
-WARNING: not finished

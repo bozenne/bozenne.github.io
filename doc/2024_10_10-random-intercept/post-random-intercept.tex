@@ -1,4 +1,4 @@
-% Created 2024-10-22 Tue 19:10
+% Created 2025-05-08 Thu 09:20
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:orgc906fa4}
+\label{sec:org55a1b76}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -278,10 +278,10 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:orga6f262e}
+\label{sec:orgca1cf76}
 
 \subsection{Theory}
-\label{sec:org396c4db}
+\label{sec:orga6c8000}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
@@ -303,7 +303,7 @@ i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:org4454f6a}
+\label{sec:orgc186772}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -360,7 +360,7 @@ Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
 \subsubsection{Maximum likelihood}
-\label{sec:org14760dd}
+\label{sec:org8cf057d}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -418,7 +418,7 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 \end{verbatim}
 
 \subsubsection{Restricted maximum likelihood}
-\label{sec:org8ab1bad}
+\label{sec:org81fa793}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -479,10 +479,10 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 \clearpage
 
 \section{Standard error in a random intercept model}
-\label{sec:org270ebd1}
+\label{sec:orgab137fa}
 
 \subsection{Theory}
-\label{sec:org8bd7f58}
+\label{sec:org36aa148}
 
 Appendix \ref{sm:seRI} shows that the standard error of the treatment
 effect estimator can be expressed as:
@@ -507,7 +507,7 @@ correlation between observation \(j\) and \(j^{\prime}\), provided
 that the mean and variance structure of the model are correctly specified. 
 
 \subsection{Comparison to a t-test on the first change}
-\label{sec:org1db33ee}
+\label{sec:org7ecd184}
 
 When using a t-test on the change based \textbf{only on the first observation
 under each treatment}, the standard error is:
@@ -539,7 +539,7 @@ whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
 which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
 
 \subsection{Comparison to a t-test on changes in a paired design}
-\label{sec:org89c4efd}
+\label{sec:orgfe9b217}
 
 Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
 vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
@@ -565,11 +565,12 @@ which has the same sign as:
 & = (\rho_{1,1}-\rho_{1,p_1+1}) \frac{2-p}{2(p-1)} 
 \end{align*}
 
-Therefore if \(\rho_{1,1}>\rho_{1,p_1+1}\) the mixed model will be
-less liberal otherwise it will be more liberal.
+Because \(\frac{2-p}{2(p-1)}<0\) the mixed model will be more liberal
+(i.e. provide a worse type 1 error control) if
+\(\rho_{1,1}>\rho_{1,p_1+1}\) otherwise it will be less liberal.
 
 \subsection{Numerical example}
-\label{sec:org9a0ab94}
+\label{sec:orgb701c29}
 
 We can retrieve the standard error estimated by the linear mixed model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -627,7 +628,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:orgddcc45d}
+\label{sec:orgdd32b14}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -710,7 +711,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:org75a8e4b}
+\label{sec:org6358f21}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -783,7 +784,7 @@ Since the first term is strictly positive (\(0<\rho<1\) and \(p>1\)) we can simp
 \end{align}
 
 \subsection{Variance parameter (ML)}
-\label{sec:orgf0e6b5b}
+\label{sec:org193e6ec}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}

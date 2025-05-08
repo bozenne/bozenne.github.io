@@ -5,12 +5,25 @@ permalink: /Teaching/
 ---
 
 ## Courses
-I am currently teaching in four Ph.D. courses for medical researchers at the University of Copenhagen (KU):
-- [Epidemiological methods in medical research](https://absalon.ku.dk/courses/58764). This is a 10 day course over 3 months (January-March) where I am the course director in collaboration with the epidemiology section of KU. 
-- [Statistical analysis of repeated measurements and clustered data](https://absalon.ku.dk/courses/47665). This is 6 day course over 3 weeks lead by Julie Forman, occuring every fall.
-- [Basic Statistics](http://paulblanche.com/files/BasicStat2022.html). This is 10 day course over 6 weeks lead by Paul Blanche, occuring twice a year (spring/fall).
-and one master course for MSc in Statistics and Mathematics-Economics  :
-- [Survival Analysis](https://kurser.ku.dk/course/nmak16019u/2023-2024). This is a 7 week with a 4 hours of lectures and 3 hours of exercise per week (December-January). 
+I am currently teaching three courses at the University of Copenhagen (KU):
+- [Epidemiological methods in medical
+  research](https://absalon.ku.dk/courses/58764). This is a 10 day
+  Ph.D. course for medical researchers, starting in January and ending
+  in March . I am the course director in collaboration with the
+  epidemiology section of KU.
+  + general information: [planning](https://bozenne.github.io/doc/Teaching/2025-Epi/General/Skema2025-provisional.pdf), [Project description](https://bozenne.github.io/doc/Teaching/2025-Epi/General/Project-Description.docx), [R refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/R-refresher.pdf), [stat refresher](https://bozenne.github.io/doc/Teaching/2025-Epi/General/stat-refresher.pdf).
+  + material for day 1: [Introduction](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_0_-_Welcome.pdf), [lecture 1](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lektion 1 - Introduction to Epidemiology_absalon-1.pdf), [lecture 2](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_2_-_Measure_of_disease_frequency_FINAL.pdf), [R demo](https://bozenne.github.io/doc/Teaching/2025-Epi/Day1/Lecture_2_-_R_demo.pdf).
+  + material for day 2: [practical 1](https://bozenne.github.io/doc/Teaching/2025-Epi/Day2/P1-association.pdf).
+
+- [Statistical analysis of repeated measurements and clustered
+  data](https://absalon.ku.dk/courses/47665). This is 6 day
+  Ph.D. course for medical researchers. It is led by Julie Forman and
+  takes place in May.
+
+- [Survival
+  Analysis](https://kurser.ku.dk/course/nmak16019u/2023-2024). This is
+  a 7 week course for Master students in statistics. It is led by
+  Frank Eriksson and takes place in December-January.
 
 ## Workshops
 With Julie Forman, we have made a workshop on linear mixed models (LMMs) for the method week at Karolinska Institutet:
@@ -22,7 +35,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - [practical part](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/exercise-workshopEpi.R).
 
 ## Useful and "pedagogical" references
-- Adjustment for multiple comparisons: [Dmitrienko, 2013](https://doi.org/10.1002/sim.5990)
+- Adjustment for multiple comparisons: 3 groups [Goeman, 2022](https://doi.org/10.1080/00031305.2021.2002188), general case [Dmitrienko, 2013](https://doi.org/10.1002/sim.5990), 
 - Causality: [Hernan, 2004](http://dx.doi.org/10.1136/jech.2002.006361), [Pearce 2020](https://doi.org/10.1093/ije/dyz229)
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
 - DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.

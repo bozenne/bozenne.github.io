@@ -3,7 +3,7 @@
 
 * Box
 
-** Default box
+** Default block
 
 #+BEGIN_EXPORT latex
 \begin{block}{Nested models}
@@ -11,7 +11,7 @@
 \end{block}
 #+END_EXPORT
 
-** Round box 
+** Colored block 
 # http://mcclinews.free.fr/latex/introbeamer/elements_contenu.html
 
 #+BEGIN_EXPORT latex
@@ -112,13 +112,6 @@ Bla src_R{{{1+1}}} {{{results(=2=)}}}.
 # #  \setlength{\parsep}{0pt}
 # # }{\end{enumerate}}
 
-** change color
-# #+latex_header:  \newenvironment{conenv}{\only{\setbeamercolor{local structure}{fg=gray}}}{}
-# #+begin_export latex
-# \begin{itemize}
-# \item<con@1-> \textcolor{gray}{any dementia (including Alzheimer's) }
-# \end{itemize}
-# #+end_export
 
 ** label scheme
 - level 1: \textbullet
@@ -147,6 +140,103 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 \end{table}
 #+END_EXPORT
 
+** From \Rlogo to latex (1/3)
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(xtable)
+data(tli)
+xtable(tli[1:10, ])
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+% latex table generated in R 4.2.0 by xtable 1.8-4 package
+% Wed Mar 12 09:43:06 2025
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrlllr}
+  \hline
+ & grade & sex & disadvg & ethnicty & tlimth \\ 
+  \hline
+1 &   6 & M & YES & HISPANIC &  43 \\ 
+  2 &   7 & M & NO & BLACK &  88 \\ 
+  3 &   5 & F & YES & HISPANIC &  34 \\ 
+  4 &   3 & M & YES & HISPANIC &  65 \\ 
+  5 &   8 & M & YES & WHITE &  75 \\ 
+  6 &   5 & M & NO & BLACK &  74 \\ 
+  7 &   8 & F & YES & HISPANIC &  72 \\ 
+  8 &   4 & M & YES & BLACK &  79 \\ 
+  9 &   6 & M & NO & WHITE &  88 \\ 
+  10 &   7 & M & YES & HISPANIC &  87 \\ 
+   \hline
+\end{tabular}
+\end{table}
+#+end_example
+
+** From \Rlogo to latex (2/2)
+
+#+BEGIN_SRC R :exports both :results output latex :session *R* :cache no
+library(xtable)
+data(tli)
+xtable(tli[1:10, ])
+#+END_SRC
+
+#+RESULTS:
+#+begin_export latex
+% latex table generated in R 4.2.0 by xtable 1.8-4 package
+% Wed Mar 12 09:43:24 2025
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrlllr}
+  \hline
+ & grade & sex & disadvg & ethnicty & tlimth \\ 
+  \hline
+1 &   6 & M & YES & HISPANIC &  43 \\ 
+  2 &   7 & M & NO & BLACK &  88 \\ 
+  3 &   5 & F & YES & HISPANIC &  34 \\ 
+  4 &   3 & M & YES & HISPANIC &  65 \\ 
+  5 &   8 & M & YES & WHITE &  75 \\ 
+  6 &   5 & M & NO & BLACK &  74 \\ 
+  7 &   8 & F & YES & HISPANIC &  72 \\ 
+  8 &   4 & M & YES & BLACK &  79 \\ 
+  9 &   6 & M & NO & WHITE &  88 \\ 
+  10 &   7 & M & YES & HISPANIC &  87 \\ 
+   \hline
+\end{tabular}
+\end{table}
+#+end_export
+
+
+** From \Rlogo to org
+
+#+begin_src R :export both :results output org :session *R* :cache no
+library(ascii)
+options(asciiType="org")
+ascii(xtable(tli[1:10, ]))
+#+end_src
+
+#+RESULTS:
+#+begin_src org
+|    | grade | sex | disadvg | ethnicty | tlimth |
+|----+-------+-----+---------+----------+--------|
+|  1 |  6.00 | M   | YES     | HISPANIC |  43.00 |
+|  2 |  7.00 | M   | NO      | BLACK    |  88.00 |
+|  3 |  5.00 | F   | YES     | HISPANIC |  34.00 |
+|  4 |  3.00 | M   | YES     | HISPANIC |  65.00 |
+|  5 |  8.00 | M   | YES     | WHITE    |  75.00 |
+|  6 |  5.00 | M   | NO      | BLACK    |  74.00 |
+|  7 |  8.00 | F   | YES     | HISPANIC |  72.00 |
+|  8 |  4.00 | M   | YES     | BLACK    |  79.00 |
+|  9 |  6.00 | M   | NO      | WHITE    |  88.00 |
+| 10 |  7.00 | M   | YES     | HISPANIC |  87.00 |
+#+end_src
+
+** From \Rlogo to latex (3/3)
+
+
+
+
+
 * References
 
 ** Citations
@@ -160,7 +250,8 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 ** No numbering for the section
 :PROPERTIES:  
 :UNNUMBERED: t  
-:END:  
+:END:
+
 ** Reference to the section
 :PROPERTIES:
 :CUSTOM_ID: sec:mysection
@@ -207,7 +298,7 @@ Grade 5 & 4 (1.4\%)  & 3 (1.1\%) \\
 *** Col right                                                       
    :PROPERTIES:
    :BEAMER_col: 0.45
-   :BEAMER_opt: [T]
+   :BEAMER_opt: [t]
    :END:
 
 [[file:./figures/myplot.pdf]]
@@ -251,18 +342,20 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 +help with reproducibility+
 
-** Figure :noexport:
-#+BEGIN_EXPORT latex
-\begin{figure}
-\centering
-\includegraphics[trim = 0mm 0mm 0mm 0mm, clip,width=\textwidth]{figures/xxx}
-\end{figure}
-#+END_EXPORT
+** Trim figure
+
+#+name: fig:1
+#+ATTR_LaTeX: :width 0.75\textwidth :options trim={10mm 2mm 1mm 0mm} :placement [!h]
+#+CAPTION:
+[[./figures/myplot.pdf]]
 # trim={<left> <lower> <right> <upper>}
+
 ** Comments
+
 # \usepackage{todonotes}
 # \setlength{\marginparwidth}{3cm}
 # \geometry{top=1cm,left=1cm,right=4cm}
+
 * References
 :PROPERTIES:
 :BEAMER_OPT: fragile,allowframebreaks
@@ -297,8 +390,6 @@ bibliographystyle:apalike
 #+LATEX_HEADER: \usepackage{xifthen}
 #+LATEX_HEADER: \usepackage{xargs}
 #+LATEX_HEADER: \usepackage{xspace}
-
-#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} % 
 
 ** Notations
 
@@ -347,6 +438,40 @@ bibliographystyle:apalike
 
 # ## margin
 #+LATEX_HEADER: \usepackage{changepage}
+
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
 
 ** Table
 #+LaTeX_HEADER: \usepackage{booktabs}

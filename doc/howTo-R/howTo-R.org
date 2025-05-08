@@ -3655,6 +3655,16 @@ plot(e.KM)
 [[file:./figures/fig-delayedTreatmentEffect.pdf]]
 
 ** Tune optimization parameters
+# control and lava.options
+# method Optimization method (NR, nlminb1,. . . )
+# iter.max (=300)
+# tol (=1e-9)
+# gamma Reduction in step-size NR (default 1 + back-tracing)
+# start starting values (named vector, see coef)
+# param (=’relative’)
+# constrain (=FALSE)
+# silent (=FALSE)
+# trace (=0)
 ** Interaction in lava (mean coefficients)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3877,15 +3887,16 @@ total correlation     0 0.000203386
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
 mSim <- lvm(TIS ~  etaINS,
-         BDI_Sleep ~  etaINS,
-         POMS_Fatigue ~  etaINS,
-         FS ~  etaINS,
-         P_A1 ~  etaVIG,
-         BL_slope_mean_Block1 ~ etaVIG,
-         Mean_median_vigilance_BL1 ~ etaVIG,
-         etaVIG ~ etaINS)
+            BDI_Sleep ~  etaINS,
+            POMS_Fatigue ~  etaINS,
+            FS ~  etaINS,
+            P_A1 ~  etaVIG,
+            BL_slope_mean_Block1 ~ etaVIG,
+            Mean_median_vigilance_BL1 ~ etaVIG,
+            etaVIG ~ 1.2*etaINS)
 latent(mSim) <- ~ etaVIG + etaINS
-
+variance(mSim,~etaINS) <- 0.5
+variance(mSim,~etaVIG) <- 1.5
 set.seed(10)
 d <- sim(mSim, n = 10000, latent = TRUE)
 c(varVIG = var(d$etaVIG),varINS = var(d$etaINS), rho = cor(d$etaVIG,d$etaINS))
@@ -3894,18 +3905,27 @@ d$etaINS <- NULL
 #+END_SRC
 
 #+RESULTS:
-:   varVIG   varINS      rho 
-: 2.063013 1.005601 0.710336
+:    varVIG    varINS       rho 
+: 2.2940041 0.5028006 0.5759292
 
 Fit the lvm:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e <- estimate(mSim, d)
+m <- lvm(TIS ~  etaINS,
+         BDI_Sleep ~  etaINS,
+         POMS_Fatigue ~  etaINS,
+         FS ~  etaINS,
+         P_A1 ~  etaVIG,
+         BL_slope_mean_Block1 ~ etaVIG,
+         Mean_median_vigilance_BL1 ~ etaVIG,
+         etaVIG ~ etaINS)
+latent(m) <- ~ etaVIG + etaINS
+e <- estimate(m, d)
 coef(e)[c("etaVIG","etaVIG~~etaVIG","etaINS~~etaINS","etaVIG~etaINS")]
 #+END_SRC
 
 #+RESULTS:
 :         etaVIG etaVIG~~etaVIG etaINS~~etaINS  etaVIG~etaINS 
-:    -0.01461882     0.98989448     1.02460861     1.01591550
+:    -0.01485614     1.49093782     0.52080626     1.22481907
 
 and deduce the correlation
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3913,16 +3933,36 @@ estimate(e, function(x){
   iOut <- c(var.etaVIG = as.double(x["etaVIG~~etaVIG"] + x["etaVIG~etaINS"]*x["etaINS~~etaINS"]),
             var.etaINS = as.double(x["etaINS~~etaINS"]),
             cov = as.double(x["etaVIG~etaINS"]))
-  return(c(iOut, cor = iOut["cov"]/sqrt(iOut["var.etaVIG"]*iOut["var.etaINS"])))
+  return(c(iOut,
+           cor = as.double(iOut["cov"]*sqrt(iOut["var.etaINS"])/sqrt(iOut["var.etaVIG"]))))
 })
 #+END_SRC
 
 #+RESULTS:
 :            Estimate Std.Err   2.5%  97.5%    P-value
-: var.etaVIG   2.0308 0.03599 1.9603 2.1014  0.000e+00
-: var.etaINS   1.0246 0.02750 0.9707 1.0785 8.031e-304
-: cov          1.0159 0.01885 0.9790 1.0529  0.000e+00
-: cor.cov      0.7043 0.02161 0.6619 0.7466 4.691e-233
+: var.etaVIG   2.1288 0.04009 2.0503 2.2074  0.000e+00
+: var.etaINS   0.5208 0.01986 0.4819 0.5597 1.341e-151
+: cov          1.2248 0.03344 1.1593 1.2904 8.716e-294
+: cor          0.6058 0.01268 0.5810 0.6307  0.000e+00
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+## BAD IDEAS
+coef(e)["etaVIG~etaINS"]
+coef(e)["etaVIG~etaINS"]/sqrt(coef(e)["etaVIG~~etaVIG"]*coef(e)["etaINS~~etaINS"])
+coef(e)["etaVIG~etaINS"]*sqrt(coef(e)["etaINS~~etaINS"])/sqrt(coef(e)["etaVIG~~etaVIG"])
+coef(e)["etaVIG~etaINS"]*sqrt(coef(e)["etaVIG~~etaVIG"]+coef(e)["etaVIG~etaINS"]*coef(e)["etaINS~~etaINS"])/sqrt(coef(e)["etaINS~~etaINS"])
+#+END_SRC
+
+#+RESULTS:
+: etaVIG~etaINS 
+:      1.224819
+: etaVIG~etaINS 
+:      1.389966
+: etaVIG~etaINS 
+:     0.7239028
+: etaVIG~etaINS 
+:      2.476307
+
 
 ** Handling left, right, and interval censored data
 
