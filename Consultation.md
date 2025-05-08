@@ -125,6 +125,7 @@ we will figure out a solution.
   meeting. My affiliations are:
   + Department of Public Health, Section of Biostatistics, University of Copenhagen, 5 Øster Farimagsgade, 1014 Copenhagen, Denmark
   + Neurobiology Research Unit and BrainDrugs, Copenhagen University Hospital, Rigshospitalet, 6-8 Inge Lehmanns Vej, 2100 Copenhagen, Denmark  <br> <br>
+  Conflict of interest: "Brice Ozenne states that part of his salary while working on this project was covered by a grant from Novo Nordisk A/S" (until 02/2027)
 		  
 - **Externalizing the statistical analysis**: This help qualifies me
   for co-authorship. I expect it to be automatic and I will also

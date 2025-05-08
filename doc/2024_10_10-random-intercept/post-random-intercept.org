@@ -51,7 +51,7 @@ Appendix [[#sm:rhoML]] shows that the Maximum Likelihood estimate of \(\Theta\) 
   \sum_{j=1}^p (1-T_{i,j}) Y_{i,j}\) \newline
   @@latex:\hphantom{\textbf{mean parameters:} }@@ \(\widehat{\beta}=
   \frac{1}{np} \sum_{i=1}^n \sum_{t=1}^p (2 T_{i,j}-1) Y_{i,j} \) \newline
-  @@latex:\hphantom{\textbf{mean parameters:} }@@ \(\widehat{\mu}_{i,j} = \widehat{\alpha} - T_{i,j}\widehat{\beta}\)
+  @@latex:\hphantom{\textbf{mean parameters:} }@@ \(\widehat{\mu}_{i,j} = \widehat{\alpha} + T_{i,j}\widehat{\beta}\)
 - *variance parameter*: \(\widehat{\sigma}^2 =
   \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\widehat{\mu}_{i,j})^2\)
 - *correlation parameter*: \(\widehat{\rho} =
@@ -243,7 +243,7 @@ that the mean and variance structure of the model are correctly specified.
 ** Comparison to a t-test on the first change
 
 When using a t-test on the change based *only on the first observation
-under each treatment*, the variance is:
+under each treatment*, the standard error is:
 #+BEGIN_EXPORT latex
 \begin{align*}
 \sigma_{\widehat{\Delta}(1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{n}}
@@ -312,7 +312,7 @@ vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
 observations (no observation is used twice when computing changes),
 and stacking all changes into a t-test. This strategy will generally
 not control the type 1 error (as it disregard within-individual
-correlation). The variance of the corresponding estimator can be
+correlation). The standard error of the corresponding estimator can be
 expressed as:
 #+BEGIN_EXPORT latex
 \begin{align*}
