@@ -236,7 +236,6 @@ ascii(xtable(tli[1:10, ]))
 
 
 
-
 * References
 
 ** Citations
@@ -258,6 +257,20 @@ ascii(xtable(tli[1:10, ]))
 :END:
 
 [[#sec:mysection]]
+
+* Minipage
+** Align minipage on top
+# https://tex.stackexchange.com/questions/325869/align-figures-to-top-using-minipage-environment
+
+#+LaTeX: \begin{minipage}{0.5\linewidth}
+#+LaTeX: \vspace{0pt} # useful if figure or table to set a reference point at the top
+xxx
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.45\linewidth}
+#+LaTeX: \vspace{0pt} # useful if figure or table to set a reference point at the top
+xxx
+#+LaTeX: \end{minipage}
+
 
 * Miscellaneous
 

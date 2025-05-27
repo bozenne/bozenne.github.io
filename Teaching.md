@@ -42,6 +42,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
+- Intercurrent events: [Kahan 2023](https://doi.org/10.1136/bmj-2023-076316)
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
 - Mediation: continuous outcome & hypotheses [Vanderweele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [Vanderweele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Non-collapsability of odds ratio: [Greenland, 2021](https://doi.org/10.1016/j.jclinepi.2021.06.004)

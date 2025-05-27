@@ -118,13 +118,15 @@ head(dtL.B)
 #+END_SRC
 
 #+RESULTS:
-:    id      mdd time        Y dropout     Yobs
-: 1:  1 moderate   T1 49.34367       0 49.34367
-: 2:  1 moderate   T2 23.43583       0 23.43583
-: 3:  2 moderate   T1 35.05489       0 35.05489
-: 4:  2 moderate   T2 13.50810       0 13.50810
-: 5:  3 moderate   T1 54.37770       0 54.37770
-: 6:  3 moderate   T2 29.80367       1       NA
+: Key: <id>
+:       id      mdd   time        Y dropout     Yobs
+:    <num>   <char> <char>    <num>   <int>    <num>
+: 1:     1 moderate     T1 49.34367       0 49.34367
+: 2:     1 moderate     T2 23.43583       0 23.43583
+: 3:     2 moderate     T1 35.05489       0 35.05489
+: 4:     2 moderate     T2 13.50810       0 13.50810
+: 5:     3 moderate     T1 54.37770       0 54.37770
+: 6:     3 moderate     T2 29.80367       1       NA
 
 Here we have simulated a two sub-populations of 1000, with a
 correlation of 0.8 between baseline and follow-up. The treatment
@@ -172,7 +174,7 @@ summary(e.BCC)$coef
 
 #+RESULTS:
 :              Estimate Std. Error   t value Pr(>|t|)
-: (Intercept) -30.98307  0.3889309 -79.66214        0
+: (Intercept) -30.93427  0.3888768 -79.54773        0
 
 An alternative approach would be to use a linear mixed model
 (i.e. full information):
@@ -185,8 +187,8 @@ summary(e.BFI)$tTable
 
 #+RESULTS:
 :                 Value Std.Error   DF   t-value p-value
-: (Intercept)  62.39901 0.3268707 1999 190.89814       0
-: timeT2      -34.72137 0.3922177 1030 -88.52576       0
+: (Intercept)  62.39901 0.3269580 1999 190.84719       0
+: timeT2      -34.67248 0.3921035 1026 -88.42686       0
 which appears better than the complete case analysis but still
 downward biased. This can be a bit surprising at first, but can be
 explained when seeing the mixed model as a way to "impute" missing
@@ -215,10 +217,10 @@ summary(e.BFIoracle)$tTable
 
 #+RESULTS:
 :                      Value Std.Error   DF    t-value       p-value
-: (Intercept)       50.14399 0.3201715 1998  156.61602  0.000000e+00
-: timeT2           -24.97957 0.2351254 1029 -106.23938  0.000000e+00
-: mddsevere         24.51004 0.4527909 1998   54.13102  0.000000e+00
-: timeT2:mddsevere -24.90905 0.4443197 1029  -56.06111 4.849765e-315
+: (Intercept)       50.14399 0.3202492 1998  156.57803  0.000000e+00
+: timeT2           -24.95124 0.2349397 1025 -106.20274  0.000000e+00
+: mddsevere         24.51004 0.4529008 1998   54.11789  0.000000e+00
+: timeT2:mddsevere -24.84754 0.4439915 1025  -55.96400 6.771048e-314
 
 which would lead to a much better estimator:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -232,7 +234,7 @@ glht(e.BFIoracle, linfct = "timeT2+0.5*timeT2:mddsevere=0")
 : 
 : Linear Hypotheses:
 :                                      Estimate
-: timeT2 + 0.5 * timeT2:mddsevere == 0   -37.43
+: timeT2 + 0.5 * timeT2:mddsevere == 0   -37.38
 
 
 \bigskip
@@ -249,7 +251,7 @@ coef(e.glmW.B)
 
 #+RESULTS:
 : (Intercept)          T1 
-:   6.6357425  -0.1047988
+:   6.6360557  -0.1050017
 
 and then compute the weights for observations with full data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -259,7 +261,7 @@ dtW.B[observed == TRUE, sum(weight.oracle)]
 #+END_SRC
 
 #+RESULTS:
-: [1] 2045.06
+: [1] 2049.331
 
 Note that the weights almost sum to the total sample size. We then
 perform the complete case analysis with these weights:
@@ -270,8 +272,8 @@ summary(e.BIPCW)$coef
 #+END_SRC
 
 #+RESULTS:
-:              Estimate Std. Error   t value Pr(>|t|)
-: (Intercept) -37.84241  0.4369635 -86.60314        0
+:             Estimate Std. Error  t value Pr(>|t|)
+: (Intercept) -37.8774  0.4377554 -86.5264        0
 
 which gives a result very close to the true value. Here the IPCW works
 very well because we have specified the correct censoring model.
@@ -300,18 +302,20 @@ print(dtL.L)
 
 #+RESULTS:
 #+begin_example
-        id      mdd time        Y dropout     Yobs
-   1:    1 moderate   T1 49.34367       0 49.34367
-   2:    1 moderate   T2 23.43583       0 23.43583
-   3:    2 moderate   T1 35.05489       0 35.05489
-   4:    2 moderate   T2 13.50810       0 13.50810
-   5:    3 moderate   T1 54.37770       0 54.37770
-  ---                                             
-3996: 1998   severe   T2 26.26605       1       NA
-3997: 1999   severe   T1 70.81751       0 70.81751
-3998: 1999   severe   T2 15.46369       1       NA
-3999: 2000   severe   T1 73.53750       0 73.53750
-4000: 2000   severe   T2 23.75026       1       NA
+Key: <id>
+         id      mdd   time        Y dropout     Yobs
+      <num>   <char> <char>    <num>   <int>    <num>
+   1:     1 moderate     T1 49.34367       0 49.34367
+   2:     1 moderate     T2 23.43583       0 23.43583
+   3:     2 moderate     T1 35.05489       0 35.05489
+   4:     2 moderate     T2 13.50810       0 13.50810
+   5:     3 moderate     T1 54.37770       0 54.37770
+  ---                                                
+3996:  1998   severe     T2 26.26605       1       NA
+3997:  1999   severe     T1 70.81751       0 70.81751
+3998:  1999   severe     T2 15.46369       1       NA
+3999:  2000   severe     T1 73.53750       0 73.53750
+4000:  2000   severe     T2 23.75026       1       NA
 #+end_example
 
 Overall the expected treatment effect is the same as before and,
@@ -362,7 +366,6 @@ specified outcome model, we would get a much better estimate:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.LFIoracle <- lme(Yobs~time*mdd, random = ~1|id, data = dtL.L, na.action = na.omit)
 glht(e.LFIoracle, linfct = "timeT2+0.5*timeT2:mddsevere=0")
-
 #+END_SRC
 
 #+RESULTS:
@@ -900,30 +903,32 @@ print(dt)
 
 #+RESULTS:
 #+begin_example
-        id group treatment eventtimeUncensored eventtimeCensoring  eventtime
-   1:    1    G1         C          0.07747187          0.4441963 0.07747187
-   2:    2    G1         C          0.18271259          0.3567996 0.18271259
-   3:    3    G1         C          0.14864417          0.2298933 0.14864417
-   4:    4    G1         C          0.26922419          0.6492349 0.26922419
-   5:    5    G1         C          0.52950600          0.2238334 0.22383343
-  ---                                                                       
-3996: 3996    G2         T          1.09150744          5.6892558 1.09150744
-3997: 3997    G2         T          5.83550031          1.7693238 1.76932381
-3998: 3998    G2         T          0.88964585          0.2485173 0.24851729
-3999: 3999    G2         T          0.44492756          4.8949421 0.44492756
-4000: 4000    G2         T         18.10666952          2.5876528 2.58765282
-      status responseUncensored response observed
-   1:      1               TRUE     TRUE        1
-   2:      1               TRUE     TRUE        1
-   3:      1               TRUE     TRUE        1
-   4:      1               TRUE     TRUE        1
-   5:      0               TRUE       NA        0
-  ---                                            
-3996:      1              FALSE    FALSE        1
-3997:      0              FALSE    FALSE        1
-3998:      0               TRUE       NA        0
-3999:      1               TRUE     TRUE        1
-4000:      0              FALSE    FALSE        1
+         id  group    id treatment eventtimeUncensored eventtimeCensoring
+      <int> <char> <num>    <fctr>               <num>              <num>
+   1:     1     G1     1         C          0.07747187          0.4441963
+   2:     2     G1     2         C          0.18271259          0.3567996
+   3:     3     G1     3         C          0.14864417          0.2298933
+   4:     4     G1     4         C          0.26922419          0.6492349
+   5:     5     G1     5         C          0.52950600          0.2238334
+  ---                                                                    
+3996:  3996     G2  1996         T          1.09150744          5.6892558
+3997:  3997     G2  1997         T          5.83550031          1.7693238
+3998:  3998     G2  1998         T          0.88964585          0.2485173
+3999:  3999     G2  1999         T          0.44492756          4.8949421
+4000:  4000     G2  2000         T         18.10666952          2.5876528
+       eventtime status responseUncensored response observed
+           <num>  <num>             <lgcl>   <lgcl>    <num>
+   1: 0.07747187      1               TRUE     TRUE        1
+   2: 0.18271259      1               TRUE     TRUE        1
+   3: 0.14864417      1               TRUE     TRUE        1
+   4: 0.26922419      1               TRUE     TRUE        1
+   5: 0.22383343      0               TRUE       NA        0
+  ---                                                       
+3996: 1.09150744      1              FALSE    FALSE        1
+3997: 1.76932381      0              FALSE    FALSE        1
+3998: 0.24851729      0               TRUE       NA        0
+3999: 0.44492756      1               TRUE     TRUE        1
+4000: 2.58765282      0              FALSE    FALSE        1
 #+end_example
 
 \clearpage
@@ -1024,25 +1029,29 @@ which is very close to the true value.
 
 Note that this estimator is implemented in the riskRegression package:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-e.wglm <- wglm(regressor.event = ~treatment,
-               formula.censor = Surv(eventtime,status==0)~group*treatment,
-               times = 1, 
+e.wglm <- wglm(Surv(eventtime,status) ~ treatment,
+               formula.censor = ~ group * treatment,
+               times = 1, fitter = "coxph",
                data = dt[,.(eventtime,status,group,treatment)])
 summary(e.wglm)
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
-     IPCW logistic regression : 
-----------------------------------------------------------------------------------
-  - time: 1
-glm(XX_status.1_XX ~ treatment, family = binomial(link = "logit"), 
-    weights = "XX_IPCW.1_XX")
+		IPCW logistic regression for cause 1 
 
-               Estimate Std. Error    z value    Pr(>|z|)
-(Intercept)  0.04110777 0.05672432  0.7246939 0.468639833
-treatmentT  -0.26472454 0.08136191 -3.2536668 0.001139258
-----------------------------------------------------------------------------------
+ - structure: Surv(eventtime, status) with possible states: 0, 1. 
+ - censoring model: ~group * treatment (fitter: coxph function). 
+ - outcome model: ~treatment (fitter: glm function). 
+ - estimated regression parameters: 
+
+  ------ time: 1 ----------------------------------------------
+  - number (events, no event, censoring): 1409, 1172, 1419
+  - IPCW (min,median,max): 1.00011, 1.37688, 2.76241
+
+                 Estimate Std. Error    z value    Pr(>|z|)
+  (Intercept)  0.04110777 0.05672432  0.7246939 0.468639833
+  treatmentT  -0.26472454 0.08136191 -3.2536668 0.001139258
 #+end_example
 
 This estimator is also implemented in the =mets= package[fn::the standard errors are slightly different though]:
