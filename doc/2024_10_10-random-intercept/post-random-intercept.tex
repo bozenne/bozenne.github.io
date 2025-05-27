@@ -1,4 +1,4 @@
-% Created 2024-10-22 ti 12:51
+% Created 2025-05-08 Thu 09:20
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -232,7 +232,7 @@ and (1.75,0.4) .. cycle;
  pdftitle={Random intercept model in a balanced design},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
+ pdfcreator={Emacs 27.1 (Org mode 9.4.6)},
  pdflang={English}
  }
 \begin{document}
@@ -241,7 +241,7 @@ and (1.75,0.4) .. cycle;
 
 
 \section{Notations}
-\label{sec:org256d940}
+\label{sec:org55a1b76}
 
 Consider an outcome variable \(Y\) measured in \(n\) subjects at \(p\)
 occasions. We will index the subjects by \(i \in \{1,\ldots,n\}\) and
@@ -278,10 +278,10 @@ that \(\VT_i=\VT_{i^{\prime}}=\VT\) for all \((i,i^{\prime})\in\{1,\ldots,n\}^2\
 \clearpage
 
 \section{Estimates in a random intercept model}
-\label{sec:org6119c8c}
+\label{sec:orgca1cf76}
 
 \subsection{Theory}
-\label{sec:orgd28e176}
+\label{sec:orga6c8000}
 
 Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\) are:
 \begin{itemize}
@@ -289,7 +289,7 @@ Appendix \ref{sm:rhoML} shows that the Maximum Likelihood estimate of \(\Theta\)
   \sum_{j=1}^p (1-T_{i,j}) Y_{i,j}\) \newline
 \hphantom{\textbf{mean parameters:} } \(\widehat{\beta}=
   \frac{1}{np} \sum_{i=1}^n \sum_{t=1}^p (2 T_{i,j}-1) Y_{i,j}\) \newline
-\hphantom{\textbf{mean parameters:} } \(\widehat{\mu}_{i,j} = \widehat{\alpha} - T_{i,j}\widehat{\beta}\)
+\hphantom{\textbf{mean parameters:} } \(\widehat{\mu}_{i,j} = \widehat{\alpha} + T_{i,j}\widehat{\beta}\)
 \item \textbf{variance parameter}: \(\widehat{\sigma}^2 =
   \frac{1}{np}\sum_{i=1}^n\sum_{j=1}^p (Y_{i,j}-\widehat{\mu}_{i,j})^2\)
 \item \textbf{correlation parameter}: \(\widehat{\rho} =
@@ -303,7 +303,7 @@ i.e. the empirical mean of the outcome, the empirical residual
 variance, and the average empirical residual correlation.
 
 \subsection{Numerical example}
-\label{sec:orgf496919}
+\label{sec:orgc186772}
 
 We will illustrate the previous result on an example. First we
 simulate some data in the long format:
@@ -360,7 +360,7 @@ Y.4 0.8330143 0.6131780 0.9503735 1.0000000
 \end{verbatim}
 
 \subsubsection{Maximum likelihood}
-\label{sec:org12eca80}
+\label{sec:org8cf057d}
 
 A random intercept model estimated by Maximum Likelihood (ML) leads to
 the following results:
@@ -418,7 +418,7 @@ mean(M.MLcor[lower.tri(M.MLcor)])
 \end{verbatim}
 
 \subsubsection{Restricted maximum likelihood}
-\label{sec:orgc568291}
+\label{sec:org81fa793}
 
 When fitting a random intercept model estimated by Maximum Likelihood
 (REML):
@@ -479,10 +479,10 @@ mean(M.REMLcor[lower.tri(M.REMLcor)])
 \clearpage
 
 \section{Standard error in a random intercept model}
-\label{sec:orgcb9b459}
+\label{sec:orgab137fa}
 
 \subsection{Theory}
-\label{sec:orgbf1ab25}
+\label{sec:org36aa148}
 
 Appendix \ref{sm:seRI} shows that the standard error of the treatment
 effect estimator can be expressed as:
@@ -507,10 +507,10 @@ correlation between observation \(j\) and \(j^{\prime}\), provided
 that the mean and variance structure of the model are correctly specified. 
 
 \subsection{Comparison to a t-test on the first change}
-\label{sec:org71b8d1c}
+\label{sec:org7ecd184}
 
 When using a t-test on the change based \textbf{only on the first observation
-under each treatment}, the variance is:
+under each treatment}, the standard error is:
 \begin{align*}
 \sigma_{\widehat{\Delta}(1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{n}}
 \end{align*}
@@ -539,14 +539,14 @@ whenever \(\sigma_{\widehat{\Delta}(1)}>\sigma_{\widehat{\beta}}\):
 which is always true unless \(p=1\) (no repetition) or \(\rho_{1,p_1+1}\approx 1\) (compound symmetry structure).
 
 \subsection{Comparison to a t-test on changes in a paired design}
-\label{sec:orgc032e4a}
+\label{sec:orgfe9b217}
 
 Consider now computing \(p_1\) changes per patient, e.g. \(p_1+1\)
 vs. \(1\), \(p_1+2\) vs. \(2\), \ldots, using only distinct
 observations (no observation is used twice when computing changes),
 and stacking all changes into a t-test. This strategy will generally
 not control the type 1 error (as it disregard within-individual
-correlation). The variance of the corresponding estimator can be
+correlation). The standard error of the corresponding estimator can be
 expressed as:
 \begin{align*}
 \sigma_{\widehat{\Delta}(p_1)} = \sqrt{\frac{2(1-\rho_{1,p_1+1}) \sigma^2}{np_1}}
@@ -570,7 +570,7 @@ Because \(\frac{2-p}{2(p-1)}<0\) the mixed model will be more liberal
 \(\rho_{1,1}>\rho_{1,p_1+1}\) otherwise it will be less liberal.
 
 \subsection{Numerical example}
-\label{sec:org65375c0}
+\label{sec:orgb701c29}
 
 We can retrieve the standard error estimated by the linear mixed model:
 \lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
@@ -628,7 +628,7 @@ where \(\VZ_i = (1,\VT_i)\) is the design matrix w.r.t. subject \(i\).
 
 
 \subsection{Mean parameters}
-\label{sec:orgb66dff6}
+\label{sec:orgdd32b14}
 
 The score equation w.r.t. the mean parameters is identical when
 considering the log-likelihood or the restricted log-likelihood. Using
@@ -711,7 +711,7 @@ maximum likelihood (REML) estimates of the mean parameters are the
 empirical means in the appropriate sub-groups.
 
 \subsection{Correlation parameter (ML)}
-\label{sec:org2461480}
+\label{sec:org6358f21}
 
 The ML score equation w.r.t the correlation parameter is:
 \begin{align*}
@@ -784,7 +784,7 @@ Since the first term is strictly positive (\(0<\rho<1\) and \(p>1\)) we can simp
 \end{align}
 
 \subsection{Variance parameter (ML)}
-\label{sec:orgb89dbec}
+\label{sec:org193e6ec}
 
 The ML score equation w.r.t the variance parameter is:
 \begin{align*}
