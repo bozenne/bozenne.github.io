@@ -3717,16 +3717,21 @@ plot(e.KM)
 [[file:./figures/fig-delayedTreatmentEffect.pdf]]
 
 ** Tune optimization parameters
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
 # control and lava.options
 # method Optimization method (NR, nlminb1,. . . )
 # iter.max (=300)
 # tol (=1e-9)
 # gamma Reduction in step-size NR (default 1 + back-tracing)
 # start starting values (named vector, see coef)
-# param (=’relative’)
+# param (='relative')
 # constrain (=FALSE)
 # silent (=FALSE)
 # trace (=0)
+#+END_SRC
+
+#+RESULTS:
+
 ** Interaction in lava (mean coefficients)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3787,7 +3792,188 @@ maximum likelihood (REML) instead of maximum likelihood
 Gaussian distribution which provides better type 1 error control in
 finite samples. 
 
-** Output correlation between two endogenous variables
+** Correlation between latent and single endogenous variable 
+
+Generate data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <-lvm(c(gene1,gene2,gene3,gene4,gene5)~expression,
+           expression~score)
+latent(mSim) <- ~expression
+
+set.seed(10)
+d <- lava::sim(mSim, n = 1e4, latent = TRUE)
+#+END_SRC
+
+#+RESULTS:
+
+Gold standard: correlation had we had measured the latent variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm <- lm(expression ~ score, data = d)
+e.lm2 <- lm(scale(expression) ~ scale(score), data = d)
+
+c(rho = cor(d$expression, d$score),  
+  slope = as.double(coef(e.lm)["score"]),
+  rhoVIAslope =as.double(coef(e.lm2)["scale(score)"]))
+#+END_SRC
+
+#+RESULTS:
+:         rho       slope rhoVIAslope 
+:   0.7087519   0.9911401   0.7087519
+
+To retrieve this with a latent variable model:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mEst <- estimate(mSim, data = d[,setdiff(names(d),"expression")])
+as.double(coef(mEst)["expression~score"]) ## to be rescaled
+#+END_SRC
+
+#+RESULTS:
+: [1] 1.001863
+
+one should rescale by the marginal standard deviation:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+estimate(mEst, f = function(p){
+  p["expression~score"]/sqrt(p["expression~~expression"]+p["expression~score"]^2)
+})
+#+END_SRC
+
+#+RESULTS:
+:                  Estimate  Std.Err   2.5%  97.5% P-value
+: expression~score   0.7071 0.004991 0.6973 0.7169       0
+
+\Warning Using the magic formula or the fitted latent variable values
+seem to provide worse estimators:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## magic formula
+betaHat/sqrt(betaHat^2+vcov(mEst)["expression~score","expression~score"]*(NROW(d)-2))
+## fitted latent variables
+d$expression.approx <- predict(mEst, y = latent(mEst), x = manifest(mEst))
+c(cor(dobs$score, d$expression.approx), betaHat/sd(d$expression.approx))
+#+END_SRC
+
+#+RESULTS:
+: expression~score 
+:        0.6174155
+: expression~score 
+:        0.7423190        0.7341532
+
+** Correlation between latent and multiple endogenous variables 
+
+Generate data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim2 <-lvm(c(gene1,gene2,gene3,gene4,gene5)~expression,
+           expression~score1+2*score2+0.75*score3)
+covariance(mSim2,score1~score2) <- 0.75
+covariance(mSim2,score1~score3) <- 0.25
+covariance(mSim2,score2~score3) <- 0.5
+latent(mSim2) <- ~expression
+
+set.seed(10)
+d2 <- lava::sim(mSim2, n = 1e4, latent = TRUE)
+#+END_SRC
+
+#+RESULTS:
+
+Gold standard: correlation had we had measured the latent variable:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## manual using the residuals from two separate linear regressions
+cor(residuals(lm(expression ~ score2 + score3, data = d2)),
+    residuals(lm(score1 ~ score2 + score3, data = d2)))
+cor(residuals(lm(expression ~ score1 + score3, data = d2)),
+    residuals(lm(score2 ~ score1 + score3, data = d2)))
+## manual using the magic formula from a single linear regression
+e.lm123 <- lmm(expression ~ score1 + score2 + score3, data = d2)
+coef(e.lm123)["score1"]/sqrt(coef(e.lm123)["score1"]^2+vcov(e.lm123)["score1","score1"]*df.residual(e.lm123))
+coef(e.lm123)["score2"]/sqrt(coef(e.lm123)["score2"]^2+vcov(e.lm123)["score2","score2"]*df.residual(e.lm123))
+## same as partialCor(e2.lmm)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.5430971
+: [1] 0.7571451
+: score1 
+: 0.5430971
+: score2 
+: 0.7571451
+
+Another way to obtain the gold standard is to rescaling the regression
+coefficients by the appropriate residual variance (see chapter 9 of
+Ding 2024, https://arxiv.org/pdf/2401.00649):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.lm1vs23 <- lm(score1 ~ score2 + score3, data = d2)
+e.lm2vs13 <- lm(score2 ~ score1 + score3, data = d2)
+
+sd_score1 <- sd(residuals(e.lm1vs23))
+sd_score2 <- sd(residuals(e.lm2vs13))
+
+sd_expression1 <- sqrt(var(residuals(e.lm123))+var(residuals(e.lm1vs23))*coef(e.lm123)["score1"]^2)
+## sd(residuals(lm(expression ~ score1 + score3, data = d2)))
+sd_expression2 <- sqrt(var(residuals(e.lm123))+var(residuals(e.lm2vs13))*coef(e.lm123)["score2"]^2)
+## sd(residuals(lm(expression ~ score2 + score3, data = d2)))
+coef(e.lm123)["score1"]*sd_score1/sd_expression1
+coef(e.lm123)["score2"]*sd_score2/sd_expression2
+#+END_SRC
+
+#+RESULTS:
+: score1 
+: 0.5430971
+: score2 
+: 0.7571451
+
+This technic can be extended to LVMs:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mEst2 <- estimate(lvm(c(gene1,gene2,gene3,gene4,gene5)~expression,
+                        expression~score1+score2+score3), data = d2[,setdiff(names(d2),"expression")])
+
+coef(mEst2)["expression~score1"]*sd(residuals(e.lm1vs23))/sqrt(coef(mEst2)["expression~~expression"]+var(residuals(e.lm1vs23))*coef(mEst2)["expression~score1"]^2)
+coef(mEst2)["expression~score2"]*sd(residuals(e.lm2vs13))/sqrt(coef(mEst2)["expression~~expression"]+var(residuals(e.lm2vs13))*coef(mEst2)["expression~score2"]^2)
+## or
+coef(mEst2)["expression~score1"]/sqrt(coef(mEst2)["expression~score1"]^2+coef(mEst2)["expression~~expression"]/var(residuals(e.lm1vs23)))
+coef(mEst2)["expression~score2"]/sqrt(coef(mEst2)["expression~score2"]^2+coef(mEst2)["expression~~expression"]/var(residuals(e.lm2vs13)))
+#+END_SRC
+
+#+RESULTS:
+: expression~score1 
+:         0.5484488
+: expression~score2 
+:         0.7537573
+: expression~score1 
+:         0.5484488
+: expression~score2 
+:         0.7537573
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+partialCor(lmm(expression ~ score1 + score2 + score3, data = sim(mEst2, n = 1e4)))
+#+END_SRC
+
+#+RESULTS:
+:        estimate      se   df lower upper p.value
+: score1    0.551 0.00582 9999 0.539 0.562       0
+: score2    0.748 0.00292 9999 0.742 0.754       0
+: score3    0.533 0.00605 9999 0.521 0.545       0
+
+\Warning Using the magic formula or the fitted latent variable values
+seem to provide worse estimators:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## magic formula
+coef(mEst2)["expression~score1"]/sqrt(coef(mEst2)["expression~score1"]^2+vcov(mEst2)["expression~score1","expression~score1"]*(NROW(d2)-3))
+coef(mEst2)["expression~score2"]/sqrt(coef(mEst2)["expression~score2"]^2+vcov(mEst2)["expression~score2","expression~score2"]*(NROW(d2)-3))
+## fitted latent variables
+d2$expression.approx <- predict(mEst2, x = endogenous(mEst2), y = latent(mEst2))
+partialCor(lmm(expression.approx ~ score1 + score2 + score3, data = d2))
+#+END_SRC
+
+#+RESULTS:
+: expression~score1 
+:         0.5088631
+: expression~score2 
+:         0.7099925
+: estimate      se   df lower upper p.value
+: score1    0.584 0.00536 9999 0.573 0.594       0
+: score2    0.783 0.00241 9999 0.778 0.787       0
+: score3    0.571 0.00553 9999 0.560 0.582       0
+
+
+** Correlation between two endogenous variables
 Simulate some data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
@@ -3870,7 +4056,7 @@ estimate(e, function(x){
 : cov.gene2~expression     1.1486 0.10913 0.9347 1.3625 6.600e-26
 : cor.gene2~expression     0.5236 0.03115 0.4626 0.5847 2.024e-63
 
-** Output correlation between two latent variables (covariance)
+** Correlation between two latent variables (covariance)
 
 Simulate some data:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3944,7 +4130,7 @@ direct correlation    0 0.000203386
 total correlation     0 0.000203386
 #+end_example
 
-** Output correlation between two latent variables (regression)
+** Correlation between two latent variables (regression)
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 library(lava)
@@ -4474,6 +4660,64 @@ r[grep("coef", r)]
 :  [9] "coef.multigroupfit"    "coef.multinomial"      "coef.ordreg"           "coef.pcor"            
 : [13] "coef.summary.estimate" "coef.summary.lvmfit"   "coef.twostageCV"       "coef.zibreg"          
 : [17] "describecoef"          "excoef"                "stdcoef"
+
+** List all S3 method in the stat package
+
+Default:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pkg_env <- getNamespace("stats")
+unique(gsub("\\.default","", ls(pkg_env, pattern = "\\.default")))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[1] "add1"            "aggregate"       "AIC"             "ansari.test"     "ar.burg"        
+ [6] "ar.yw"           "as.dist"         "as.hclust"       "as.stepfun"      "as.ts"          
+[11] "bartlett.test"   "BIC"             "biplot"          "case.names"      "coef"           
+[16] "confint"         "cophenetic"      "cor.test"        "cycle"           "deltat"         
+[21] "density"         "deriv"           "deriv3"          "deviance"        "df.residual"    
+[26] "diffinv"         "drop1"           "end"             "fitted"          "fligner.test"   
+[31] "formula"         "frequency"       "friedman.test"   "ftable"          "getCall"        
+[36] "getInitial"      "kernapply"       "kruskal.test"    "ks.test"         "lag"            
+[41] "makepredictcall" "median"          "model.frame"     "model.matrix"    "monthplot"      
+[46] "mood.test"       "na.action"       "na.contiguous"   "na.exclude"      "na.fail"        
+[51] "na.omit"         "napredict"       "naprint"         "naresid"         "nobs"           
+[56] "pacf"            "ppr"             "prcomp"          "princomp"        "proj"           
+[61] "qqnorm"          "quade.test"      "quantile"        "relevel"         "reorder"        
+[66] "residuals"       "screeplot"       "selfStart"       "sigma"           "sortedXyData"   
+[71] "start"           "t.test"          "terms"           "time"            "update"         
+[76] "var.test"        "variable.names"  "weighted.mean"   "weights"         "wilcox.test"    
+[81] "window"
+#+end_example
+
+=lm=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pkg_env <- getNamespace("stats")
+unique(gsub("\\.lm|\\.summary\\.lm","", ls(pkg_env, pattern = "\\.lm|\\.summary\\.lm")))
+#+END_SRC
+
+#+RESULTS:
+: [1] "add1"           "alias"          "anova"          "anovalist"      "case.names"     "confint"       
+:  [7] "cooks.distance" "deviance"       "dfbeta"         "dfbetas"        "drop1"          "dummy.coef"    
+: [13] "effects"        "extractAIC"     "family"         "formula"        "hatvalues"      "influence"     
+: [19] "labels"         "logLik"         "model.frame"    "model.matrix"   "nobs"           "plot"          
+: [25] "predict"        "print"          "proj"           "qr"             "residuals"      "rstandard"     
+: [31] "rstudent"       "simulate"       "summary"        "variable.names" "vcov"
+
+=aov=:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+pkg_env <- getNamespace("stats")
+unique(gsub("\\.aov|\\.summary\\.aov","", ls(pkg_env, pattern = "\\.aov|\\.summary\\.aov")))
+#+END_SRC
+
+#+RESULTS:
+: [1] "as.data.frameproj"   "coef"                "dummy.coeflist"      "efflist"            
+:  [5] "extractAIC"          "make.tablesproj"     "make.tablesprojlist" "model.framelist"    
+:  [9] "model.tables"        "model.tableslist"    "print"               "printlist"          
+: [13] "proj"                "projlist"            "se"                  "selist"             
+: [17] "se.contrast"         "se.contrastlist"     "summary"             "summarylist"        
+: [21] "termslist"           "TukeyHSD"            "vcov"
+
 
 ** Install development version of R
 https://cran.r-project.org/bin/windows/base/rdevel.html
