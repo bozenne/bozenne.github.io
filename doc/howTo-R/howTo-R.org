@@ -3807,7 +3807,7 @@ d <- lava::sim(mSim, n = 1e4, latent = TRUE)
 #+RESULTS:
 
 Gold standard: correlation had we had measured the latent variable:
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+#+BEGIN_SRC R :exports code :results silent :session *R* :cache no
 e.lm <- lm(expression ~ score, data = d)
 e.lm2 <- lm(scale(expression) ~ scale(score), data = d)
 
@@ -3816,6 +3816,11 @@ c(rho = cor(d$expression, d$score),
   rhoVIAslope =as.double(coef(e.lm2)["scale(score)"]))
 #+END_SRC
 
+#+BEGIN_SRC R :exports results :results output :session *R* :cache no
+c(rho = cor(d$expression, d$score),  
+  slope = as.double(coef(e.lm)["score"]),
+  rhoVIAslope = as.double(coef(e.lm2)["scale(score)"]))
+#+END_SRC
 #+RESULTS:
 :         rho       slope rhoVIAslope 
 :   0.7087519   0.9911401   0.7087519
@@ -3833,7 +3838,7 @@ one should rescale by the marginal standard deviation:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 estimate(mEst, f = function(p){
   p["expression~score"]/sqrt(p["expression~~expression"]+p["expression~score"]^2)
-})
+
 #+END_SRC
 
 #+RESULTS:
@@ -3844,10 +3849,10 @@ estimate(mEst, f = function(p){
 seem to provide worse estimators:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 ## magic formula
-betaHat/sqrt(betaHat^2+vcov(mEst)["expression~score","expression~score"]*(NROW(d)-2))
+coef(mEst)["expression~score"]/sqrt(coef(mEst)["expression~score"]^2+vcov(mEst)["expression~score","expression~score"]*(NROW(d)-2))
 ## fitted latent variables
 d$expression.approx <- predict(mEst, y = latent(mEst), x = manifest(mEst))
-c(cor(dobs$score, d$expression.approx), betaHat/sd(d$expression.approx))
+c(cor(d$score, d$expression.approx), coef(mEst)["expression~score"]/sd(d$expression.approx))
 #+END_SRC
 
 #+RESULTS:
@@ -3855,6 +3860,15 @@ c(cor(dobs$score, d$expression.approx), betaHat/sd(d$expression.approx))
 :        0.6174155
 : expression~score 
 :        0.7423190        0.7341532
+
+Simulating from the LVM lead to a value close to the gold standard:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10); dSim <- sim(mEst, n = 1e5)
+cor(dSim$score,dSim$expression)
+#+END_SRC
+
+#+RESULTS:
+: [1] 0.7107798
 
 ** Correlation between latent and multiple endogenous variables 
 
@@ -3902,15 +3916,8 @@ Ding 2024, https://arxiv.org/pdf/2401.00649):
 e.lm1vs23 <- lm(score1 ~ score2 + score3, data = d2)
 e.lm2vs13 <- lm(score2 ~ score1 + score3, data = d2)
 
-sd_score1 <- sd(residuals(e.lm1vs23))
-sd_score2 <- sd(residuals(e.lm2vs13))
-
-sd_expression1 <- sqrt(var(residuals(e.lm123))+var(residuals(e.lm1vs23))*coef(e.lm123)["score1"]^2)
-## sd(residuals(lm(expression ~ score1 + score3, data = d2)))
-sd_expression2 <- sqrt(var(residuals(e.lm123))+var(residuals(e.lm2vs13))*coef(e.lm123)["score2"]^2)
-## sd(residuals(lm(expression ~ score2 + score3, data = d2)))
-coef(e.lm123)["score1"]*sd_score1/sd_expression1
-coef(e.lm123)["score2"]*sd_score2/sd_expression2
+coef(e.lm123)["score1"]*sd(residuals(e.lm1vs23))/sqrt(var(residuals(e.lm123))+var(residuals(e.lm1vs23))*coef(e.lm123)["score1"]^2)
+coef(e.lm123)["score2"]*sd(residuals(e.lm2vs13))/sqrt(var(residuals(e.lm123))+var(residuals(e.lm2vs13))*coef(e.lm123)["score2"]^2)
 #+END_SRC
 
 #+RESULTS:
@@ -3941,16 +3948,6 @@ coef(mEst2)["expression~score2"]/sqrt(coef(mEst2)["expression~score2"]^2+coef(mE
 : expression~score2 
 :         0.7537573
 
-#+BEGIN_SRC R :exports none :results output :session *R* :cache no
-partialCor(lmm(expression ~ score1 + score2 + score3, data = sim(mEst2, n = 1e4)))
-#+END_SRC
-
-#+RESULTS:
-:        estimate      se   df lower upper p.value
-: score1    0.551 0.00582 9999 0.539 0.562       0
-: score2    0.748 0.00292 9999 0.742 0.754       0
-: score3    0.533 0.00605 9999 0.521 0.545       0
-
 \Warning Using the magic formula or the fitted latent variable values
 seem to provide worse estimators:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -3972,6 +3969,17 @@ partialCor(lmm(expression.approx ~ score1 + score2 + score3, data = d2))
 : score2    0.783 0.00241 9999 0.778 0.787       0
 : score3    0.571 0.00553 9999 0.560 0.582       0
 
+Simulating from the LVM lead to a value close to the gold standard:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+set.seed(10)
+partialCor(lmm(expression ~ score1 + score2 + score3, data = sim(mEst2, n = 1e4)))
+#+END_SRC
+
+#+RESULTS:
+: estimate      se   df lower upper p.value
+: score1    0.548 0.00586 9999 0.536 0.559       0
+: score2    0.753 0.00284 9999 0.748 0.759       0
+: score3    0.529 0.00611 9999 0.517 0.541       0
 
 ** Correlation between two endogenous variables
 Simulate some data:
@@ -4947,6 +4955,61 @@ add the following keywords :
 # ## add page break after section/subsection
 #+LaTeX_HEADER: \newcommand{\sectionbreak}{\clearpage}
 #+LaTeX_HEADER: \newcommand{\subsectionbreak}{\clearpage}
+
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+
+# ## valid and cross symbols
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
+
+# ## warning symbol
+#+LaTeX_HEADER: \usepackage{stackengine}
+#+LaTeX_HEADER: \usepackage{scalerel}
+#+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
+#+LaTeX_HEADER:   \renewcommand\stacktype{L}%
+#+LaTeX_HEADER:   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny\bfseries !}}{#1}%
+#+LaTeX_HEADER:   \xspace
+#+LaTeX_HEADER: }
+
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }
 
 ** Code
 #+PROPERTY: header-args :session *R*
