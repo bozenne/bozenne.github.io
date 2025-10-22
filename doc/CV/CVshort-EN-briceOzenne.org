@@ -1,0 +1,235 @@
+#+TITLE:
+#+Author: Brice Ozenne
+
+# header
+#+BEGIN_EXPORT latex
+\begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+	\textbf{\Large Brice Ozenne} & \textbf{\today} \\
+\end{tabular*}
+
+\bigskip
+
+\begin{minipage}{0.2\linewidth}
+\includegraphics[width=\linewidth]{photoId.png}
+\end{minipage}
+\begin{minipage}{0.75\linewidth}
+\begin{tabular*}{7in}{ll@{ }l}
+	Nationality&:& french  \\
+	Age&:& 35  \\
+	Professional email&:& \url{broz@sund.ku.dk} \\ 
+        Personal Website&:& \url{https://bozenne.github.io/} \\
+        Github&:& \url{https://github.com/bozenne/} \\
+\end{tabular*}
+\end{minipage}
+#+END_EXPORT
+
+\bigskip
+
+* Current position                                          :ignore:
+#+LaTeX: \resheading{Current position}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+	October 2023- Now:& \textbf{Associate professor in biostatistics} with a shared position between \\ [2mm]
+	& - the \href{https://publichealth.ku.dk/about-the-department/biostat/}{Section of Biostatistics}, University of Copenhagen (KU) \\
+	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
+	& - the \href{https://nru.dk}{Neurobiology Research Unit} (NRU) \\
+	& Copenhagen University Hospital, Rigshospitalet \\
+	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark \\ [2mm]
+\end{tabular}
+#+END_EXPORT
+where I do research in biostatistics along with a consulting and teaching activity in statistics.
+
+* Education                                                          :ignore:
+#+LaTeX: \resheading{Education and research carrier}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2020 - 2023 : & Assistant professor in biostatistics with a shared positive between KU and NRU \\
+2020 - 2015 : & Post-doc in biostatistics with a shared positive between KU and NRU \\
+2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
+              & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
+2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University lyon, Lyon, France. \\ 
+2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
+              & Erasmus at Politecnico di Milano (2nd semester 2011). \\
+\end{tabular}
+#+END_EXPORT
+
+* Teaching                                           :ignore:
+#+LaTeX: \resheading{Teaching activity at the University of Copenhagen}
+
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+\href{https://absalon.ku.dk/courses/68009}{Survival analysis}&: Master students in statistics \\
+\href{https://absalon.ku.dk/courses/47665}{Statistical analysis of repeated measurements}&: Ph.d. students in medical sciences  \\
+\href{https://absalon.ku.dk/courses/58764}{Epidemiological methods in medical research}&: Ph.d. students in medical sciences \\
+\end{tabular}
+#+END_EXPORT
+
+
+* Grants                                                             :ignore:
+#+LaTeX: \resheading{Grants}
+#+BEGIN_EXPORT latex
+\begin{tabular}{l@{ }l}
+2017-2019: MARIE CURIE Individual Fellowships (200 000\euro, EU H2020-MSCA-IF-2016 746850) \\
+2017-2020: Lundbeck Fellowships (140 000\euro, R231-2016-3236) \\
+2025-2026: Savværksejer Jeppe Juhl og hustru Ovita Juhls Mindelegat (500 000 DKK) \\
+\end{tabular}
+#+END_EXPORT
+* Publications                                                       :ignore:                          
+#+LaTeX: \resheading{Selected publications  \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
+#+BEGIN_EXPORT latex
+\begin{itemize}
+    \item \bibentry{ozenne2025sensitivity}
+    \item \bibentry{baayen2025design}
+    \item \bibentry{ozenne2022controlling}
+    \item \bibentry{ip2021eeg}
+    \item \bibentry{norgaard2019preprocessing}
+\end{itemize}
+#+END_EXPORT
+* Software development                 :ignore:
+#+LaTeX: \resheading{Selected software \hfill (packages for the \href{https://www.r-project.org/}{R software})}
+
+- *LMMstar* (author and maintainer) : linear mixed model via
+  covariance structure. Inference in small sample, test linear and
+  non-linear combinations of parameters, pooling across models,
+  multiple comparisons adjustment. Available on [[https://cran.r-project.org/web/packages/LMMstar/index.html][CRAN]] and on [[https://github.com/bozenne/LMMstar][Github]].
+
+- *riskRegression* (contributor): computation of absolute risks and
+  average treatment effects. Methodology described in
+  citep:ozenne2017riskregression and
+  citep:ozenne2020estimation. Available on [[https://cran.r-project.org/web/packages/riskRegression/index.html][CRAN]] and on [[https://github.com/tagteam/riskRegression][Github]].
+
+- *BuyseTest* (author and maintainer): implementation of generalized
+  pairwise comparisons, including recent developments to handle
+  right-censoring citep:ozenne2021asymptotic. Available on [[https://cran.r-project.org/web/packages/BuyseTest/index.html][CRAN]] and on
+  [[https://github.com/bozenne/BuyseTest][Github]].
+
+
+
+
+* Reference :ignore:
+
+# bibliographystyle:apalike
+ bibliographystyle:plainnat
+
+ # [[bibliography:publicationBO.bib]]
+[[nobibliography:publicationBO.bib]]
+
+* CONFIG :noexport:
+#+LANGUAGE: en
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [12pt]
+#+OPTIONS:   title:nil author:nil toc:nil todo:nil
+#+OPTIONS:   H:3 num:t 
+#+OPTIONS:   TeX:t LaTeX:t
+#+options: num:nil
+
+#+LaTeX_HEADER: \pagestyle{empty} % no page numbering
+#+LATEX_HEADER: \usepackage[french]{babel}
+
+** Notations
+#+LaTeX_HEADER: \newcommand{\Cpp}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
+#+LaTeX_HEADER: \usepackage{eurosym} % euro symbol
+
+** Sections
+#+LaTeX_HEADER: \usepackage{titlesec}
+#+LaTeX_HEADER: \titleformat{\section}{\large}{\thesection}{1em}{}
+
+#+LaTeX_HEADER: \titlespacing*{\section}{0pt}{0.25\baselineskip}{0.25\baselineskip}
+** Margin
+#+LaTeX_HEADER: \geometry{
+#+LaTeX_HEADER: left=20mm,
+#+LaTeX_HEADER: right=20mm,
+#+LaTeX_HEADER: top=20mm,
+#+LaTeX_HEADER: bottom=20mm
+#+LaTeX_HEADER: }
+
+** Color
+# # change the color of the links
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+
+** Line spacing
+#+LATEX_HEADER: \RequirePackage{setspace} % to modify the space between lines - incompatible with footnote in beamer
+#+LaTeX_HEADER: \renewcommand{\baselinestretch}{1.1}
+
+** CV
+# from https://www.sharelatex.com/templates/cv-or-resume/sc_cv
+#+LaTeX_HEADER: \usepackage{framed}
+#+LaTeX_HEADER: \usepackage{tocloft}
+
+#+LaTeX_HEADER: \newlength{\outerbordwidth}
+#+LaTeX_HEADER: \raggedbottom
+#+LaTeX_HEADER: \raggedright
+
+#+LaTeX_HEADER: \setlength{\outerbordwidth}{3pt}  % Width of border outside of title bars
+#+LaTeX_HEADER: \definecolor{shadecolor}{gray}{0.75}  % Outer background color of title bars (0 = black, 1 = white)
+#+LaTeX_HEADER: \definecolor{shadecolorB}{gray}{0.93}  % Inner background color of title bars
+
+#+LaTeX_HEADER: \usepackage{mdframed}
+#+LaTeX_HEADER: \newcommand{\resitem}[1]{\item #1 \vspace{-2pt}}
+
+#+LaTeX_HEADER: \newcommand{\resheading}[1]{
+#+LaTeX_HEADER: \vspace{8pt}
+#+LaTeX_HEADER:  \parbox{\textwidth}{\setlength{\FrameSep}{\outerbordwidth}
+#+LaTeX_HEADER:     \begin{shaded}
+#+LaTeX_HEADER: \setlength{\fboxsep}{0pt}\framebox[\textwidth][l]{\setlength{\fboxsep}{4pt}\fcolorbox{shadecolorB}{shadecolorB}{\textbf{\sffamily{\mbox{~}\makebox[6.762in][l]{\large #1} \vphantom{p\^{E}}}}}}
+#+LaTeX_HEADER:     \end{shaded}
+#+LaTeX_HEADER:   }\vspace{-5pt}
+#+LaTeX_HEADER: }
+#+LaTeX_HEADER: \newcommand{\ressubheading}[4]{
+#+LaTeX_HEADER: \begin{tabular*}{6.5in}{l@{\cftdotfill{\cftsecdotsep}\extracolsep{\fill}}r}
+#+LaTeX_HEADER: 		\textbf{#1} & #2 \\
+#+LaTeX_HEADER: 		\textit{#3} & \textit{#4} \\
+#+LaTeX_HEADER: \end{tabular*}\vspace{-6pt}}
+
+** List of publications
+# ### list publications
+#+LaTeX_HEADER: \usepackage{bibentry}
+#+LaTeX_HEADER: \nobibliography*
+
+# ### display of my name
+#+LaTeX_HEADER: \newcommand{\myname}[1]{\textbf{#1}}
+
+#+LaTeX_HEADER:  \usepackage{url}
+
+# ## [resume] (keep the numbering over several enumerate list)
+#+LaTeX_HEADER: \usepackage{enumitem}
+
+** Rlogo
+# ## R logo
+#+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
+#+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
+#+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}   
+#+LATEX_HEADER: \newcommand{\Rlogo}[1][0.07]{
+#+LATEX_HEADER: \begin{tikzpicture}[scale=#1]
+#+LATEX_HEADER: \shade [right color=grayR,left color=grayL,shading angle=60] 
+#+LATEX_HEADER: (-3.55,0.3) .. controls (-3.55,1.75) 
+#+LATEX_HEADER: and (-1.9,2.7) .. (0,2.7) .. controls (2.05,2.7)  
+#+LATEX_HEADER: and (3.5,1.6) .. (3.5,0.3) .. controls (3.5,-1.2) 
+#+LATEX_HEADER: and (1.55,-2) .. (0,-2) .. controls (-2.3,-2) 
+#+LATEX_HEADER: and (-3.55,-0.75) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white] 
+#+LATEX_HEADER: (-2.15,0.2) .. controls (-2.15,1.2) 
+#+LATEX_HEADER: and (-0.7,1.8) .. (0.5,1.8) .. controls (2.2,1.8) 
+#+LATEX_HEADER: and (3.1,1.2) .. (3.1,0.2) .. controls (3.1,-0.75) 
+#+LATEX_HEADER: and (2.4,-1.45) .. (0.5,-1.45) .. controls (-1.1,-1.45) 
+#+LATEX_HEADER: and (-2.15,-0.7) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[blueM] 
+#+LATEX_HEADER: (1.75,1.25) -- (-0.65,1.25) -- (-0.65,-2.75) -- (0.55,-2.75) -- (0.55,-1.15) -- 
+#+LATEX_HEADER: (0.95,-1.15)  .. controls (1.15,-1.15) 
+#+LATEX_HEADER: and (1.5,-1.9) .. (1.9,-2.75) -- (3.25,-2.75)  .. controls (2.2,-1) 
+#+LATEX_HEADER: and (2.5,-1.2) .. (1.8,-0.95) .. controls (2.6,-0.9) 
+#+LATEX_HEADER: and (2.85,-0.35) .. (2.85,0.2) .. controls (2.85,0.7) 
+#+LATEX_HEADER: and (2.5,1.2) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \fill[white]  (1.4,0.4) -- (0.55,0.4) -- (0.55,-0.3) -- (1.4,-0.3).. controls (1.75,-0.3) 
+#+LATEX_HEADER: and (1.75,0.4) .. cycle;
+#+LATEX_HEADER: 
+#+LATEX_HEADER: \end{tikzpicture}
+#+LATEX_HEADER: }

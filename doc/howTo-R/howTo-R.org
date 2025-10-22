@@ -4219,6 +4219,95 @@ coef(e)["etaVIG~etaINS"]*sqrt(coef(e)["etaVIG~~etaVIG"]+coef(e)["etaVIG~etaINS"]
 : etaVIG~etaINS 
 :      2.476307
 
+** Interaction between latent variables
+
+Simulate LVM with interaction:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm(x1+x2+x3 ~ etaX,
+            y1+y2+y3 ~ etaY,
+            z ~ etaXY)
+covariance(mSim, etaX~etaY) <- 0.25
+transform(mSim, etaXY ~ etaX+etaY) <- function(x){x[1]*x[2]+rnorm(NROW(x))}
+dSim.GS <- sim(mSim, n=1e3, seed=42) # Default is all parameters are 1
+#+END_SRC
+
+#+RESULTS:
+
+Oracle regression:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+summary(lm(z ~ etaX*etaY, data = dSim.GS))$coef
+#+END_SRC
+
+#+RESULTS:
+:                 Estimate Std. Error    t value     Pr(>|t|)
+: (Intercept)  0.008112885 0.04631895  0.1751526 8.609953e-01
+: etaX         0.036613618 0.04705011  0.7781835 4.366457e-01
+: etaY        -0.104524672 0.04634788 -2.2552204 2.433591e-02
+: etaX:etaY    1.042602480 0.04422953 23.5725438 5.504357e-98
+
+Observable dataset:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dSim.obs <- dSim.GS[,c(paste0("x",1:3),paste0("y",1:3),"z")]
+#+END_SRC
+
+#+RESULTS:
+
+Latent variable model with interaction on the observable data:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+## linear LVM estimable on the observed data
+m1 <- lvm(x1+x2+x3 ~ etaX,
+          y1+y2+y3 ~ etaY,
+          latent=~etaX+etaY)
+covariance(m1) <- etaX~etaY
+## linear LVM if m1 is known otherwise non-linear
+m2 <- lvm(z ~ etaX + etaY + etaX:etaY)
+mypred <- function(mu,var,data,...) {
+  ## E[f(etaX,etaY)] = E[\alpha etaX + \beta etaY + \gamma etaX etaY | X,Y]
+  ##                 = \alpha E[etaX|X,Y] + \beta E[etaY|X,Y] + \gamma E[etaX etaY|X,Y]
+  ##                 = \alpha E[etaX|X,Y] + \beta E[etaY|X,Y] + \gamma (E[etaX|X,Y]E[etaY|X,Y] + Cov(etaX,etaY|X,Y)
+  ## NOTE: var["etaX","etaY"|X,Y]=0 without covariance link
+  ##       var["etaX",G|X,Y]=0 when G is one of the observed covariates, i.e., is in X
+  cbind("etaX" = mu[,"etaX"],
+        "etaY" = mu[,"etaY"],
+        "etaX:etaY" = mu[,"etaX"] * mu[,"etaY"] + var["etaX","etaY"])
+}
+ee2 <- twostage(m1, model2=m2, data=dSim.obs, predict.fun=mypred)
+summary(ee2)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Latent variables: 
+Number of rows in data=1000
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+                    Estimate Std. Error  Z-value  P-value   std.xy
+Regressions:                                                      
+   z~etaX            0.06320    0.07094  0.89084    0.373  0.03031
+   z~etaY           -0.08678    0.06607 -1.31344    0.189 -0.04557
+   z~etaX:etaY       1.03636    0.09035 11.47117   <1e-12  0.46523
+Intercepts:                                                       
+   z                 0.01752    0.05555  0.31545   0.7524  0.00985
+Residual Variances:                                               
+   z                 2.47678    0.11838 20.92265           0.78271
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+Estimator: generic 
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Number of observations = 1000 
+ Log-Likelihood = -1872.418 
+ BIC = 3779.375 
+ AIC = 3754.836 
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+R-squared 
+    z 
+0.217
+#+end_example
+
+In the lava package [[https://cran.r-project.org/web/packages/lava/vignettes/nonlinear.html][vignette]] about interactions, section
+'Specification of general functional forms', the example is given for
+an quadratic interaction, i.e. \(\beta_1 \eta + \beta_2 \eta^2 +
+\gamma G + \delta_1 \eta G + \delta_2 \eta G\). Here
+\(\Esp[\eta^2|X,Y]=\Esp[\eta|X,Y]^2 + \Var[\eta|X,Y]\).
 
 ** Handling left, right, and interval censored data
 

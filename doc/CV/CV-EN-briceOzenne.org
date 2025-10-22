@@ -15,7 +15,7 @@
 \begin{minipage}{0.75\linewidth}
 \begin{tabular*}{7in}{ll@{ }l}
 	Nationality&:& french  \\
-	Age&:& 34  \\
+	Age&:& 35  \\
 	Professional email&:& \url{broz@sund.ku.dk} \\ 
         Personal Website&:& \url{https://bozenne.github.io/} \\
         Github&:& \url{https://github.com/bozenne/} \\
