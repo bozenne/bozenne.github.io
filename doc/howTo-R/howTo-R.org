@@ -48,6 +48,7 @@ library(perm) ## permutation tests
 library(quantreg) ## quantile regression
 library(butils) ## partial residuals (butils::install_github("bozenne/butils"))
 library(TOSTER) ## equivalence testing
+library(bpcp) ## compare KM between groups at fixed timepoint
 
 ## diagnostics 
 library(gof) ## devtools::install_github("kkholst/gof")
@@ -2152,6 +2153,64 @@ sample estimates:
 odds ratio 
          1
 #+end_example
+** Compare proportions between groups with right censoring
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(bpcp)
+library(survival)
+library(riskRegression)
+data(leuk2)
+
+set.seed(1)
+leuk2$time2 <- leuk2$time + rnorm(NROW(leuk2), sd = 0.00001) ## break ties
+
+
+bpcp2samp(leuk2$time2,leuk2$status,leuk2$treatment,
+          20,parmtype="difference") ## also work with ties
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+	Two-Sample Melded BPCP Test
+
+data:  S(20;group=placebo)-S(20;group=6-MP)
+S(20;group=6-MP) = 0.62425, S(20;group=placebo) = 0.095238, p-value = 0.003323
+alternative hypothesis: true difference is not equal to 0
+95 percent confidence interval:
+ -0.7734081 -0.1460189
+sample estimates:
+difference 
+-0.5290116
+#+end_example
+
+Sanity check (only without ties)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e.SKM <- coxph(Surv(time2,status)~strata(treatment), data = leuk2, 
+               x = TRUE)
+pred.SKM <- predictCox(e.SKM, times = 20, product.limit = TRUE,
+                       newdata = data.frame(treatment =  levels(leuk2$treatment)), iid = TRUE)
+
+res <- data.frame(estimate = pred.SKM$survival[1]-pred.SKM$survival[2],
+         se = crossprod(pred.SKM$survival.iid[,,1]-pred.SKM$survival.iid[,,2])
+)
+res$lower <- res$estimate + pnorm(0.025)*res$se
+res$upper <- res$estimate + pnorm(0.975)*res$se
+res$p.value <- 2*(1-pnorm(abs(res$estimate)/res$se))
+res
+#+END_SRC
+
+#+RESULTS:
+: estimate         se     lower     upper p.value
+: 1 0.5290116 0.01378468 0.5360414 0.5405248       0
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+diff(summary(survfit(Surv(time2,status)~treatment, data = leuk2), time = 20)$surv)
+#+END_SRC
+
+#+RESULTS:
+: [1] -0.5290116
+
 ** Estimate Mann Whitney parameter
 
 Remove ties:
@@ -3376,6 +3435,7 @@ rho1       0.6729560 0.07737590
 rho2       0.3023899 0.12848984
 rho2-rho1 -0.3705661 0.14998890
 #+end_example
+
 
 * Loops and parallel computations  
 ** Apply with progress bar
@@ -4676,6 +4736,23 @@ pnorm(coef(e0.lvm)[1]+exp(coef(e0.lvm)[2])) - pnorm(coef(e0.lvm)[1])
 : 0.4669996
 
 * Miscellaneous
+** logit (qlogis) and expit (plogit)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+lp.try <- seq(-5,5,by=.1)
+range(plogis(lp.try) - 1/(1+exp(-lp.try)))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0 0
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+p.try <- seq(0.0001,0.9999,by=.1)
+range(qlogis(p.try) - log(p.try/(1-p.try)))
+#+END_SRC
+
+#+RESULTS:
+: [1] 0 0
+
 ** Profile code R
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -4814,7 +4891,6 @@ unique(gsub("\\.aov|\\.summary\\.aov","", ls(pkg_env, pattern = "\\.aov|\\.summa
 : [13] "proj"                "projlist"            "se"                  "selist"             
 : [17] "se.contrast"         "se.contrastlist"     "summary"             "summarylist"        
 : [21] "termslist"           "TukeyHSD"            "vcov"
-
 
 ** Install development version of R
 https://cran.r-project.org/bin/windows/base/rdevel.html

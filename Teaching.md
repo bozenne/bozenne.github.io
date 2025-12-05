@@ -41,6 +41,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
 - DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
+- Emulating trials: [Hernan 2016](https://doi.org/10.1093/aje/kwv254)
 - Estimand: [Kahan 2023](https://doi.org/10.1136/bmj-2023-076316 )
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)

@@ -97,6 +97,15 @@ Bla src_R{{{1+1}}} {{{results(=2=)}}}.
 - (A) :: yyy
 - (1) :: xxx
 
+** Change color
+# https://tex.stackexchange.com/questions/87133/changing-the-color-of-itemize-item-in-beamer
+
+#+LaTeX: \setbeamercolor{itemize item}{fg=red}
+#+LaTeX:  \setbeamertemplate{itemize item}[square]
+
+#+LaTeX: \setbeamertemplate{itemize subitem}[circle]
+#+LaTeX: \setbeamertemplate{itemize subsubitem}[triangle]
+
 ** Use itemize and modify vertical space
 
 #+ATTR_LATEX: :environment itemize
