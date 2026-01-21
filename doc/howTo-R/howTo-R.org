@@ -4496,11 +4496,13 @@ weight
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 rbind(lambda) %*% solve(tcrossprod(lambda) + diag(sigma/tau))
+sum(lambda * solve(tcrossprod(lambda) + diag(sigma/tau))[,1])
 #+END_SRC
 
 #+RESULTS:
 :             [,1]      [,2]       [,3]      [,4]
 : lambda 0.1108541 0.2186568 0.04547272 0.1854233
+: [1] 0.1108541
 
 and values of the latent variable:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no

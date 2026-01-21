@@ -49,7 +49,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Mann-Whitney parameter: [Fay, 2018](https://doi.org/10.1002/sim.7799)
 - Mediation: continuous outcome & hypotheses [Vanderweele, 2009](https://dx.doi.org/10.4310/SII.2009.v2.n4.a7), binary outcome [Vanderweele, 2010](https://doi.org/10.1093/aje/kwq332)
 - Non-collapsability of odds ratio: [Greenland, 2021](https://doi.org/10.1016/j.jclinepi.2021.06.004)
-- Observed power: [Hoenig, 2001](http://www.jstor.org/stable/2685525) use CI instead [Hawkins 2021](doi:10.1001/jama.2021.16172)
+- Observed power: misuse of power when interpreting results [Goodman, 1994](doi:10.7326/0003-4819-121-3-199408010-00008﻿) or [Hoenig, 2001](http://www.jstor.org/stable/2685525). Use CI instead [Hawkins 2021](https://doi:10.1001/jama.2021.16172)
 - Per protocol analysis: DAGs showing the bias of naive methods [Hernán, 2012](https://doi.org//10.1177/1740774511420743) and recommandations [Hernán, 2017](https://doi.org//10.1056/NEJMsm1605385)
 - Recurrent events: [Furberg, 2021](https://doi.org/10.1002/pst.2167)
 - Risk, rate, and competing risks: [Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
