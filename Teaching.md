@@ -42,7 +42,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Emulating trials: [Hernan 2016](https://doi.org/10.1093/aje/kwv254)
-- Estimand: [Kahan 2023](https://doi.org/10.1136/bmj-2023-076316 )
+- Estimand: examples [Lawrance 2020](https://doi.org/10.1186/s41687-020-00218-5) and how to handle intercurrent events [Kahan 2023](https://doi.org/10.1136/bmj-2023-076316)
 - Groups sequential design: [Todd, 2001](https://dx.doi.org/10.1046/j.1365-2125.2001.01382.x)
 - Interaction vs. effect modification: [VanderWeele, 2009](https://doi.org/10.1097/ede.0b013e3181ba333c)
 - Intercurrent events: [Kahan 2023](https://doi.org/10.1136/bmj-2023-076316)
@@ -54,7 +54,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Recurrent events: [Furberg, 2021](https://doi.org/10.1002/pst.2167)
 - Risk, rate, and competing risks: [Beyersmann, 2014](https://doi.org/10.1007/s00134-014-3279-7)
 - Sample size calculation for existing databases: [Hernan, 2022](https://doi.org/10.1016/j.jclinepi.2021.08.028)
-- Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275))
+- Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275)
 - Testing proportional hazards: [Stensrud, 2020](https://doi.org/10.1001/jama.2020.1267)
 - t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
 - Table 1 (no p-value): [STROBE, 2007](https://doi.org/10.1371/journal.pmed.0040297): "Inferential measures such as standard errors and confidence intervals should not be used to describe the variability of characteristics, and significance tests should be avoided in descriptive tables."
