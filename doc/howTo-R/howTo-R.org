@@ -3436,7 +3436,6 @@ rho2       0.3023899 0.12848984
 rho2-rho1 -0.3705661 0.14998890
 #+end_example
 
-
 * Loops and parallel computations  
 ** Apply with progress bar
 
@@ -4998,6 +4997,14 @@ regmatches(text, regexpr(text = text, pattern = "\\d+"))
 source("https://raw.github.com/bozenne/butils/master/R/riskIDM.R")
 #+END_SRC
 
+** read.table - error
+
+https://stackoverflow.com/questions/29977967/error-in-rstudio-with-read-tableurl
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+setInternet2(use=FALSE) ## try
+#+END_SRC
+
+
 ** Keywords in Rd files
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 RShowDoc("KEYWORDS")
@@ -5109,7 +5116,6 @@ add the following keywords :
 
 ** Additional commands
 #+LATEX_HEADER: \usepackage{xspace}
-#+LATEX_HEADER: \newcommand\Rlogo{\textbf{\textsf{R}}\xspace} 
 
 ** Display
 #+LaTeX_HEADER: \usepackage{titlesec}

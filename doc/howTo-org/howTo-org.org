@@ -244,7 +244,6 @@ ascii(xtable(tli[1:10, ]))
 
 
 
-
 * References
 
 ** Citations
@@ -392,28 +391,56 @@ bibliographystyle:apalike
 
 
 * CONFIG :noexport:
+
+** Theme
 #+LANGUAGE:  en
 #+startup: beamer
 #+LaTeX_CLASS: beamer
 #+LaTeX_class_options: [table] 
 #+LaTeX_HEADER: \subtitle{}
-#+LaTeX_HEADER: \setbeamertemplate{footline}[frame number]
-#+LaTeX_HEADER: \setbeamertemplate{navigation symbols}{}
+#+BEAMER_THEME: Singapore [height=20pt]
 #+OPTIONS:   title:t author:t toc:nil todo:nil
 #+OPTIONS:   H:2 num:t 
 #+OPTIONS:   TeX:t LaTeX:t
 
-#+LATEX_HEADER: %
-#+LATEX_HEADER: %%%% specifications %%%%
-#+LATEX_HEADER: %
+*** page number
+#+LaTeX_HEADER: \setbeamertemplate{footline}[frame number]
+# #+LaTeX_HEADER: \setbeamertemplate{footline}{} %% remove numbering
+# #+LaTeX_HEADER: \setbeamerfont{footline}{size=\small} %% increase size and 
+# #+LaTeX_HEADER: \setbeamercolor{footline}{fg=blue}
 
-** Latex command
-#+LATEX_HEADER: \usepackage{ifthen}
-#+LATEX_HEADER: \usepackage{xifthen}
-#+LATEX_HEADER: \usepackage{xargs}
-#+LATEX_HEADER: \usepackage{xspace}
+*** Backup slides
+#+LATEX_HEADER: \newcommand{\backupbegin}{
+#+LATEX_HEADER:   \newcounter{finalframe}
+#+LATEX_HEADER:   \setcounter{finalframe}{\value{framenumber}}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \newcommand{\backupend}{
+#+LATEX_HEADER:   \setcounter{framenumber}{\value{finalframe}}
+#+LATEX_HEADER:}
 
-** Notations
+*** Footnotes
+#+LaTeX_HEADER: \RequirePackage{hanging}
+#+LaTeX_HEADER: \setbeamertemplate{footnote}{%
+#+LaTeX_HEADER:   \hangpara{2em}{1}%
+#+LaTeX_HEADER:   \makebox[2em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par%
+#+LaTeX_HEADER: } 
+
+*** handout (i.e. animation-free: last slide)
+# #+LaTeX_CLASS_options: [handout]
+# #+LaTeX_HEADER: \usepackage{pdfpages}
+# #+LaTeX_HEADER: \mode<handout>{
+# #+LaTeX_HEADER: \pdfpageuselayout{resize to}[a4paper, landscape]
+# #+LaTeX_HEADER: }
+
+
+** Margins
+
+*** Globally adjust
+# #+LATEX_HEADER:\geometry{left=1cm}
+
+*** Locally adjust
+#+LATEX_HEADER: \usepackage{changepage} %% ## \begin{adjustwidth} ## \end{adjustwidth}
+
 
 ** Code
 # Documentation at https://org-babel.readthedocs.io/en/latest/header-args/#results
@@ -424,32 +451,32 @@ bibliographystyle:apalike
 # :export (code/results/none/both)
 #+PROPERTY: header-args :session *R* :tangle yes :cache no ## extra argument need to be on the same line as :session *R*
 
-# Code display:
+*** Code display (input)
+# ## change font size input
+# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
+
+*** Code display (output)
 #+LATEX_HEADER: \RequirePackage{fancyvrb}
 #+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\small,formatcom = {\color[rgb]{0.5,0,0}}}
 
-# ## change font size input
-# ## #+ATTR_LATEX: :options basicstyle=\ttfamily\scriptsize
-# ## change font size output
-# ## \RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\tiny,formatcom = {\color[rgb]{0.5,0,0}}}
+** Symbols
 
-** List
-#+LaTeX_HEADER: \RequirePackage{enumitem}
 
-** Display 
-#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+*** Valid
+#+LaTeX_HEADER: \RequirePackage{pifont}
+#+LaTeX_HEADER: \RequirePackage{relsize}
+#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
+#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
+#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
 
-# ## valid and cross symbols
+*** Wrong
 #+LaTeX_HEADER: \RequirePackage{pifont}
 #+LaTeX_HEADER: \RequirePackage{relsize}
 #+LaTeX_HEADER: \newcommand{\Cross}{{\raisebox{-0.5ex}%
 #+LaTeX_HEADER:		{\relsize{1.5}\ding{56}}}\hspace{1pt} }
-#+LaTeX_HEADER: \newcommand{\Valid}{{\raisebox{-0.5ex}%
-#+LaTeX_HEADER:		{\relsize{1.5}\ding{52}}}\hspace{1pt} }
 #+LaTeX_HEADER: \newcommand{\CrossR}{ \textcolor{red}{\Cross} }
-#+LaTeX_HEADER: \newcommand{\ValidV}{ \textcolor{green}{\Valid} }
 
-# ## warning symbol
+*** Warning
 #+LaTeX_HEADER: \usepackage{stackengine}
 #+LaTeX_HEADER: \usepackage{scalerel}
 #+LaTeX_HEADER: \newcommand\Warning[1][3ex]{%
@@ -458,10 +485,7 @@ bibliographystyle:apalike
 #+LaTeX_HEADER:   \xspace
 #+LaTeX_HEADER: }
 
-# ## margin
-#+LATEX_HEADER: \usepackage{changepage}
-
-# ## R logo
+*** R logo
 #+LATEX_HEADER:\definecolor{grayR}{HTML}{8A8990}
 #+LATEX_HEADER:\definecolor{grayL}{HTML}{C4C7C9}
 #+LATEX_HEADER:\definecolor{blueM}{HTML}{1F63B5}
@@ -495,11 +519,43 @@ bibliographystyle:apalike
 #+LATEX_HEADER: \end{tikzpicture}
 #+LATEX_HEADER: }
 
-** Table
-#+LaTeX_HEADER: \usepackage{booktabs}
+** Font
+# https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
 
-** Color
+*** mycomment
+#+LaTeX_HEADER: \newenvironment{mycomment}{\small \color{gray}\fontfamily{lmtt}\selectfont}{\par}
+
+*** myactivity
+#+LaTeX_HEADER: \newenvironment{myactivity}{\color{orange}\fontfamily{qzc}\selectfont}{\par}
+
+
+** Table
+
+#+LaTeX_HEADER: \usepackage{booktabs} % pretty table
+#+LaTeX_HEADER: \RequirePackage{diagbox} % diagonally divide table
+
+** Colors
+*** Define new colors
+#+LATEX_HEADER: \RequirePackage{colortbl} % arrayrulecolor to mix colors
+#+LaTeX_HEADER: \definecolor{myorange}{rgb}{1,0.2,0}
+#+LaTeX_HEADER: \definecolor{mypurple}{rgb}{0.7,0,8}
+#+LaTeX_HEADER: \definecolor{mycyan}{rgb}{0,0.6,0.6}
+#+LaTeX_HEADER: \newcommand{\lightblue}{blue!50!white}
+#+LaTeX_HEADER: \newcommand{\darkblue}{blue!80!black}
 #+LaTeX_HEADER: \newcommand{\darkgreen}{green!50!black}
+#+LaTeX_HEADER: \newcommand{\darkred}{red!50!black}
+
+*** Change hyperlink color
+#+LaTeX_HEADER: \hypersetup{
+#+LaTeX_HEADER:  citecolor=[rgb]{0,0.5,0},
+#+LaTeX_HEADER:  urlcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER:  linkcolor=[rgb]{0,0,0.5},
+#+LaTeX_HEADER: }
+
+# beamer seems to ignore the citecolor so this is a solution
+# https://tex.stackexchange.com/questions/104290/beamer-ignores-citecolor-from-hyperref
+#+LaTeX_HEADER: \let\oldcite=\cite                                                     
+#+LaTeX_HEADER: \renewcommand{\cite}[1]{\textcolor[rgb]{0,0.5,0}{\oldcite{#1}}}
 
 ** Box
 #+LaTeX_HEADER:\definecolor{purplebox1}{rgb}{0.84, 0.84, 0.9375}
@@ -522,21 +578,14 @@ bibliographystyle:apalike
 #+LATEX_HEADER: \RequirePackage{capt-of} % 
 #+LATEX_HEADER: \RequirePackage{caption} % newlines in graphics
 
-*** Backup slides
-#+LATEX_HEADER: \newcommand{\backupbegin}{
-#+LATEX_HEADER:   \newcounter{finalframe}
-#+LATEX_HEADER:   \setcounter{finalframe}{\value{framenumber}}
-#+LATEX_HEADER: }
-#+LATEX_HEADER: \newcommand{\backupend}{
-#+LATEX_HEADER:   \setcounter{framenumber}{\value{finalframe}}
-#+LATEX_HEADER:}
 
-*** Footnotes
-#+LaTeX_HEADER: \RequirePackage{hanging}
-#+LaTeX_HEADER: \setbeamertemplate{footnote}{%
-#+LaTeX_HEADER:   \hangpara{2em}{1}%
-#+LaTeX_HEADER:   \makebox[2em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par%
-#+LaTeX_HEADER: } 
+** Latex command
+#+LATEX_HEADER: \usepackage{ifthen}
+#+LATEX_HEADER: \usepackage{xifthen}
+#+LATEX_HEADER: \usepackage{xargs}
+#+LATEX_HEADER: \usepackage{xspace}
+#+LATEX_HEADER: \newcommand{\first}{1\textsuperscript{st} }
+#+LATEX_HEADER: \newcommand{\second}{2\textsuperscript{nd} }
+#+LATEX_HEADER: \newcommand{\third}{3\textsuperscript{rd} }
+#+LATEX_HEADER: \newcommand{\fourth}{4\textsuperscript{th} }
 
-** Theme
-#+BEAMER_THEME: Singapore [height=20pt]

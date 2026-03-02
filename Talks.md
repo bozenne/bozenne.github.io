@@ -33,15 +33,17 @@ Copenhagen, Denmark
   London, England.
 - [Ordering the sample space for p-value and confidence interval computation in group sequential trials with delayed outcome](https://bozenne.github.io/doc/Talks/2024-ADMTP-GSD-pval.pdf), ADMTP Workshop, 25-26 April 2024,
   Ibiza, Spain.
+- [Generalized pairwise comparisons: A practical guide to the design and analysis of patient-centric trials](https://bozenne.github.io/doc/Talks/2025-DAGstat-GPCtuto.pdf), DAG Stat, 24-28 March 2025,
+  Berlin, Germany. Half day tutorial with Johan Verbeeck - more at https://github.com/bozenne/tutorial-DagStat2025-GPC.
 
-And also some more pedagogical talks given at the Christmas symposium
-of NRU:
+And also some more pedagogical talks: 
 
 - about [statistical
 power](https://bozenne.github.io/doc/Talks/2017-XNRU-power.pdf) in
-2017.
-- about [DAGs](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018.
+2017. NRU Christmas symposium.
+- about [DAGs](https://bozenne.github.io/doc/Talks/2018-XNRU-DAGs.pdf) in 2018. NRU Christmas symposium.
 - about [multiple
-comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019.
-- about [pooling estimates](https://bozenne.github.io/doc/Talks/2022-XNRU-pooling.pdf) in 2022.
-- about [interaction](https://bozenne.github.io/doc/Talks/2024-IPSY-interaction.pdf) in 2024.
+comparisons](https://bozenne.github.io/doc/Talks/2019-XNRU-multcomp.pdf) in 2019. NRU Christmas symposium.
+- about [pooling estimates](https://bozenne.github.io/doc/Talks/2022-XNRU-pooling.pdf) in 2022. NRU Christmas symposium.
+- about [interaction](https://bozenne.github.io/doc/Talks/2024-IPSY-interaction.pdf) in 2024. NRU IPSY meeting. 
+- about [reproducible science](https://bozenne.github.io/doc/Talks/2026-Onco-reproducibleScience.pdf) in 2026. Rigshospitalet Oncology's Research Day.
