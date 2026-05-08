@@ -39,6 +39,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Causality: [Hernan, 2004](http://dx.doi.org/10.1136/jech.2002.006361), [Pearce 2020](https://doi.org/10.1093/ije/dyz229)
 - Collider bias: [Holmberg, 2022](https://doi.org/10.1001/jama.2022.1820)
 - Competing risks: [Andersen, 2012](https://doi.org/10.1093/ije/dyr213)
+- CONSORT diagram: item 22a (page 34) in [Hopewell, 2025](https://doi.org/10.1136/bmj-2024-081124).
 - DAGs: summary of the [DAGs](https://sgfin.github.io/2019/06/19/Causal-Inference-Book-All-DAGs/) from Hernan and Robin book. Includes DAGs related to measurement error.
 - Efron’s paradox dice: [Thangavelu 2007](https://doi.org/10.1016/j.jspi.2006.06.005)
 - Emulating trials: [Hernan 2016](https://doi.org/10.1093/aje/kwv254)

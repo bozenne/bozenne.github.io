@@ -35,6 +35,8 @@ Copenhagen, Denmark
   Ibiza, Spain.
 - [Generalized pairwise comparisons: A practical guide to the design and analysis of patient-centric trials](https://bozenne.github.io/doc/Talks/2025-DAGstat-GPCtuto.pdf), DAG Stat, 24-28 March 2025,
   Berlin, Germany. Half day tutorial with Johan Verbeeck - more at https://github.com/bozenne/tutorial-DagStat2025-GPC.
+- [Using Generalized Pairwise Comparisons to compare the benefit-risk profile of two therapies](https://bozenne.github.io/doc/Talks/2026-Munster-GPCbenefitRisk.pdf), Seminar for the Institute of Biostatistics and Clinical Reasearch of the University of Munster, Online, 29 April 2026,
+  Münster, Germany. 
 
 And also some more pedagogical talks: 
 

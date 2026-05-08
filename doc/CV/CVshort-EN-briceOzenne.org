@@ -47,7 +47,7 @@ where I do research in biostatistics along with a consulting and teaching activi
 2020 - 2015 : & Post-doc in biostatistics with a shared positive between KU and NRU \\
 2012 - 2015 : & Ph.D. in biostatistics, University Lyon 1, Lyon, France. \\
               & Thesis Title: \href{https://tel.archives-ouvertes.fr/tel-01233049/document}{Statistical modelling for the prognosis of stroke patients.} \\ 
-2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University lyon, Lyon, France. \\ 
+2011 - 2012 : & Master’s degree in biostatistics (\href{https://clarolineconnect.univ-lyon1.fr/icap_website/299/5381}{M2 B3S}), University Lyon 1, Lyon, France. \\ 
 2009 - 2012 : & Engineering diploma from the École Centrale de Lyon, Lyon, France. \\
               & Erasmus at Politecnico di Milano (2nd semester 2011). \\
 \end{tabular}

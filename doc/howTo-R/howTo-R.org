@@ -4278,6 +4278,77 @@ coef(e)["etaVIG~etaINS"]*sqrt(coef(e)["etaVIG~~etaVIG"]+coef(e)["etaVIG~etaINS"]
 : etaVIG~etaINS 
 :      2.476307
 
+** Two stage linear lvm
+
+Simulate linear LVM:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mSim <- lvm(c(y1,y2,y3,y4,y5)~eta,
+            eta ~ 0*x1+0.02*x2+0.05*x3+0.1*x4)
+latent(mSim) <- ~eta
+dSim.GS <- sim(mSim, n=1e3, seed=42, latent = FALSE) 
+#+END_SRC
+
+#+RESULTS:
+
+Oracle
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+mAll <- lvm(c(y1,y2,y3,y4,y5)~eta,
+            eta ~ x1+x2+x3+x4)
+eAll <- estimate(mAll, dSim.GS)
+summary(eAll)$coef[grep("eta~x",rownames(summary(e2)$coef), fixed=TRUE),]
+#+END_SRC<<
+
+#+RESULTS:
+: Estimate Std. Error    Z-value      P-value
+: eta~x1 -0.01025370 0.03530654 -0.2904192 0.7714955259
+: eta~x2  0.03642679 0.03442105  1.0582706 0.2899320818
+: eta~x3  0.13264809 0.03449281  3.8456734 0.0001202218
+: eta~x4  0.09433190 0.03445610  2.7377419 0.0061862600
+
+Likelihood ratio test
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+m0 <- lvm(c(y1,y2,y3,y4,y5)~eta,
+          eta ~ 1)
+e0 <- estimate(m0, dSim.GS)
+compare(eAll, e0)
+#+END_SRC
+#+RESULTS:
+: 
+: 	- Likelihood ratio test -
+: 
+: data:  
+: chisq = 23.173, df = 4, p-value = 0.000117
+: sample estimates:
+: log likelihood (model 1) log likelihood (model 2) 
+:                -8038.557                -8050.143
+
+Two stage
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+e2 <- twostage(m0, model2=mAll, data=dSim.GS, predict.fun=function(mu,var,data,...) {cbind("eta" = mu[,"eta"])})
+summary(e2)$coef[grep("eta~x",rownames(summary(e2)$coef), fixed=TRUE),]
+#+END_SRC
+
+#+RESULTS:
+:            Estimate Std. Error    Z-value      P-value
+: eta~x1 -0.008741693 0.02967700 -0.2945612 7.683291e-01
+: eta~x2  0.030916357 0.02759656  1.1202977 2.625869e-01
+: eta~x3  0.113112561 0.02750687  4.1121566 3.919803e-05
+: eta~x4  0.080280509 0.03031947  2.6478207 8.101248e-03
+
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+cor(predict(e0, x = manifest(e0), y = latent(e0)), predict(eAll, x = manifest(e0), y = latent(eAll)))
+cor(predict(e0, x = manifest(e0), y = latent(e0)), predict(eAll, x = manifest(eAll), y = latent(eAll)))
+cor(predict(e0, x = manifest(e0), y = latent(e0)), predict(eAll, x = setdiff(manifest(eAll),manifest(e0)), y = latent(eAll)))
+#+END_SRC
+
+#+RESULTS:
+:           eta
+: eta 0.9996249
+: eta
+: eta 0.9996249
+: eta
+: eta 0.1511704
+
 ** Interaction between latent variables
 
 Simulate LVM with interaction:
@@ -4737,7 +4808,7 @@ pnorm(coef(e0.lvm)[1]+exp(coef(e0.lvm)[2])) - pnorm(coef(e0.lvm)[1])
 : 0.4669996
 
 * Miscellaneous
-** logit (qlogis) and expit (plogit)
+** logit (qlogis) and expit (plogis)
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 lp.try <- seq(-5,5,by=.1)
 range(plogis(lp.try) - 1/(1+exp(-lp.try)))
