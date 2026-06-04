@@ -1,4 +1,4 @@
----
+p---
 layout: post
 title:  "Statistical consultations at NRU"
 categories: jekyll update
@@ -69,7 +69,7 @@ width="30px"} Make sure to plan sufficient time (> 1 week) for the
 power calculation as I will generally not be able to help you with
 "emergency" power calculation. 
 
-## What can I cannot help you with?
+## What I cannot help you with?
 
 - "How should I analyze my data?" It is not possible for me to assess
 the statistical properties of a procedure if I do not precisely

@@ -3526,7 +3526,7 @@ ls.res <- foreach::`%dopar%`(
                            for(iSim in 1:n.sim){
                                Sys.sleep(0.1)
                                tcltk::setTkProgressBar(pb = pb, value = iSim,
-                                                       label = paste(iSim," over ",n.sim," iterations done") )
+                                                       label = paste(iSim," over ",n.sim," iterations done"))
                            }
 
                            close(pb)
