@@ -1,4 +1,4 @@
-p---
+---
 layout: post
 title:  "Statistical consultations at NRU"
 categories: jekyll update
