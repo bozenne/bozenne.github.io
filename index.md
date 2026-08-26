@@ -16,7 +16,7 @@ shared position between:
 
 For information about the statistical consultations see the tab
 "Consultations at NRU" in the menu above or click
-[here](https://bozenne.github.io/Consultation.html). <br>
+[here](https://bozenne.github.io/Consultation.html). If you are planning a trial, have a look to the tab "Trials" or click [here](https://bozenne.github.io/Trials) <br>
 
 My recipe book in R can be downloaded
 [here](https://bozenne.github.io/doc/howTo-R/howTo-R.pdf).

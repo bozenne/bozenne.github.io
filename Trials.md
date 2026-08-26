@@ -1,9 +1,13 @@
 ---
 layout: page
 title:  Randomized Clinical Trials
-link_title: Trial
+excerpt: Trials
 permalink: /Trials/
 ---
+
+Acronyms:
+- SAP: statistical analysis plan
+- DMSC: Data Monitoring and Safety Committe
 
 # Personal experience
 
@@ -70,9 +74,6 @@ involvment:
 
 - RECAP-D: help with the protocol.
 
-SAP: statistical analysis plan
-
-DMSC: Data Monitoring and Safety Committe
 
 # Guidance for trialists
 
