@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Statistical consultations at NRU"
-excerpt: "Consultations"
+title:  "NRU consultations"
+link_title: "Consultations"
 categories: jekyll update
 ---
 

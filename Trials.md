@@ -1,7 +1,7 @@
 ---
 layout: page
 title:  Randomized Clinical Trials
-excerpt: Trials
+link_title: Trials
 permalink: /Trials/
 ---
 
@@ -75,6 +75,89 @@ involvment:
 - RECAP-D: help with the protocol.
 
 
-# Guidance for trialists
+# Main steps of a trial from a statistician perspective
 
+
+The following diagram display some of the key steps of a trial:
 ![](https://bozenne.github.io/img/timeline-trial-NRU.png) 
+
+Several steps take place before any data is collected, and most before
+having access to the unblinded data. This stresses the importance of
+involving the statistician early enough. 
+> To take a culinary analogy, once you've used your ingredients to bake a cake, there is little a chef can do to 'fix' the cake.
+
+1. The first step is to write a protocol. It provides, among many
+other things, some rational for the trial, description of the study
+design including the intervention, measurement being made, and a
+statistical analysis section. Typically more details are provided for
+the main objective/primary endpoint. This can be a very long and
+technical document and my input is generally about:
+- study design: help with the choice of a design (e.g. cross-over
+  vs. parallel two-arm design, interim analyses, ...) and the sample
+  size calculation.
+- statistical analysis: decide upon an estimand that can be identified
+  based on the collected data, and a corresponding statistical
+  test. The level of details can vary depending of the experience of
+  the investigator and the complexity of the research question. But
+  this section should at the very least make it clear how one intends
+  to carry out the primary analysis - possibly in an idealized trial
+  (e.g. no drop-out, no intercurrent events). The more complex and the
+  less experienced, the higher the chance that when writting the SAP
+  one realizes that modifications in data collection procedures are
+  needed to mitigate the risk of failure of the trial.
+
+> Instead one should first discuss with the chef about the type of desert one likes, the budget, and possible allergies.
+> The chef will help plan what to buy at the market and sketch a recipe (protocol).
+> The recipe should be approved by the health authorities.
+
+2. The protocol can be re-phrased with a more scientific and research
+   focus while having fewer operational details to be published in a
+   scientific journal. 
+- the 'statistical content' is very similar as for step 1. Protocol. 
+- in my experience, investigators start to involve a statistician to
+  reply to reviewer comments. True it saves ressources (time) but it
+  can be problematic if the statistican disagrees with the design that
+  has been chosen without him onboard.
+
+> To 'brand' your new cake, it is natural to publish a trailer (protocol paper).
+> Each chef has his style (favorite technic and ingredients) so asking him to follow someone-else recipe, even very good, may not be ideal.
+
+3. The SAP is an important step for the statistican as it precisely
+   describes how to proceed. A first version should be made BEFORE
+   data collection (i) data collection is still be modifiable to
+   address a last minute difficulty concern (ii) the investigator is
+   still fully blinded so the choice of the methodology is very
+   arguably independent of the results (iii) there is often less time
+   pressure at this stage.
+- Writing a SAP is a substantial task! Expect many back and forth
+  between the reasearch team and the statistician. Its length varies
+  depending of the trial, but expect 15-30 page document.
+- Once the reasearch team and the statistician agree on a version, it
+  should be uploaded on euclinicaltrials.eu or clinicaltrials.gov to
+  have a time stamp.
+- It is generally a BAD idea to wait the end of data collection to
+  write the SAP. Often the research team is eager to analyse the data
+  and leading to (un-necessary) time pressure to finish the SAP
+  fast. It also looks more suspicious to have a late date for the
+  first SAP than a documented update of the SAP.
+- The SAP can also make clear who will do what and can serve as a
+  reference document, so the content of scientific discussions that
+  occured months or years ago are not forgotten or distorted.
+- An important part of the SAP is to anticipate problems arising
+  during data collection (e.g. missing data or not usuable data due to
+  intercurrent events)
+
+> To be efficient when baking cake, a step by step recipe is to be decided (SAP).
+> Each step should be precise enough so there is no ambiguity in what should be done.
+> This is especially important when several people are involved, from different domain, with different level of experience. 
+> How to cut an oignon may be obvious for one person but not for another!
+
+4. During data collection, some (possibly anticipated) difficulties arise:
+- missing data, e.g. due to patient drop-out or technical failures.
+- incorrect data, e.g. due to typos or an instrument incorrectly calibrated.
+- different data encoding, e.g. depression status at the last phone
+  call instead of as a time to event variable/daily monitoring.
+> When buying the food at the market you may not find exactly what you want 
+> or not realized that you have bought the wrong ingredient or one that is spoiled.
+
+5. 
