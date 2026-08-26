@@ -1,22 +1,22 @@
 ---
 layout: page
-title:  Randomized Clinical Trials
+title:  Trials
 link_title: Trials
 permalink: /Trials/
 ---
 
 Acronyms:
-- SAP: statistical analysis plan
 - DMSC: Data Monitoring and Safety Committe
+- RCT: Randomized Control Trial
+- SAP: Statistical Analysis Plan
 
-# Personal experience
+# Personal experience with RCTs
 
 Since 2022, I have been increasingly involved in helping with the
-planning, monitoring, and data analysis of Randomized Clinical Trials
-(RCT). Here is a list of the trial acronyms (e.g. TRAUMOX), the EU
-clinical trial number / EudraCT (e.g. 2021-000556-19), the
-clinicalTrial.gov / NCT number and a short description of my
-involvment:
+planning, monitoring, and data analysis of RCT. Here is a list of the
+trial acronyms (e.g. TRAUMOX), the EU clinical trial number / EudraCT
+(e.g. 2021-000556-19), the clinicalTrial.gov / NCT number and a short
+description of my involvment:
 
 - [TRAUMOX2](https://doi.org/10.1136/bmjopen-2022-064047)
    ([2021-000556-19](https://www.clinicaltrialsregister.eu/ctr-search/trial/2021-000556-19/results), [NCT05146700](https://clinicaltrials.gov/study/NCT05146700)): member of the
@@ -75,7 +75,7 @@ involvment:
 - RECAP-D: help with the protocol.
 
 
-# Main steps of a trial from a statistician perspective
+# Main steps of a RCT from a statistician perspective
 
 
 The following diagram display some of the key steps of a trial:
@@ -147,6 +147,9 @@ technical document and my input is generally about:
   during data collection (e.g. missing data or not usuable data due to
   intercurrent events)
 
+[![Download the protocol]({{ '/img/wordLogo.png' | relative_url }})]({{ '/doc/SAP/Statistical Analysis Plan - template.docx | relative_url }})
+
+
 > To be efficient when baking cake, a step by step recipe is to be decided (SAP).
 > Each step should be precise enough so there is no ambiguity in what should be done.
 > This is especially important when several people are involved, from different domain, with different level of experience. 
@@ -160,4 +163,24 @@ technical document and my input is generally about:
 > When buying the food at the market you may not find exactly what you want 
 > or not realized that you have bought the wrong ingredient or one that is spoiled.
 
-5. 
+5. After data collection, the data manager export the database without
+   any reference to the randomization variable. Ideally also without
+   any of the 'directly' associated variables (e.g. hormonal
+   concentration if there is an hormonal treatment) if the data review
+   is to be made by the investigator to ensure full blinding.
+   - Every variable involved in the primary (and possibly secondary if
+     time permits) analysis is reviewed, and the value taken checked.
+   - If an implausible value is detected, it should be flagged and
+     modified for the analysis: either one can argue for a more
+     plausible value (e.g. the data was reported using the wrong unit)
+     or it should be set to missing. Importantly, any modification of
+     the database should be documented.
+   - No modeling is being made here so there is no need for a statistician.
+> When receiving the ingredients, the chef check them and note any missing or not satisfying product.
+> If some vegetables have been put in the fruit box, he will sort them and make sure the box contain the right 'type' of products.
+
+6. Using the 'cleaned' data, descriptive statistics are provided to
+   check that the planned analysis is still relevant with the current
+   data.
+   - 
+   - 
