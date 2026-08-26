@@ -1,6 +1,7 @@
 ---
 layout: page
 title:  Randomized Clinical Trials
+link_title: Trial
 permalink: /Trials/
 ---
 
