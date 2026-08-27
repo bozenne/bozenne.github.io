@@ -1,13 +1,13 @@
 ---
 layout: page
-title:  "Clinical Randomized Trials"
+title:  "Clinical Trials"
 menu_title: "Trials"
 permalink: /Trials/
 ---
 
 Acronyms:
 - DMSC: Data Monitoring and Safety Committe
-- RCT: Randomized Control Trial
+- RCT: Randomized Controlled Trial
 - SAP: Statistical Analysis Plan
 
 # Personal experience with RCTs
@@ -79,7 +79,7 @@ description of my involvment:
 
 
 The following diagram display some of the key steps of a trial:
-![](https://bozenne.github.io/img/timeline-trial-NRU.png) 
+![](https://bozenne.github.io/img/TRIAL-timeline.png) 
 
 Several steps take place before any data is collected, and most before
 having access to the unblinded data. This stresses the importance of
@@ -92,7 +92,9 @@ involvment of a data manager and a statistician:
 - it is not unfrequent that it is one of the investigators that is performing the data review (5.). Measures to avoid data leakage (e.g. unblinding) and comprehensive documentation of any modification are then essential to maintain trust.
 - to save 'statistician time' some investigators involve him in the late stage (typically 3.) and ask him to review the primary, secondary, and some of the exploratory analyses. A better practice is to involve him from the start but in very few analyses (e.g. only primary or with very few secondaries).
 
-> If you are short in budget, you should rather ask a chef to propose a nice main dish than to fix your own attempt to make a 5 course menu.
+> If you are short in budget, you should rather ask a chef to propose
+> a nice main dish than to fix your own attempt to make a 5 course
+> menu. 
 
 {:start="1"}
 1. **Protocol**: it provides, among many
@@ -115,7 +117,7 @@ technical document and my input is generally about:
   one realizes that modifications in data collection procedures are
   needed to mitigate the risk of failure of the trial.
 
-> Instead one should first discuss with the chef about the type of desert one likes, the budget, and possible allergies.
+> One should first discuss with the chef about the type of desert one likes, the budget, and possible allergies.
 > The chef will help plan what to buy at the market and sketch a recipe (protocol).
 > The recipe should be approved by the health authorities.
 
@@ -129,8 +131,10 @@ technical document and my input is generally about:
   can be problematic if the statistican disagrees with the design that
   has been chosen without him onboard.
 
-> To 'brand' your new cake, it is natural to publish a trailer (protocol paper).
-> Each chef has his style (favorite technic and ingredients) so asking him to follow someone-else recipe, even very good, may not be ideal.
+> To 'brand' your new cake, it can be natural to publish a trailer
+> (protocol paper).  Each chef has his style (favorite technic and
+> ingredients) so asking him to follow someone-else recipe, even when
+> very good, may not be ideal.
 
 {:start="3"}
 3. **SAP version 1**: the SAP is an important step for the statistican as it precisely
@@ -159,10 +163,12 @@ technical document and my input is generally about:
   intercurrent events)
 - A .docx template for the SAP can be downloaded by clicking on [![SAP](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
 
-> To be efficient when baking cake, a step by step recipe is to be decided (SAP).
-> Each step should be precise enough so there is no ambiguity in what should be done.
-> This is especially important when several people are involved, from different domain, with different level of experience. 
-> How to cut an oignon may be obvious for one person but not for another!
+> To be efficient when baking cake, a step by step recipe is to be
+> decided (SAP).  Each step should be precise enough so there is no
+> ambiguity in what should be done.  This is especially important when
+> several people are involved, from different domains, with different
+> level of experience.  How to cut an oignon may be obvious for one
+> person but not for another!
 
 {:start="4"}
 4. **Data collection**: during data collection, some (possibly anticipated) difficulties arise:
@@ -174,29 +180,59 @@ technical document and my input is generally about:
 > or not realized that you have bought the wrong ingredient or one that is spoiled.
 
 {:start="5"}
-5. **Data review**: after data collection, the data manager export the database without
-   any reference to the randomization variable. Ideally also without
-   any of the 'directly' associated variables (e.g. hormonal
-   concentration if there is an hormonal treatment) if the data review
-   is to be made by the investigator to ensure full blinding.
+5. **Data review**: after data collection, the data manager export the
+   database without any reference to the randomization
+   variable. Ideally also without any of the 'directly' associated
+   variables (e.g. hormonal concentration if there is an hormonal
+   treatment) if the data review is to be made by the investigator to
+   ensure full blinding.
    - Every variable involved in the primary (and possibly secondary if
-     time permits) analysis is reviewed, and the value taken checked.
-   - If an implausible value is detected, it should be flagged and
+     time permits) analysis is reviewed, and the values taken
+     checked. The research team should double check the intended
+     variable are used, e.g. what is the 'origin' variable when
+     computing the follow-up time or what variable should be used for
+     depression status (there might be several diagnostic variables).
+   - if an implausible value is detected, it should be flagged and
      modified for the analysis: either one can argue for a more
      plausible value (e.g. the data was reported using the wrong unit)
      or it should be set to missing. Importantly, any modification of
      the database should be documented.
-   - No modeling is being made here so there is no need for a statistician.
-> When receiving the ingredients, the chef check them and note any missing or not satisfying product.
-> If some vegetables have been put in the fruit box, he will sort them and make sure the box contain the right 'type' of products.
+   - Missing values should also be reviewed: maybe some of them should
+     not be missing and something went wrong when assembling the
+     database.
+   - No modeling is being made here so there is no need for a
+     statistician.
+     ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+     width="30px"} the database after this reviewer should be
+     considered as locked, so the review, while tedious, should be
+     planned and done carefully. The research team usually have
+     critical inside about what sanity checks should be performed.
+> When receiving the ingredients, a clerc checks them and reports any missing or rotten product.
+> If some vegetables have been put in the fruit box, he can be instructed to sort them and make sure the box contain the right 'type' of products.
 
 {:start="6"}
-6. **Descriptive statistics**: using the 'cleaned' data, descriptive statistics are provided to
-   check that the planned analysis is still relevant with the current
-   data.
-   - 
-   - 
+6. **Descriptive statistics**: using the 'cleaned' data, descriptive
+   statistics are provided to check that the planned analysis is still
+   relevant with the current data.
+   - displaying patient trajectories often provides a good overview of the data.
+![](https://bozenne.github.io/img/TRIAL-missingPattern_EPDS.png)
+   - is the data available in the expected format? The database may
+     contain the outcome a binary variable (depressed yes/no) rather
+     than the expected time to event variable (time to
+     depression). Missing values in the outcome or covariates may not
+     have been expected. To condense the information, one display the
+     observed missing data pattern:
+     ![](https://bozenne.github.io/img/TRIAL-missingPattern_EPDS.png)
+   - is there any unexpected event during data collection that may
+     affect the meaning/interpretation of the data? For instance,
+     hospitalisation or death of some study participants may stop data
+     collection in an informative way. Or the may be some unexpected
+     technical variability, e.g., more than one scanner was used or
+     multiple doses of contrast agent. 
 
+Having a description of the available data and listing 'complications'
+that occured will facilitate the revision of the SAP by the research
+team and the statistician.
 
 {:start="7"}
 7. **Blinded data analysis**
