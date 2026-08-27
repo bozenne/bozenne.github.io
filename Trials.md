@@ -74,7 +74,6 @@ description of my involvment:
 
 - RECAP-D: help with the protocol.
 
-
 # Main steps of a RCT from a statistician perspective
 
 
@@ -97,25 +96,24 @@ involvment of a data manager and a statistician:
 > menu. 
 
 {:start="1"}
-1. **Protocol**: it provides, among many
-other things, some rational for the trial, description of the study
-design including the intervention, measurement being made, and a
-statistical analysis section. Typically more details are provided for
-the main objective/primary endpoint. This can be a very long and
-technical document and my input is generally about:
+1. **Protocol**: it provides, among many other things, some rational
+for the trial, description of the study design including the
+intervention, measurement being made, and safety considerations for
+the study participants. It also contains a statistical analysis
+section focused on primary objective endpoint(s) of the trial. This
+can be a very long and technical document and my input is generally
+about:
 - study design: help with the choice of a design (e.g. cross-over
-  vs. parallel two-arm design, interim analyses, ...) and the sample
-  size calculation.
+  vs. parallel two-arm design), possible interim analyses, and the
+  sample size calculation.
 - statistical analysis: decide upon an estimand that can be identified
-  based on the collected data, and a corresponding statistical
-  test. The level of details can vary depending of the experience of
-  the investigator and the complexity of the research question. But
-  this section should at the very least make it clear how one intends
-  to carry out the primary analysis - possibly in an idealized trial
-  (e.g. no drop-out, no intercurrent events). The more complex and the
-  less experienced, the higher the chance that when writting the SAP
-  one realizes that modifications in data collection procedures are
-  needed to mitigate the risk of failure of the trial.
+  based on the collected data, and a corresponding statistical test
+  accounting for interim analyses when relevant. The level of details
+  can vary depending of the experience of the investigator and the
+  complexity of the research question. But this section should at the
+  very least make it clear how one intends to carry out the primary
+  analysis - possibly in an idealized trial (e.g. no drop-out, no
+  intercurrent events). 
 
 > One should first discuss with the chef about the type of desert one likes, the budget, and possible allergies.
 > The chef will help plan what to buy at the market and sketch a recipe (protocol).
@@ -130,6 +128,18 @@ technical document and my input is generally about:
   reply to reviewer comments. True it saves ressources (time) but it
   can be problematic if the statistican disagrees with the design that
   has been chosen without him onboard.
+- not all trials involve the statistician at this stage. This
+  increases the risk that modification in the data collection
+  procedures needed to mitigate the risk of failure of the trial are
+  only idenfied later in the process. Thus harder or impossible to
+  implement. This is especially true for complex research questions
+  and less experienced the research team. For instance large amount of
+  missing data in the primary outcome will compromise the credibility
+  of a trial. If that is expected, one should either have a strategy
+  to mitigate missing values (e.g. answer questionnaires on site
+  instead of at home), measure a proxy outcome during the follow-up,
+  or choose an easier outcome to measure instead.
+
 
 > To 'brand' your new cake, it can be natural to publish a trailer
 > (protocol paper).  Each chef has his style (favorite technic and
@@ -140,21 +150,35 @@ technical document and my input is generally about:
 3. **SAP version 1**: the SAP is an important step for the statistican as it precisely
    describes how to proceed. A first version should be made BEFORE
    data collection (i) data collection is still be modifiable to
-   address a last minute difficulty concern (ii) the investigator is
+   address a last minute concern (ii) the investigator is
    still fully blinded so the choice of the methodology is very
    arguably independent of the results (iii) there is often less time
    pressure at this stage.
 - Writing a SAP is a substantial task! Expect many back and forth
   between the reasearch team and the statistician. Its length varies
-  depending of the trial, but expect 15-30 page document.
+  depending of the trial, but expect 15-30 page document. 
+- To keep it concise, the SAP is very focused on the primary analysis
+  while providing some description of key secondary analyses. As
+  overall philosophy I would cite: "The design of every clinical trial
+  starts with a primary clinical research question. The first
+  requirement for designing a robust and an efficient clinical trial
+  is to clearly define and understand the research question. Clarity
+  of the research question can require much deliberation often
+  entailing a transition from a vague concept (e.g., "to see if the
+  drug works" or "to look at the biological effects of the drug") to a
+  particular hypothesis that can be tested or a quantity estimated
+  using specific data collection instruments with a particular
+  duration of therapy. Secondary research questions may also be of
+  interest, but the trial design usually is constructed to address the
+  primary research question." ([Evans & Ting, 2016](https://doi.org/10.1201/b19777))
 - Once the reasearch team and the statistician agree on a version, it
   should be uploaded on euclinicaltrials.eu or clinicaltrials.gov to
   have a time stamp.
 - It is generally a BAD idea to wait the end of data collection to
-  write the SAP. Often the research team is eager to analyse the data
-  and leading to (un-necessary) time pressure to finish the SAP
-  fast. It also looks more suspicious to have a late date for the
-  first SAP than a documented update of the SAP.
+  write the SAP. At that point,the research team is often eager to
+  analyse the data and leading to (un-necessary) time pressure to
+  finish the SAP. It also looks more suspicious to have a late
+  date for the first SAP than a documented update of the SAP.
 - The SAP can also make clear who will do what and can serve as a
   reference document, so the content of scientific discussions that
   occured months or years ago are not forgotten or distorted.
@@ -173,7 +197,14 @@ technical document and my input is generally about:
 {:start="4"}
 4. **Data collection**: during data collection, some (possibly anticipated) difficulties arise:
 - missing data, e.g. due to patient drop-out or technical failures.
-- incorrect data, e.g. due to typos or an instrument incorrectly calibrated.
+  ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+  width="30px"} Discontinuation of the intervention or worsening of
+  the health condition should not mean exclusion from the trial as the
+  subsequent outcomes are still relevant for the intention to treat
+  analysis.
+- incorrect data, e.g. due to typos or an instrument incorrectly
+  calibrated. Also make sure that negative response and missing data
+  can be distinguished (i.e. avoid 'check box if feeling depressed').
 - different data encoding, e.g. depression status at the last phone
   call instead of as a time to event variable/daily monitoring.
 > When buying the food at the market you may not find exactly what you want 
