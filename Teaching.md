@@ -34,6 +34,11 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - [theoretical part](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/prez-workshopEpi.pdf).
 - [practical part](https://bozenne.github.io/doc/Teaching/2023-Workshop-Epi/exercise-workshopEpi.R).
 
+For KU department conference, I prepare a mini-workshop on estimands:
+- [theoretical part](https://bozenne.github.io/doc/Teaching/2026-Workshop-KU/introEstimand.pdf).
+- [practical part](https://bozenne.github.io/doc/Teaching/2026-Workshop-KU/Department conference 2026 - biostat workshop - Consultation case study.docx).
+
+
 ## Useful and "pedagogical" references
 - Adjustment for multiple comparisons: 3 groups [Goeman, 2022](https://doi.org/10.1080/00031305.2021.2002188), general case [Dmitrienko, 2013](https://doi.org/10.1002/sim.5990), 
 - Causality: [Hernan, 2004](http://dx.doi.org/10.1136/jech.2002.006361), [Pearce 2020](https://doi.org/10.1093/ije/dyz229)

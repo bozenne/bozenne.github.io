@@ -16,7 +16,7 @@ Since 2022, I have been increasingly involved in helping with the
 planning, monitoring, and data analysis of RCT. Here is a list of the
 trial acronyms (e.g. TRAUMOX), the EU clinical trial number / EudraCT
 (e.g. 2021-000556-19), the clinicalTrial.gov / NCT number and a short
-description of my involvment:
+description of my involvement:
 
 - [TRAUMOX2](https://doi.org/10.1136/bmjopen-2022-064047)
    ([2021-000556-19](https://www.clinicaltrialsregister.eu/ctr-search/trial/2021-000556-19/results), [NCT05146700](https://clinicaltrials.gov/study/NCT05146700)): member of the
@@ -31,7 +31,7 @@ description of my involvment:
   [NCT05574439](https://clinicaltrials.gov/study/NCT05574439)]): elaboration of the
   [SAP](https://cdn.clinicaltrials.gov/large-docs/39/NCT05574439/SAP_001.pdf). Performed
   the primary analysis and corresponding sensitivity analyses. The
-  later were about how to handle missing participants, essencially
+  later were about how to handle missing participants, essentially
   imputing the placebo trajectory (jump to reference) or leveraging
   participant who discontinued but returned for the last follow-up.
   
@@ -49,7 +49,7 @@ description of my involvment:
   the SAP. Performed data review and primary & secondary analyses, see
   [Github](https://github.com/bozenne/MAMAtrial/) for the
   corresponding R code (survival analysis, linear mixed model as an
-  inputation model for a binary event: below/above clinical
+  imputation model for a binary event: below/above clinical
   threshold).
   
 - UNPRESCRIB
@@ -61,7 +61,7 @@ description of my involvment:
   treatment allocation sequence (on/off pill) in the active arm such
   that the distribution of perimenstrual days and number of menses
   over the follow-up resemble the placebo arm. This should help
-  maintaining the blinding of the medical staff.
+  maintain the blinding of the medical staff.
 
 - PsiloZonic
   ([2024-515961-33-00](https://euclinicaltrials.eu/ctis-public/view/2024-515961-33-00),
@@ -74,7 +74,10 @@ description of my involvment:
 
 - RECAP-D: help with the protocol.
 
-# Main steps of a RCT from a statistician perspective
+You can find there examples of protocol, protocol papers, SAP, and
+published articles.
+
+# A bio-statistician perspective on RCTs
 
 This section contains my current understanding and procedures for
 RCTs. I am still learning with every RCT (and books when I have time
@@ -88,9 +91,9 @@ involving the statistician early enough.
 
 > To take a culinary analogy, once you've used your ingredients to bake a cake, there is little a chef can do to 'fix' the cake.
 
-In academia, there will often be time constrains regarding the
-involvment of a data manager and a statistician:
-- it is not unfrequent that it is one of the investigators that is performing the data review (5.). Measures to avoid data leakage (e.g. unblinding) and comprehensive documentation of any modification are then essential to maintain trust.
+In academia, there will often be time constraints regarding the
+involvement of a data manager and a statistician:
+- it is not infrequent that it is one of the investigators that is performing the data review (5.). Measures to avoid data leakage (e.g. unblinding) and comprehensive documentation of any modification are then essential to maintain trust.
 - to save 'statistician time' some investigators involve him in the late stage (typically 3.) and ask him to review the primary, secondary, and some of the exploratory analyses. A better practice is to involve him from the start but in very few analyses (e.g. only primary or with very few secondaries).
 
 > If you are short in budget, you should rather ask a chef to propose
@@ -110,8 +113,8 @@ about:
   sample size calculation.
 - statistical analysis: decide upon an estimand that can be identified
   based on the collected data, and a corresponding statistical test
-  accounting for interim analyses when relevant. The level of details
-  can vary depending of the experience of the investigator and the
+  accounting for interim analyses when relevant. The level of detail
+  can vary depending on the experience of the investigator and the
   complexity of the research question. But this section should at the
   very least make it clear how one intends to carry out the primary
   analysis - possibly in an idealized trial (e.g. no drop-out, no
@@ -119,7 +122,7 @@ about:
 - not all trials involve the statistician at this stage. This
   increases the risk that modification in the data collection
   procedures needed to mitigate the risk of failure of the trial are
-  only idenfied later in the process. Thus harder or impossible to
+  only identified later in the process. Thus harder or impossible to
   implement. This is especially true for complex research questions
   and less experienced the research team. For instance large amount of
   missing data in the primary outcome will compromise the credibility
@@ -128,19 +131,19 @@ about:
   instead of at home), measure a proxy outcome during the follow-up,
   or choose an easier outcome to measure instead.
 
-> One should first discuss with the chef about the type of desert wanted and the budget.
+> One should first discuss with the chef about the type of dessert wanted and the budget.
 > The chef will help plan what to buy at the market and sketch a recipe (protocol).
 > Tell the chef early about food allergies or ingredients not available in your region (difficulties you anticipate) instead of having him guess. 
-> The list of ingredient and recipe should be approved by the health authorities.
+> The list of ingredients and recipe should be approved by the health authorities.
 
 {:start="2"}
 2. **Protocol paper**: the protocol can be re-phrased with a more scientific and research
    focus while having fewer operational details to be published in a
    scientific journal. 
-- the 'statistical content' is very similar as for step 1. Protocol. 
+- the 'statistical content' is very similar to step 1. Protocol. 
 - in my experience, investigators start to involve a statistician to
-  reply to reviewer comments. True it saves ressources (time) but it
-  can be problematic if the statistican disagrees with the design that
+  reply to reviewer comments. True it saves ressource (time) but it
+  can be problematic if the statistician disagrees with the design that
   has been chosen without him onboard.
 
 
@@ -150,21 +153,21 @@ about:
 > very good, may not be ideal.
 
 {:start="3"}
-3. **SAP version 1**: the SAP is an important step for the statistican as it precisely
-   describes how to proceed. A first version should be made BEFORE
-   data collection (i) data collection is still be modifiable to
-   address a last minute concern (ii) the investigator is
-   still fully blinded so the choice of the methodology is very
-   arguably independent of the results (iii) there is often less time
-   pressure at this stage.
+3. **SAP version 1**: the SAP is an important step for the
+   statistician as it precisely describes how to proceed. A first
+   version should be made BEFORE data collection (i) data collection
+   is still be modifiable to address a last minute concern (ii) the
+   investigator is still fully blinded so the choice of the
+   methodology is very arguably independent of the results (iii) there
+   is often less time pressure at this stage.
 - Writing a SAP is a substantial task! Expect many back and forth
-  between the reasearch team and the statistician. Its length varies
+  between the research team and the statistician. Its length varies
   depending of the trial, but expect 15-30 page document. 
 - To keep it concise, the SAP is very focused on the primary analysis
   while providing some description of key secondary analyses. As
   overall philosophy I would cite: "The design of every clinical trial
   starts with a primary clinical research question. The first
-  requirement for designing a robust and an efficient clinical trial
+  requirement for designing a robust and efficient clinical trial
   is to clearly define and understand the research question. Clarity
   of the research question can require much deliberation often
   entailing a transition from a vague concept (e.g., "to see if the
@@ -174,20 +177,21 @@ about:
   duration of therapy. Secondary research questions may also be of
   interest, but the trial design usually is constructed to address the
   primary research question." ([Evans & Ting, 2016](https://doi.org/10.1201/b19777))
-- Once the reasearch team and the statistician agree on a version, it
+- Once the research team and the statistician agree on a version, it
   should be uploaded on euclinicaltrials.eu or clinicaltrials.gov to
   have a time stamp.
 - ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
-     width="30px"} It is generally a BAD idea to wait the end of data collection to
-  write the SAP. At that point,the research team is often eager to
-  analyse the data and leading to (un-necessary) time pressure to
-  finish the SAP. It also looks more suspicious to have a late
-  date for the first SAP than a documented update of the SAP.
+     width="30px"} It is generally a BAD idea to wait for the end of
+     data collection to write the SAP. At that point, the research
+     team is often eager to analyze the data and lead to
+     (un-necessary) time pressure to finish the SAP. It also looks
+     more suspicious to have a late date for the first SAP than a
+     documented update of the SAP.
 - The SAP can also make clear who will do what and can serve as a
   reference document, so the content of scientific discussions that
-  occured months or years ago are not forgotten or distorted.
+  occurred months or years ago are not forgotten or distorted.
 - An important part of the SAP is to anticipate problems arising
-  during data collection (e.g. missing data or not usuable data due to
+  during data collection (e.g. missing data or not usable data due to
   intercurrent events)
 - A .docx template for the SAP can be downloaded by clicking on
   [![SAP](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
@@ -196,14 +200,14 @@ about:
   (possibly using AI) and run the proposed R code in the SAP to check
   that one can obtain the expected output. Ideally this should be done
   once under the null and once under the alternative hypothesis as a
-  quick validation that the output are consistent with the data
+  quick validation that the output is consistent with the data
   generating mechanism.
 
 > To be efficient when baking cake, a step by step recipe is to be
 > decided (SAP).  Each step should be precise enough so there is no
 > ambiguity in what should be done.  This is especially important when
 > several people are involved, from different domains, with different
-> level of experience.  How to cut an oignon may be obvious for one
+> levels of experience.  How to cut an onion may be obvious for one
 > person but not for another!
 
 {:start="4"}
@@ -215,14 +219,14 @@ about:
   the health condition should not mean exclusion from the trial as the
   subsequent outcomes are still relevant for the intention to treat
   analysis.
-- incorrect data, e.g. due to typos or an instrument incorrectly
-  calibrated. Also make sure that negative response and missing data
+- incorrect data, e.g. due to typos or an incorrectly calibrated
+  instrument. Also make sure that negative response and missing data
   can be distinguished (i.e. avoid 'check box if feeling depressed').
 - different data encoding, e.g. depression status at the last phone
   call instead of as a time to event variable/daily monitoring.
   
 > When buying the food at the market you may not find exactly what you want 
-> or not realized that you have bought the wrong ingredient or one that is spoiled.
+> or not realize that you have bought the wrong ingredient or one that is spoiled.
 
 {:start="5"}
 5. **Data review**: after data collection, the data manager export the
@@ -234,7 +238,7 @@ about:
    - Every variable involved in the primary (and possibly secondary if
      time permits) analysis is reviewed, and the values taken
      checked. The research team should double check the intended
-     variable are used, e.g. what is the 'origin' variable when
+     variables are used, e.g. what is the 'origin' variable when
      computing the follow-up time or what variable should be used for
      depression status (there might be several diagnostic variables).
    - if an implausible value is detected, it should be flagged and
@@ -250,11 +254,11 @@ about:
    - ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
      width="30px"} the database after this reviewer should be
      considered as locked, so the review, while tedious, should be
-     planned and done carefully. The research team usually have
+     planned and done carefully. The research team usually has
      critical inside about what sanity checks should be performed.
 	 
-> When receiving the ingredients, a clerc checks them and reports any missing or rotten product.
-> If some vegetables have been put in the fruit box, he can be instructed to sort them and make sure the box contain the right 'type' of products.
+> When receiving the ingredients, a clerk checks them and reports any missing or rotten product.
+> If some vegetables have been put in the fruit box, he can be instructed to sort them and make sure the box contains the right 'type' of products.
 
 {:start="6"}
 6. **Descriptive statistics**: using the 'cleaned' data, descriptive
@@ -271,21 +275,38 @@ about:
      ![](https://bozenne.github.io/img/TRIAL-missingPattern_EPDS.png)
    - is there any unexpected event during data collection that may
      affect the meaning/interpretation of the data? For instance,
-     hospitalisation or death of some study participants may stop data
-     collection in an informative way. Or the may be some unexpected
+     hospitalization or death of some study participants may stop data
+     collection in an informative way. Or there may be some unexpected
      technical variability, e.g., more than one scanner was used or
-     multiple doses of contrast agent. 
+     multiple doses of contrast agent.
 
 Having a description of the available data and listing 'complications'
 that occured will facilitate the revision of the SAP by the research
 team and the statistician.
 	 
 > Before starting the recipe, the chef should check (look/smell/taste)
-> the ingredient to identify If some vegetables have been put in the fruit box, he
-> can be instructed to sort them and make sure the box contain the
-> right 'type' of products.
+> the ingredients. He may need to update his recipe if some are
+> missing or of insufficient quality.
 
 
 {:start="7"}
-7. **Blinded data analysis**
+7. **Blinded data analysis**: the aim of this step is simply to check
+   that statistical analysis runs on the available data. This is
+   especially relevant when using complex statistical models where the
+   software may fail to provide (reliable) estimates for the current
+   data. 
+- The software will typically output warnings or error messages to flag
+   problems. In some cases extremely large standard errors or missing
+   values in the fit function (NA for the log-likelihood) can also be
+   used as diagnostics.
+- If so, a 'simplified' or alternative procedure should be used
+   instead and the SAP should be updated accordingly.
+- This should be done blinded to the real randomization groups and to
+   estimates and p-values related to the research questions, to
+   maintain the trust that the choice of the method is not driven by
+   the results.
 
+> Before making the 'real' recipe that may involve expensive
+> ingredients or large quantities, the chef makes a test cake to
+> 'validate' the feasability of the recipe (e.g. cooking time) and try
+> out the kitchen (pan, oven, ...).
