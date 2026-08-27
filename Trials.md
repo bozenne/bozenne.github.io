@@ -1,7 +1,7 @@
 ---
 layout: page
-title:  Trials
-link_title: Trials
+title:  "Clinical Randomized Trials"
+menu_title: "Trials"
 permalink: /Trials/
 ---
 
