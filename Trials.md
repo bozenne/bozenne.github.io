@@ -86,7 +86,8 @@ having access to the unblinded data. This stresses the importance of
 involving the statistician early enough. 
 > To take a culinary analogy, once you've used your ingredients to bake a cake, there is little a chef can do to 'fix' the cake.
 
-1. The first step is to write a protocol. It provides, among many
+{:start="1"}
+1. **Protocol**: it provides, among many
 other things, some rational for the trial, description of the study
 design including the intervention, measurement being made, and a
 statistical analysis section. Typically more details are provided for
@@ -110,7 +111,8 @@ technical document and my input is generally about:
 > The chef will help plan what to buy at the market and sketch a recipe (protocol).
 > The recipe should be approved by the health authorities.
 
-2. The protocol can be re-phrased with a more scientific and research
+{:start="2"}
+2. **Protocol paper**: the protocol can be re-phrased with a more scientific and research
    focus while having fewer operational details to be published in a
    scientific journal. 
 - the 'statistical content' is very similar as for step 1. Protocol. 
@@ -122,7 +124,8 @@ technical document and my input is generally about:
 > To 'brand' your new cake, it is natural to publish a trailer (protocol paper).
 > Each chef has his style (favorite technic and ingredients) so asking him to follow someone-else recipe, even very good, may not be ideal.
 
-3. The SAP is an important step for the statistican as it precisely
+{:start="3"}
+3. **SAP version 1**: the SAP is an important step for the statistican as it precisely
    describes how to proceed. A first version should be made BEFORE
    data collection (i) data collection is still be modifiable to
    address a last minute difficulty concern (ii) the investigator is
@@ -146,17 +149,15 @@ technical document and my input is generally about:
 - An important part of the SAP is to anticipate problems arising
   during data collection (e.g. missing data or not usuable data due to
   intercurrent events)
-
-[![Download the protocol](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
-[![Download the protocol](https://bozenne.github.io/img/wordLogo.png){:width="5"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
-
+- A .docx template for the SAP can be downloaded by clicking on [![SAP](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
 
 > To be efficient when baking cake, a step by step recipe is to be decided (SAP).
 > Each step should be precise enough so there is no ambiguity in what should be done.
 > This is especially important when several people are involved, from different domain, with different level of experience. 
 > How to cut an oignon may be obvious for one person but not for another!
 
-4. During data collection, some (possibly anticipated) difficulties arise:
+{:start="4"}
+4. **Data collection**: during data collection, some (possibly anticipated) difficulties arise:
 - missing data, e.g. due to patient drop-out or technical failures.
 - incorrect data, e.g. due to typos or an instrument incorrectly calibrated.
 - different data encoding, e.g. depression status at the last phone
@@ -164,7 +165,8 @@ technical document and my input is generally about:
 > When buying the food at the market you may not find exactly what you want 
 > or not realized that you have bought the wrong ingredient or one that is spoiled.
 
-5. After data collection, the data manager export the database without
+{:start="5"}
+5. **Data review**: after data collection, the data manager export the database without
    any reference to the randomization variable. Ideally also without
    any of the 'directly' associated variables (e.g. hormonal
    concentration if there is an hormonal treatment) if the data review
@@ -180,8 +182,14 @@ technical document and my input is generally about:
 > When receiving the ingredients, the chef check them and note any missing or not satisfying product.
 > If some vegetables have been put in the fruit box, he will sort them and make sure the box contain the right 'type' of products.
 
-6. Using the 'cleaned' data, descriptive statistics are provided to
+{:start="6"}
+6. **Descriptive statistics**: using the 'cleaned' data, descriptive statistics are provided to
    check that the planned analysis is still relevant with the current
    data.
    - 
    - 
+
+
+{:start="7"}
+7. **Blinded data analysis**
+
