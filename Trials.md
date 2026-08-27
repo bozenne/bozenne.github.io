@@ -76,9 +76,11 @@ description of my involvment:
 
 # Main steps of a RCT from a statistician perspective
 
-
-The following diagram display some of the key steps of a trial:
-![](https://bozenne.github.io/img/TRIAL-timeline.png) 
+This section contains my current understanding and procedures for
+RCTs. I am still learning with every RCT (and books when I have time
+to read) so it should be taken as a basis to work with and not as an
+absolute truth. I will focus on the following steps of a trial:
+![](https://bozenne.github.io/img/TRIAL-timeline.png)
 
 Several steps take place before any data is collected, and most before
 having access to the unblinded data. This stresses the importance of
@@ -114,20 +116,6 @@ about:
   very least make it clear how one intends to carry out the primary
   analysis - possibly in an idealized trial (e.g. no drop-out, no
   intercurrent events). 
-
-> One should first discuss with the chef about the type of desert one likes, the budget, and possible allergies.
-> The chef will help plan what to buy at the market and sketch a recipe (protocol).
-> The recipe should be approved by the health authorities.
-
-{:start="2"}
-2. **Protocol paper**: the protocol can be re-phrased with a more scientific and research
-   focus while having fewer operational details to be published in a
-   scientific journal. 
-- the 'statistical content' is very similar as for step 1. Protocol. 
-- in my experience, investigators start to involve a statistician to
-  reply to reviewer comments. True it saves ressources (time) but it
-  can be problematic if the statistican disagrees with the design that
-  has been chosen without him onboard.
 - not all trials involve the statistician at this stage. This
   increases the risk that modification in the data collection
   procedures needed to mitigate the risk of failure of the trial are
@@ -139,6 +127,21 @@ about:
   to mitigate missing values (e.g. answer questionnaires on site
   instead of at home), measure a proxy outcome during the follow-up,
   or choose an easier outcome to measure instead.
+
+> One should first discuss with the chef about the type of desert wanted and the budget.
+> The chef will help plan what to buy at the market and sketch a recipe (protocol).
+> Tell the chef early about food allergies or ingredients not available in your region (difficulties you anticipate) instead of having him guess. 
+> The list of ingredient and recipe should be approved by the health authorities.
+
+{:start="2"}
+2. **Protocol paper**: the protocol can be re-phrased with a more scientific and research
+   focus while having fewer operational details to be published in a
+   scientific journal. 
+- the 'statistical content' is very similar as for step 1. Protocol. 
+- in my experience, investigators start to involve a statistician to
+  reply to reviewer comments. True it saves ressources (time) but it
+  can be problematic if the statistican disagrees with the design that
+  has been chosen without him onboard.
 
 
 > To 'brand' your new cake, it can be natural to publish a trailer
@@ -174,7 +177,8 @@ about:
 - Once the reasearch team and the statistician agree on a version, it
   should be uploaded on euclinicaltrials.eu or clinicaltrials.gov to
   have a time stamp.
-- It is generally a BAD idea to wait the end of data collection to
+- ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+     width="30px"} It is generally a BAD idea to wait the end of data collection to
   write the SAP. At that point,the research team is often eager to
   analyse the data and leading to (un-necessary) time pressure to
   finish the SAP. It also looks more suspicious to have a late
@@ -185,7 +189,15 @@ about:
 - An important part of the SAP is to anticipate problems arising
   during data collection (e.g. missing data or not usuable data due to
   intercurrent events)
-- A .docx template for the SAP can be downloaded by clicking on [![SAP](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
+- A .docx template for the SAP can be downloaded by clicking on
+  [![SAP](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
+  <br /> ![](https://bozenne.github.io/img/idea.jpg){:height="30px"
+  width="30px"} A good sanity check is to generate an example dataset
+  (possibly using AI) and run the proposed R code in the SAP to check
+  that one can obtain the expected output. Ideally this should be done
+  once under the null and once under the alternative hypothesis as a
+  quick validation that the output are consistent with the data
+  generating mechanism.
 
 > To be efficient when baking cake, a step by step recipe is to be
 > decided (SAP).  Each step should be precise enough so there is no
@@ -196,7 +208,8 @@ about:
 
 {:start="4"}
 4. **Data collection**: during data collection, some (possibly anticipated) difficulties arise:
-- missing data, e.g. due to patient drop-out or technical failures.
+- missing data, e.g. due to patient drop-out or technical
+  failures. <br />
   ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
   width="30px"} Discontinuation of the intervention or worsening of
   the health condition should not mean exclusion from the trial as the
@@ -207,6 +220,7 @@ about:
   can be distinguished (i.e. avoid 'check box if feeling depressed').
 - different data encoding, e.g. depression status at the last phone
   call instead of as a time to event variable/daily monitoring.
+  
 > When buying the food at the market you may not find exactly what you want 
 > or not realized that you have bought the wrong ingredient or one that is spoiled.
 
@@ -233,11 +247,12 @@ about:
      database.
    - No modeling is being made here so there is no need for a
      statistician.
-     ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
+   - ![](https://bozenne.github.io/img/warning.jpg){:height="30px"
      width="30px"} the database after this reviewer should be
      considered as locked, so the review, while tedious, should be
      planned and done carefully. The research team usually have
      critical inside about what sanity checks should be performed.
+	 
 > When receiving the ingredients, a clerc checks them and reports any missing or rotten product.
 > If some vegetables have been put in the fruit box, he can be instructed to sort them and make sure the box contain the right 'type' of products.
 
@@ -246,12 +261,12 @@ about:
    statistics are provided to check that the planned analysis is still
    relevant with the current data.
    - displaying patient trajectories often provides a good overview of the data.
-![](https://bozenne.github.io/img/TRIAL-missingPattern_EPDS.png)
+![](https://bozenne.github.io/img/TRIAL-patientTrajectories.png)
    - is the data available in the expected format? The database may
      contain the outcome a binary variable (depressed yes/no) rather
      than the expected time to event variable (time to
      depression). Missing values in the outcome or covariates may not
-     have been expected. To condense the information, one display the
+     have been expected. To condense the information, one may display the
      observed missing data pattern:
      ![](https://bozenne.github.io/img/TRIAL-missingPattern_EPDS.png)
    - is there any unexpected event during data collection that may
@@ -264,6 +279,12 @@ about:
 Having a description of the available data and listing 'complications'
 that occured will facilitate the revision of the SAP by the research
 team and the statistician.
+	 
+> Before starting the recipe, the chef should check (look/smell/taste)
+> the ingredient to identify If some vegetables have been put in the fruit box, he
+> can be instructed to sort them and make sure the box contain the
+> right 'type' of products.
+
 
 {:start="7"}
 7. **Blinded data analysis**
