@@ -88,13 +88,11 @@ involving the statistician early enough.
 > To take a culinary analogy, once you've used your ingredients to bake a cake, there is little a chef can do to 'fix' the cake.
 
 In academia, there will often be time constrains regarding the
-involvment of a data manager and a statistician. Typically it is not
-unfrequent that it is one of the investigators that is performing the
-data review (5.). One may also be tempted to save 'statistician time'
-by involving him/her in the late stage (typically 3.). A better
-practice is to involve him from the start but in very few analyses
-(e.g. only primary or with very few secondaries).
+involvment of a data manager and a statistician:
+- it is not unfrequent that it is one of the investigators that is performing the data review (5.). Measures to avoid data leakage (e.g. unblinding) and comprehensive documentation of any modification are then essential to maintain trust.
+- to save 'statistician time' some investigators involve him in the late stage (typically 3.) and ask him to review the primary, secondary, and some of the exploratory analyses. A better practice is to involve him from the start but in very few analyses (e.g. only primary or with very few secondaries).
 
+> If you are short in budget, you should rather ask a chef to propose a nice main dish than to fix your own attempt to make a 5 course menu.
 
 {:start="1"}
 1. **Protocol**: it provides, among many
