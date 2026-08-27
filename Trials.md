@@ -84,7 +84,17 @@ The following diagram display some of the key steps of a trial:
 Several steps take place before any data is collected, and most before
 having access to the unblinded data. This stresses the importance of
 involving the statistician early enough. 
+
 > To take a culinary analogy, once you've used your ingredients to bake a cake, there is little a chef can do to 'fix' the cake.
+
+In academia, there will often be time constrains regarding the
+involvment of a data manager and a statistician. Typically it is not
+unfrequent that it is one of the investigators that is performing the
+data review (5.). One may also be tempted to save 'statistician time'
+by involving him/her in the late stage (typically 3.). A better
+practice is to involve him from the start but in very few analyses
+(e.g. only primary or with very few secondaries).
+
 
 {:start="1"}
 1. **Protocol**: it provides, among many
