@@ -147,7 +147,7 @@ technical document and my input is generally about:
   during data collection (e.g. missing data or not usuable data due to
   intercurrent events)
 
-[![Download the protocol]({{ '/img/wordLogo.png' | relative_url }})]({{ '/doc/SAP/Statistical Analysis Plan - template.docx | relative_url }})
+[![Download the protocol](https://bozenne.github.io/img/wordLogo.png)](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
 
 
 > To be efficient when baking cake, a step by step recipe is to be decided (SAP).

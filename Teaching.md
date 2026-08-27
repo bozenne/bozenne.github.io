@@ -57,7 +57,7 @@ For the Brain drug project, I am also creating a workshop on Time-to-event analy
 - Sample size calculation for existing databases: [Hernan, 2022](https://doi.org/10.1016/j.jclinepi.2021.08.028)
 - Selection bias: [Hernandez-Diaz, 2006](https://doi.org/10.1093/aje/kwj275)
 - Testing proportional hazards: [Stensrud, 2020](https://doi.org/10.1001/jama.2020.1267)
-- t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x)
+- t-test vs. Mann-Whitney: [Skovlund, 2001](https://doi.org/10.1016/s0895-4356(00)00264-x), [Rochon, 2012](https://doi.org/10.1186/1471-2288-12-81)
 - Table 1 (no p-value): [STROBE, 2007](https://doi.org/10.1371/journal.pmed.0040297): "Inferential measures such as standard errors and confidence intervals should not be used to describe the variability of characteristics, and significance tests should be avoided in descriptive tables."
 - Table 2 Fallacy: [Westreich, 2013](https://doi.org/10.1093/aje/kws412)
 
