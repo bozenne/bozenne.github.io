@@ -147,7 +147,8 @@ technical document and my input is generally about:
   during data collection (e.g. missing data or not usuable data due to
   intercurrent events)
 
-[![Download the protocol](https://bozenne.github.io/img/wordLogo.png)](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
+[![Download the protocol](https://bozenne.github.io/img/wordLogo.png){:width="5%"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
+[![Download the protocol](https://bozenne.github.io/img/wordLogo.png){:width="5"}](https://bozenne.github.io/doc/SAP/StatisticalAnalysisPlan-template.docx)
 
 
 > To be efficient when baking cake, a step by step recipe is to be decided (SAP).
