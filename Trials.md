@@ -232,13 +232,14 @@ about:
    variable. Ideally also without any of the 'directly' associated
    variables (e.g. hormonal concentration if there is an hormonal
    treatment) if the data review is to be made by the investigator to
-   ensure full blinding.
+   not compromise the blinding.
    - Every variable involved in the primary (and possibly secondary if
-     time permits) analysis is reviewed, and the values taken
-     checked. The research team should double check the intended
-     variables are used, e.g. what is the 'origin' variable when
-     computing the follow-up time or what variable should be used for
-     depression status (there might be several diagnostic variables).
+     time permits) analysis is reviewed: values, timing of the
+     measurement ... To facilitate this task the research team may
+     have to clarify what exact column in the dataset should be used,
+     e.g. what is the 'time 0 column' when computing the follow-up
+     time or what variable should be used for depression status (there
+     might be several diagnostic variables).
    - if an implausible value is detected, it should be flagged and
      modified for the analysis: either one can argue for a more
      plausible value (e.g. the data was reported using the wrong unit)
