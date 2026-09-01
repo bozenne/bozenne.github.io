@@ -95,6 +95,7 @@ In academia, there will often be time constraints regarding the
 involvement of a data manager and a statistician:
 - it is not infrequent that it is one of the investigators that is performing the data review (5.). Measures to avoid data leakage (e.g. unblinding) and comprehensive documentation of any modification are then essential to maintain trust.
 - to save 'statistician time' some investigators involve him in the late stage (typically 3. or 6.) and ask him to review the primary, secondary, and some of the exploratory analyses. A better practice is to involve him from the start but in very few analyses (e.g. only primary or with very few secondaries) and make it clear what the ambition is (e.g. JAMA or a modest journal) so he can plan accordingly.
+
 > If you are short in budget, asking a chef to fix your own attempt to make a 5 course menu feels bewildering.
 > Discuss upfront what he can do with your budget, plan accordingly, maybe all you need is a nice main dish.
 
