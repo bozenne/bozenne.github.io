@@ -80,10 +80,12 @@ published articles.
 # A bio-statistician perspective on RCTs
 
 This section contains my current understanding and procedures for
-RCTs. I am still learning with every RCT (and books when I have time
-to read) so it should be taken as a basis to work with and not as an
-absolute truth. I will focus on the following steps of a trial:
-![](https://bozenne.github.io/img/TRIAL-timeline.png)
+RCTs. I am still learning with every RCT (big thanks to Søren, Vibe,
+Simon, and other PI's for our discussions), discussion with other
+biostatisticians (big thanks for Paul), and books (well, when I have
+time to read), and so it should be taken as a basis to work with and
+not as an absolute truth. I will focus on the following steps of a
+trial: ![](https://bozenne.github.io/img/TRIAL-timeline.png)
 
 Several steps take place before any data is collected, and most before
 having access to the unblinded data. This stresses the importance of
@@ -144,7 +146,6 @@ about:
   reply to reviewer comments. True it saves ressource (time) but it
   can be problematic if the statistician disagrees with the design that
   has been chosen without him onboard.
-
 
 > To 'brand' your new cake, it can be natural to publish a trailer
 > (protocol paper).  Each chef has his style (favorite technic and
