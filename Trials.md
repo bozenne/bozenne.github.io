@@ -82,7 +82,7 @@ published articles.
 This section contains my current understanding and procedures for
 RCTs. I am still learning with every RCT (big thanks to Søren, Vibe,
 Simon, and other PI's for our discussions), discussion with other
-biostatisticians (big thanks for Paul), and books (well, when I have
+biostatisticians (big thanks to Paul), and books (well, when I have
 time to read), and so it should be taken as a basis to work with and
 not as an absolute truth. I will focus on the following steps of a
 trial: ![](https://bozenne.github.io/img/TRIAL-timeline.png)
