@@ -35,7 +35,7 @@ So for \(g\in\{1,2\}\):
 \Esp[Y|G=g] = e^{\alpha + \beta g} \Esp[e^{\varepsilon}]
 \end{align*}
 #+END_EXPORT
-Then:
+Then the 'relative geometric mean reduction' equals:
 #+BEGIN_EXPORT latex
 \begin{align*}
 \frac{\Esp[Y|G=1]-\Esp[Y|G=0]}{\Esp[Y|G=0]}
