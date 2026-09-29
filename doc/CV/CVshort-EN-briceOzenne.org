@@ -15,7 +15,7 @@
 \begin{minipage}{0.75\linewidth}
 \begin{tabular*}{7in}{ll@{ }l}
 	Nationality&:& french  \\
-	Age&:& 35  \\
+	Age&:& 36  \\
 	Professional email&:& \url{broz@sund.ku.dk} \\ 
         Personal Website&:& \url{https://bozenne.github.io/} \\
         Github&:& \url{https://github.com/bozenne/} \\
@@ -33,11 +33,18 @@
 	& - the \href{https://publichealth.ku.dk/about-the-department/biostat/}{Section of Biostatistics}, University of Copenhagen (KU) \\
 	& \O{}ster Farimagsgade 5, 1014 Copenhagen, Denmark \\ [2mm]
 	& - the \href{https://nru.dk}{Neurobiology Research Unit} (NRU) \\
-	& Copenhagen University Hospital, Rigshospitalet \\
-	& Building 6931, Blegdamsvej 9, DK-2100 Copenhagen, Denmark \\ [2mm]
+	& Copenhagen University Hospital, Rigshospitalet, Copenhagen, Denmark \\ [2mm]
 \end{tabular}
 #+END_EXPORT
-where I do research in biostatistics along with a consulting and teaching activity in statistics.
+where I do research in biostatistics along with a consulting and
+teaching activity in statistics. My research identifies methodological
+needs in medical studies, builds solutions based on mathematical and
+probabilistic arguments, and implements them in software available to
+practitioners and other statisticians. It includes the *development of
+multivariate models* (mixed models, latent variable models,
+generalized pairwise comparisons), particularly in neuroscience and
+clinical trials, and handling of *censored, missing, or truncated data* in
+longitudinal or time to event analyses.
 
 * Education                                                          :ignore:
 #+LaTeX: \resheading{Education and research carrier}
@@ -75,16 +82,22 @@ where I do research in biostatistics along with a consulting and teaching activi
 \end{tabular}
 #+END_EXPORT
 * Publications                                                       :ignore:                          
+
+\vspace{-0.25cm}
+
 #+LaTeX: \resheading{Selected publications  \hfill \href{https://scholar.google.com/citations?user=rJMNP7YAAAAJ&hl=fr}{link google scholar}}
 #+BEGIN_EXPORT latex
 \begin{itemize}
+    \item \bibentry{dorfel2026prediction}
     \item \bibentry{ozenne2025sensitivity}
     \item \bibentry{baayen2025design}
-    \item \bibentry{ozenne2022controlling}
-    \item \bibentry{ip2021eeg}
-    \item \bibentry{norgaard2019preprocessing}
+    \item \bibentry{fisher2025discordance}
+    \item \bibentry{larsen2025methodological}
 \end{itemize}
 #+END_EXPORT
+
+\vspace{-0.5cm}
+
 * Software development                 :ignore:
 #+LaTeX: \resheading{Selected software \hfill (packages for the \href{https://www.r-project.org/}{R software})}
 

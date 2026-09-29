@@ -48,7 +48,8 @@ dt.data <- as.data.table(sim(mSim,n))
 #+RESULTS:
 Add missing values
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dt.data[1:10, bmi:=NA]
+dt.data[1:10, "age":=NA]
+dt.data[11:20, c("age","bmi","Y"):=NA]
 #+END_SRC
 
 #+RESULTS:
@@ -65,82 +66,141 @@ colSums(is.na(dt.data))
 
 #+RESULTS:
 :      Y  group season    bmi gender    age 
-:      0      0      0     10      0      0
+:     10      0      0     10      0     20
 
 Missing data patterns:   
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
+md.data <- md.pattern(dt.data)
+md.data
+#+END_SRC
+
+#+RESULTS:
+:    group season gender  Y bmi age   
+: 80     1      1      1  1   1   1  0
+: 10     1      1      1  1   1   0  1
+: 10     1      1      1  0   0   0  3
+:        0      0      0 10  10  20 40
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/missingDataPattern.pdf")
 md.pattern(dt.data)
+dev.off()
 #+END_SRC
 
 #+RESULTS:
-:    Y group season gender age bmi   
-: 90 1     1      1      1   1   1  0
-: 10 1     1      1      1   1   0  1
-:    0     0      0      0   0  10 10
+:    group season gender  Y bmi age   
+: 80     1      1      1  1   1   1  0
+: 10     1      1      1  1   1   0  1
+: 10     1      1      1  0   0   0  3
+:        0      0      0 10  10  20 40
+: windows 
+:       2
 
-#+LaTeX: \vspace{-4cm}
+- the left column counts the number of observations having a specific
+  missing data pattern.
+- the right column display the number of missing data in each pattern
+- the bottom row counts the number of missing value relative to each
+  variable (and the total number of missing values).
 
-# #+BEGIN_SRC R :results graphics :file "./figures/missingDataPattern.pdf" :exports results :session *R* :cache no
-# md.pattern(dt.data)
-# #+END_SRC
-
-#+RESULTS:
-[[file:./figures/missingDataPattern.pdf]]
-
-#+LaTeX: \vspace{-4cm}
-
-Note: with more patterns it becomes clear that the left column counts
-the number of observations with a specific patern. The right column
-display the index of the pattern. The bottom row counts the number of
-missing value relative to each variable (and the total number of
-missing values).
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dt.data2 <- copy(dt.data)
-dt.data2[5:10,age:=NA]
-md.pattern(dt.data2)
-#+END_SRC
-
-#+RESULTS:
-:    Y group season gender age bmi   
-: 90 1     1      1      1   1   1  0
-: 4  1     1      1      1   1   0  1
-: 6  1     1      1      1   0   0  2
-:    0     0      0      0   6  10 16
+#+name: fig:md
+#+ATTR_LaTeX: :width 0.8\textwidth :options trim={40 120 40 120},clip :placement [!h]
+[[./figures/missingDataPattern.pdf]]
 
 \clearpage
 
-** Step 2: Define imputation model
+** Step 2: Reflect upon the missing data and correlation patterns
+
+It is often useful to consider the missing data patterns next to the
+association between variables. Ideally the association pattern should
+be based on prior knowledge as the empirical one (i.e. based on the
+observed data) may be difficult to estimate reliably in presence of
+missing data. To keep things concrete, let's use a rough approximation
+(pearson correlation also for categorical variables) of the
+correlation structure:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+dtNum.data <- as.data.frame(lapply(dt.data,as.numeric))
+cor.data <- cor(dtNum.data, use = "pairwise")
+cor.data[setdiff(colnames(md.data),""),
+         setdiff(colnames(md.data),"")]
+#+END_SRC
+
+#+RESULTS:
+:              group      season      gender           Y         bmi         age
+: group   1.00000000 -0.08242959 -0.04222003  0.11147368 -0.09679738  0.09304925
+: season -0.08242959  1.00000000 -0.09090909  0.09219243  0.06508765  0.07620663
+: gender -0.04222003 -0.09090909  1.00000000 -0.12831302  0.04329831 -0.17662044
+: Y       0.11147368  0.09219243 -0.12831302  1.00000000  0.32446590  0.98452932
+: bmi    -0.09679738  0.06508765  0.04329831  0.32446590  1.00000000  0.16195300
+: age     0.09304925  0.07620663 -0.17662044  0.98452932  0.16195300  1.00000000
+
+*Intuition*: A complete case analysis where =Y= is regressed against
+=group=, adjusting for =season=, =gender=, =bmi=, =age= would discard
+information from all the 20 subjects with missing values.
+- Complete case would discard valuable information for the 10 subjects
+  where =Y= is known but =age=. Indeed, =age= being very correlated
+  with =Y=, those subjects are not really missing data. Multiple
+  imputation can avoid discarding such valuable information, leading
+  to superior statistical power and possibly less bias.
+- the 10 subjects missing =bmi=, =age=, and =Y= carry little
+  information as =group=, =season=, and =gender= do not seem to be
+  particularly useful to guess the missing values. In that case
+  multiple imputation would essentially impute the group mean for
+  =bmi=, =age=, and =Y= leading to similar results as complete case
+  analysis.
+
+\clearpage
+
+*Multiple imputation (MI) vs. complete case (CC)* citep:vanbuuren2018:
+  "Suppose that the complete-data model is a regression with outcome
+  \(Y\) and predictors \(X\). If the missing data occur in \(Y\) only,
+  complete-case analysis and multiple imputation are equivalent [...]
+  Multiple imputation gains an advantage over complete-case analysis
+  if additional predictors for \(Y\) are available that are not part
+  of \(X\). The efficiency of complete-case analysis declines if \(X\)
+  contains missing values. [...] there are two special cases where
+  listwise deletation outperforms multiple imputation [...]
+  - the probability to be missing does not depend on Y
+  - the complete data model is logistic regression [...] the
+    probability to be missing depends only on Y and not on X"
+    
+\bigskip
+\bigskip
+\bigskip
+
+** Step 3: Define imputation model
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-all.variables <- c("Y","group","season","bmi","gender","age")
+all.variables <- setdiff(colnames(md.data),"")
 n.variables <- length(all.variables)
 Mlink <- matrix(0, n.variables, n.variables,
                 dimnames = list(all.variables,all.variables))
-Mlink["bmi",c("group","season","gender","age")] <- 1
+Mlink["Y", which(colnames(Mlink)!="Y")] <- 1
+Mlink["age", which(colnames(Mlink)!="age")] <- 1
+Mlink["bmi", which(colnames(Mlink)!="bmi")] <- 1
 Mlink
 #+END_SRC
 
 #+RESULTS:
-:        Y group season bmi gender age
-: Y      0     0      0   0      0   0
-: group  0     0      0   0      0   0
-: season 0     0      0   0      0   0
-: bmi    0     1      1   0      1   1
-: gender 0     0      0   0      0   0
-: age    0     0      0   0      0   0
+:        group season gender Y bmi age
+: group      0      0      0 0   0   0
+: season     0      0      0 0   0   0
+: gender     0      0      0 0   0   0
+: Y          1      1      1 0   1   1
+: bmi        1      1      1 1   0   1
+: age        1      1      1 1   1   0
 
 A value of 1 means that the column variable is used as a predictor for
  the target block (in the rows).
 
 \clearpage
 
-** Step 3: Generate imputed datasets
+** Step 4: Generate imputed datasets
 Generate imputed values
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 n.imputed <- 3 ## number of imputed datasets
 dt.mice <- mice(dt.data,
                 m=n.imputed, 
-                maxit = 50, # number of iterations to obtain the imputed dataset
+                maxit = 100, # number of iterations to obtain the imputed dataset
                 predictorMatrix = Mlink,
                 method = 'pmm', # Predictive mean matching, only ok for continuous variables, it is possible to set constrains for positive variables
                 seed = 500, printFlag = FALSE)
@@ -152,16 +212,16 @@ summary(dt.mice)
 Class: mids
 Number of multiple imputations:  3 
 Imputation methods:
-     Y  group season    bmi gender    age 
-    ""     ""     ""  "pmm"     ""     "" 
+ group season gender      Y    bmi    age 
+    ""     ""     ""  "pmm"  "pmm"  "pmm" 
 PredictorMatrix:
-       Y group season bmi gender age
-Y      0     0      0   0      0   0
-group  0     0      0   0      0   0
-season 0     0      0   0      0   0
-bmi    0     1      1   0      1   1
-gender 0     0      0   0      0   0
-age    0     0      0   0      0   0
+       group season gender Y bmi age
+group      0      0      0 0   0   0
+season     0      0      0 0   0   0
+gender     0      0      0 0   0   0
+Y          1      1      1 0   1   1
+bmi        1      1      1 1   0   1
+age        1      1      1 1   1   0
 #+end_example
 
 *** Interacting with the mice object
@@ -174,8 +234,9 @@ table(cci(dt.mice))
 #+RESULTS:
 : 
 : FALSE  TRUE 
-:    10    90
+:    20    80
 
+\clearpage
 
 Complete case dataset:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -183,13 +244,13 @@ str(cc(dt.mice))
 #+END_SRC
 
 #+RESULTS:
-: 'data.frame':	90 obs. of  6 variables:
-:  $ Y     : num  102 82.9 94.9 61.4 82 ...
-:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 1 2 2 2 2 2 2 ...
-:  $ season: Factor w/ 2 levels "winter","summer": 2 2 1 1 2 1 2 1 1 1 ...
-:  $ bmi   : num  21.6 21.9 20.6 26.4 28.5 ...
-:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 2 1 1 2 2 1 2 2 ...
-:  $ age   : num  77.3 57.2 73.6 34 50.7 ...
+: 'data.frame':	80 obs. of  6 variables:
+:  $ Y     : num  48.7 91.6 75.3 51.8 92 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 1 2 1 2 1 1 1 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 1 1 2 1 1 2 2 2 2 2 ...
+:  $ bmi   : num  23.4 25.7 20.2 24.3 23.8 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 2 1 1 2 1 1 2 2 ...
+:  $ age   : num  24.8 66.1 53.7 29.7 68.4 ...
 
 Extract observations with missing values:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -197,13 +258,13 @@ str(ic(dt.mice))
 #+END_SRC
 
 #+RESULTS:
-: 'data.frame':	10 obs. of  6 variables:
+: 'data.frame':	20 obs. of  6 variables:
 :  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
-:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2
-:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1
-:  $ bmi   : num  NA NA NA NA NA NA NA NA NA NA
-:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1
-:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+:  $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+:  $ age   : num  NA NA NA NA NA NA NA NA NA NA ...
 
 Dataset after multiple imputation:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -215,9 +276,9 @@ str(complete(dt.mice, action = 1)) ## first imputed dataset
 :  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
 :  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
 :  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
-:  $ bmi   : num  25.9 21 16.7 20.2 25.9 ...
+:  $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
 :  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
-:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+:  $ age   : num  72.2 61.6 36.7 51.7 56.3 ...
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 str(complete(dt.mice, action = 2)) ## second imputed dataset
@@ -228,13 +289,86 @@ str(complete(dt.mice, action = 2)) ## second imputed dataset
 :  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
 :  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
 :  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
-:  $ bmi   : num  17.5 18.1 24.3 20.7 20.9 ...
+:  $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
 :  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
-:  $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+:  $ age   : num  68.4 64.1 30.4 48.9 53.7 ...
 
 \clearpage
 
-** Step 4: Check the imputed datasets
+** Step 5: Check the imputed datasets
+*** Build-in plot to visualize missing values
+
+Dotplot of the orignal data (blue) vs. imputed data (pink) to check
+that the imputed values are plausible (e.g. no negative age):
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+stripplot(dt.mice, age~.imp, pch=20, cex=2)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/striplotImputed.pdf")
+stripplot(dt.mice, age~.imp, pch=20, cex=2)
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+: windows 
+:       2
+
+#+RESULTS:
+[[file:./figures/striplotImputed.pdf]]
+
+- Points above x=1 represent the original data
+- Points above x=2 represent the first imputed dataset
+- Points above x=3 represent the second imputed dataset
+- ...
+
+\clearpage
+
+
+Boxplot of the orignal data (blue) vs. imputed data (pink) for a more
+compact visualization:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+stripplot(dt.mice, age~.imp, pch=20, cex=2)
+#+END_SRC
+
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/bwplotImputed.pdf")
+bwplot(dt.mice)
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+: windows 
+:       2
+
+#+RESULTS:
+
+#+ATTR_LaTeX: :width 0.8\textwidth :options trim={0 10 0 0},clip :placement [!h]
+[[file:./figures/bwplotImputed.pdf]]
+
+Density plot of the orignal data (blue) vs. imputed data (pink) to
+compare more in detail the distributions:
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+densityplot(dt.mice, layout = c(3,1))
+#+END_SRC
+
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/densityplotImputed.pdf", width = 10, height = 4)
+densityplot(dt.mice, layout = c(3,1))
+dev.off()
+#+END_SRC
+
+#+RESULTS:
+: windows 
+:       2
+
+#+RESULTS:
+[[file:./figures/densityplotImputed.pdf]]
+
+
 *** Convergence of the imputation algorithm
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -243,117 +377,128 @@ plot(dt.mice, layout = c(1,2))
 
 #+RESULTS:
 
-# #+BEGIN_SRC R :results graphics :file "./figures/traceCVimputed.pdf" :exports results :session *R* :cache no
-# plot(dt.mice, layout = c(1,2))
-# #+END_SRC
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/traceCVimputed.pdf")
+plot(dt.mice, layout = c(1,2))
+dev.off()
+#+END_SRC
 
-
-
+#+RESULTS:
+: windows 
+:       2
 
 #+ATTR_LaTeX: :width 0.70\textwidth :placement [!h]
 [[file:./figures/traceCVimputed.pdf]]
 
+Should look more like the bottom plot than the top plot where the
+chains are not mixing very well. Note that here at least 50 iteration
+are needed to reach a steady state.
 
-*** Visualizing the imputed values
-Visualize imputed value values and check they are plausible (e.g. mice
-is not imputed a BMI of 75):
+*** Make your own plot
+
+Imputed values can be directly extracted from the object:
+
+\medskip
+
+#+LaTeX: \begin{minipage}{0.5\linewidth} 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dt.mice$imp$bmi
+head(dt.mice$imp$age)
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-          1        2        3
-1  25.86170 17.51962 26.03528
-2  20.97076 18.12224 21.60139
-3  16.68404 24.25679 17.86661
-4  20.15124 20.71567 26.03528
-5  25.86170 20.92015 25.24236
-6  24.80171 25.02219 20.62111
-7  21.42336 25.02219 25.02219
-8  21.00639 20.90548 20.15124
-9  24.76365 12.99571 24.80171
-10 15.52519 12.99571 21.42336
-#+end_example
+:          1        2        3
+: 1 67.14724 20.49185 51.74262
+: 2 33.40963 24.89930 51.74262
+: 3 31.30446 43.02380 48.88883
+: 4 31.30446 22.29032 48.88883
+: 5 35.79714 31.66111 69.79847
+: 6 31.30446 31.66111 69.79847
 
-The rows correspond to the 3 different imputed datasets and the
-columns to 10 imputed values per dataset. One can also summarizes the
-imputed values computing their quantiles:
-
+#+LaTeX: \end{minipage}
+#+LaTeX: \begin{minipage}{0.45\linewidth} 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-apply(dt.mice$imp$bmi,2,quantile)
+tail(dt.mice$imp$age)
 #+END_SRC
 
 #+RESULTS:
-:             1        2        3
-: 0%   15.52519 12.99571 17.86661
-: 25%  20.35612 17.67028 20.82167
-: 50%  21.21487 20.81058 23.20155
-: 75%  24.79219 23.42263 25.18731
-: 100% 25.86170 25.02219 26.03528
+:           1        2        3
+: 15 31.30446 22.29032 69.79847
+: 16 35.79714 22.29032 24.91940
+: 17 35.79714 24.89930 48.88883
+: 18 33.40963 22.29032 24.91940
+: 19 31.30446 43.02380 48.88883
+: 20 31.30446 22.29032 48.88883
+#+LaTeX: \end{minipage}
 
-Boxplot of the imputed values:
 
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-boxplot(dt.mice$imp$bmi)
-#+END_SRC
-
-#+RESULTS:
-
-# #+BEGIN_SRC R :results graphics :file "./figures/boxplotImputed.pdf" :exports results :session *R* :cache no
-# boxplot(dt.mice$imp$bmi)
-# #+END_SRC
-
-#+RESULTS:
-[[file:./figures/boxplotImputed.pdf]]
+The columns correspond to the 3 different imputed datasets and the
+rows to 20 imputed values per dataset.
 
 \clearpage
 
-	Imputed values vs. observed values
+The imputed datasets can be extracted using:
+
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
-dt.bmi <- rbind(data.table(bmi = unlist(dt.mice$imp$bmi), imputed = TRUE),
-                data.table(bmi = na.omit(dt.data$bmi), imputed = FALSE))
+dfMICE.data <- complete(dt.mice, action = "long")
+str(dfMICE.data)
+#+END_SRC
+
+#+RESULTS:
+: 'data.frame':	300 obs. of  8 variables:
+:  $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+:  $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+:  $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+:  $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+:  $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+:  $ age   : num  72.2 61.6 36.7 51.7 56.3 ...
+:  $ .imp  : int  1 1 1 1 1 1 1 1 1 1 ...
+:  $ .id   : int  1 2 3 4 5 6 7 8 9 10 ...
+
+
+One can them display the observed and imputed values, possibly with an
+interval to reflect the sampling variation of the imputed value (here 1st and 3rd quantiles)
+#+BEGIN_SRC R :exports both :results output :session *R* :cache no
+library(LMMstar)
+dfMICE.mean <- summarize(Y ~ .id + group, data = dfMICE.data)
+dfMICE.mean$impute <- dfMICE.mean$sd>0
+dfMICE.mean$group.num <- as.numeric(dfMICE.mean$group)
+dfMICE.mean$Nimpute <- unlist(tapply(dfMICE.mean$impute,dfMICE.mean$group,cumsum))*(dfMICE.mean$impute)
+
+ggMICE.point <- ggplot(dfMICE.mean,
+                       aes(x = group.num+0.1*Nimpute, y = mean))
+ggMICE.point <- ggMICE.point + geom_point(aes(color = impute,
+                                              shape = impute))
+ggMICE.point <- ggMICE.point + geom_segment(data = dfMICE.mean[dfMICE.mean$impute,],
+                                            aes(color = impute, y = q1, yend = q3))
+ggMICE.point <- ggMICE.point + scale_x_continuous(
+                                 breaks = 1:2,
+                                 labels = levels(dfMICE.mean$group)
+                               )
+ggMICE.point <- ggMICE.point + labs(x = "group", y = "Y",
+                                    color = "Imputed value",
+                                    shape = "Imputed value")
+ggMICE.point
 #+END_SRC
 
 #+RESULTS:
 
-Histogram
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-gg1.bmi <- ggplot(dt.bmi, aes(bmi, group = imputed, fill = imputed))
-gg1.bmi <- gg1.bmi + geom_histogram(aes(y=..count../sum(..count..)),position = "dodge")
-gg1.bmi
+#+BEGIN_SRC R :exports none :results output :session *R* :cache no
+pdf("./figures/manualDotImputed.pdf")
+ggMICE.point
+dev.off()
 #+END_SRC
 
 #+RESULTS:
-: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+: windows 
+:       2
 
-# #+BEGIN_SRC R :results graphics :file "./figures/histImputed.pdf" :exports results :session *R* :cache no
-# gg1.bmi
-# #+END_SRC
+#+ATTR_LaTeX: :width 1\textwidth :options trim={0 0 0 0},clip :placement [!h]
+[[./figures/manualDotImputed.pdf]]
 
-#+RESULTS:
-[[file:./figures/histImputed.pdf]]
 
 \clearpage
 
-One more plot:
-   
-#+BEGIN_SRC R :exports both :results output :session *R* :cache no
-stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
-#+END_SRC
-
-#+RESULTS:
-
-# #+BEGIN_SRC R :results graphics :file "./figures/striplotImputed.pdf" :exports results :session *R* :cache no
-# stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
-# #+END_SRC
-
-#+RESULTS:
-[[file:./figures/striplotImputed.pdf]]
-
-\clearpage
-
-** Step 3: Fit the statical model on each imputed dataset
+** Step 6: Fit the statical model on each imputed dataset
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 e.mice <- with(data = dt.mice,
@@ -370,11 +515,10 @@ with.mids(data = dt.mice, expr = lm(Y ~ group + season + bmi +
 
 call1 :
 mice(data = dt.data, m = n.imputed, method = "pmm", predictorMatrix = Mlink, 
-    maxit = 50, printFlag = FALSE, seed = 500)
+    maxit = 100, printFlag = FALSE, seed = 500)
 
 nmis :
-     Y  group season    bmi gender    age 
-     0      0      0     10      0      0 
+[1] 10  0  0 10  0 20
 
 analyses :
 [[1]]
@@ -384,7 +528,7 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      2.8846        0.7238        1.2174        0.8602        0.5507        1.0058  
+    -0.02614       0.95181       1.13110       0.99033       0.70594       1.00116  
 
 
 [[2]]
@@ -394,7 +538,7 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      3.8365        0.6732        0.8917        0.7907        0.7422        1.0221  
+     0.05021       0.59320       0.87012       1.01371       0.59669       1.00034  
 
 
 [[3]]
@@ -404,7 +548,7 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      2.2639        0.5601        1.1779        0.8919        0.7209        1.0025
+      0.5906        0.7486        1.0359        0.9588        1.0171        1.0077
 #+end_example
 
 We can check that using =with= is equivalent to run the linear
@@ -412,6 +556,8 @@ regression on the imputed dataset:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 dt.tempo <- copy(dt.data)
 dt.tempo[is.na(bmi), bmi := dt.mice$imp$bmi[,1]]
+dt.tempo[is.na(age), age := dt.mice$imp$age[,1]]
+dt.tempo[is.na(Y), Y := dt.mice$imp$Y[,1]]
 lm(Y ~ group + season + bmi + gender + age, data  = dt.tempo)
 #+END_SRC
 
@@ -422,11 +568,11 @@ lm(Y ~ group + season + bmi + gender + age, data  = dt.tempo)
 : 
 : Coefficients:
 :  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-:       2.8846        0.7238        1.2174        0.8602        0.5507        1.0058
+:     -0.02614       0.95181       1.13110       0.99033       0.70594       1.00116
 
 \clearpage
 
-** Step 4: Pool the results over the imputed datasets
+** Step 7: Pool the results over the imputed datasets
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 ePool.mice <- pool(e.mice)
@@ -434,13 +580,13 @@ summary(ePool.mice)
 #+END_SRC
 
 #+RESULTS:
-:           term  estimate  std.error statistic        df      p.value
-: 1  (Intercept) 2.9949755 1.73919838  1.722044 18.777429 1.014936e-01
-: 2      groupHC 0.6523698 0.42434760  1.537348 78.067966 1.282516e-01
-: 3 seasonsummer 1.0956572 0.46036133  2.379994 30.027026 2.386256e-02
-: 4          bmi 0.8475895 0.08552179  9.910802  7.101823 2.060982e-05
-: 5 genderFemale 0.6712684 0.42707145  1.571794 66.444876 1.207484e-01
-: 6          age 1.0101585 0.01664369 60.693193  6.176972 8.221885e-10
+:           term  estimate   std.error   statistic        df      p.value
+: 1  (Intercept) 0.2048883 0.970756912   0.2110604 38.881759 8.339425e-01
+: 2      groupHC 0.7645464 0.319142478   2.3956273  9.220665 3.956182e-02
+: 3 seasonsummer 1.0123677 0.286505516   3.5335015 18.085773 2.359316e-03
+: 4          bmi 0.9876296 0.049550963  19.9315925  9.684670 3.472961e-09
+: 5 genderFemale 0.7732397 0.353001211   2.1904733  6.590121 6.701387e-02
+: 6          age 1.0030637 0.008348779 120.1449616 15.554399 1.645574e-24
 
 
 The (pooled) estimate is the average of the estimates relative to each
@@ -452,7 +598,7 @@ Q.coef
 
 #+RESULTS:
 :  (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
-:    2.9949755    0.6523698    1.0956572    0.8475895    0.6712684    1.0101585
+:    0.2048883    0.7645464    1.0123677    0.9876296    0.7732397    1.0030637
 
 The variance is a bit more complex and involves:
 - the within-imputation variance (depends on the sample size)
@@ -463,12 +609,12 @@ print(covW, digits = 5)
 
 #+RESULTS:
 :              (Intercept)     groupHC seasonsummer         bmi genderFemale         age
-: (Intercept)    2.1882899 -0.13040004  -0.04842230 -7.9278e-02  -0.10952359 -5.2588e-03
-: groupHC       -0.1304000  0.17070925   0.01361091  3.0162e-03   0.00655971 -6.6906e-04
-: seasonsummer  -0.0484223  0.01361091   0.16981498 -2.3136e-03   0.01559623 -2.0107e-04
-: bmi           -0.0792775  0.00301620  -0.00231365  3.7376e-03  -0.00042973 -4.6547e-05
-: genderFemale  -0.1095236  0.00655971   0.01559623 -4.2973e-04   0.16771404  2.9411e-04
-: age           -0.0052588 -0.00066906  -0.00020107 -4.6547e-05   0.00029411  1.3100e-04
+: (Intercept)    0.7916558 -0.04307788  -0.02717933 -0.02939118  -0.03847724 -0.00154551
+: groupHC       -0.0430779  0.05873233   0.00490851  0.00083376   0.00140149 -0.00017523
+: seasonsummer  -0.0271793  0.00490851   0.05882881 -0.00042661   0.00549819 -0.00002796
+: bmi           -0.0293912  0.00083376  -0.00042661  0.00144421  -0.00074300 -0.00004101
+: genderFemale  -0.0384772  0.00140149   0.00549819 -0.00074300   0.06116567  0.00035449
+: age           -0.0015455 -0.00017523  -0.00002796 -0.00004101   0.00035449  0.00004799
 
 - the between-imputation variance (depends on the amount of missing data)
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -478,13 +624,13 @@ print(covB, digits = 5)
 #+END_SRC
 
 #+RESULTS:
-:            [,1]        [,2]       [,3]        [,4]        [,5]        [,6]
-: [1,]  0.6273908  0.03854326 -0.1225940 -0.04085088  0.01833254  0.00804290
-: [2,]  0.0385433  0.00702122 -0.0015717 -0.00218666 -0.00585420  0.00032147
-: [3,] -0.1225940 -0.00157170  0.0315882  0.00839604 -0.01252242 -0.00179271
-: [4,] -0.0408509 -0.00218666  0.0083960  0.00268231 -0.00167818 -0.00053567
-: [5,]  0.0183325 -0.00585420 -0.0125224 -0.00167818  0.01100699  0.00049399
-: [6,]  0.0080429  0.00032147 -0.0017927 -0.00053567  0.00049399  0.00010951
+:            [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
+: [1,]  0.1130349 -1.1447e-02  0.00182317 -0.00788221  0.06845745  1.3253e-03
+: [2,] -0.0114468  3.2340e-02  0.02311661 -0.00175256  0.00688497  1.8197e-05
+: [3,]  0.0018232  2.3117e-02  0.01744245 -0.00203333  0.01143001  1.3527e-04
+: [4,] -0.0078822 -1.7526e-03 -0.00203333  0.00075832 -0.00590408 -1.0488e-04
+: [5,]  0.0684574  6.8850e-03  0.01143001 -0.00590408  0.04758314  8.7018e-04
+: [6,]  0.0013253  1.8197e-05  0.00013527 -0.00010488  0.00087018  1.6284e-05
 
 - the simulation error
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -493,13 +639,13 @@ print(covE, digits = 5)
 #+END_SRC
 
 #+RESULTS:
-:            [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
-: [1,]  0.2091303  0.01284775 -0.04086467 -0.01361696  0.00611085  2.6810e-03
-: [2,]  0.0128478  0.00234041 -0.00052390 -0.00072889 -0.00195140  1.0716e-04
-: [3,] -0.0408647 -0.00052390  0.01052939  0.00279868 -0.00417414 -5.9757e-04
-: [4,] -0.0136170 -0.00072889  0.00279868  0.00089410 -0.00055939 -1.7856e-04
-: [5,]  0.0061108 -0.00195140 -0.00417414 -0.00055939  0.00366900  1.6466e-04
-: [6,]  0.0026810  0.00010716 -0.00059757 -0.00017856  0.00016466  3.6504e-05
+:             [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
+: [1,]  0.03767828 -3.8156e-03  0.00060772 -2.6274e-03  0.02281915  4.4177e-04
+: [2,] -0.00381559  1.0780e-02  0.00770554 -5.8419e-04  0.00229499  6.0656e-06
+: [3,]  0.00060772  7.7055e-03  0.00581415 -6.7778e-04  0.00381000  4.5090e-05
+: [4,] -0.00262740 -5.8419e-04 -0.00067778  2.5277e-04 -0.00196803 -3.4962e-05
+: [5,]  0.02281915  2.2950e-03  0.00381000 -1.9680e-03  0.01586105  2.9006e-04
+: [6,]  0.00044177  6.0656e-06  0.00004509 -3.4962e-05  0.00029006  5.4279e-06
 
 The total variance is:
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
@@ -514,7 +660,7 @@ sqrt(diag(covT))
 #+END_SRC
 #+RESULTS:
 :  (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
-:   1.73919838   0.42434760   0.46036133   0.08552179   0.42707145   0.01664369
+:  0.970756912  0.319142478  0.286505516  0.049550963  0.353001211  0.008348779
 
 # #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 # summary(ePool.mice)$std.error
@@ -532,8 +678,8 @@ pool.r.squared(e.mice)
 #+END_SRC
 
 #+RESULTS:
-:           est     lo 95     hi 95 fmi
-: R^2 0.9890535 0.9819615 0.9933666 NaN
+:           est     lo 95     hi 95        fmi
+: R^2 0.9961692 0.9942275 0.9974586 0.06584253
 
 #+BEGIN_SRC R :exports both :results output :session *R* :cache no
 vec.rsquared <- sapply(e.mice$analyses, function(iImp){
@@ -543,7 +689,7 @@ tanh(mean(atanh(vec.rsquared)))
 #+END_SRC
 
 #+RESULTS:
-: [1] 0.9890535
+: [1] 0.9961692
 
 \clearpage
 
@@ -765,7 +911,7 @@ From https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf:
 - Sensitivity analysis
 
 
-* Reference :noexport:
+* Reference
 # help: https://gking.harvard.edu/files/natnotes2.pdf
 
 #+BEGIN_EXPORT latex

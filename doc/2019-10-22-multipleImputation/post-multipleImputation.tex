@@ -1,4 +1,4 @@
-% Created 2022-04-04 ma 17:54
+% Created 2026-09-29 ti 17:17
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{article}
 
@@ -200,7 +200,7 @@ linkcolor=[rgb]{0,0,0.5},
  pdftitle={A simple example of multiple imputation using the mice package},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 27.2 (Org mode 9.5.2)},
+ pdfcreator={Emacs 30.1 (Org mode 9.7.11)},
  pdflang={English}
  }
 \begin{document}
@@ -212,20 +212,17 @@ package. See \url{https://stefvanbuuren.name/mice/}.
 \bigskip
 
 Load packages
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 library(lava)
 library(mice)
 library(data.table)
 library(ggplot2)
 \end{lstlisting}
-
 \section{Simulate data}
-\label{sec:org305732f}
+\label{sec:org4d32e4c}
 
 Just to have an example to work with. Generative model:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 mSim <- lvm(Y~group+season+bmi+gender+age)
 categorical(mSim, labels = c("winter","summer")) <- ~season
 categorical(mSim, labels = c("SAD","HC")) <- ~group
@@ -235,104 +232,159 @@ distribution(mSim,~age) <- lava::uniform.lvm(20,80)
 \end{lstlisting}
 
 Sampling
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 n <- 1e2
 set.seed(10)
 dt.data <- as.data.table(sim(mSim,n))
 \end{lstlisting}
 
 Add missing values
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dt.data[1:10, bmi:=NA]
+\begin{lstlisting}[language=r,numbers=none]
+dt.data[1:10, "age":=NA]
+dt.data[11:20, c("age","bmi","Y"):=NA]
 \end{lstlisting}
 
 \clearpage
-
 \section{Working with mice}
-\label{sec:org73980cb}
+\label{sec:org02bf03b}
 
 \subsection{Step 1: Inspect the missing data pattern}
-\label{sec:org78ccca3}
+\label{sec:orgd61b74d}
 Check the number of missing values in the dataset:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 colSums(is.na(dt.data))
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-Y  group season    bmi gender    age 
-0      0      0     10      0      0
+ Y  group season    bmi gender    age 
+10      0      0     10      0     20
 \end{verbatim}
 
 
 Missing data patterns:   
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-md.pattern(dt.data)
+\begin{lstlisting}[language=r,numbers=none]
+md.data <- md.pattern(dt.data)
+md.data
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-   Y group season gender age bmi   
-90 1     1      1      1   1   1  0
-10 1     1      1      1   1   0  1
-   0     0      0      0   0  10 10
+   group season gender  Y bmi age   
+80     1      1      1  1   1   1  0
+10     1      1      1  1   1   0  1
+10     1      1      1  0   0   0  3
+       0      0      0 10  10  20 40
 \end{verbatim}
 
 
-\vspace{-4cm}
+\begin{itemize}
+\item the left column counts the number of observations having a specific
+missing data pattern.
+\item the right column display the number of missing data in each pattern
+\item the bottom row counts the number of missing value relative to each
+variable (and the total number of missing values).
+\end{itemize}
 
 \begin{center}
-\includegraphics[width=.9\linewidth]{./figures/missingDataPattern.pdf}
+\includegraphics[trim={40 120 40 120},clip,width=0.8\textwidth]{./figures/missingDataPattern.pdf}
+\label{fig:md}
 \end{center}
 
-\vspace{-4cm}
+\clearpage
+\subsection{Step 2: Reflect upon the missing data and correlation patterns}
+\label{sec:orge59a0af}
 
-Note: with more patterns it becomes clear that the left column counts
-the number of observations with a specific patern. The right column
-display the index of the pattern. The bottom row counts the number of
-missing value relative to each variable (and the total number of
-missing values).
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dt.data2 <- copy(dt.data)
-dt.data2[5:10,age:=NA]
-md.pattern(dt.data2)
+It is often useful to consider the missing data patterns next to the
+association between variables. Ideally the association pattern should
+be based on prior knowledge as the empirical one (i.e. based on the
+observed data) may be difficult to estimate reliably in presence of
+missing data. To keep things concrete, let's use a rough approximation
+(pearson correlation also for categorical variables) of the
+correlation structure:
+\begin{lstlisting}[language=r,numbers=none]
+dtNum.data <- as.data.frame(lapply(dt.data,as.numeric))
+cor.data <- cor(dtNum.data, use = "pairwise")
+cor.data[setdiff(colnames(md.data),""),
+         setdiff(colnames(md.data),"")]
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-   Y group season gender age bmi   
-90 1     1      1      1   1   1  0
-4  1     1      1      1   1   0  1
-6  1     1      1      1   0   0  2
-   0     0      0      0   6  10 16
+             group      season      gender           Y         bmi         age
+group   1.00000000 -0.08242959 -0.04222003  0.11147368 -0.09679738  0.09304925
+season -0.08242959  1.00000000 -0.09090909  0.09219243  0.06508765  0.07620663
+gender -0.04222003 -0.09090909  1.00000000 -0.12831302  0.04329831 -0.17662044
+Y       0.11147368  0.09219243 -0.12831302  1.00000000  0.32446590  0.98452932
+bmi    -0.09679738  0.06508765  0.04329831  0.32446590  1.00000000  0.16195300
+age     0.09304925  0.07620663 -0.17662044  0.98452932  0.16195300  1.00000000
 \end{verbatim}
 
+
+\textbf{Intuition}: A complete case analysis where \texttt{Y} is regressed against
+\texttt{group}, adjusting for \texttt{season}, \texttt{gender}, \texttt{bmi}, \texttt{age} would discard
+information from all the 20 subjects with missing values.
+\begin{itemize}
+\item Complete case would discard valuable information for the 10 subjects
+where \texttt{Y} is known but \texttt{age}. Indeed, \texttt{age} being very correlated
+with \texttt{Y}, those subjects are not really missing data. Multiple
+imputation can avoid discarding such valuable information, leading
+to superior statistical power and possibly less bias.
+\item the 10 subjects missing \texttt{bmi}, \texttt{age}, and \texttt{Y} carry little
+information as \texttt{group}, \texttt{season}, and \texttt{gender} do not seem to be
+particularly useful to guess the missing values. In that case
+multiple imputation would essentially impute the group mean for
+\texttt{bmi}, \texttt{age}, and \texttt{Y} leading to similar results as complete case
+analysis.
+\end{itemize}
 
 \clearpage
 
-\subsection{Step 2: Define imputation model}
-\label{sec:org0bcff7e}
+\textbf{Multiple imputation (MI) vs. complete case (CC)} \citep{vanbuuren2018}:
+  "Suppose that the complete-data model is a regression with outcome
+  \(Y\) and predictors \(X\). If the missing data occur in \(Y\) only,
+  complete-case analysis and multiple imputation are equivalent [\ldots{}]
+  Multiple imputation gains an advantage over complete-case analysis
+  if additional predictors for \(Y\) are available that are not part
+  of \(X\). The efficiency of complete-case analysis declines if \(X\)
+  contains missing values. [\ldots{}] there are two special cases where
+  listwise deletation outperforms multiple imputation [\ldots{}]
+\begin{itemize}
+\item the probability to be missing does not depend on Y
+\item the complete data model is logistic regression [\ldots{}] the
+probability to be missing depends only on Y and not on X"
+\end{itemize}
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-all.variables <- c("Y","group","season","bmi","gender","age")
+\bigskip
+\bigskip
+\bigskip
+\subsection{Step 3: Define imputation model}
+\label{sec:org9937436}
+
+\begin{lstlisting}[language=r,numbers=none]
+all.variables <- setdiff(colnames(md.data),"")
 n.variables <- length(all.variables)
 Mlink <- matrix(0, n.variables, n.variables,
-		dimnames = list(all.variables,all.variables))
-Mlink["bmi",c("group","season","gender","age")] <- 1
+                dimnames = list(all.variables,all.variables))
+Mlink["Y", which(colnames(Mlink)!="Y")] <- 1
+Mlink["age", which(colnames(Mlink)!="age")] <- 1
+Mlink["bmi", which(colnames(Mlink)!="bmi")] <- 1
 Mlink
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-       Y group season bmi gender age
-Y      0     0      0   0      0   0
-group  0     0      0   0      0   0
-season 0     0      0   0      0   0
-bmi    0     1      1   0      1   1
-gender 0     0      0   0      0   0
-age    0     0      0   0      0   0
+       group season gender Y bmi age
+group      0      0      0 0   0   0
+season     0      0      0 0   0   0
+gender     0      0      0 0   0   0
+Y          1      1      1 0   1   1
+bmi        1      1      1 1   0   1
+age        1      1      1 1   1   0
 \end{verbatim}
 
 
@@ -340,131 +392,179 @@ A value of 1 means that the column variable is used as a predictor for
  the target block (in the rows).
 
 \clearpage
-
-\subsection{Step 3: Generate imputed datasets}
-\label{sec:org7930493}
+\subsection{Step 4: Generate imputed datasets}
+\label{sec:orgcf362ce}
 Generate imputed values
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 n.imputed <- 3 ## number of imputed datasets
 dt.mice <- mice(dt.data,
-		m=n.imputed, 
-		maxit = 50, # number of iterations to obtain the imputed dataset
-		predictorMatrix = Mlink,
-		method = 'pmm', # Predictive mean matching, only ok for continuous variables, it is possible to set constrains for positive variables
-		seed = 500, printFlag = FALSE)
+                m=n.imputed, 
+                maxit = 100, # number of iterations to obtain the imputed dataset
+                predictorMatrix = Mlink,
+                method = 'pmm', # Predictive mean matching, only ok for continuous variables, it is possible to set constrains for positive variables
+                seed = 500, printFlag = FALSE)
 summary(dt.mice)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 Class: mids
 Number of multiple imputations:  3 
 Imputation methods:
-     Y  group season    bmi gender    age 
-    ""     ""     ""  "pmm"     ""     "" 
+ group season gender      Y    bmi    age 
+    ""     ""     ""  "pmm"  "pmm"  "pmm" 
 PredictorMatrix:
-       Y group season bmi gender age
-Y      0     0      0   0      0   0
-group  0     0      0   0      0   0
-season 0     0      0   0      0   0
-bmi    0     1      1   0      1   1
-gender 0     0      0   0      0   0
-age    0     0      0   0      0   0
+       group season gender Y bmi age
+group      0      0      0 0   0   0
+season     0      0      0 0   0   0
+gender     0      0      0 0   0   0
+Y          1      1      1 0   1   1
+bmi        1      1      1 1   0   1
+age        1      1      1 1   1   0
 \end{verbatim}
-
 \subsubsection{Interacting with the mice object}
-\label{sec:org1516b6a}
+\label{sec:org9203133}
 
 Missingness indicator:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 table(cci(dt.mice))
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 
 FALSE  TRUE 
-   10    90
-\end{verbatim}
-
-
-
-Complete case dataset:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-str(cc(dt.mice))
-\end{lstlisting}
-
-\begin{verbatim}
-'data.frame':	90 obs. of  6 variables:
- $ Y     : num  102 82.9 94.9 61.4 82 ...
- $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 1 2 2 2 2 2 2 ...
- $ season: Factor w/ 2 levels "winter","summer": 2 2 1 1 2 1 2 1 1 1 ...
- $ bmi   : num  21.6 21.9 20.6 26.4 28.5 ...
- $ gender: Factor w/ 2 levels "Male","Female": 2 2 2 1 1 2 2 1 2 2 ...
- $ age   : num  77.3 57.2 73.6 34 50.7 ...
-\end{verbatim}
-
-
-Extract observations with missing values:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-str(ic(dt.mice))
-\end{lstlisting}
-
-\begin{verbatim}
-'data.frame':	10 obs. of  6 variables:
- $ Y     : num  92.2 91 63.1 76.2 75.2 ...
- $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2
- $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1
- $ bmi   : num  NA NA NA NA NA NA NA NA NA NA
- $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1
- $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
-\end{verbatim}
-
-
-Dataset after multiple imputation:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-str(complete(dt.mice, action = 1)) ## first imputed dataset
-\end{lstlisting}
-
-\begin{verbatim}
-'data.frame':	100 obs. of  6 variables:
- $ Y     : num  92.2 91 63.1 76.2 75.2 ...
- $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
- $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
- $ bmi   : num  25.9 21 16.7 20.2 25.9 ...
- $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
- $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
-\end{verbatim}
-
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-str(complete(dt.mice, action = 2)) ## second imputed dataset
-\end{lstlisting}
-
-\begin{verbatim}
-'data.frame':	100 obs. of  6 variables:
- $ Y     : num  92.2 91 63.1 76.2 75.2 ...
- $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
- $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
- $ bmi   : num  17.5 18.1 24.3 20.7 20.9 ...
- $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
- $ age   : num  68.5 62.6 34.9 50.6 54.1 ...
+   20    80
 \end{verbatim}
 
 
 \clearpage
 
-\subsection{Step 4: Check the imputed datasets}
-\label{sec:org42ca17a}
-\subsubsection{Convergence of the imputation algorithm}
-\label{sec:org9cce740}
+Complete case dataset:
+\begin{lstlisting}[language=r,numbers=none]
+str(cc(dt.mice))
+\end{lstlisting}
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\phantomsection
+\label{}
+\begin{verbatim}
+'data.frame':	80 obs. of  6 variables:
+ $ Y     : num  48.7 91.6 75.3 51.8 92 ...
+ $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 1 2 1 2 1 1 1 ...
+ $ season: Factor w/ 2 levels "winter","summer": 1 1 2 1 1 2 2 2 2 2 ...
+ $ bmi   : num  23.4 25.7 20.2 24.3 23.8 ...
+ $ gender: Factor w/ 2 levels "Male","Female": 2 2 2 1 1 2 1 1 2 2 ...
+ $ age   : num  24.8 66.1 53.7 29.7 68.4 ...
+\end{verbatim}
+
+
+Extract observations with missing values:
+\begin{lstlisting}[language=r,numbers=none]
+str(ic(dt.mice))
+\end{lstlisting}
+
+\phantomsection
+\label{}
+\begin{verbatim}
+'data.frame':	20 obs. of  6 variables:
+ $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+ $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+ $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+ $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+ $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+ $ age   : num  NA NA NA NA NA NA NA NA NA NA ...
+\end{verbatim}
+
+
+Dataset after multiple imputation:
+\begin{lstlisting}[language=r,numbers=none]
+str(complete(dt.mice, action = 1)) ## first imputed dataset
+\end{lstlisting}
+
+\phantomsection
+\label{}
+\begin{verbatim}
+'data.frame':	100 obs. of  6 variables:
+ $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+ $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+ $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+ $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+ $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+ $ age   : num  72.2 61.6 36.7 51.7 56.3 ...
+\end{verbatim}
+
+
+\begin{lstlisting}[language=r,numbers=none]
+str(complete(dt.mice, action = 2)) ## second imputed dataset
+\end{lstlisting}
+
+\phantomsection
+\label{}
+\begin{verbatim}
+'data.frame':	100 obs. of  6 variables:
+ $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+ $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+ $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+ $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+ $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+ $ age   : num  68.4 64.1 30.4 48.9 53.7 ...
+\end{verbatim}
+
+
+\clearpage
+\subsection{Step 5: Check the imputed datasets}
+\label{sec:org912c849}
+\subsubsection{Build-in plot to visualize missing values}
+\label{sec:org6798677}
+
+Dotplot of the orignal data (blue) vs. imputed data (pink) to check
+that the imputed values are plausible (e.g. no negative age):
+\begin{lstlisting}[language=r,numbers=none]
+stripplot(dt.mice, age~.imp, pch=20, cex=2)
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/striplotImputed.pdf}
+\label{}
+\end{center}
+
+\begin{itemize}
+\item Points above x=1 represent the original data
+\item Points above x=2 represent the first imputed dataset
+\item Points above x=3 represent the second imputed dataset
+\item \ldots{}
+\end{itemize}
+
+\clearpage
+
+
+Boxplot of the orignal data (blue) vs. imputed data (pink) for a more
+compact visualization:
+\begin{lstlisting}[language=r,numbers=none]
+stripplot(dt.mice, age~.imp, pch=20, cex=2)
+\end{lstlisting}
+
+
+\begin{center}
+\includegraphics[trim={0 10 0 0},clip,width=0.8\textwidth]{./figures/bwplotImputed.pdf}
+\end{center}
+
+Density plot of the orignal data (blue) vs. imputed data (pink) to
+compare more in detail the distributions:
+\begin{lstlisting}[language=r,numbers=none]
+densityplot(dt.mice, layout = c(3,1))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./figures/densityplotImputed.pdf}
+\label{}
+\end{center}
+\subsubsection{Convergence of the imputation algorithm}
+\label{sec:org5582dc2}
+
+\begin{lstlisting}[language=r,numbers=none]
 plot(dt.mice, layout = c(1,2))
 \end{lstlisting}
 
@@ -472,112 +572,126 @@ plot(dt.mice, layout = c(1,2))
 \includegraphics[width=0.70\textwidth]{./figures/traceCVimputed.pdf}
 \end{center}
 
+Should look more like the bottom plot than the top plot where the
+chains are not mixing very well. Note that here at least 50 iteration
+are needed to reach a steady state.
+\subsubsection{Make your own plot}
+\label{sec:org2547d87}
 
-\subsubsection{Visualizing the imputed values}
-\label{sec:orgf5fa909}
-Visualize imputed value values and check they are plausible (e.g. mice
-is not imputed a BMI of 75):
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dt.mice$imp$bmi
+Imputed values can be directly extracted from the object:
+
+\medskip
+
+\begin{minipage}{0.5\linewidth}
+\begin{lstlisting}[language=r,numbers=none]
+head(dt.mice$imp$age)
 \end{lstlisting}
 
+\phantomsection
+\label{}
+\begin{verbatim}
+         1        2        3
+1 67.14724 20.49185 51.74262
+2 33.40963 24.89930 51.74262
+3 31.30446 43.02380 48.88883
+4 31.30446 22.29032 48.88883
+5 35.79714 31.66111 69.79847
+6 31.30446 31.66111 69.79847
+\end{verbatim}
+
+
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{lstlisting}[language=r,numbers=none]
+tail(dt.mice$imp$age)
+\end{lstlisting}
+
+\phantomsection
+\label{}
 \begin{verbatim}
           1        2        3
-1  25.86170 17.51962 26.03528
-2  20.97076 18.12224 21.60139
-3  16.68404 24.25679 17.86661
-4  20.15124 20.71567 26.03528
-5  25.86170 20.92015 25.24236
-6  24.80171 25.02219 20.62111
-7  21.42336 25.02219 25.02219
-8  21.00639 20.90548 20.15124
-9  24.76365 12.99571 24.80171
-10 15.52519 12.99571 21.42336
+15 31.30446 22.29032 69.79847
+16 35.79714 22.29032 24.91940
+17 35.79714 24.89930 48.88883
+18 33.40963 22.29032 24.91940
+19 31.30446 43.02380 48.88883
+20 31.30446 22.29032 48.88883
 \end{verbatim}
 
-The rows correspond to the 3 different imputed datasets and the
-columns to 10 imputed values per dataset. One can also summarizes the
-imputed values computing their quantiles:
+\end{minipage}
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-apply(dt.mice$imp$bmi,2,quantile)
+
+The columns correspond to the 3 different imputed datasets and the
+rows to 20 imputed values per dataset.
+
+\clearpage
+
+The imputed datasets can be extracted using:
+
+\begin{lstlisting}[language=r,numbers=none]
+dfMICE.data <- complete(dt.mice, action = "long")
+str(dfMICE.data)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-            1        2        3
-0%   15.52519 12.99571 17.86661
-25%  20.35612 17.67028 20.82167
-50%  21.21487 20.81058 23.20155
-75%  24.79219 23.42263 25.18731
-100% 25.86170 25.02219 26.03528
+'data.frame':	300 obs. of  8 variables:
+ $ Y     : num  92.2 91 63.1 76.2 75.2 ...
+ $ group : Factor w/ 2 levels "SAD","HC": 1 2 1 2 1 2 2 1 2 2 ...
+ $ season: Factor w/ 2 levels "winter","summer": 2 2 2 2 1 2 2 1 1 1 ...
+ $ bmi   : num  21.8 25.5 28.6 23.2 19.8 ...
+ $ gender: Factor w/ 2 levels "Male","Female": 2 2 1 2 2 2 1 2 1 1 ...
+ $ age   : num  72.2 61.6 36.7 51.7 56.3 ...
+ $ .imp  : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ .id   : int  1 2 3 4 5 6 7 8 9 10 ...
 \end{verbatim}
 
 
-Boxplot of the imputed values:
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-boxplot(dt.mice$imp$bmi)
+One can them display the observed and imputed values, possibly with an
+interval to reflect the sampling variation of the imputed value (here 1st and 3rd quantiles)
+\begin{lstlisting}[language=r,numbers=none]
+library(LMMstar)
+dfMICE.mean <- summarize(Y ~ .id + group, data = dfMICE.data)
+dfMICE.mean$impute <- dfMICE.mean$sd>0
+dfMICE.mean$group.num <- as.numeric(dfMICE.mean$group)
+dfMICE.mean$Nimpute <- unlist(tapply(dfMICE.mean$impute,dfMICE.mean$group,cumsum))*(dfMICE.mean$impute)
+
+ggMICE.point <- ggplot(dfMICE.mean,
+                       aes(x = group.num+0.1*Nimpute, y = mean))
+ggMICE.point <- ggMICE.point + geom_point(aes(color = impute,
+                                              shape = impute))
+ggMICE.point <- ggMICE.point + geom_segment(data = dfMICE.mean[dfMICE.mean$impute,],
+                                            aes(color = impute, y = q1, yend = q3))
+ggMICE.point <- ggMICE.point + scale_x_continuous(
+                                 breaks = 1:2,
+                                 labels = levels(dfMICE.mean$group)
+                               )
+ggMICE.point <- ggMICE.point + labs(x = "group", y = "Y",
+                                    color = "Imputed value",
+                                    shape = "Imputed value")
+ggMICE.point
 \end{lstlisting}
 
 \begin{center}
-\includegraphics[width=.9\linewidth]{./figures/boxplotImputed.pdf}
+\includegraphics[trim={0 0 0 0},clip,width=1\textwidth]{./figures/manualDotImputed.pdf}
 \end{center}
 
-\clearpage
-
-Imputed values vs. observed values
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-dt.bmi <- rbind(data.table(bmi = unlist(dt.mice$imp$bmi), imputed = TRUE),
-		data.table(bmi = na.omit(dt.data$bmi), imputed = FALSE))
-\end{lstlisting}
-
-Histogram
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-gg1.bmi <- ggplot(dt.bmi, aes(bmi, group = imputed, fill = imputed))
-gg1.bmi <- gg1.bmi + geom_histogram(aes(y=..count../sum(..count..)),position = "dodge")
-gg1.bmi
-\end{lstlisting}
-
-\begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-\end{verbatim}
-
-
-\begin{center}
-\includegraphics[width=.9\linewidth]{./figures/histImputed.pdf}
-\end{center}
 
 \clearpage
+\subsection{Step 6: Fit the statical model on each imputed dataset}
+\label{sec:org566d0ed}
 
-One more plot:
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
-stripplot(dt.mice, bmi~.imp, pch=20, cex=2)
-\end{lstlisting}
-
-\begin{center}
-\includegraphics[width=.9\linewidth]{./figures/striplotImputed.pdf}
-\end{center}
-
-\clearpage
-
-\subsection{Step 3: Fit the statical model on each imputed dataset}
-\label{sec:org8dfbc79}
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 e.mice <- with(data = dt.mice,
-	       lm(Y~group+season+bmi+gender+age)
-	       )
+               lm(Y~group+season+bmi+gender+age)
+               )
 e.mice
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 call :
 with.mids(data = dt.mice, expr = lm(Y ~ group + season + bmi + 
@@ -585,11 +699,10 @@ with.mids(data = dt.mice, expr = lm(Y ~ group + season + bmi +
 
 call1 :
 mice(data = dt.data, m = n.imputed, method = "pmm", predictorMatrix = Mlink, 
-    maxit = 50, printFlag = FALSE, seed = 500)
+    maxit = 100, printFlag = FALSE, seed = 500)
 
 nmis :
-     Y  group season    bmi gender    age 
-     0      0      0     10      0      0 
+[1] 10  0  0 10  0 20
 
 analyses :
 [[1]]
@@ -599,7 +712,7 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      2.8846        0.7238        1.2174        0.8602        0.5507        1.0058  
+    -0.02614       0.95181       1.13110       0.99033       0.70594       1.00116  
 
 
 [[2]]
@@ -609,7 +722,7 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      3.8365        0.6732        0.8917        0.7907        0.7422        1.0221  
+     0.05021       0.59320       0.87012       1.01371       0.59669       1.00034  
 
 
 [[3]]
@@ -619,18 +732,21 @@ lm(formula = Y ~ group + season + bmi + gender + age)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      2.2639        0.5601        1.1779        0.8919        0.7209        1.0025
+      0.5906        0.7486        1.0359        0.9588        1.0171        1.0077
 \end{verbatim}
 
 We can check that using \texttt{with} is equivalent to run the linear
 regression on the imputed dataset:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 dt.tempo <- copy(dt.data)
 dt.tempo[is.na(bmi), bmi := dt.mice$imp$bmi[,1]]
+dt.tempo[is.na(age), age := dt.mice$imp$age[,1]]
+dt.tempo[is.na(Y), Y := dt.mice$imp$Y[,1]]
 lm(Y ~ group + season + bmi + gender + age, data  = dt.tempo)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 
 Call:
@@ -638,44 +754,45 @@ lm(formula = Y ~ group + season + bmi + gender + age, data = dt.tempo)
 
 Coefficients:
  (Intercept)       groupHC  seasonsummer           bmi  genderFemale           age  
-      2.8846        0.7238        1.2174        0.8602        0.5507        1.0058
+    -0.02614       0.95181       1.13110       0.99033       0.70594       1.00116
 \end{verbatim}
 
 
 \clearpage
+\subsection{Step 7: Pool the results over the imputed datasets}
+\label{sec:org59266d6}
 
-\subsection{Step 4: Pool the results over the imputed datasets}
-\label{sec:orgf98cc3c}
-
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 ePool.mice <- pool(e.mice)
 summary(ePool.mice)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-          term  estimate  std.error statistic        df      p.value
-1  (Intercept) 2.9949755 1.73919838  1.722044 18.777429 1.014936e-01
-2      groupHC 0.6523698 0.42434760  1.537348 78.067966 1.282516e-01
-3 seasonsummer 1.0956572 0.46036133  2.379994 30.027026 2.386256e-02
-4          bmi 0.8475895 0.08552179  9.910802  7.101823 2.060982e-05
-5 genderFemale 0.6712684 0.42707145  1.571794 66.444876 1.207484e-01
-6          age 1.0101585 0.01664369 60.693193  6.176972 8.221885e-10
+          term  estimate   std.error   statistic        df      p.value
+1  (Intercept) 0.2048883 0.970756912   0.2110604 38.881759 8.339425e-01
+2      groupHC 0.7645464 0.319142478   2.3956273  9.220665 3.956182e-02
+3 seasonsummer 1.0123677 0.286505516   3.5335015 18.085773 2.359316e-03
+4          bmi 0.9876296 0.049550963  19.9315925  9.684670 3.472961e-09
+5 genderFemale 0.7732397 0.353001211   2.1904733  6.590121 6.701387e-02
+6          age 1.0030637 0.008348779 120.1449616 15.554399 1.645574e-24
 \end{verbatim}
 
 
 
 The (pooled) estimate is the average of the estimates relative to each
 imputed dataset:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 Q.coef <- colMeans(do.call(rbind,lapply(e.mice$analyses, coef)))
 Q.coef
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
-  2.9949755    0.6523698    1.0956572    0.8475895    0.6712684    1.0101585
+  0.2048883    0.7645464    1.0123677    0.9876296    0.7732397    1.0030637
 \end{verbatim}
 
 
@@ -683,148 +800,153 @@ The variance is a bit more complex and involves:
 \begin{itemize}
 \item the within-imputation variance (depends on the sample size)
 \end{itemize}
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 covW <- Reduce("+",lapply(e.mice$analyses, vcov))/n.imputed
 print(covW, digits = 5)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
              (Intercept)     groupHC seasonsummer         bmi genderFemale         age
-(Intercept)    2.1882899 -0.13040004  -0.04842230 -7.9278e-02  -0.10952359 -5.2588e-03
-groupHC       -0.1304000  0.17070925   0.01361091  3.0162e-03   0.00655971 -6.6906e-04
-seasonsummer  -0.0484223  0.01361091   0.16981498 -2.3136e-03   0.01559623 -2.0107e-04
-bmi           -0.0792775  0.00301620  -0.00231365  3.7376e-03  -0.00042973 -4.6547e-05
-genderFemale  -0.1095236  0.00655971   0.01559623 -4.2973e-04   0.16771404  2.9411e-04
-age           -0.0052588 -0.00066906  -0.00020107 -4.6547e-05   0.00029411  1.3100e-04
+(Intercept)    0.7916558 -0.04307788  -0.02717933 -0.02939118  -0.03847724 -0.00154551
+groupHC       -0.0430779  0.05873233   0.00490851  0.00083376   0.00140149 -0.00017523
+seasonsummer  -0.0271793  0.00490851   0.05882881 -0.00042661   0.00549819 -0.00002796
+bmi           -0.0293912  0.00083376  -0.00042661  0.00144421  -0.00074300 -0.00004101
+genderFemale  -0.0384772  0.00140149   0.00549819 -0.00074300   0.06116567  0.00035449
+age           -0.0015455 -0.00017523  -0.00002796 -0.00004101   0.00035449  0.00004799
 \end{verbatim}
 
 
 \begin{itemize}
 \item the between-imputation variance (depends on the amount of missing data)
 \end{itemize}
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 ls.diffCoef <- lapply(e.mice$analyses, function(iI){coef(iI)-Q.coef})
 covB <- Reduce("+",lapply(ls.diffCoef,tcrossprod))/(n.imputed-1)
 print(covB, digits = 5)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-           [,1]        [,2]       [,3]        [,4]        [,5]        [,6]
-[1,]  0.6273908  0.03854326 -0.1225940 -0.04085088  0.01833254  0.00804290
-[2,]  0.0385433  0.00702122 -0.0015717 -0.00218666 -0.00585420  0.00032147
-[3,] -0.1225940 -0.00157170  0.0315882  0.00839604 -0.01252242 -0.00179271
-[4,] -0.0408509 -0.00218666  0.0083960  0.00268231 -0.00167818 -0.00053567
-[5,]  0.0183325 -0.00585420 -0.0125224 -0.00167818  0.01100699  0.00049399
-[6,]  0.0080429  0.00032147 -0.0017927 -0.00053567  0.00049399  0.00010951
+           [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
+[1,]  0.1130349 -1.1447e-02  0.00182317 -0.00788221  0.06845745  1.3253e-03
+[2,] -0.0114468  3.2340e-02  0.02311661 -0.00175256  0.00688497  1.8197e-05
+[3,]  0.0018232  2.3117e-02  0.01744245 -0.00203333  0.01143001  1.3527e-04
+[4,] -0.0078822 -1.7526e-03 -0.00203333  0.00075832 -0.00590408 -1.0488e-04
+[5,]  0.0684574  6.8850e-03  0.01143001 -0.00590408  0.04758314  8.7018e-04
+[6,]  0.0013253  1.8197e-05  0.00013527 -0.00010488  0.00087018  1.6284e-05
 \end{verbatim}
 
 
 \begin{itemize}
 \item the simulation error
 \end{itemize}
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 covE <- covB/n.imputed
 print(covE, digits = 5)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-           [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
-[1,]  0.2091303  0.01284775 -0.04086467 -0.01361696  0.00611085  2.6810e-03
-[2,]  0.0128478  0.00234041 -0.00052390 -0.00072889 -0.00195140  1.0716e-04
-[3,] -0.0408647 -0.00052390  0.01052939  0.00279868 -0.00417414 -5.9757e-04
-[4,] -0.0136170 -0.00072889  0.00279868  0.00089410 -0.00055939 -1.7856e-04
-[5,]  0.0061108 -0.00195140 -0.00417414 -0.00055939  0.00366900  1.6466e-04
-[6,]  0.0026810  0.00010716 -0.00059757 -0.00017856  0.00016466  3.6504e-05
+            [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
+[1,]  0.03767828 -3.8156e-03  0.00060772 -2.6274e-03  0.02281915  4.4177e-04
+[2,] -0.00381559  1.0780e-02  0.00770554 -5.8419e-04  0.00229499  6.0656e-06
+[3,]  0.00060772  7.7055e-03  0.00581415 -6.7778e-04  0.00381000  4.5090e-05
+[4,] -0.00262740 -5.8419e-04 -0.00067778  2.5277e-04 -0.00196803 -3.4962e-05
+[5,]  0.02281915  2.2950e-03  0.00381000 -1.9680e-03  0.01586105  2.9006e-04
+[6,]  0.00044177  6.0656e-06  0.00004509 -3.4962e-05  0.00029006  5.4279e-06
 \end{verbatim}
 
 
 The total variance is:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 covT <- covW + covB + covE
 \end{lstlisting}
 
 leading to the standard errors:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 sqrt(diag(covT))
 \end{lstlisting}
+\phantomsection
+\label{}
 \begin{verbatim}
 (Intercept)      groupHC seasonsummer          bmi genderFemale          age 
- 1.73919838   0.42434760   0.46036133   0.08552179   0.42707145   0.01664369
+0.970756912  0.319142478  0.286505516  0.049550963  0.353001211  0.008348779
 \end{verbatim}
 
 
 \bigskip
 
 There is also a function to extract the R-squared:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 pool.r.squared(e.mice)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-          est     lo 95     hi 95 fmi
-R^2 0.9890535 0.9819615 0.9933666 NaN
+          est     lo 95     hi 95        fmi
+R^2 0.9961692 0.9942275 0.9974586 0.06584253
 \end{verbatim}
 
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 vec.rsquared <- sapply(e.mice$analyses, function(iImp){
     summary(iImp)$r.squared
 })
 tanh(mean(atanh(vec.rsquared)))
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
-[1] 0.9890535
+[1] 0.9961692
 \end{verbatim}
 
 
 \clearpage
-
 \section{Special case: stratified imputation \newline and variable transformation}
-\label{sec:org663d02f}
+\label{sec:org1d73a81}
 
-Mice can be adapted to use a group-specific imputation model\footnote{\emph{/thestatsgeek.com/2021/06/02/multiple-imputation-separately-by-groups-in-r-and-stata}\label{org0b8faff}}:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+Mice can be adapted to use a group-specific imputation model\footnote{//github.com/amices/mice/issues/34\label{org7e29c1c}}:
+\begin{lstlisting}[language=r,numbers=none]
 dtMale.data <- dt.data[dt.data$gender=="Male",]
 dtFemale.data <- dt.data[dt.data$gender=="Female",]
 
 all.variables <- c("Y","group","season","bmi","age","gender")
 n.variables <- length(all.variables)
 Mlink <- matrix(0, n.variables, n.variables,
-		dimnames = list(all.variables,all.variables))
+                dimnames = list(all.variables,all.variables))
 Mlink["bmi",c("group","season","age")] <- 1
 Mlink
 
 ## stratified imputation
 dtMale.mice <- mice(dtMale.data,
-		    m=10, 
-		    maxit = 50, 
-		    predictorMatrix = Mlink,
-		    method = c("","","","norm","",""),
-		    seed = 500, printFlag = FALSE)
+                    m=10, 
+                    maxit = 50, 
+                    predictorMatrix = Mlink,
+                    method = c("","","","norm","",""),
+                    seed = 500, printFlag = FALSE)
 dtFemale.mice <- mice(dtFemale.data,
-		      m=10, 
-		      maxit = 50,
-		      predictorMatrix = Mlink,
-		      method = c("","","","norm","",""),
-		      seed = 500, printFlag = FALSE)
+                      m=10, 
+                      maxit = 50,
+                      predictorMatrix = Mlink,
+                      method = c("","","","norm","",""),
+                      seed = 500, printFlag = FALSE)
 dt.mice <- rbind(dtMale.mice, dtFemale.mice)
 
 ## sanity check
 test <- complete(dt.mice)$bmi
 GS <-  c(complete(dtMale.mice)$bmi,
-	     complete(dtFemale.mice)$bmi)
+             complete(dtFemale.mice)$bmi)
 range(test-GS)
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
        Y group season bmi age gender
 Y      0     0      0   0   0      0
@@ -840,9 +962,8 @@ Number of logged events: 1
 [1] 0 0
 \end{verbatim}
 
-and to define new variables post-imputation\textsuperscript{\ref{org0b8faff}}:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+and to define new variables post-imputation\textsuperscript{\ref{org7e29c1c}}:
+\begin{lstlisting}[language=r,numbers=none]
 dtLong.mice <- complete(dt.mice, action='long', include=TRUE)
 dtLong.mice$newvar <- dtLong.mice$Y^2
 dt2.mice <- as.mids(dtLong.mice)
@@ -855,6 +976,8 @@ elm.mice <- with(dt2.mice, lm(newvar ~ group+season+bmi+age+gender))
 summary(pool(elm.mice))
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
 [1] 0 0
           term    estimate  std.error   statistic       df      p.value
@@ -868,14 +991,12 @@ summary(pool(elm.mice))
 
 
 \clearpage
-
 \section{Special case: imputation using a specific law and no covariate}
-\label{sec:orgf6314bc}
+\label{sec:orgae21c12}
 Mice can be adapted in order, for instance, to sample from a uniform
 distribution or a truncated normal distribution. First define a
 function able to generate data like:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 mice.impute.SI_unif <- function(y, ry, ...){ ## uniform xglaw
     n.NA <- sum(ry==FALSE)
     sample <- runif(n.NA, min = 0, max = 1)
@@ -885,8 +1006,7 @@ mice.impute.SI_unif <- function(y, ry, ...){ ## uniform xglaw
 
 or
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 mice.impute.SI_tnorm <- function(y, ry, ...){ ## truncated normal law
     require(truncnorm)
     n.NA <- sum(ry==FALSE)
@@ -896,17 +1016,18 @@ mice.impute.SI_tnorm <- function(y, ry, ...){ ## truncated normal law
 \end{lstlisting}
 Then prepare the matrix indicating which variable should be used
 during the imputation:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 impute.var <- c("bmi","group")
 Mlink2 <- matrix(0, 
-		 nrow = length(impute.var), 
-		 ncol = length(impute.var), 
-		 dimnames = list(impute.var,impute.var))
+                 nrow = length(impute.var), 
+                 ncol = length(impute.var), 
+                 dimnames = list(impute.var,impute.var))
 Mlink2["bmi","group"] <- 1
 Mlink2
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
       bmi group
 bmi     0     1
@@ -917,24 +1038,24 @@ group   0     0
 \clearpage 
 
 Then run mice as usual except that the method should correspond to one of the previous functions:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 n.imputed <- 50 ## number of imputed datasets
 set.seed(1)
 dt.mice2 <- mice(dt.data,
-		 m=n.imputed, 
-		 maxit = 1, # not relevant
-		 predictorMatrix = Mlink2, # not relevant
-		 method = 'SI_tnorm', # function previous define (without "mice.impute.")
-		 seed = 500, printFlag = FALSE)
+                 m=n.imputed, 
+                 maxit = 1, # not relevant
+                 predictorMatrix = Mlink2, # not relevant
+                 method = 'SI_tnorm', # function previous define (without "mice.impute.")
+                 seed = 500, printFlag = FALSE)
 \end{lstlisting}
 
 Then as usual one should check that the imputed values are satisfying:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 quantile(unlist(dt.mice2$imp$bmi))
 \end{lstlisting}
 
+\phantomsection
+\label{}
 \begin{verbatim}
        0%       25%       50%       75%      100% 
 0.7041556 0.8790477 0.9317021 0.9687630 0.9997288
@@ -942,8 +1063,7 @@ quantile(unlist(dt.mice2$imp$bmi))
 
 
 
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 hist(unlist(dt.mice2$imp$bmi))
 \end{lstlisting}
 
@@ -954,13 +1074,13 @@ hist(unlist(dt.mice2$imp$bmi))
 \clearpage
 
 One more plot:
-\lstset{language=r,label= ,caption= ,captionpos=b,numbers=none}
-\begin{lstlisting}
+\begin{lstlisting}[language=r,numbers=none]
 stripplot(dt.mice2, bmi~.imp, pch=20, cex=2)
 \end{lstlisting}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{./figures/striplotImputed2.pdf}
+\label{}
 \end{center}
 
 Here for instance the imputed values does not overlap the observed one
@@ -968,9 +1088,8 @@ so something (i.e. the parameters of the distribution used for the
 imputation) is wrong.
 
 \clearpage
-
 \section{Reporting guideline}
-\label{sec:orge78d740}
+\label{sec:orgc71f668}
 From \url{https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf}:
 \begin{itemize}
 \item Amount of missing data
@@ -986,4 +1105,25 @@ From \url{https://stefvanbuuren.name/Winnipeg/Lectures/Winnipeg.pdf}:
 \item Listwise deletion
 \item Sensitivity analysis
 \end{itemize}
+\section{Reference}
+\label{sec:org0791b91}
+\begingroup
+\renewcommand{\section}[2]{}
+\bibliographystyle{apalike}
+\bibliography{bibliography} 
+\endgroup
+
+\appendix
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{1em}{Appendix~\thesection:~}
+
+\renewcommand{\thefigure}{\Alph{figure}}
+\renewcommand{\thetable}{\Alph{table}}
+\renewcommand{\theequation}{\Alph{equation}}
+
+\setcounter{figure}{0}    
+\setcounter{table}{0}    
+\setcounter{equation}{0}    
+
+\setcounter{page}{1}
 \end{document}

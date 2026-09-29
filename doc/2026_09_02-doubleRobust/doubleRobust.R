@@ -1,0 +1,101 @@
+### doubleRobust.R --- 
+##----------------------------------------------------------------------
+## Author: Brice Ozenne
+## Created: sep  2 2026 (13:41) 
+## Version: 
+## Last-Updated: sep  2 2026 (13:41) 
+##           By: Brice Ozenne
+##     Update #: 1
+##----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+##----------------------------------------------------------------------
+## 
+### Code:
+
+## ** robust
+library(riskRegression)
+
+## *** setting 1: no confounder
+set.seed(1)
+n <- 1e5
+df <- data.frame(X = rbinom(n, size = 1, prob = 0.5),
+                 Z = rnorm(n))
+df$Y <- rbinom(n, size = 1, prob = plogis(df$X + 2*df$Z^2))
+df$X <- as.factor(df$X)
+df$Z2 <- df$Z^2
+
+## **** double robust estimator
+ate(Y ~ X + Z2, treatment = X ~ Z, se = FALSE, data = df)
+## X=A X=B    risk.A   risk.B difference (B-A) ratio (B/A)
+##   0   1 0.7364365 0.871374        0.1349374     1.18323
+
+ate(Y ~ X + Z, treatment = X ~ Z, se = FALSE, data = df)
+## X=A X=B    risk.A    risk.B difference (B-A) ratio (B/A)
+##   0   1 0.7360417 0.8715989        0.1355572    1.184171
+
+## **** linear regression
+summary(lm(Y ~ X + Z2, data = df))
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 0.6618410  0.0018833  351.43   <2e-16 ***
+## X1          0.1350868  0.0023836   56.67   <2e-16 ***
+## Z2          0.0741012  0.0008394   88.28   <2e-16 ***
+
+summary(lm(Y ~ X + Z, data = df))
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 7.360e-01  1.750e-03 420.649   <2e-16 ***
+## X1          1.356e-01  2.475e-03  54.776   <2e-16 ***
+## Z           4.083e-05  1.235e-03   0.033    0.974    
+
+## **** linear 'binomial' regression
+summary(glm(Y ~ X + Z, family = binomial(link = "identity"), data = df)) ## very similar to lm
+##               Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  0.7360424  0.0019711 373.425   <2e-16 ***
+## X1           0.1355580  0.0024746  54.780   <2e-16 ***
+## Z           -0.0002954  0.0011885  -0.249    0.804    
+
+summary(glm(Y ~ X + Z2, family = binomial(link = "identity"), data = df)) ## very similar to lm
+
+## *** setting 2: confounder
+set.seed(1)
+n <- 1e5
+df.C <- data.frame(Z = rnorm(n))
+df.C$X <- rbinom(n, size = 1, prob = plogis(df.C$Z))
+df.C$Y <- rbinom(n, size = 1, prob = plogis(df.C$X + 2*df.C$Z^2))
+df.C$X <- as.factor(df.C$X)
+df.C$Z2 <- df.C$Z^2
+
+ate(glm(Y ~ X + Z2, family = binomial(link = "logit"), data = df.C), treatment = "X", se = FALSE, data = df.C)
+## X=A X=B    risk.A    risk.B difference (B-A) ratio (B/A)
+##   0   1 0.7403795 0.8672916        0.1269121    1.171415
+
+ate(glm(Y ~ X + Z, family = binomial(link = "logit"), data = df.C), treatment = "X", se = FALSE, data = df.C)
+## X=A X=B    risk.A    risk.B difference (B-A) ratio (B/A)
+##   0   1 0.7293216 0.8735044        0.1441827    1.197694
+
+summary(lm(Y ~ X + Z2, data = df.C))
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 0.6656683  0.0018907  352.08   <2e-16 ***
+## X1          0.1265355  0.0023858   53.04   <2e-16 ***
+## Z2          0.0746178  0.0008387   88.97   <2e-16 ***
+
+summary(lm(Y ~ X + Z, data = df.C))
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  0.731925   0.001840  397.84   <2e-16 ***
+## X1           0.144183   0.002716   53.08   <2e-16 ***
+## Z           -0.022779   0.001353  -16.83   <2e-16 ***
+
+
+summary(glm(Y ~ X + Z, family = binomial(link = "identity"), data = df.C))
+##              Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  0.722320   0.006556  110.17   <2e-16 ***
+## X1           0.157528   0.008489   18.56   <2e-16 ***
+## Z           -0.013540   0.004078   -3.32    9e-04 ***
+ 
+
+
+
+##----------------------------------------------------------------------
+### doubleRobust.R ends here

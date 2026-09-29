@@ -1,0 +1,95 @@
+### LMMvsGformula.R --- 
+##----------------------------------------------------------------------
+## Author: Brice Ozenne
+## Created: sep 25 2026 (15:00) 
+## Version: 
+## Last-Updated: sep 25 2026 (15:00) 
+##           By: Brice Ozenne
+##     Update #: 1
+##----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+##----------------------------------------------------------------------
+## 
+### Code:
+
+## ** LMM vs. Gformula
+library(lava)
+library(LMMstar)
+
+mSim <- lvm(Y ~ A1 + A0 + L1 + L0,
+            A1 ~ A0 + L1 + L0,
+            L1 ~ A0 + L0)
+distribution(mSim, ~A0+A1) <- binomial.lvm(size = 1, p = 0.5)
+
+set.seed(1)
+dfW <- sim(mSim, 1e4)
+dfW0 <- dfW[df$A1==0,]
+
+summary(lm(Y ~ A0 + L0, data = dfW0))
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  0.51246    0.03691   13.88   <2e-16 ***
+## A0           2.24405    0.05149   43.58   <2e-16 ***
+## L0           2.24182    0.02565   87.39   <2e-16 ***
+
+dfW$Y0 <- ifelse(dfW$A1==1,NA,dfW$Y)
+dfL <- reshape(dfW[,c("A0","L0","L1","Y0")], direction = "long", timevar = "time",
+               varying = c("L0","L1","Y0"), v.names = "Y")
+dfL$visit <- as.character(dfL$time)
+e.lmm <- lmm(Y ~ visit + visit:A0, repetition = ~visit|id, structure = UN, data = dfL)
+summary(e.lmm)
+##             estimate    se      df  lower upper p.value    
+## (Intercept)   -0.021 0.014  9999.4 -0.049 0.007 0.14788    
+## visit2        -0.003 0.014  9998.1 -0.031 0.024 0.81654    
+## visit3         0.007 0.032  3631.1 -0.055  0.07 0.82132    
+## visit1:A0      0.056  0.02  9999.5  0.017 0.096 0.00536  **
+## visit2:A0      1.054 0.028 10001.8  0.999  1.11 < 1e-04 ***
+## visit3:A0      2.091 0.059  6423.5  1.976 2.206 < 1e-04 ***
+
+dfLW <- reshape(dfW[,c("A0","L0","L1","Y0")], direction = "long", timevar = "time",
+                varying = c("L1","Y0"), v.names = "Y")
+dfLW$visit <- as.character(dfLW$time)
+dfLW$A0 <- as.character(dfLW$A0)
+e.lmm20 <- lmm(Y ~ 0 + visit + visit:L0, repetition = ~visit|id, structure = UN, data = dfLW[dfLW$A0==0,])
+summary(e.lmm20)
+##            estimate    se     df  lower upper p.value    
+## visit1      -0.003 0.014   4967 -0.031 0.024   0.811    
+## visit2       0.033  0.03   2954 -0.026 0.091   0.273    
+## visit1:L0    0.993 0.014   4967  0.966 1.021  <1e-04 ***
+## visit2:L0     2.01 0.028 3246.5  1.955 2.066  <1e-04 ***
+
+## visit1 = L1, visit2 = Y
+
+## E[L1 | A0=a0,L0]
+beta_10 <- coef(e.lmm20)["visit1"] ## -0.003402171 
+beta_11 <- coef(e.lmm20)["visit1:L0"] ## 0.9931899 
+lm(L1 ~ L0, data = dfW[dfW$A0==0,])
+## (Intercept)           L0  
+##   -0.003402     0.993190  
+
+
+## E[Y | A0=a0,L0,L1]
+lmm.rho <- coef(e.lmm20, effects = "correlation")
+lmm.k <- coef(e.lmm20, effects = "variance")[2]
+
+beta_20 <- coef(e.lmm20)["visit2"] - lmm.rho * lmm.k * beta_10 ## 0.03617724 
+beta_21 <- coef(e.lmm20)["visit2:L0"] - lmm.rho * lmm.k * beta_11 ##  1.004642 
+beta_22 <- lmm.rho * lmm.k ## 1.012668 
+lm(Y0 ~ L0 + L1, data = dfW[dfW$A0==0,])
+## (Intercept)           L0           L1  
+##     0.03618      1.00464      1.01267  
+
+## Property of 'ordinary least square'
+mean(dfW[dfW$A0==0,"L1"]) - (beta_10 + beta_11*mean(dfW[dfW$A0==0,"L0"]))
+##       visit1 
+## 8.291978e-16 
+
+## estimate average counterfactual
+mean(beta_20 + beta_21 * dfW[dfW$A0==0,"L0"] + beta_22 * dfW[dfW$A0==0,"L1"])
+## [1] -0.008849159
+
+
+##----------------------------------------------------------------------
+### LMMvsGformula.R ends here
