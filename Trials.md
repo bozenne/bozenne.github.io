@@ -56,9 +56,9 @@ description of my involvement:
   
 - UNPRESCRIB
   ([2026-526314-90-00](https://euclinicaltrials.eu/ctis-public/view/2026-526314-90-00)):
-  co-authored the protocol (set "Trial Documents" tab in the previous
-  link), including strategies to cope with intercurrent
-  events. Developed an
+  co-authored the protocol and SAP (set "Trial Documents" tab in the previous
+  link),
+  including strategies to cope with intercurrent events. Developed an
   [algorithm](https://github.com/LarsenSV/CycleAlgo) generating the
   treatment allocation sequence (on/off pill) in the active arm such
   that the distribution of perimenstrual days and number of menses
